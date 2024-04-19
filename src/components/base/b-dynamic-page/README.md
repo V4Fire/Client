@@ -1,6 +1,7 @@
 # components/base/b-dynamic-page
 
-This module provides a component for dynamically loading page components. Mainly used with a router.
+This module provides a component for dynamically loading page components.
+It is primarily used in conjunction with a router.
 
 ## Synopsis
 
@@ -25,10 +26,11 @@ See the [[iDynamicPage]] component.
 The component automatically dispatches all events from the inner page component.
 Also, you can see the [[iDynamicPage]] component.
 
-## Basic concepts
+## Basic Concepts
 
-The shortest way to bind some components to a router is to use the route field and the component `:is` directive.
-Let's look at an example below.
+The most straightforward way to bind certain components to a router is by using the route field and
+the component `:is` directive.
+Here is an example:
 
 ```
 < component v-if = route | :is = route.meta.component
@@ -37,8 +39,10 @@ Let's look at an example below.
   Go to
 ```
 
-The example works fine, but problems arise when we try to organize the caching of loaded components.
-Well, how can we solve this problem? If we are using Vue as the engine of our application, we can use the `keep-alive` directive.
+This approach operates smoothly as per the example,
+but issues can arise when there's an attempt to cache the loaded components.
+So, how can such a problem be resolved?
+If we use Vue to power our application, the `keep-alive` directive can be helpful.
 
 ```
 < keep-alive
@@ -48,17 +52,21 @@ Well, how can we solve this problem? If we are using Vue as the engine of our ap
   Go to
 ```
 
-It works but only works with Vue. Also, this directive has a rather bad API: we can't manually invalidate the cache;
-we cannot configure caching of various components. Yes, we can use `include/exclude/max`, but there is no way to define
-different `max` for different components. And the main problem is that this directive uses the component name as a cache key,
-i.e., we cannot cache pages with the same name but different query parameters as separate components.
+It works but only works with Vue, and its API has several limitations.
+For example, you can't manually invalidate the cache or configure the caching of different components.
+Although you can use `include/exclude/max`, there is no option to define different max values for various components.
 
-`bDynamicPage` solves all these problems. This is a fairly simple wrapper around the `component :is` directive with
-own powerful cache API. You can specify custom cache keys, use different cache groups for different components, and other cool stuff.
+A major drawback is that the directive uses the component name as a cache key,
+which means we can't cache pages with the same name but different query parameters as separate components.
 
-Let's look at a few examples of using this component.
+The `bDynamicPage` component addresses all these issues.
+This component is a simple yet powerful wrapper around the `:is` directive, offering its own robust cache API.
+It allows the specification of custom cache keys,
+the usage of different cache groups for separate components, and many more advanced features.
 
-### Simple using without caching of pages
+Let's delve into some examples of using this component.
+
+### Usage Without Page Caching
 
 ```
 < b-dynamic-page
@@ -67,7 +75,7 @@ Let's look at a few examples of using this component.
   Go to
 ```
 
-### Automatically caching of all pages with the same name
+### Automatic Caching of All Pages with the Same Name
 
 ```
 < b-dynamic-page :keepAlive = true
@@ -76,7 +84,7 @@ Let's look at a few examples of using this component.
   Go to
 ```
 
-### Specifying the maximum cache size
+### Specifying the Maximum Cache Size
 
 ```
 < b-dynamic-page :keepAlive = true | :keepAliveSize = 5
@@ -85,7 +93,7 @@ Let's look at a few examples of using this component.
   Go to
 ```
 
-### Excluding some components from caching
+### Excluding Certain Components from Caching
 
 ```
 /// Also, `exclude` can be defined as a string, RegExp, or a function
@@ -95,7 +103,7 @@ Let's look at a few examples of using this component.
   Go to
 ```
 
-### Specifying components to cache
+### Specifying Components for Caching
 
 ```
 /// Also, `include` can be defined as a string, RegExp, or a function
@@ -105,7 +113,7 @@ Let's look at a few examples of using this component.
   Go to
 ```
 
-### Specifying a custom cache key
+### Specifying a Custom Cache Key
 
 ```
 < b-dynamic-page :keepAlive = true | :include = (page, route) => `${page}:${route.query.userId}`
@@ -114,7 +122,7 @@ Let's look at a few examples of using this component.
   Go to
 ```
 
-### Specifying various cache groups
+### Specifying Various Cache Groups
 
 ```
 < b-dynamic-page :keepAlive = true | :include = (page, route) => { &
@@ -127,7 +135,7 @@ Let's look at a few examples of using this component.
   Go to
 ```
 
-### Invalidating the cache
+### Invalidating the Cache
 
 ```
 < b-dynamic-page ref = dynamicPage | :keepAlive = true
@@ -139,16 +147,40 @@ Let's look at a few examples of using this component.
   Invalidate cache
 ```
 
-## Providing props to the inner page component
+## Preserving the Scroll Position of Nested DOM Nodes
 
-By default, `bDynamicPage` provides all props defined in the [[iDynamicPage]] component to the inner page component.
+This component offers a convenient API for retaining the scroll position of DOM nodes on the page,
+which is cached in `keepAlive`.
+
+To achieve this, add a listener for the `beforeSwitchPage` event and
+pass the scroll element that needs to be saved to the `saveScroll` method.
+
+```typescript
+import iBlock, { component } from 'components/super/i-block/i-block';
+import type { OnBeforeSwitchPage } from 'base/b-dynamic-page/b-dynamic-page';
+
+@component()
+export default class bExample extends iBlock {
+  @watch('rootEmitter:onBeforeSwitchPage')
+  onBeforeSwitchPage({saveScroll}: OnBeforeSwitchPage): void {
+    if (this.$refs.elementWithScroll) {
+      saveScroll(this.$refs.elementWithScroll.$el);
+    }
+  }
+}
+```
+
+## Providing Props to the Inner Page Component
+
+By default, the `bDynamicPage` component provides all the props defined in the [[iDynamicPage]] component
+to its inner page component.
 
 ```
 /// `pageTitle` will be provided to the inner page component
 < b-dynamic-page :keepAlive = true | :pageTitle = 'Hello world'
 ```
 
-## Catching events of the inner page component
+## Catching Events of the Inner Page Component
 
 By default, `bDynamicPage` dispatches all events from the inner page component.
 
@@ -177,32 +209,38 @@ A function that takes a route object and returns the name of the page component 
 
 #### [keepAlive = `false`]
 
-If true, then when moving from one page to another, the old page is saved in the cache under its own name.
-When you return to this page, it will be restored. This helps to optimize switching between pages, but increases memory consumption.
-Note that when a page is switched, it will be deactivated by calling `deactivate`.
-When the page is restored, it will be activated by calling `activate`.
+If set to true, the previous pages will be cached under their own names,
+allowing them to be restored when revisited.
+This optimization helps improve page switching but may increase memory usage.
+
+Please note that when a page is switched, it will be deactivated through the `deactivate` function.
+Similarly, when the page is restored, it will be activated using the `activate` function.
 
 #### [keepAliveSize = `10`]
 
-The maximum number of pages in the `keepAlive` global cache.
+The maximum number of pages that can be stored in the global cache of `keepAlive`.
 
 #### [include]
 
-A predicate to include pages in `keepAlive` caching: if not specified, all loaded pages will be cached.
-It can be defined as:
+A predicate to determine which pages should be included in `keepAlive` caching.
+If not specified, all loaded pages will be cached.
 
-1. a component name (or a list of names);
-2. a regular expression;
-3. a function that takes a component name and returns:
-  * `true` (include), `false` (does not include);
-  * a string key for caching (used instead of the component name);
-  * or a special object with information about the caching strategy being used.
+The predicate can be defined in three ways:
+1. As a component name or a list of component names.
+2. As a regular expression.
+3. As a function that takes a component name and returns one of the following:
+  - `true` (to include the page in caching).
+  - `false` (to exclude the page from caching).
+  - A string key to be used for caching instead of the component name.
+  - A special object with information about the caching strategy being used.
 
 #### [exclude]
 
-A predicate to exclude some pages from `keepAlive` caching.
-It can be defined as a component name (or a list of names), regular expression,
-or a function that takes a component name and returns `true` (exclude) or `false` (does not exclude).
+A predicate to exclude certain pages from `keepAlive` caching can be defined in three ways:
+1. As a component name or a list of component names.
+2. As a regular expression.
+3. As a function that takes a component name and returns `true` to exclude the page from caching,
+   or `false` to include the page in caching.
 
 #### [emitter = `this.$root`]
 
@@ -214,7 +252,7 @@ A link to an event emitter to listen for page switch events.
 
 #### [event = `'setRoute'`]
 
-Page switching event name.
+The page switching event name.
 
 ```
 < b-dynamic-page :emitter = router | :event = 'transition'
@@ -228,8 +266,7 @@ The name of the active page to load.
 
 #### keepAliveCache
 
-A dictionary of `keepAlive` caches.
-The keys represent cache groups  (the default is `global`).
+A dictionary of `keepAlive` caches, where the keys represent cache groups (with the default being `global`).
 
 ### Getters
 

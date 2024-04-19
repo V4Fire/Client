@@ -16,7 +16,7 @@ test.describe('<i-input-text> events', () => {
 	});
 
 	test([
-		'should emit `selectText` event when the `selectText` method is invoked,',
+		'should emit the `selectText` event when the `selectText` method is invoked,',
 		'subsequent invocations should be ignored if the value is already selected'
 	].join(' '), async ({page}) => {
 		const target = await renderDummyInput(page, {
@@ -36,7 +36,7 @@ test.describe('<i-input-text> events', () => {
 	});
 
 	test([
-		'should emit `clearText` event when the `clearText` method is invoked,',
+		'should emit the `clearText` event when the `clearText` method is invoked,',
 		'subsequent invocations should be ignored if the <input> is empty'
 	].join(' '), async ({page}) => {
 		const target = await renderDummyInput(page, {
