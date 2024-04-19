@@ -7,6 +7,7 @@
  */
 
 /* eslint-disable max-lines-per-function */
+
 import sharp from 'sharp';
 
 import test from 'tests/config/unit/test';
