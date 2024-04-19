@@ -211,8 +211,15 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 		img.style.opacity = '0';
 
 		el.style['background-image'] = el.getAttribute('data-broken-image') ?? '';
-		el.style['background-size'] = 'contain';
 		el.setAttribute('data-image', 'broken');
+
+		if (p.backgroundSize == null) {
+			el.style['background-size'] = 'contain';
+		}
+
+		if (Object.isString(p.backgroundSize) && p.backgroundSize !== 'false') {
+			el.style['background-size'] = p.backgroundSize;
+		}
 
 		p.onError?.(img);
 	}

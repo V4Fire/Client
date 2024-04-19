@@ -211,6 +211,16 @@ export interface ImageOptions {
 	 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/fetchPriority
 	 */
 	fetchPriority?: 'high' | 'low' | 'auto';
+
+	/**
+	 * A value, that will be passed to the `background-size` CSS style on the image container.
+	 * This will only affect the broken image placeholder.
+	 * The default value is `contain`.
+	 * If you don't need the `background-size` on your placeholder image, pass the `'false'` value.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/CSS/background-size
+	 */
+	backgroundSize?: 'false' | string;
 }
 
 export interface ImageSource {
