@@ -13,6 +13,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.70.2 (2024-04-19)
 
+#### :rocket: New Feature
+
+* Introduced a `beforeSwitchPage` event that is emitted prior to the removal of the current page element
+* Implemented an API for saving the scroll of nested DOM nodes on the page.
+  [Learn more](./README.md#api-for-saving-scroll-of-nested-dom-nodes).
+
 #### :house: Internal
 
 * Use the `v-resize-observer` directive to recalculate `b-bottom-slide` state instead of `window:resize` and `DOMChange` watchers

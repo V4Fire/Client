@@ -1,5 +1,5 @@
 {
-  "hash": "16c496c09c2d6f423e835ff1f2d1cbf66e8974a499c340f2c8774c88471aad1d",
+  "hash": "8a737608822631444b83b6d0279de056239be7d66672d3613cc7b86852b58ef8",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -894,6 +894,38 @@
             "src/base/b-router/b-router.styl"
           ],
           "tpl": "src/base/b-router/b-router.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-scroll-element-dummy",
+        {
+          "index": "src/base/b-dynamic-page/test/b-scroll-element-dummy/index.js",
+          "declaration": {
+            "name": "b-scroll-element-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-scroll-element-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-dynamic-page/test/b-scroll-element-dummy/b-scroll-element-dummy.ts",
+          "styles": [
+            "src/base/b-dynamic-page/test/b-scroll-element-dummy/b-scroll-element-dummy.styl"
+          ],
+          "tpl": "src/base/b-dynamic-page/test/b-scroll-element-dummy/b-scroll-element-dummy.ss",
           "etpl": null
         }
       ],
@@ -2068,7 +2100,8 @@
               "b-dummy-sync",
               "b-dummy-state",
               "b-dummy-control-list",
-              "b-dummy-decorators"
+              "b-dummy-decorators",
+              "b-scroll-element-dummy"
             ],
             "libs": [
               "core/cookies",
@@ -2114,7 +2147,8 @@
             "b-dummy-sync",
             "b-dummy-state",
             "b-dummy-control-list",
-            "b-dummy-decorators"
+            "b-dummy-decorators",
+            "b-scroll-element-dummy"
           ],
           "libs": [
             "core/cookies",

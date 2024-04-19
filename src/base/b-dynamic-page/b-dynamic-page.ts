@@ -47,6 +47,8 @@ import type {
 
 } from 'base/b-dynamic-page/interface';
 
+import { restorePageElementsScroll, saveScrollIntoAttribute } from 'base/b-dynamic-page/helpers';
+
 export * from 'super/i-data/i-data';
 export * from 'base/b-dynamic-page/interface';
 
@@ -242,7 +244,7 @@ export default class bDynamicPage extends iDynamicPage {
 		}
 
 		const
-			{unsafe, route} = this;
+			{unsafe, route, r} = this;
 
 		return new SyncPromise((r) => {
 			this.onPageChange = onPageChange(r, this.route);
@@ -263,6 +265,8 @@ export default class bDynamicPage extends iDynamicPage {
 					currentPageComponent = currentPageEl?.component?.unsafe;
 
 				if (currentPageEl != null) {
+					r.emit('beforeSwitchPage', {saveScroll: saveScrollIntoAttribute});
+
 					if (currentPageComponent != null) {
 						const
 							currentPageStrategy = unsafe.getKeepAliveStrategy(currentPage, currentRoute);
@@ -300,6 +304,10 @@ export default class bDynamicPage extends iDynamicPage {
 
 					if (pageComponentFromCache != null) {
 						pageComponentFromCache.activate();
+
+						unsafe.async.requestAnimationFrame(() => {
+							restorePageElementsScroll(pageElFromCache);
+						}, {label: $$.restorePageElementsScroll});
 
 						unsafe.$el?.append(pageElFromCache);
 						pageComponentFromCache.emit('mounted', pageElFromCache);
