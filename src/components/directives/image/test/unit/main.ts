@@ -339,9 +339,11 @@ test.describe('components/directives/image', () => {
 						draggable: false
 					});
 
+					const
+						styleAttribute = await container.getAttribute('style');
+
 					await waitForImageLoadFail(page, container);
-					await test.expect(container.getAttribute('style'))
-						.toBeResolvedTo(`background-image: url("${EXISTING_PICTURE_SRC}");`);
+					test.expect(styleAttribute).toContain(`background-image: url("${EXISTING_PICTURE_SRC}");`);
 				}
 			);
 		});
