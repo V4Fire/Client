@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## 4.0.0-beta.?? (2024-??-??)
+
+#### :house: Internal
+
+* Removed optional chaining from load function in loadModules block
+to ensure compliance with ES2018 `iBlock`
+
 ## v4.0.0-beta.90 (2024-04-17)
 
 #### :rocket: New Feature
