@@ -41,9 +41,7 @@
 			- block view
 				< .&__view &
 					ref = view |
-					v-on-resize = {
-						handler: recalculateState
-					} |
+					v-on-resize = {handler: recalculateState} |
 					@touchstart = swipeControl.onPullStart |
 					@touchmove = swipeControl.onPull |
 					@touchend = swipeControl.onPullEnd

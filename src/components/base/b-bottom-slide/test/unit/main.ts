@@ -713,17 +713,16 @@ test.describe('<b-bottom-slide> functional cases', () => {
 
 			const
 				imageSize = 300,
-				image = await sharp({
-					create: {
-						width: imageSize,
-						height: imageSize,
-						channels: 4,
-						background: {r: 255, g: 0, b: 0, alpha: 0.5}
-					}
-				})
-					.png()
-					.toBuffer(),
 				fakeImgUrl = 'https://fake-image.get';
+
+			const image = await sharp({
+				create: {
+					width: imageSize,
+					height: imageSize,
+					channels: 4,
+					background: {r: 255, g: 0, b: 0, alpha: 0.5}
+				}
+			}).png().toBuffer();
 
 			const
 				interceptor = new RequestInterceptor(page, fakeImgUrl);
@@ -745,9 +744,7 @@ test.describe('<b-bottom-slide> functional cases', () => {
 
 			await BOM.waitForIdleCallback(page, {sleepAfterIdles: 200});
 
-			const
-				windowTopOffset = await getAbsoluteComponentWindowOffset(component);
-
+			const windowTopOffset = await getAbsoluteComponentWindowOffset(component);
 			test.expect(windowTopOffset).toBe(contentHeight);
 
 			await interceptor.respond();

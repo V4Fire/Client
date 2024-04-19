@@ -1,5 +1,5 @@
 {
-  "hash": "be5328c11827c4226eafeea8c717f430dd61d15cbe46c2b7a1366ef9a79e40c8",
+  "hash": "5a4d2a336984dd1ee0c0b713d0fbc356477b43181475f21b226b799ae574825f",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -116,6 +116,38 @@
             "src/components/form/b-checkbox/b-checkbox.styl"
           ],
           "tpl": "src/components/form/b-checkbox/b-checkbox.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-component-interface-dummy",
+        {
+          "index": "src/core/component/interface/component/test/b-component-interface-dummy/index.js",
+          "declaration": {
+            "name": "b-component-interface-dummy",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-component-interface-dummy",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/interface/component/test/b-component-interface-dummy/b-component-interface-dummy.ts",
+          "styles": [
+            "src/core/component/interface/component/test/b-component-interface-dummy/b-component-interface-dummy.styl"
+          ],
+          "tpl": "src/core/component/interface/component/test/b-component-interface-dummy/b-component-interface-dummy.ss",
           "etpl": null
         }
       ],
@@ -974,6 +1006,38 @@
             "src/components/base/b-router/b-router.styl"
           ],
           "tpl": "src/components/base/b-router/b-router.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-scroll-element-dummy",
+        {
+          "index": "src/components/base/b-dynamic-page/test/b-scroll-element-dummy/index.js",
+          "declaration": {
+            "name": "b-scroll-element-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-scroll-element-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/base/b-dynamic-page/test/b-scroll-element-dummy/b-scroll-element-dummy.ts",
+          "styles": [
+            "src/components/base/b-dynamic-page/test/b-scroll-element-dummy/b-scroll-element-dummy.styl"
+          ],
+          "tpl": "src/components/base/b-dynamic-page/test/b-scroll-element-dummy/b-scroll-element-dummy.ss",
           "etpl": null
         }
       ],
