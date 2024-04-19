@@ -141,19 +141,23 @@ Let's look at a few examples of using this component.
 
 ### API for saving scroll of nested DOM nodes
 
-This component provides a convenient API for saving the scroll position of DOM nodes on the page,
+This component offers a convenient API for retaining the scroll position of DOM nodes on the page,
 which is cached in `keepAlive`.
 
-To achieve this, you need to add a listener for the `beforeSwitchPage` event
-and pass the element whose scroll needs to be saved to the `saveScroll` method.
+To achieve this, add a listener for the `beforeSwitchPage` event and
+pass the scroll element that needs to be saved to the `saveScroll` method.
 
 ```typescript
+import iBlock, { component } from 'components/super/i-block/i-block';
 import type { OnBeforeSwitchPage } from 'base/b-dynamic-page/b-dynamic-page';
 
-@watch('rootEmitter:onBeforeSwitchPage')
-onBeforeSwitchPage({saveScroll}: OnBeforeSwitchPage): void {
-  if (this.$refs.elementWithScroll) {
-    saveScroll(this.$refs.elementWithScroll.$el);
+@component()
+export default class bExample extends iBlock {
+  @watch('rootEmitter:onBeforeSwitchPage')
+  onBeforeSwitchPage({saveScroll}: OnBeforeSwitchPage): void {
+    if (this.$refs.elementWithScroll) {
+      saveScroll(this.$refs.elementWithScroll.$el);
+    }
   }
 }
 ```

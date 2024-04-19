@@ -16,7 +16,6 @@ const
  */
 export function saveScrollIntoAttribute(el: Element): void {
 	const value = `${String(el.scrollTop)}${separator}${String(el.scrollLeft)}`;
-
 	el.setAttribute(scrollAttribute, value);
 }
 

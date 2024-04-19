@@ -10,12 +10,12 @@ import test from 'tests/config/unit/test';
 
 import { renderDynamicPage } from 'components/base/b-dynamic-page/test/helpers';
 
-test.describe('<b-dynamic-page> events', () => {
+test.describe('<b-dynamic-page> standard component events', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
-	test('emits the `beforeSwitchPage` event before removing the page element', async ({page}) => {
+	test('should emit the `beforeSwitchPage` event before removing the page element', async ({page}) => {
 		const target = await renderDynamicPage(page, {keepAlive: true});
 
 		const count = await page.evaluateHandle(() => ({value: 0}));

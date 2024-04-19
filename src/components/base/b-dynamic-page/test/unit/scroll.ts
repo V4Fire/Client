@@ -15,7 +15,7 @@ test.describe('<b-dynamic-page> scroll', () => {
 		await demoPage.goto();
 	});
 
-	test('saves and applies a scroll to the children cached page element', async ({page}) => {
+	test('should save and apply scroll to the cached page element for the children', async ({page}) => {
 		const
 			scrollOptions = {left: 200, top: 200},
 			target = await renderDynamicPage(page, {keepAlive: true});
