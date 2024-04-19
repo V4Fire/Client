@@ -6,6 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-bottom-slide')
-	.extends('i-block')
-	.libs('components/directives/on-resize');
+package('b-component-interface-dummy')
+	.extends('i-block');

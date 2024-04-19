@@ -115,7 +115,7 @@ test.describe('<i-static-page>', () => {
 	});
 
 	test.describe('`reset`', () => {
-		test('should emit `reset` event on the globalEmitter when the `reset` method is invoked', async () => {
+		test('should emit the `reset` event on the globalEmitter when the `reset` method is invoked', async () => {
 			const scan = await root.evaluate(async (ctx) => {
 				let res = false;
 
@@ -132,7 +132,7 @@ test.describe('<i-static-page>', () => {
 			test.expect(scan).toBeTruthy();
 		});
 
-		test('should emit `reset.silence` event on the globalEmitter when the `silence` method is invoked', async () => {
+		test('should emit the `reset.silence` event on the globalEmitter when the `silence` method is invoked', async () => {
 			const scan = await root.evaluate(async (ctx) => {
 				let res = false;
 

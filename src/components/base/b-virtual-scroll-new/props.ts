@@ -45,7 +45,7 @@ export default abstract class iVirtualScrollProps extends iData {
 	readonly item?: iItems['item'];
 
 	/** {@link iItems.items} */
-	@prop({type: [String, Function]})
+	@prop({type: Array, required: false})
 	readonly items: iItems['items'];
 
 	/** {@link iItems.itemKey} */
@@ -73,7 +73,7 @@ export default abstract class iVirtualScrollProps extends iData {
 	 * })
 	 * ```
 	 */
-	@prop()
+	@prop({required: false})
 	readonly itemMeta?: CreateFromItemFn<object, ComponentItemMeta>;
 
 	/**
@@ -97,7 +97,7 @@ export default abstract class iVirtualScrollProps extends iData {
 	 * <div class="..__skeleton">Skeleton</div>
 	 * ```
 	 */
-	@prop(Number)
+	@prop({type: Number, required: false})
 	readonly tombstoneCount?: number;
 
 	/**
@@ -255,7 +255,7 @@ export default abstract class iVirtualScrollProps extends iData {
 	 *
 	 * {@link RequestQueryFn}
 	 */
-	@prop({type: Function})
+	@prop({type: Function, required: false})
 	readonly requestQuery?: RequestQueryFn;
 
 	/**

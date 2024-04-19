@@ -11,6 +11,47 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.93 (2024-04-19)
+
+#### :house: Internal
+
+* Use the `v-on-resize` directive to recalculate state instead of `window:resize` and `DOMChange` watchers `bBottomSlide`
+
+## v4.0.0-beta.92 (2024-04-19)
+
+#### :rocket: New Feature
+
+* Introduced a `beforeSwitchPage` event that is emitted prior to the removal of the current page element
+* Implemented an API for saving the scroll of nested DOM nodes on the page.
+  [Learn more](./README.md#api-for-saving-scroll-of-nested-dom-nodes).
+
+## v4.0.0-beta.91 (2024-04-19)
+
+#### :rocket: New Feature
+
+* The `dataOffset` property is now public in the `VirtualScrollState` interface `components/base/b-virtual-scroll`
+* Added `$getRoot` and `$getParent` methods to the `ComponentInterface`
+* Implemented the `$getRoot` and `$getParent` methods on the component's instance `core/component/init`
+* Added a new `rootMargin` property to the intersection-watcher `core/dom/intersection-watcher`.
+  Note: this should only be used for the IntersectionObserver strategy.
+
+#### :house: Internal
+
+* Replaced anonymous functions for `getRoot` and `getParent` props
+  with calls to the `$getRoot` and `$getParent` methods of the component `build/snakeskin`
+* Removed optional chaining from load function in loadModules block
+  to ensure compliance with ES2018 `iBlock`
+
+## v4.0.0-beta.90 (2024-04-17)
+
+#### :rocket: New Feature
+
+* Supported the insertion of a primitive as a value `directives/safe-html`
+
+#### :bug: Bug Fix
+
+* The `onEnter` parameter for the `v-in-view` directive is now passed as the `handler` parameter `components/base/b-virtual-scroll-new`
+
 ## v4.0.0-beta.88 (2024-04-12)
 
 #### :boom: Breaking Change

@@ -6,7 +6,7 @@ This module provides a component to create bottom sheet behavior that is similar
 
 * The component extends [[iBlock]].
 
-* The component implements [[iLockPageScroll]], [[iOpen]], [[iVisible]], [[iObserveDOM]], [[iHistory]] traits.
+* The component implements [[iLockPageScroll]], [[iOpen]], [[iVisible]], [[iHistory]] traits.
 
 ## Modifiers
 

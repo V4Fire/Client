@@ -149,7 +149,7 @@ test.describe('<b-select> standard component events', () => {
 			});
 
 			test([
-				'should emit `clear` event when the `clear` method is invoked,',
+				'should emit the `clear` event when the `clear` method is invoked,',
 				'subsequent invocations should be ignored if the <input> is empty'
 			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
@@ -177,7 +177,7 @@ test.describe('<b-select> standard component events', () => {
 			});
 
 			test([
-				'should emit `reset` event when the `reset` method is invoked,',
+				'should emit the `reset` event when the `reset` method is invoked,',
 				'subsequent invocations should be ignored if the <input> has a default value'
 			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
@@ -290,7 +290,7 @@ test.describe('<b-select> standard component events', () => {
 			});
 
 			test([
-				'should emit `clear` event when the `clear` method is invoked,',
+				'should emit the `clear` event when the `clear` method is invoked,',
 				'subsequent invocations should be ignored if the <input> is empty'
 			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
@@ -319,7 +319,7 @@ test.describe('<b-select> standard component events', () => {
 			});
 
 			test([
-				'should emit `reset` event when the `reset` method is invoked,',
+				'should emit the `reset` event when the `reset` method is invoked,',
 				'subsequent invocations should be ignored if the <input> has a default value'
 			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
@@ -407,7 +407,7 @@ test.describe('<b-select> standard component events', () => {
 			});
 
 			test([
-				'should emit `clear` event when the `clear` method is invoked,',
+				'should emit the `clear` event when the `clear` method is invoked,',
 				'subsequent invocations should be ignored if the <input> is empty'
 			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
@@ -436,7 +436,7 @@ test.describe('<b-select> standard component events', () => {
 			});
 
 			test([
-				'should emit `reset` event when the `reset` method is invoked,',
+				'should emit the `reset` event when the `reset` method is invoked,',
 				'subsequent invocations should be ignored if the <input> has a default value'
 			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
@@ -524,7 +524,7 @@ test.describe('<b-select> standard component events', () => {
 			});
 
 			test([
-				'should emit `clear` event when the `clear` method is invoked,',
+				'should emit the `clear` event when the `clear` method is invoked,',
 				'subsequent invocations should be ignored if the <input> is empty'
 			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
@@ -554,7 +554,7 @@ test.describe('<b-select> standard component events', () => {
 			});
 
 			test([
-				'should emit `reset` event when the `reset` method is invoked,',
+				'should emit the `reset` event when the `reset` method is invoked,',
 				'subsequent invocations should be ignored if the <input> has a default value'
 			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
@@ -587,7 +587,7 @@ test.describe('<b-select> standard component events', () => {
 	});
 
 	test([
-		'should emit `selectText` event when `selectText` method is invoked,',
+		'should emit the `selectText` event when `selectText` method is invoked,',
 		'subsequent invocations should be ignored if the text is selected'
 	].join(' '), async ({page}) => {
 		const target = await renderSelect(page, {
@@ -609,7 +609,7 @@ test.describe('<b-select> standard component events', () => {
 	});
 
 	test([
-		'should emit `clearText` event when `clearText` method is invoked,',
+		'should emit the `clearText` event when `clearText` method is invoked,',
 		'subsequent invocations should be ignored if the text is cleared'
 	].join(' '), async ({page}) => {
 		const target = await renderSelect(page, {

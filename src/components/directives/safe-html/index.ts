@@ -21,11 +21,7 @@ export * from 'components/directives/safe-html/interface';
 
 ComponentEngine.directive('safe-html', {
 	beforeCreate({value, oldValue}: SafeHtmlDirectiveParams, vnode: VNode) {
-		if (SSR) {
-			return;
-		}
-
-		if (value === oldValue) {
+		if (value === oldValue || SSR) {
 			return;
 		}
 
@@ -51,13 +47,13 @@ ComponentEngine.directive('safe-html', {
 function sanitize(value: SafeHtmlDirectiveParams['value'], windowObject: typeof globalThis = globalThis): string {
 	const domPurify = DOMPurify(windowObject);
 
-	if (typeof value === 'string') {
-		return domPurify.sanitize(value, config.safeHtml);
+	if (Object.isPrimitive(value)) {
+		return domPurify.sanitize(toString(value), config.safeHtml);
 
 	}
 
 	return domPurify.sanitize(
-		value.value,
+		toString(value.value),
 
 		{
 			...config.safeHtml,
@@ -67,4 +63,12 @@ function sanitize(value: SafeHtmlDirectiveParams['value'], windowObject: typeof 
 			RETURN_DOM: false
 		}
 	);
+
+	/**
+	 * Converts the input value to a string for sanitization
+	 * @param value
+	 */
+	function toString(value: SafeHtmlDirectiveParams['value']): string {
+		return value == null ? '' : String(value);
+	}
 }
