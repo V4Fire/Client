@@ -1,5 +1,5 @@
 {
-  "hash": "03fa61a881bd04afbdd232c20cf9eca80b7179078fb85630fb59b00940df6e6e",
+  "hash": "16c496c09c2d6f423e835ff1f2d1cbf66e8974a499c340f2c8774c88471aad1d",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -11,19 +11,27 @@
             "name": "b-bottom-slide",
             "parent": "i-block",
             "dependencies": [],
-            "libs": []
+            "libs": [
+              "core/component/directives/resize-observer"
+            ]
           },
           "name": "b-bottom-slide",
           "parent": "i-block",
           "dependencies": [],
-          "libs": [],
+          "libs": [
+            "core/component/directives/resize-observer"
+          ],
           "resolvedLibs": {
             "%data": "%data:Set",
-            "%data:Set": []
+            "%data:Set": [
+              "core/component/directives/resize-observer"
+            ]
           },
           "resolvedOwnLibs": {
             "%data": "%data:Set",
-            "%data:Set": []
+            "%data:Set": [
+              "core/component/directives/resize-observer"
+            ]
           },
           "type": "block",
           "mixin": false,

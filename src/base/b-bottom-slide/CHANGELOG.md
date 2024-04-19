@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.70.2 (2024-04-19)
+
+#### :house: Internal
+
+* Use the `v-resize-observer` directive to recalculate state instead of `window:resize` and `DOMChange` watchers
+
 ## v3.32.1 (2022-12-26)
 
 #### :bug: Bug Fix

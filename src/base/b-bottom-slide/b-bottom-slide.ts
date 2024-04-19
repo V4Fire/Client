@@ -20,7 +20,6 @@ import History from 'traits/i-history/history';
 import type iHistory from 'traits/i-history/i-history';
 
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
-import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 
 import iOpen from 'traits/i-open/i-open';
 import iVisible from 'traits/i-visible/i-visible';
@@ -54,7 +53,6 @@ export const
 
 interface bBottomSlide extends
 	Trait<typeof iLockPageScroll>,
-	Trait<typeof iObserveDOM>,
 	Trait<typeof iOpen> {}
 
 /**
@@ -62,8 +60,8 @@ interface bBottomSlide extends
  * @see https://material.io/develop/android/components/bottom-sheet-behavior/
  */
 @component()
-@derive(iLockPageScroll, iObserveDOM, iOpen)
-class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen, iVisible, iHistory {
+@derive(iLockPageScroll, iOpen)
+class bBottomSlide extends iBlock implements iLockPageScroll, iOpen, iVisible, iHistory {
 	/** @see [[iVisible.prototype.hideIfOffline]] */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
@@ -532,21 +530,6 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 		// Loopback
 	}
 
-	/** @see [[iObserveDOM.initObservers]] */
-	@watch('heightMode')
-	@hook('mounted')
-	@wait('ready')
-	async initDOMObservers(): Promise<void> {
-		const
-			content = await this.waitRef<HTMLElement>('content', {label: $$.initDOMObservers});
-
-		iObserveDOM.observe(this, {
-			node: content,
-			childList: true,
-			subtree: true
-		});
-	}
-
 	protected override initModEvents(): void {
 		super.initModEvents();
 		this.sync.mod('heightMode', 'heightMode', String);
@@ -856,7 +839,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * Recalculates a component state: sizes, positions, etc.
 	 */
-	@watch(['window:resize', ':DOMChange', ':history:transition'])
+	@watch(':history:transition')
 	@wait('ready')
 	protected async recalculateState(): Promise<void> {
 		try {
