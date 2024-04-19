@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :nail_care: Polish
 
-* Add `rootMargin` property for intersection-watcher `core/dom/intersection-watcher`
+* Add `rootMargin` property for intersection-watcher `core/dom/intersection-watcher`. Note: use this only for the `IntersectionObserver` strategy.
 
 ## v4.0.0-beta.83 (2024-04-08)
 

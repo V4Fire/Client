@@ -13,7 +13,7 @@ Changelog
 
 #### :nail_care: Polish
 
-* Add `rootMargin` property for intersection-watcher
+* Add `rootMargin` property for intersection-watcher. Note: use this only for the `IntersectionObserver` strategy.
 
 ## v3.0.0-rc.153 (2021-03-04)
 
