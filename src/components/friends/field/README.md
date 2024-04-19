@@ -15,7 +15,7 @@ this.field.get('foo.bla.bar', this.r);
 this.field.delete('foo.bla.bar', this.r);
 ```
 
-## How to include this module in your component?
+## How to Include this Module in Your Component?
 
 By default, any component that inherits from [[iBlock]] has the `field` property.
 Some methods, such as `get` and `set`, are always available,
@@ -33,7 +33,7 @@ Field.addToPrototype({delete: deleteField});
 export default class bExample extends iBlock {}
 ```
 
-## Why not use `Object.set/get/delete`?
+## Why Not Use `Object.set/get/delete`?
 
 There are three reasons to use `Field` instead of Prelude methods.
 

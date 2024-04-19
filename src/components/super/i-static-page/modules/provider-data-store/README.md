@@ -24,7 +24,7 @@ if (this.r.providerDataStore.has('users.List')) {
 console.log(this.r.providerDataStore.get('foo')?.data);
 ```
 
-## How to use?
+## How to Use?
 
 By default, any component that inherited from [[iStaticPage]] has the `providerDataStore` property.
 This property implements the [[Cache]] data structure and contains elements as [[ProviderDataItem]].

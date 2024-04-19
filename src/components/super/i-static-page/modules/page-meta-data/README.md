@@ -2,7 +2,7 @@
 
 This module provides an API for manipulating page metadata, such as the page title or description.
 
-## How to use?
+## How to Use?
 
 By default, any component that inherited from [[iStaticPage]] has the `pageMetaData` property.
 To access this API from an arbitrary component, use it via the root component.

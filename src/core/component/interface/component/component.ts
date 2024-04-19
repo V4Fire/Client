@@ -553,6 +553,27 @@ export abstract class ComponentInterface {
 	}
 
 	/**
+	 * Returns a function for getting the root component based on the context of the current component
+	 * @param _ctx
+	 */
+	protected $getRoot(_ctx: ComponentInterface): () => ComponentInterface {
+		return Object.throw();
+	}
+
+	/**
+	 * Returns a function for getting the parent component based on the context of the current component
+	 *
+	 * @param _ctx
+	 * @param _restArgs
+	 */
+	protected $getParent(
+		_ctx: ComponentInterface,
+		_restArgs?: {ctx?: ComponentInterface} | VNode
+	): () => ComponentInterface {
+		return Object.throw();
+	}
+
+	/**
 	 * Executes the given function within the component's render context.
 	 * This function is necessary to render components asynchronously.
 	 *

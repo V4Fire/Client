@@ -10,7 +10,7 @@ This module provides a component for organizing page routing.
 
 * By default, the component's root tag is set to `<div>`.
 
-## Why a component instead of a plugin?
+## Why a Component Instead of a Plugin?
 
 There are several reasons why this API is implemented as a component rather than a plugin:
 
@@ -24,7 +24,7 @@ There are several reasons why this API is implemented as a component rather than
 3. The router is automatically compatible with all supported rendering engines,
    ensuring consistent performance across different environments.
 
-## How to use?
+## How to Use?
 
 Just place the component in the root component template as shown below.
 
@@ -85,7 +85,7 @@ This component contains all the essential logic, such as page caching and more.
     < b-dynamic-page
 ```
 
-### Connection API between router and other components
+### Connection API Between Router and Other Components
 
 All components have two accessors for interacting with the router:
 
@@ -114,7 +114,7 @@ To initiate a transition to another route, simply call one of the router methods
   ...
 ```
 
-#### Handling of links on a page
+#### Handling of Links on a Page
 
 By default, the router intercepts any clicks on elements on the page that have a `href` attribute.
 If the URL in href meets certain conditions,
@@ -135,7 +135,7 @@ The following links will not be intercepted, whose href value:
 
 Also, clicks made while holding down the `ctrl` or `cmd` key are not intercepted.
 
-##### Additional link attributes
+##### Additional Link Attributes
 
 It's allowed to pass additional parameters for the transition along with the link.
 For example, you can instruct the router to replace the current history item, rather than creating a new one.
@@ -181,7 +181,7 @@ The following attributes are supported:
   < a href = /some-url | data-router-prevent-transition = true | @click = router.push('my-route')
   ```
 
-##### How to cancel the router's link interception?
+##### How to Cancel the Router's Link Interception?
 
 There are several ways:
 
