@@ -16,6 +16,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * The `dataOffset` property is now public in the `VirtualScrollState` interface `components/base/b-virtual-scroll`
+* Added `$getRoot` and `$getParent` methods to the `ComponentInterface`
+* Implemented the `$getRoot` and `$getParent` methods on the component's instance `core/component/init`
+
+#### :house: Internal
+
+* Replaced anonymous functions for `getRoot` and `getParent` props
+with calls to the `$getRoot` and `$getParent` methods of the component `build/snakeskin`
+* Removed optional chaining from load function in loadModules block
+to ensure compliance with ES2018 `iBlock`
 
 ## v4.0.0-beta.90 (2024-04-17)
 

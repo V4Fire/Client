@@ -127,8 +127,12 @@
 			{{
 				void(moduleLoader.addToBucket(${bucket}, {
 					id: ${interpolatedId},
-					load: () => (async () => (${filter})?.())().then(() => import('${path}')),
-					ssr: false
+					ssr: false,
+					load: () => (async () => {
+						if (typeof (${filter}) === 'function') {
+							return (${filter})();
+						}
+					})().then(() => import('${path}'))
 				}))
 			}}
 
