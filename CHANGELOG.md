@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* The `dataOffset` property is now public in the `VirtualScrollState` interface `components/base/b-virtual-scroll`
+
 ## v4.0.0-beta.90 (2024-04-17)
 
 #### :rocket: New Feature
