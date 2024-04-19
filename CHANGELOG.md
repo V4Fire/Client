@@ -26,6 +26,10 @@ with calls to the `$getRoot` and `$getParent` methods of the component `build/sn
 * Removed optional chaining from load function in loadModules block
 to ensure compliance with ES2018 `iBlock`
 
+#### :nail_care: Polish
+
+* Add `rootMargin` property for intersection-watcher `core/dom/intersection-watcher`. Note: use this only for the `IntersectionObserver` strategy.
+
 ## v4.0.0-beta.90 (2024-04-17)
 
 #### :rocket: New Feature
