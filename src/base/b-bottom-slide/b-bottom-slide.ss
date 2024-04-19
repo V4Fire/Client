@@ -40,6 +40,9 @@
 			- block view
 				< .&__view &
 					ref = view |
+					v-resize-observer = {
+						callback: recalculateState
+					} |
 					@touchstart = onPullStart |
 					@touchmove = onPull |
 					@touchend = onPullEnd

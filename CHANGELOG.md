@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.? (2024-??-??)
+## v3.70.2 (2024-04-19)
 
 #### :rocket: New Feature
 
@@ -19,11 +19,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Implemented an API for saving the scroll of nested DOM nodes on the page.
   [Learn more](./README.md#api-for-saving-scroll-of-nested-dom-nodes).
 
+#### :house: Internal
+
+* Use the `v-resize-observer` directive to recalculate `b-bottom-slide` state instead of `window:resize` and `DOMChange` watchers
+
 ## v3.70.1 (2024-04-19)
 
 #### :rocket: New Feature
 
-* The `dataOffset` property is now public in the `VirtualScrollState` interface`base/b-virtual-scroll-new`
+* The `dataOffset` property is now public in the `VirtualScrollState` interface `base/b-virtual-scroll-new`
 
 ## v3.70.0 (2024-04-17)
 
