@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2024-??-??)
+## 4.0.0-beta.?? (2024-??-??)
 
 #### :rocket: New Feature
 
@@ -22,6 +22,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Replaced anonymous functions for `getRoot` and `getParent` props
 with calls to the `$getRoot` and `$getParent` methods of the component `build/snakeskin`
+* Removed optional chaining from load function in loadModules block
+to ensure compliance with ES2018 `iBlock`
 
 ## v4.0.0-beta.90 (2024-04-17)
 
