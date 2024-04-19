@@ -11,9 +11,13 @@ Changelog
 
 ## 4.0.0-beta.?? (2024-04-??)
 
+#### :rocket: New Feature
+
+* Added new `backgroundSize` option
+
 #### :bug: Bug Fix
 
-* Fixed an incorrect size of the background image
+* Fixed an incorrect size of the placeholder image
 
 ## 4.0.0-beta.86 (2024-04-11)
 

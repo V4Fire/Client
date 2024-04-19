@@ -13,9 +13,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## 4.0.0-beta.?? (2024-04-??)
 
+#### :rocket: New Feature
+
+* Added new `backgroundSize` option for `v-image`
+
 #### :bug: Bug Fix
 
-* Fixed an incorrect size of the background image for `v-image`
+* Fixed an incorrect size of the placeholder image for `v-image`
 
 ## v4.0.0-beta.90 (2024-04-17)
 
