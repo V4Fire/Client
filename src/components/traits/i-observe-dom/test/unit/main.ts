@@ -23,7 +23,7 @@ test.describe('components/traits/i-observe-dom', () => {
 		target = await Component.createComponent(page, 'b-traits-i-observe-dom-dummy');
 	});
 
-	test('should emit `DOMChange` event when the child is appended to the component element', async () => {
+	test('should emit the `DOMChange` event when the child is appended to the component element', async () => {
 		const domChanged = target.evaluate((ctx) =>
 			new Promise((resolve) => ctx.unsafe.localEmitter.once('DOMChange', resolve)));
 
