@@ -8,9 +8,11 @@
 
 /* eslint-disable max-lines-per-function */
 
+import sharp from 'sharp';
+
 import test from 'tests/config/unit/test';
 
-import BOM from 'tests/helpers/bom';
+import { BOM, RequestInterceptor } from 'tests/helpers';
 
 import {
 
@@ -694,6 +696,62 @@ test.describe('<b-bottom-slide> functional cases', () => {
 				windowTopOffset = await getAbsoluteComponentWindowOffset(component);
 
 			test.expect(windowTopOffset).toBe(contentHeight * 2);
+		});
+
+		test('should recalculate the window geometry after image loading', async ({page}) => {
+			const
+				contentHeight = 40;
+
+			await page.addStyleTag({
+				content: `#test-div {height: ${contentHeight}px;}`
+			});
+
+			const component = await renderBottomSlide(page, {
+				heightMode: 'content'
+			});
+
+			await open(page, component);
+
+			const
+				imageSize = 300,
+				fakeImgUrl = 'https://fake-image.get';
+
+			const image = await sharp({
+				create: {
+					width: imageSize,
+					height: imageSize,
+					channels: 4,
+					background: {r: 255, g: 0, b: 0, alpha: 0.5}
+				}
+			}).png().toBuffer();
+
+			const
+				interceptor = new RequestInterceptor(page, fakeImgUrl);
+
+			interceptor.response(200, image, {contentType: 'image/png'});
+
+			await interceptor.start();
+			await interceptor.responder();
+
+			await component.evaluate((_, fakeImgUrl) => {
+				const
+					el = document.getElementById('test-div'),
+					newEl = document.createElement('img');
+
+				newEl.src = fakeImgUrl;
+				newEl.style.display = 'block';
+				el?.insertAdjacentElement('afterend', newEl);
+			}, fakeImgUrl);
+
+			await BOM.waitForIdleCallback(page, {sleepAfterIdles: 200});
+
+			const windowTopOffset = await getAbsoluteComponentWindowOffset(component);
+			test.expect(windowTopOffset).toBe(contentHeight);
+
+			await interceptor.respond();
+
+			await test.expect.poll(() => getAbsoluteComponentWindowOffset(component))
+				.toBe(contentHeight + imageSize);
 		});
 	});
 });
