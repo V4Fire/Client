@@ -188,6 +188,7 @@ Handler: the observable element has left the viewport.
 It's important to note that this handler is always called immediately,
 meaning it ignores the delay option specified.
 
+
 ```js
 import * as IntersectionWatcher from 'core/dom/intersection-watcher';
 
@@ -199,6 +200,16 @@ function onLeave(watcher) {
   console.log('The element has leaved the viewport');
 }
 ```
+
+##### [rootMargin]
+
+A string, formatted similarly to the CSS margin property's value,
+which contains offsets for one or more sides of the root's bounding box.
+These offsets are added to the corresponding values in the root's bounding box
+before the intersection between the resulting rectangle and the target element's bounds. See also [this](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/rootMargin) for more information.
+
+Note: it works only for the `IntersectionObserver` strategy: [issue/1244](https://github.com/V4Fire/Client/issues/1244)
+
 
 #### Watcher object
 
