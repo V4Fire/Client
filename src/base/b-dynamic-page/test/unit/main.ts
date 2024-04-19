@@ -11,7 +11,7 @@ import type bDynamicPage from 'base/b-dynamic-page/b-dynamic-page';
 import test from 'tests/config/unit/test';
 import { Component } from 'tests/helpers';
 
-test.describe.only('<b-dynamic-page>', () => {
+test.describe('<b-dynamic-page>', () => {
 	test.beforeEach(({demoPage}) => demoPage.goto());
 
 	test('should emit the `beforeSwitchPage` event before removing the page element', async ({page}) => {
