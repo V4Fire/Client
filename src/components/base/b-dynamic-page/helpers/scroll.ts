@@ -7,15 +7,14 @@
  */
 
 const
-	scrollAttribute = 'data-save-scroll',
-	separator = '-';
+	scrollAttribute = 'data-save-scroll';
 
 /**
  * Adds an attribute to the element with the scroll value
  * @param el
  */
 export function saveScrollIntoAttribute(el: Element): void {
-	const value = `${String(el.scrollTop)}${separator}${String(el.scrollLeft)}`;
+	const value = JSON.stringify([el.scrollTop, el.scrollLeft]);
 	el.setAttribute(scrollAttribute, value);
 }
 
@@ -27,7 +26,7 @@ export function restorePageElementsScroll(page: Element): void {
 	const elementsWithHorizontalScroll = page.querySelectorAll(`[${scrollAttribute}]`);
 
 	elementsWithHorizontalScroll.forEach((element) => {
-		const [scrollTop, scrollLeft] = element.getAttribute(scrollAttribute)?.split(separator) ?? [0, 0];
+		const [scrollTop, scrollLeft] = JSON.parse(element.getAttribute(scrollAttribute) ?? '[0,0]');
 
 		const options = {
 			top: Number(scrollTop),
