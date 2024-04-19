@@ -18,7 +18,7 @@
 	- componentName = ''
 
 	/** The root tag type. If not specified, it will be taken from the component `rootTag` prop. */
-	- rootTag = null
+	- rootTag = 'div'
 
 	/** Should or not to create an extra wrapper inside the root tag */
 	- rootWrapper = false
