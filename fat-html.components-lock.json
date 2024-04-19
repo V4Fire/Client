@@ -1,5 +1,5 @@
 {
-  "hash": "a76ffbb038e5fc8e788df13e50f471c47aaf6242fba69f21789127a3d91694d2",
+  "hash": "e5f9887eb4b33a65dc32e542d9520a38df7beaafcd0965a4178993187fcb53a6",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -108,6 +108,38 @@
             "src/components/form/b-checkbox/b-checkbox.styl"
           ],
           "tpl": "src/components/form/b-checkbox/b-checkbox.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-component-interface-dummy",
+        {
+          "index": "src/core/component/interface/component/test/b-component-interface-dummy/index.js",
+          "declaration": {
+            "name": "b-component-interface-dummy",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-component-interface-dummy",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/interface/component/test/b-component-interface-dummy/b-component-interface-dummy.ts",
+          "styles": [
+            "src/core/component/interface/component/test/b-component-interface-dummy/b-component-interface-dummy.styl"
+          ],
+          "tpl": "src/core/component/interface/component/test/b-component-interface-dummy/b-component-interface-dummy.ss",
           "etpl": null
         }
       ],
@@ -1676,6 +1708,38 @@
           "logic": null,
           "styles": [
             "src/components/global/g-icon/g-icon.styl"
+          ],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
+        "g-slider",
+        {
+          "index": "src/components/global/g-slider/index.js",
+          "declaration": {
+            "name": "g-slider",
+            "parent": null,
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "g-slider",
+          "parent": null,
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "global",
+          "mixin": false,
+          "logic": null,
+          "styles": [
+            "src/components/global/g-slider/g-slider.styl"
           ],
           "tpl": null,
           "etpl": null
