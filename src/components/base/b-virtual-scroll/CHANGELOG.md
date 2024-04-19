@@ -8,6 +8,13 @@ Changelog
 > - :memo:       [Documentation]
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
+>
+
+## v4.0.0-beta.91 (2024-04-19)
+
+#### :rocket: New Feature
+
+* The `dataOffset` property is now public in the `VirtualScrollState` interface
 
 ## v4.0.0-beta.36 (2023-10-23)
 

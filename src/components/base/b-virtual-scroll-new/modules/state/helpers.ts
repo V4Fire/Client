@@ -32,7 +32,8 @@ export function createInitialState(): VirtualScrollState {
 		isLifecycleDone: false,
 		isLastErrored: false,
 		isLastRender: false,
-		isTombstonesInView: false
+		isTombstonesInView: false,
+		dataOffset: 0
 	};
 }
 
@@ -41,7 +42,6 @@ export function createInitialState(): VirtualScrollState {
  */
 export function createPrivateInitialState(): PrivateComponentState {
 	return {
-		dataOffset: 0,
 		isDomInsertInProgress: false
 	};
 }

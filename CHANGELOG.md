@@ -19,6 +19,24 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Implemented an API for saving the horizontal scroll of nested DOM nodes on the page.
   [Learn more](./README.md#api-for-saving-scroll-of-nested-dom-nodes).
 
+## v4.0.0-beta.91 (2024-04-19)
+
+#### :rocket: New Feature
+
+* The `dataOffset` property is now public in the `VirtualScrollState` interface `components/base/b-virtual-scroll`
+* Added `$getRoot` and `$getParent` methods to the `ComponentInterface`
+* Implemented the `$getRoot` and `$getParent` methods on the component's instance `core/component/init`
+* Added a new `rootMargin` property to the intersection-watcher `core/dom/intersection-watcher`.
+  Note: this should only be used for the IntersectionObserver strategy.
+
+#### :house: Internal
+
+* Replaced anonymous functions for `getRoot` and `getParent` props
+  with calls to the `$getRoot` and `$getParent` methods of the component `build/snakeskin`
+* Removed optional chaining from load function in loadModules block
+  to ensure compliance with ES2018 `iBlock`
+>>>>>>> v4
+
 ## v4.0.0-beta.90 (2024-04-17)
 
 #### :rocket: New Feature

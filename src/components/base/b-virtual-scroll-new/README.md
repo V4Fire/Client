@@ -31,13 +31,13 @@
   - [Slots](#slots)
   - [API](#api)
     - [Props](#props)
-      - [[shouldPerformDataRender = `(state: VirtualScrollState) => state.isInitialRender || state.remainingItems === 0`]](#shouldperformdatarender--state-virtualscrollstate--stateisinitialrender--stateremainingitems--0)
-      - [[shouldPerformDataRequest = `(state: VirtualScrollState) => state.lastLoadedData.length > 0`]](#shouldperformdatarequest--state-virtualscrollstate--statelastloadeddatalength--0)
-      - [[shouldStopRequestingData = `(state: VirtualScrollState) => state.lastLoadedData.length > 0`]](#shouldstoprequestingdata--state-virtualscrollstate--statelastloadeddatalength--0)
-      - [[chunkSize = `10`]](#chunksize--10)
-      - [[requestQuery]](#requestquery)
-      - [[itemsFactory]](#itemsfactory)
-      - [[itemsProcessors = `{}`]](#itemsprocessors--)
+      - [\[shouldPerformDataRender = `(state: VirtualScrollState) => state.isInitialRender || state.remainingItems === 0`\]](#shouldperformdatarender--state-virtualscrollstate--stateisinitialrender--stateremainingitems--0)
+      - [\[shouldStopRequestingData = `(state: VirtualScrollState) => state.lastLoadedData.length > 0`\]](#shouldstoprequestingdata--state-virtualscrollstate--statelastloadeddatalength--0)
+      - [\[chunkSize = `10`\]](#chunksize--10)
+      - [\[requestQuery\]](#requestquery)
+      - [\[itemsFactory\]](#itemsfactory)
+      - [\[itemsProcessors = `{}`\]](#itemsprocessors--)
+      - [\[preloadAmount = `0`\]](#preloadamount--0)
       - [`tombstoneCount`](#tombstonecount)
     - [Methods](#methods)
       - [getNextDataSlice](#getnextdataslice)
@@ -495,10 +495,11 @@ const itemsFactory = (state, ctx) => {
 
   lastLoadedData.forEach((current, i) => {
     const
+      dataIndex = state.dataOffset + i,
       // Retrieve the previous data element relative to the given
-      prev = allData[(allData.length - lastLoadedData.length + i) - 1],
+      prev = allData[dataIndex - 1],
       // Retrieve the next data element relative to the given
-      next = allData[i + 1];
+      next = allData[dataIndex + 1];
 
     if (!prev || prev.date !== current.date) {
       items.push({
@@ -1149,14 +1150,15 @@ The `bVirtualScrollNew` class extends `iData` and includes additional properties
   ```typescript
   function getProps(dataItem: DataInterface, index: number): Dictionary {
     const
-      {data, lastLoadedData} = this.$refs.scroll.getVirtualScrollState();
+      {data, dataOffset} = this.$refs.scroll.getVirtualScrollState();
 
     const
+      dataIndex = dataOffset + index,
       current = dataItem,
       /* Retrieve the previous data element relative to the given */
-      prev = data[(data.length - lastLoadedData.length + i) - 1],
+      prev = data[dataIndex - 1],
       /* Retrieve the next data element relative to the given */
-      next = lastLoadedData[i + 1];
+      next = data[dataIndex + 1];
   }
   ```
 
