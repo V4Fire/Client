@@ -11,7 +11,7 @@ Changelog
 
 ## v4.0.0-?? (2023-??-??)
 
-#### :rocket: Polish
+#### :nail_care: Polish
 
 * Add `rootMargin` property for intersection-watcher
 

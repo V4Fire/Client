@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-?? (2023-??-??)
+
+#### :nail_care: Polish
+
+* Add `rootMargin` property for intersection-watcher
+
 ## v4.0.0-beta.83 (2024-04-08)
 
 #### :house: Internal
