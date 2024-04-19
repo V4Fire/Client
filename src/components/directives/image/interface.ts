@@ -12,6 +12,12 @@ import type { createVNode, VNode, DirectiveBinding } from 'core/component/engine
 
 export interface DirectiveParams extends DirectiveBinding<ImageOptions> {}
 
+export interface SSRDirectiveParams extends DirectiveParams {
+	bindings?: Dictionary & {
+		style: Dictionary<string>;
+	};
+}
+
 export type OptionsResolver = (opts: ImageOptions) => ImageOptions;
 
 export type ImagePlaceholderOptions = Omit<ImageOptions, 'lazy' | 'preview' | 'broken'>;

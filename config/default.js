@@ -1112,12 +1112,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	template: {
 		/**
 		 * Returns a dictionary with directive descriptors that need to be specifically processed during code generation
-		 * @returns {Object<string, {tag?: string, generateSSRContent?: boolean}>}
+		 * @returns {Object<string, {tag?: string, innerHTML?: boolean, withBindings?: boolean}>}
 		 */
 		directives() {
 			return {
 				icon: include('src/components/directives/icon/compiler-info'),
-				image: include('src/components/directives/image/compiler-info')
+				attrs: {},
+				image: include('src/components/directives/image/compiler-info'),
+				'safe-html': include('src/components/directives/safe-html/compiler-info')
 			};
 		},
 
@@ -1137,20 +1139,38 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 						return;
 					}
 
-					const args = {
-						arg: stringifyProp(prop.arg),
-						value: stringifyProp(prop.exp),
-						modifiers: JSON.stringify(prop.modifiers),
-						instance: '_ctx'
-					};
+					const
+						directive = directives[prop.name],
+						args = {
+							arg: stringifyProp(prop.arg),
+							value: stringifyProp(prop.exp),
+							modifiers: JSON.stringify(prop.modifiers),
+							instance: '_ctx'
+						};
+
+					if (directive.withBindings) {
+						const bindings = node.props.reduce((acc, prop) => {
+							if (prop.name === 'bind' && prop.arg?.content) {
+								try {
+									acc[prop.arg.content] = JSON.parse(prop.exp.content);
+
+								} catch {
+									acc[prop.arg.content] = prop.exp.content;
+								}
+							}
+
+							return acc;
+						}, {});
+
+						args.bindings = JSON.stringify(bindings);
+					}
 
 					const
-						argsStr = `{${Object.entries(args).map(([k, v]) => `"${k}": ${v}`).join(',')}}`,
-						directive = directives[prop.name];
+						argsStr = `{${Object.entries(args).map(([k, v]) => `"${k}": ${v}`).join(',')}}`;
 
 					if (directive.innerHTML) {
 						node.props.push({
-							type: 7,
+							type: DIRECTIVE,
 							name: 'html',
 
 							exp: {
