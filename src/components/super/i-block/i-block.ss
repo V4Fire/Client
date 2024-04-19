@@ -127,12 +127,12 @@
 			{{
 				void(moduleLoader.addToBucket(${bucket}, {
 					id: ${interpolatedId},
+					ssr: false,
 					load: () => (async () => {
 						if (typeof (${filter}) === 'function') {
 							return (${filter})();
 						}
-					})().then(() => import('${path}')),
-					ssr: false
+					})().then(() => import('${path}'))
 				}))
 			}}
 
