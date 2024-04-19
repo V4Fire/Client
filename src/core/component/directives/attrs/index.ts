@@ -14,14 +14,7 @@
 import { components } from 'core/component/const';
 import { ComponentEngine, DirectiveBinding, VNode } from 'core/component/engines';
 
-import {
-
-	setVNodePatchFlags,
-
-	normalizeComponentAttrs
-
-} from 'core/component/render';
-
+import { setVNodePatchFlags, normalizeComponentAttrs } from 'core/component/render';
 import { getDirectiveContext } from 'core/component/directives/helpers';
 
 import {
@@ -33,10 +26,11 @@ import {
 	keyModifiers
 
 } from 'core/component/directives/attrs/const';
+
 import {
 
-	normalizePropertyAttribute,
 	patchProps,
+	normalizePropertyAttribute,
 	normalizeDirectiveModifiers
 
 } from 'core/component/directives/attrs/helpers';
@@ -361,9 +355,11 @@ ComponentEngine.directive('attrs', {
 	getSSRProps(params: DirectiveParams) {
 		const
 			ctx = getDirectiveContext(params, null),
-			props: Dictionary = {},
-			componentMeta = ctx?.meta,
 			r = ctx?.$renderEngine.r;
+
+		const
+			props: Dictionary = {},
+			componentMeta = ctx?.meta;
 
 		let
 			attrs = {...params.value};
@@ -454,12 +450,9 @@ ComponentEngine.directive('attrs', {
 				modifiers
 			};
 
-			if (Object.isDictionary(dir)) {
-				if (Object.isFunction(dir.getSSRProps)) {
-					const dirProps = dir.getSSRProps(binding);
-
-					Object.mixin({deep: true}, props, dirProps);
-				}
+			if (Object.isDictionary(dir) && Object.isFunction(dir.getSSRProps)) {
+				const dirProps = dir.getSSRProps(binding);
+				Object.mixin({deep: true}, props, dirProps);
 			}
 		}
 	}

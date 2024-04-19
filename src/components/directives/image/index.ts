@@ -10,6 +10,7 @@
  * [[include:components/directives/image/README.md]]
  * @packageDocumentation
  */
+
 import config from 'config';
 import { ComponentEngine, VNode } from 'core/component/engines';
 
