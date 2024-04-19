@@ -11,9 +11,10 @@ Changelog
 
 ## v4.0.0-?? (2024-??-??)
 
-#### :nail_care: Polish
+#### :rocket: New Feature
 
-* Add `rootMargin` property for intersection-watcher. Note: use this only for the `IntersectionObserver` strategy.
+* Added a new `rootMargin` property to the intersection-watcher.
+  Note: this should only be used for the IntersectionObserver strategy.
 
 ## v3.0.0-rc.153 (2021-03-04)
 
