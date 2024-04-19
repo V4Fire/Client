@@ -23,9 +23,9 @@ export function saveScrollIntoAttribute(el: Element): void {
  * @param page
  */
 export function restorePageElementsScroll(page: Element): void {
-	const elementsWithHorizontalScroll = page.querySelectorAll(`[${scrollAttribute}]`);
+	const elementsWithScroll = page.querySelectorAll(`[${scrollAttribute}]`);
 
-	elementsWithHorizontalScroll.forEach((element) => {
+	elementsWithScroll.forEach((element) => {
 		const [scrollTop, scrollLeft] = JSON.parse(element.getAttribute(scrollAttribute) ?? '[0,0]');
 
 		const options = {
