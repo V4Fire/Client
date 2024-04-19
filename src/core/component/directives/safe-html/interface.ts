@@ -12,8 +12,8 @@ import type { VNodeDirective } from 'core/component/engines';
 export interface Options extends Omit<SuperConfig, 'RETURN_DOM' | 'RETURN_DOM_FRAGMENT'> {}
 
 export interface SafeHtmlDirectiveParams extends VNodeDirective {
-	value?: string | {
-		value: string;
+	value?: Primitive | {
+		value: Primitive;
 		options?: Options;
 	};
 }
