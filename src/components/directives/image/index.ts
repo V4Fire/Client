@@ -19,7 +19,7 @@ import { getDirectiveContext, getElementId } from 'core/component/directives';
 import { unsupportedElements } from 'components/directives/image/const';
 import { createImageElement, getCurrentSrc } from 'components/directives/image/helpers';
 
-import type { DirectiveParams, SSRDirectiveParams } from 'components/directives/image/interface';
+import type { DirectiveParams, ImageOptions, SSRDirectiveParams } from 'components/directives/image/interface';
 
 export * from 'components/directives/image/interface';
 
@@ -47,23 +47,17 @@ ComponentEngine.directive('image', {
 			return;
 		}
 
-		let
-			p = Object.mixin(true, {}, config.image, params.value);
-
-		if (p.optionsResolver != null) {
-			p = p.optionsResolver(p);
-		}
-
 		const
+			value = normalizeValue(params.value),
 			{r} = ctx.$renderEngine;
 
-		const props = generateProps(p, vnode.props?.style);
+		const props = normalizeProps(value, vnode.props?.style);
 
 		vnode.type = 'span';
 		vnode.props = vnode.props != null ? mergeProps(vnode.props, props) : props;
 		vnode.dynamicProps = Array.union(vnode.dynamicProps ?? [], Object.keys(props));
 
-		const imageElement = createImageElement(p).toVNode(r.createVNode.bind(ctx));
+		const imageElement = createImageElement(value).toVNode(r.createVNode.bind(ctx));
 
 		vnode.children = [imageElement];
 		vnode.dynamicChildren = Object.cast(vnode.children.slice());
@@ -74,20 +68,15 @@ ComponentEngine.directive('image', {
 	updated: mounted,
 
 	getSSRProps(params: SSRDirectiveParams) {
-		let
-			p = Object.mixin(true, {}, config.image, params.value);
-
-		if (p.optionsResolver != null) {
-			p = p.optionsResolver(p);
-		}
+		const value = normalizeValue(params.value);
 
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const {JSDOM} = require('jsdom');
 		const jsdom = new JSDOM();
 
-		const props = generateProps(p, params.bindings?.style, jsdom.window);
+		const props = normalizeProps(value, params.bindings?.style, jsdom.window);
 
-		const imageElement = createImageElement(p).toElement(jsdom.window.document);
+		const imageElement = createImageElement(value).toElement(jsdom.window.document);
 
 		return {
 			...props,
@@ -197,7 +186,18 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 	}
 }
 
-function generateProps(params: DirectiveParams['value'], styles: CanUndef<Dictionary<string>>, windowObject: typeof globalThis = globalThis): Dictionary {
+function normalizeValue(value: DirectiveParams['value']): typeof config.image & ImageOptions {
+	let
+		p = Object.mixin(true, {}, config.image, value);
+
+	if (p.optionsResolver != null) {
+		p = p.optionsResolver(p);
+	}
+
+	return p;
+}
+
+function normalizeProps(params: DirectiveParams['value'], styles: CanUndef<Dictionary<string>>, windowObject: typeof globalThis = globalThis): Dictionary {
 	const placeholders = {
 		preview: undefined,
 		broken: undefined

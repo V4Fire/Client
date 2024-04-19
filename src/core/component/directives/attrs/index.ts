@@ -16,11 +16,8 @@ import { ComponentEngine, DirectiveBinding, VNode } from 'core/component/engines
 
 import {
 
-	mergeProps,
 	setVNodePatchFlags,
 
-	normalizeStyle,
-	normalizeClass,
 	normalizeComponentAttrs
 
 } from 'core/component/render';
@@ -29,17 +26,20 @@ import { getDirectiveContext } from 'core/component/directives/helpers';
 
 import {
 
-	modRgxp,
 	directiveRgxp,
 
 	handlers,
 	modifiers,
-	keyModifiers,
-
-	classAttrs,
-	styleAttrs
+	keyModifiers
 
 } from 'core/component/directives/attrs/const';
+import {
+
+	normalizePropertyAttribute,
+	patchProps,
+	normalizeDirectiveModifiers
+
+} from 'core/component/directives/attrs/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
 import type { DirectiveParams } from 'core/component/directives/attrs/interface';
@@ -372,21 +372,19 @@ ComponentEngine.directive('attrs', {
 			attrs = normalizeComponentAttrs(attrs, null, componentMeta)!;
 		}
 
-		const attrsKeys = Object
-			.keys(attrs)
-			.sort(((key) => key.startsWith('v-') ? 1 : -1));
+		Object
+			.entries(attrs)
 
-		for (let i = 0; i < attrsKeys.length; i++) {
-			const
-				attrName = attrsKeys[i],
-				attrVal = attrs[attrName];
+			.sort(([name]) => name.startsWith('v-') ? 1 : -1)
 
-			if (attrName.startsWith('v-')) {
-				parseDirective(attrName, attrVal);
-			} else if (!attrName.startsWith('@')) {
-				parseProperty(attrName, attrVal);
-			}
-		}
+			.forEach(([name, value]) => {
+				if (name.startsWith('v-')) {
+					parseDirective(name, value);
+
+				} else if (!name.startsWith('@')) {
+					parseProperty(name, value);
+				}
+			});
 
 		return props;
 
@@ -466,91 +464,3 @@ ComponentEngine.directive('attrs', {
 		}
 	}
 });
-
-function normalizePropertyAttribute(name: string): string {
-	let attrName = name.startsWith(':') ? name.slice(1) : name;
-
-	if (modRgxp.test(attrName)) {
-		const attrChunks = attrName.split('.');
-		attrName = attrName.startsWith('.') ? `.${attrChunks[1]}` : attrChunks[0];
-
-		if (attrChunks.includes('camel')) {
-			attrName = attrName.camelize(false);
-		}
-
-		if (attrChunks.includes('prop') && !attrName.startsWith('.')) {
-			if (attrName.startsWith('^')) {
-				throw new SyntaxError('Invalid `v-bind` modifiers');
-			}
-
-			attrName = `.${attrName}`;
-		}
-
-		if (attrChunks.includes('attr') && !attrName.startsWith('^')) {
-			if (attrName.startsWith('.')) {
-				throw new SyntaxError('Invalid `v-bind` modifiers');
-			}
-
-			attrName = `^${attrName}`;
-		}
-	}
-
-	return attrName;
-}
-
-function patchProps(props: Dictionary, attrName: string, attrVal: unknown, vnode?: VNode): void {
-	if (classAttrs[attrName] != null) {
-		attrName = classAttrs[attrName];
-		attrVal = normalizeClass(Object.cast(attrVal));
-
-		if (vnode) {
-			setVNodePatchFlags(vnode, 'classes');
-		}
-
-	} else if (styleAttrs[attrName] != null) {
-		attrVal = normalizeStyle(Object.cast(attrVal));
-
-		if (vnode) {
-			setVNodePatchFlags(vnode, 'styles');
-		}
-
-	} else {
-		if (vnode) {
-			setVNodePatchFlags(vnode, 'props');
-		}
-
-		if (attrName.startsWith('-')) {
-			attrName = `data${attrName}`;
-		}
-
-		if (vnode) {
-			const dynamicProps = vnode.dynamicProps ?? [];
-			vnode.dynamicProps = dynamicProps;
-
-			if (!dynamicProps.includes(attrName)) {
-				dynamicProps.push(attrName);
-			}
-		}
-	}
-
-	if (props[attrName] != null) {
-		Object.assign(props, mergeProps({[attrName]: props[attrName]}, {[attrName]: attrVal}));
-
-	} else {
-		props[attrName] = attrVal;
-	}
-}
-
-function normalizeDirectiveModifiers(rawModifiers: string): Record<string, boolean> {
-	const modifiers = {};
-
-	rawModifiers.split('.').forEach((modifier) => {
-		modifier = modifier.trim();
-
-		if (modifier !== '') {
-			modifiers[modifier] = true;
-		}
-	});
-
-	return modifiers;
-}

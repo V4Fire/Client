@@ -11,3 +11,5 @@
 exports.tag = 'span';
 
 exports.innerHTML = true;
+
+exports.withBindings = true;
