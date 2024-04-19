@@ -203,7 +203,7 @@ export class ComponentInternalState extends Friend {
 	 * Returns the cursor indicating the last index of the last rendered data element
 	 */
 	getDataOffset(): number {
-		return this.privateState.dataOffset;
+		return this.state.dataOffset;
 	}
 
 	/**
@@ -223,7 +223,7 @@ export class ComponentInternalState extends Friend {
 			current = this.getDataOffset(),
 			chunkSize = ctx.getChunkSize(state);
 
-		this.privateState.dataOffset = current + chunkSize;
+		this.state.dataOffset = current + chunkSize;
 	}
 
 	/**
