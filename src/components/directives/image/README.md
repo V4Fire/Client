@@ -101,7 +101,7 @@ Will render as
 ## Special attributes
 
 The container to which the directive is applied receives a special `data-image` attribute.
-The value of this attribute can be one of three options: `preview`, ``loaded`, or brok`en,
+The value of this attribute can be one of three options: `preview`, `loaded`, or `broken`,
 changing in accordance with the current state of the image.
 Additionally, the `img` tag, inserted within the applied container, also incorporates a `data-img` attribute.
 Both of these attributes are highly beneficial in customizing CSS styles.

@@ -85,6 +85,18 @@ export interface WatchOptions {
 	 * @param watcher
 	 */
 	onLeave?: WatchHandler;
+
+	/**
+	 * A string, formatted similarly to the CSS margin property's value,
+	 * which contains offsets for one or more sides of the root's bounding box.
+	 * These offsets are added to the corresponding values in the root's bounding box
+	 * before the intersection between the resulting rectangle and the target element's bounds.
+	 *
+	 * Note: use this only for the `IntersectionObserver` strategy.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/rootMargin
+	 */
+	rootMargin?: string;
 }
 
 export interface Watcher extends Readonly<

@@ -12,8 +12,8 @@ import type { DirectiveBinding } from 'core/component/engines';
 export interface Options extends Omit<SuperConfig, 'RETURN_DOM' | 'RETURN_DOM_FRAGMENT'> {}
 
 export interface SafeHtmlDirectiveParams extends DirectiveBinding {
-	value: string | {
-		value: string;
+	value: Primitive | {
+		value: Primitive;
 		options?: Options;
 	};
 }
