@@ -8,6 +8,8 @@
 
 'use strict';
 
+/* eslint-disable max-lines */
+
 const
 	config = require('@v4fire/core/config/default');
 
