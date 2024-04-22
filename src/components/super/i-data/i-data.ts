@@ -22,7 +22,6 @@ import type iBlock from 'components/super/i-block/i-block';
 import {
 
 	component,
-	hydrationStore,
 
 	InitLoadCb,
 	InitLoadOptions,
@@ -112,7 +111,7 @@ export default abstract class iData extends iDataHandlers {
 
 			if (this.canUseHydratedData) {
 				const
-					store = hydrationStore.get(this.componentId),
+					store = this.remoteState.hydrationStore!.get(this.componentId),
 					data = Object.cast<CanUndef<this['DB']>>(store?.[providerHydrationKey]);
 
 				if (store != null) {

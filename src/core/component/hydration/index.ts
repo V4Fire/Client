@@ -123,7 +123,7 @@ export class HydrationStore {
 	 * @param data
 	 */
 	set(componentId: string, path: string, data: CanUndef<HydratedValue>): void {
-		if (data === undefined) {
+		if (data === undefined || !SSR) {
 			return;
 		}
 
@@ -192,6 +192,3 @@ export class HydrationStore {
 		return JSON.parse(store, expandedParse) ?? Object.createDict();
 	}
 }
-
-// eslint-disable-next-line import/no-anonymous-default-export
-export default new HydrationStore();
