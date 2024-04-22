@@ -1120,7 +1120,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return {
 				icon: include('src/components/directives/icon/compiler-info'),
 				attrs: {},
-				images: include('src/components/directives/image/compiler-info'),
+				image: include('src/components/directives/image/compiler-info'),
 				'safe-html': include('src/components/directives/safe-html/compiler-info')
 			};
 		},

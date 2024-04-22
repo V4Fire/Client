@@ -43,10 +43,6 @@ export * from 'core/component/directives/attrs/interface';
 
 ComponentEngine.directive('attrs', {
 	beforeCreate(params: DirectiveParams, vnode: VNode): void {
-		if (SSR) {
-			return;
-		}
-
 		const
 			ctx = getDirectiveContext(params, vnode),
 			resolveDirective = this.directive.bind(this);
