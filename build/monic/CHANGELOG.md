@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-04-??)
+
+#### :bug: Bug Fix
+
+* Now styles for dynamically loaded components with `loadModules` are included in the fat-html build
+
 ## v4.0.0-beta.20 (2023-09-13)
 
 #### :rocket: New Feature
