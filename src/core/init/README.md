@@ -62,7 +62,7 @@ import { app } from 'core/component';
 console.log(app.state?.location);
 ```
 
-### Client-side browser application initialization
+### Initializing Client-Side Browser Application
 
 During initialization in the browser, all necessary calls are made automatically.
 After initialization, the root component node will have an id attribute equal to `root-component`.
@@ -88,7 +88,7 @@ console.log(app?.component.componentName);
 console.log(app?.state.isAuth);
 ```
 
-### Additional initialization options
+### Additional Initialization Options
 
 ```typescript
 import type Async from 'core/async';
@@ -177,7 +177,7 @@ interface InitAppOptions {
 }
 ```
 
-## Registering additional tasks before initializing the application
+## Registering Additional Tasks Prior to Application Initialization
 
 To specify a list of tasks before initializing the application,
 you need to return them as a default export in the form of a dictionary from the `core/init/dependencies` module.
@@ -232,7 +232,7 @@ interface Dependency {
 
 You can manually add or remove additional dependencies, or, again, use the `dependency` function for this.
 
-### Built-in dependencies
+### Built-In Dependencies
 
 Please note that V4Fire expects the initialization of three basic states described in the modules:
 

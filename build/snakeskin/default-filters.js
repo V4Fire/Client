@@ -30,17 +30,24 @@ const
 	TYPE_OF = Symbol('Type of component to create'),
 	SMART_PROPS = Symbol('Smart component props');
 
-const bind = {
+const tagBind = {
 	bind: [
 		(o) => o.getVar('$attrs'),
 		'typeof rootTag !== "undefined" ? rootTag : undefined'
 	]
 };
 
+const tagNameBind = {
+	bind: [
+		...tagBind.bind,
+		'typeof renderSSRAsString !== "undefined" ? renderSSRAsString : undefined'
+	]
+};
+
 Snakeskin.importFilters({
 	tagFilter: Snakeskin.setFilterParams(tagFilter, {bind: ['TPL_NAME', '$i++']}),
-	tagNameFilter: Snakeskin.setFilterParams(tagNameFilter, bind),
-	bemFilter: Snakeskin.setFilterParams(bemFilter, bind),
+	tagNameFilter: Snakeskin.setFilterParams(tagNameFilter, tagNameBind),
+	bemFilter: Snakeskin.setFilterParams(bemFilter, tagBind),
 	line: Snakeskin.setFilterParams((_, line) => line, {bind: [(o) => o.i]})
 });
 
@@ -157,12 +164,12 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 	}
 }
 
-function tagNameFilter(tag, attrs, rootTag) {
+function tagNameFilter(tag, attrs, rootTag, renderSSRAsString) {
 	attrs ??= {};
 
 	tag = $C(tagNameFilters)
 		.to(tag)
-		.reduce((tag, filter) => filter(tag, attrs, rootTag));
+		.reduce((tag, filter) => filter(tag, attrs, rootTag, renderSSRAsString));
 
 	const
 		componentName = tag.camelize(false),

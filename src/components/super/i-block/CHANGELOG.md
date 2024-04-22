@@ -9,6 +9,19 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added Snakeskin constant `SSR` to determine that the template is being assembled for SSR
+* Added Snakeskin constant `renderSSRAsString` for optimizing component assembly under SSR
+
+## v4.0.0-beta.91 (2024-04-19)
+
+#### :house: Internal
+
+* Removed optional chaining from load function in loadModules block to ensure compliance with ES2018
+
 ## 4.0.0-beta.79 (2024-03-29)
 
 #### :house: Internal

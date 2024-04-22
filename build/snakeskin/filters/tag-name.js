@@ -22,6 +22,7 @@ module.exports = [
 	 * @param {string} tag
 	 * @param {object} attrs
 	 * @param {string} rootTag
+	 * @param {boolean} renderSSRAsString
 	 * @returns {string}
 	 *
 	 * @example
@@ -33,8 +34,12 @@ module.exports = [
 	 *   < _.bar
 	 * ```
 	 */
-	function expandRootTag(tag, attrs, rootTag) {
+	function expandRootTag(tag, attrs, rootTag, renderSSRAsString) {
 		if (tag === '_') {
+			if (renderSSRAsString && rootTag) {
+				return rootTag;
+			}
+
 			const tag = rootTag ? [JSON.stringify(rootTag)] : ["rootTag || 'div'"];
 			attrs['v-tag'] = tag;
 

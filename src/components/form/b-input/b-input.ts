@@ -53,7 +53,6 @@ const
 export default class bInput extends iInputText {
 	override readonly Value!: Value;
 	override readonly FormValue!: FormValue;
-	override readonly rootTag: string = 'span';
 
 	@prop({type: String, required: false})
 	override readonly valueProp?: this['Value'];

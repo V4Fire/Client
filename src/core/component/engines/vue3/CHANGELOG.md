@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.83 (2024-04-08)
+
+#### :house: Internal
+
+* Re-export `withMemo`
+
 ## v4.0.0-beta.54 (2024-02-06)
 
 #### :bug: Bug Fix

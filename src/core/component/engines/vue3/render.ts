@@ -99,6 +99,7 @@ export {
 
 	withKeys,
 	withModifiers,
+	withMemo,
 
 	vShow,
 	vModelText,

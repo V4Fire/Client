@@ -27,7 +27,7 @@ test.describe('<i-block> modules - activation', () => {
 		// which means that no events will be emitted
 		// @see https://github.com/V4Fire/Client/issues/1108
 		// @see https://github.com/V4Fire/Client/issues/1197
-		test.fixme('should emit `hook:deactivated` event when `deactivate` is invoked', async () => {
+		test.fixme('should emit the `hook:deactivated` event when `deactivate` is invoked', async () => {
 			const eventPromise = target.evaluate((ctx) => new Promise((resolve) => {
 				ctx.once('hook:deactivated', resolve);
 				ctx.deactivate();
@@ -36,7 +36,7 @@ test.describe('<i-block> modules - activation', () => {
 			await test.expect(eventPromise).toBeResolved();
 		});
 
-		test('should emit `hook:activated` event when `activate` is invoked', async () => {
+		test('should emit the `hook:activated` event when `activate` is invoked', async () => {
 			const eventPromise = target.evaluate((ctx) => new Promise((resolve) => {
 				ctx.once('hook:activated', resolve);
 				ctx.deactivate();

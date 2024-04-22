@@ -16,7 +16,7 @@ from the component.
 } .
 ```
 
-## Why is this directive needed?
+## Why is This Directive Needed?
 
 This directive is typically used with functional components as they do not initially possess their own lifecycle API and
 can easily be supplemented with it using this directive.

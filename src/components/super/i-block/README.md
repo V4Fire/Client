@@ -472,6 +472,34 @@ A selector to mount component via teleport or false.
   - teleport = '#content'
 ```
 
+#### SSR
+
+True if the application needs to be built for SSR.
+
+```
+- namespace [%fileName%]
+
+- include 'components/super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - block body
+    - if SSR
+       SSR only content
+```
+
+#### [renderSSRAsString = `false`]
+
+If set to true, then during SSR rendering, the component can be immediately formed as a string, not a VDOM tree.
+
+```
+- namespace [%fileName%]
+
+- include 'components/super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - renderSSRAsString = true
+```
+
 #### [ssrRendering = `true`]
 
 If set to false, the component will generate a special markup to allow it to not render during server-side rendering.

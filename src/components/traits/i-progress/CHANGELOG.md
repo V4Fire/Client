@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.88 (2024-04-12)
+
+#### :boom: Breaking Change
+
+* The behavior of blocking the component during progress has been removed from `initModsEvents`
+
+#### :rocket: New Feature
+
+* Added a new static method `initDisableBehavior`
+
 ## v3.0.0-rc.211 (2021-07-21)
 
 #### :boom: Breaking Change

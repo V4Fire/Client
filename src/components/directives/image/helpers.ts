@@ -48,6 +48,23 @@ export function createImgElement(
 	imageParams: ImageOptions,
 	commonParams: ImageOptions = imageParams
 ): VirtualElement<HTMLImageElement> {
+	const optionalAttrs = {
+		draggable: imageParams.draggable != null ? `${imageParams.draggable}` : undefined,
+		ismap: imageParams.isMap,
+		referrerpolicy: imageParams.referrerPolicy,
+		usemap: imageParams.useMap,
+		decoding: imageParams.decoding,
+		elementtiming: imageParams.elementTiming,
+		fetchpriority: imageParams.fetchPriority,
+		crossorigin: imageParams.crossOrigin
+	};
+
+	for (const key in optionalAttrs) {
+		if (optionalAttrs[key] == null) {
+			delete optionalAttrs[key];
+		}
+	}
+
 	const attrs = {
 		'data-img': Object.fastHash(imageParams),
 
@@ -73,11 +90,13 @@ export function createImgElement(
 
 		style: {
 			opacity: Object.isTruly(imageParams.preview) ? 0 : undefined
-		}
+		},
+
+		...optionalAttrs
 	};
 
 	return {
-		toElement: () => {
+		toElement(document = globalThis.document) {
 			const
 				img = document.createElement('img');
 
@@ -90,15 +109,20 @@ export function createImgElement(
 				}
 			});
 
+			// The "src" is a required attribute for the <img> tag.
+			// If it isn't provided, the "onerror" and "onload" listeners won't be called, and the image won't be rendered.
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			img.src ??= '';
+
 			return img;
 		},
 
-		toVNode: (create) => {
+		toVNode(create) {
 			const
 				img: VNode = create('img');
 
 			const
-				props = {},
+				props: Dictionary = {},
 				dynamicProps: string[] = [];
 
 			Object.forEach(attrs, (prop, name) => {
@@ -108,8 +132,11 @@ export function createImgElement(
 				}
 			});
 
+			props.src ??= '';
+
 			img.props = props;
 			img.dynamicProps = dynamicProps;
+
 			setVNodePatchFlags(img, 'props', 'styles');
 
 			return img;
@@ -130,17 +157,17 @@ export function createPictureElement(
 	commonParams: ImageOptions = imageParams
 ): VirtualElement<HTMLElement> {
 	return {
-		toElement: () => {
+		toElement(document = globalThis.document) {
 			const
 				picture = document.createElement('picture');
 
-			picture.appendChild(createSourceElements(imageParams, commonParams).toElement());
-			picture.appendChild(createImgElement(imageParams, commonParams).toElement());
+			picture.appendChild(createSourceElements(imageParams, commonParams).toElement(document));
+			picture.appendChild(createImgElement(imageParams, commonParams).toElement(document));
 
 			return picture;
 		},
 
-		toVNode: (create) => {
+		toVNode(create) {
 			const
 				picture: VNode = create('picture');
 
@@ -171,7 +198,7 @@ export function createSourceElements(
 	commonParams: ImageOptions = imageParams
 ): VirtualElement<DocumentFragment, []> {
 	return {
-		toElement: () => {
+		toElement(document = globalThis.document) {
 			const
 				fragment = document.createDocumentFragment();
 
@@ -188,7 +215,7 @@ export function createSourceElements(
 			return fragment;
 		},
 
-		toVNode: (create) => {
+		toVNode(create) {
 			const
 				fragment: VNode[] = [];
 

@@ -2,7 +2,7 @@
 
 This module provides a bunch of helpers to work with a component context.
 
-## What problem is being solved?
+## What Problem is Being Solved?
 
 The V4Fire library creates a domain-specific language (DSL) wrapper over the component libraries it uses.
 This allows developers to use TypeScript classes to describe their components, regardless of the underlying library.

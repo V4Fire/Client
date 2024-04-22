@@ -124,8 +124,10 @@ export function beforeCreateState(
 		enumerable: false,
 		writable: true,
 		value: <ComponentInterface['$getParent']>((ctx, restArgs) => {
-			if ($getParent in ctx) {
-				return ctx[$getParent];
+			const targetCtx = restArgs != null && 'ctx' in restArgs ? restArgs.ctx ?? ctx : ctx;
+
+			if ($getParent in targetCtx) {
+				return targetCtx[$getParent];
 			}
 
 			let fn: CanUndef<Function>;
@@ -144,7 +146,7 @@ export function beforeCreateState(
 				fn = () => ctx;
 			}
 
-			Object.defineProperty(ctx, $getParent, {
+			Object.defineProperty(targetCtx, $getParent, {
 				configurable: true,
 				enumerable: true,
 				writable: false,
