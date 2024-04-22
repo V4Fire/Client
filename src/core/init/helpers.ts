@@ -74,6 +74,10 @@ export function getAppParams(opts: InitAppOptions): {
 		} catch {}
 	});
 
+	if (SSR) {
+		resolvedState.hydrationStore = new HydrationStore();
+	}
+
 	return {
 		// Make the state observable
 		state: SSR ? resolvedState : watch(resolvedState).proxy,
