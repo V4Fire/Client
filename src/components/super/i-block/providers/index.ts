@@ -74,7 +74,7 @@ export default abstract class iBlockProviders extends iBlockState {
 		const {hydrationStore} = this.remoteState;
 
 		if (SSR) {
-			hydrationStore.init(this.componentId);
+			this.remoteState.hydrationStore.init(this.componentId);
 		}
 
 		const
@@ -88,10 +88,10 @@ export default abstract class iBlockProviders extends iBlockState {
 
 		const hydrationMode =
 			HYDRATION &&
-			hydrationStore.has(this.componentId);
+			this.remoteState.hydrationStore.has(this.componentId);
 
 		if (hydrationMode) {
-			this.state.set(hydrationStore.get(this.componentId));
+			this.state.set(this.remoteState.hydrationStore.get(this.componentId));
 			Promise.resolve(this.state.initFromStorage()).catch(stderr);
 
 			done();
