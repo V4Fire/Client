@@ -104,7 +104,12 @@ ComponentEngine.directive('attrs', {
 				patchProps(props, attrName, attrVal, vnode);
 
 			} else {
-				componentCtx[attrName] = attrVal;
+				Object.defineProperty(componentCtx, attrName, {
+					configurable: true,
+					enumerable: true,
+					writable: true,
+					value: attrVal
+				});
 			}
 		}
 
@@ -368,36 +373,16 @@ ComponentEngine.directive('attrs', {
 			attrs = normalizeComponentAttrs(attrs, null, componentMeta)!;
 		}
 
-		Object
-			.entries(attrs)
+		Object.entries(attrs).forEach(([name, value]) => {
+			if (name.startsWith('v-')) {
+				parseDirective(name, value);
 
-			.sort(([name]) => name.startsWith('v-') ? 1 : -1)
-
-			.forEach(([name, value]) => {
-				if (name.startsWith('v-')) {
-					parseDirective(name, value);
-
-				} else if (!name.startsWith('@')) {
-					parseProperty(name, value);
-				}
-			});
+			} else if (!name.startsWith('@')) {
+				patchProps(props, normalizePropertyAttribute(name), value);
+			}
+		});
 
 		return props;
-
-		function parseProperty(attrName: string, attrVal: unknown) {
-			attrName = normalizePropertyAttribute(attrName);
-
-			const needPatchVNode =
-				ctx == null ||
-				componentMeta?.props[attrName] == null;
-
-			if (needPatchVNode) {
-				patchProps(props, attrName, attrVal);
-
-			} else {
-				ctx[attrName] = attrVal;
-			}
-		}
 
 		function parseDirective(attrName: string, attrVal: unknown) {
 			const

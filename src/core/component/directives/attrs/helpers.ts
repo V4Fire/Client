@@ -58,57 +58,6 @@ export function normalizePropertyAttribute(name: string): string {
 }
 
 /**
- * Patches and formats the provided props according to the attribute
- *
- * @param props
- * @param attrName
- * @param attrVal
- * @param [vnode] - required for client-side rendering.
- */
-export function patchProps(props: Dictionary, attrName: string, attrVal: unknown, vnode?: VNode): void {
-	if (classAttrs[attrName] != null) {
-		attrName = classAttrs[attrName];
-		attrVal = normalizeClass(Object.cast(attrVal));
-
-		if (vnode) {
-			setVNodePatchFlags(vnode, 'classes');
-		}
-
-	} else if (styleAttrs[attrName] != null) {
-		attrVal = normalizeStyle(Object.cast(attrVal));
-
-		if (vnode) {
-			setVNodePatchFlags(vnode, 'styles');
-		}
-
-	} else {
-		if (vnode) {
-			setVNodePatchFlags(vnode, 'props');
-		}
-
-		if (attrName.startsWith('-')) {
-			attrName = `data${attrName}`;
-		}
-
-		if (vnode) {
-			const dynamicProps = vnode.dynamicProps ?? [];
-			vnode.dynamicProps = dynamicProps;
-
-			if (!dynamicProps.includes(attrName)) {
-				dynamicProps.push(attrName);
-			}
-		}
-	}
-
-	if (props[attrName] != null) {
-		Object.assign(props, mergeProps({[attrName]: props[attrName]}, {[attrName]: attrVal}));
-
-	} else {
-		props[attrName] = attrVal;
-	}
-}
-
-/**
  * Normalizes a string containing modifiers into a boolean dictionary
  * @param rawModifiers
  */
@@ -124,4 +73,55 @@ export function normalizeDirectiveModifiers(rawModifiers: string): Record<string
 	});
 
 	return modifiers;
+}
+
+/**
+ * Patches and formats the provided props according to the attribute
+ *
+ * @param props
+ * @param attrName
+ * @param attrVal
+ * @param [vnode] - required for client-side rendering.
+ */
+export function patchProps(props: Dictionary, attrName: string, attrVal: unknown, vnode?: VNode): void {
+	if (classAttrs[attrName] != null) {
+		attrName = classAttrs[attrName];
+		attrVal = normalizeClass(Object.cast(attrVal));
+
+		if (vnode != null) {
+			setVNodePatchFlags(vnode, 'classes');
+		}
+
+	} else if (styleAttrs[attrName] != null) {
+		attrVal = normalizeStyle(Object.cast(attrVal));
+
+		if (vnode != null) {
+			setVNodePatchFlags(vnode, 'styles');
+		}
+
+	} else {
+		if (vnode != null) {
+			setVNodePatchFlags(vnode, 'props');
+		}
+
+		if (attrName.startsWith('-')) {
+			attrName = `data${attrName}`;
+		}
+
+		if (vnode != null) {
+			const dynamicProps = vnode.dynamicProps ?? [];
+			vnode.dynamicProps = dynamicProps;
+
+			if (!dynamicProps.includes(attrName)) {
+				dynamicProps.push(attrName);
+			}
+		}
+	}
+
+	if (props[attrName] != null) {
+		Object.assign(props, mergeProps({[attrName]: props[attrName]}, {[attrName]: attrVal}));
+
+	} else {
+		props[attrName] = attrVal;
+	}
 }

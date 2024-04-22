@@ -8,6 +8,8 @@
 
 'use strict';
 
+/* eslint-disable max-lines */
+
 const
 	config = require('@v4fire/core/config/default');
 
@@ -1118,7 +1120,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return {
 				icon: include('src/components/directives/icon/compiler-info'),
 				attrs: {},
-				image: include('src/components/directives/image/compiler-info'),
+				images: include('src/components/directives/image/compiler-info'),
 				'safe-html': include('src/components/directives/safe-html/compiler-info')
 			};
 		},
@@ -1128,11 +1130,18 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @returns {object}
 		 */
 		compilerSFC() {
-			const DIRECTIVE = 7;
-			const directives = this.directives();
+			const {ssr} = this.config.webpack;
+
+			const
+				DIRECTIVE = 7,
+				directives = this.directives();
 
 			const nodeTransforms = [
 				(node) => {
+					if (!ssr) {
+						return;
+					}
+
 					const prop = node.props?.find((el) => el.type === DIRECTIVE && directives[el.name] != null);
 
 					if (prop == null) {
@@ -1140,13 +1149,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					}
 
 					const
-						directive = directives[prop.name],
-						args = {
-							arg: stringifyProp(prop.arg),
-							value: stringifyProp(prop.exp),
-							modifiers: JSON.stringify(prop.modifiers),
-							instance: '_ctx'
-						};
+						directive = directives[prop.name];
+
+					const args = {
+						arg: stringifyProp(prop.arg),
+						value: stringifyProp(prop.exp),
+						modifiers: JSON.stringify(prop.modifiers),
+						instance: '_ctx'
+					};
 
 					if (directive.withBindings) {
 						const bindings = node.props.reduce((acc, prop) => {
@@ -1194,6 +1204,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					function stringifyProp(prop) {
 						if (prop == null) {
 							return;
+						}
+
+						if (Object.isString(prop)) {
+							return prop;
+						}
+
+						if (prop.children != null) {
+							return prop.children.reduce((acc, prop) => acc + stringifyProp(prop), '');
 						}
 
 						return prop.isStatic ? JSON.stringify(prop.content) : prop.content;
