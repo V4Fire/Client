@@ -373,6 +373,14 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iOpen, 
 	}
 
 	/**
+	 * Unlocks page scroll when component gets destroyed
+	 */
+	@hook('beforeCreate')
+	protected unlockPageScrollOnDestroy(): void {
+		this.async.worker(() => this.unlockPageScroll().catch(stderr));
+	}
+
+	/**
 	 * Initializes the initial `hidden` modifier value
 	 */
 	@hook('created')

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-04-??)
+
+#### :bug: Bug Fix
+
+* Unlock page scroll when component gets destroyed
+
 ## v4.0.0-beta.93 (2024-04-19)
 
 #### :house: Internal
