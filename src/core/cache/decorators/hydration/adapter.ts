@@ -61,11 +61,13 @@ export default class HydrationCacheAdapter {
 	 * @param key
 	 */
 	protected get(key: string): CanUndef<unknown> {
-		const dataInStore = Object.get(this.store.get(this.id), key);
+		const dataInStore = this.store.get(this.id)?.[key];
+
+		if (!SSR) {
+			this.store.remove(this.id);
+		}
 
 		if (dataInStore != null) {
-			this.store.remove(this.id);
-
 			return dataInStore;
 		}
 
@@ -89,7 +91,7 @@ export default class HydrationCacheAdapter {
 	 * @param key
 	 */
 	protected has(key: string): boolean {
-		const dataInStore = Object.get(this.store.get(this.id), key);
+		const dataInStore = this.store.get(this.id)?.[key];
 
 		if (dataInStore != null) {
 			return true;
