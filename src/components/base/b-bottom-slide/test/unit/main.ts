@@ -755,7 +755,7 @@ test.describe('<b-bottom-slide> functional cases', () => {
 		});
 	});
 
-	test('should unlock page scroll on destroy', async ({page}) => {
+	test('should unlock the page scroll on destroy', async ({page}) => {
 		await page.addStyleTag({
 			content: '.b-bottom-slide__window {transition: 0.1s}'
 		});
