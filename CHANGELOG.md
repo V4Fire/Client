@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Unlock page scroll when component gets destroyed `bBottomSlide`
+* Unlock the page scroll when the component is destroyed `bBottomSlide`
 * Now styles for dynamically loaded components with `loadModules` are included in the fat-html build `build/monic`
 
 ## v4.0.0-beta.93 (2024-04-19)
