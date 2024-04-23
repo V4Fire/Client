@@ -22801,11 +22801,11 @@ __metadata:
 
 "ss2vue3@github:snakeskintpl/ss2vue3":
   version: 1.0.0
-  resolution: "ss2vue3@https://github.com/snakeskintpl/ss2vue3.git#commit=e0e2e900fff169c2e5a6469cd052123557c2f9da"
+  resolution: "ss2vue3@https://github.com/snakeskintpl/ss2vue3.git#commit=28bf1d906a3afdf933fa7bf79c5bb243a35e45c6"
   peerDependencies:
     "@vue/compiler-sfc": "*"
     snakeskin: ^7.5.1
-  checksum: 52ce7fa298200077e247b4c2506fab162b7d156dd63f2405818d90e33f6513e511279926f813e9b8e6b6641c4cd1ac91ad1cc6615995147d67b336e6fc613b0e
+  checksum: 2aea21d81a9d4d57649bd10384cc13e66f6850cbd6accf6c53164deab2d69c1086e69b7a64a444899fbdc112b077e7465d8d379beedb90103b81819eddff9f0e
   languageName: node
   linkType: hard
 
