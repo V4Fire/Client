@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Unlocks the page scroll when the component is destroyed
+* Unlock the page scroll when the component is destroyed
 
 ## v4.0.0-beta.93 (2024-04-19)
 
