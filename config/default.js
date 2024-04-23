@@ -1118,8 +1118,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		directives() {
 			return {
+				tag: {},
 				icon: include('src/components/directives/icon/compiler-info'),
-				attrs: {},
 				image: include('src/components/directives/image/compiler-info'),
 				'safe-html': include('src/components/directives/safe-html/compiler-info')
 			};
@@ -1133,73 +1133,92 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			const {ssr} = this.config.webpack;
 
 			const
-				DIRECTIVE = 7,
-				directives = this.directives();
+				NOT_CONSTANT = 0;
+
+			const
+				EXPRESSION = 4,
+				DIRECTIVE = 7;
+
+			const
+				transformableDirectives = this.directives(),
+				propsToRemove = [];
 
 			const nodeTransforms = [
 				(node) => {
-					if (!ssr) {
+					const {props} = node;
+
+					if (!ssr || props == null) {
 						return;
 					}
 
-					const prop = node.props?.find((el) => el.type === DIRECTIVE && directives[el.name] != null);
+					props.slice().forEach((prop, propIndex) => {
+						if (prop.type !== DIRECTIVE || transformableDirectives[prop.name] == null) {
+							return;
+						}
 
-					if (prop == null) {
-						return;
-					}
+						if (prop.name === 'tag') {
+							propsToRemove.push(propIndex);
+							node.tag = `__TAG_INTERPOLATION:\${${stringifyProp(prop.exp)}}$`;
+							return;
+						}
 
-					const
-						directive = directives[prop.name];
+						const directive = transformableDirectives[prop.name];
 
-					const args = {
-						arg: stringifyProp(prop.arg),
-						value: stringifyProp(prop.exp),
-						modifiers: JSON.stringify(prop.modifiers),
-						instance: '_ctx'
-					};
+						const args = {
+							arg: stringifyProp(prop.arg),
+							value: stringifyProp(prop.exp),
+							modifiers: JSON.stringify(prop.modifiers),
+							instance: '_ctx'
+						};
 
-					if (directive.withBindings) {
-						const bindings = node.props.reduce((acc, prop) => {
-							if (prop.name === 'bind' && prop.arg?.content) {
-								try {
-									acc[prop.arg.content] = JSON.parse(prop.exp.content);
+						if (directive.withBindings) {
+							const bindings = props.reduce((acc, prop) => {
+								if (prop.name === 'bind' && prop.arg?.content) {
+									try {
+										acc[prop.arg.content] = JSON.parse(prop.exp.content);
 
-								} catch {
-									acc[prop.arg.content] = prop.exp.content;
+									} catch {
+										acc[prop.arg.content] = prop.exp.content;
+									}
 								}
-							}
 
-							return acc;
-						}, {});
+								return acc;
+							}, {});
 
-						args.bindings = JSON.stringify(bindings);
-					}
+							args.bindings = JSON.stringify(bindings);
+						}
 
-					const
-						argsStr = `{${Object.entries(args).map(([k, v]) => `"${k}": ${v}`).join(',')}}`;
+						const argsStr = `{${Object.entries(args).map(([k, v]) => `"${k}": ${v}`).join(',')}}`;
 
-					if (directive.innerHTML) {
-						node.props.push({
-							type: DIRECTIVE,
-							name: 'html',
+						if (directive.innerHTML) {
+							props.push({
+								type: DIRECTIVE,
+								name: 'html',
 
-							exp: {
-								type: 4,
-								content: `_ctx.$renderEngine.r.resolveDirective.call(_ctx, '${prop.name}')?.getSSRProps?.(${argsStr}).innerHTML`,
-								isStatic: false,
-								constType: 0,
-								loc: prop.exp?.loc ?? prop.loc
-							},
+								exp: {
+									type: EXPRESSION,
+									constType: NOT_CONSTANT,
+									isStatic: false,
+									content: `_ctx.$renderEngine.r.resolveDirective.call(_ctx, '${prop.name}')?.getSSRProps?.(${argsStr}).innerHTML`,
+									loc: prop.exp?.loc ?? prop.loc
+								},
 
-							arg: undefined,
-							modifiers: [],
-							loc: prop.loc
-						});
-					}
+								arg: undefined,
+								modifiers: [],
+								loc: prop.loc
+							});
+						}
 
-					if (directive.tag != null) {
-						node.tag = directive.tag;
-					}
+						if (directive.tag != null) {
+							node.tag = directive.tag;
+						}
+					});
+
+					let removed = 0;
+					propsToRemove.forEach((i) => {
+						props.splice(i - removed, 1);
+						removed++;
+					});
 
 					function stringifyProp(prop) {
 						if (prop == null) {
