@@ -684,7 +684,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		output(vars) {
 			const
-				res = this.mode() !== 'production' || this.ssr || this.fatHTML() ? '[name]' : '[hash]_[name]';
+				res = this.mode() !== 'production' || this.fatHTML() ? '[name]' : '[hash]_[name]';
 
 			if (vars) {
 				return res.replace(/_?\[(.*?)]/g, (str, key) => {
@@ -733,7 +733,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			const
 				root = 'assets';
 
-			if (this.mode() !== 'production' || this.ssr || this.fatHTML()) {
+			if (this.mode() !== 'production' || this.fatHTML()) {
 				return this.output({
 					...params,
 					name: `${root}/[path][name].[ext]`,
@@ -1140,8 +1140,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				DIRECTIVE = 7;
 
 			const
-				transformableDirectives = this.directives(),
-				propsToRemove = [];
+				transformableDirectives = this.directives();
 
 			const nodeTransforms = [
 				(node) => {
@@ -1151,13 +1150,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 						return;
 					}
 
-					props.slice().forEach((prop, propIndex) => {
+					props.slice().forEach((prop) => {
 						if (prop.type !== DIRECTIVE || transformableDirectives[prop.name] == null) {
 							return;
 						}
 
 						if (prop.name === 'tag') {
-							propsToRemove.push(propIndex);
 							node.tag = `__TAG_INTERPOLATION:\${${stringifyProp(prop.exp)}}$`;
 							return;
 						}
@@ -1212,12 +1210,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 						if (directive.tag != null) {
 							node.tag = directive.tag;
 						}
-					});
-
-					let removed = 0;
-					propsToRemove.forEach((i) => {
-						props.splice(i - removed, 1);
-						removed++;
 					});
 
 					function stringifyProp(prop) {
