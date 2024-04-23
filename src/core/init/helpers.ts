@@ -58,6 +58,7 @@ export function getAppParams(opts: InitAppOptions): {
 		),
 
 		pageMetaData: opts.pageMetaData ?? new PageMetaData(opts.location),
+
 		hydrationStore: opts.hydrationStore ?? new HydrationStore()
 	};
 
@@ -70,10 +71,6 @@ export function getAppParams(opts: InitAppOptions): {
 			}, 0);
 		} catch {}
 	});
-
-	if (SSR) {
-		resolvedState.hydrationStore = new HydrationStore();
-	}
 
 	return {
 		// Make the state observable

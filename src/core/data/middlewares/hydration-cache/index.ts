@@ -15,19 +15,15 @@ import { addHydrationCache } from 'core/cache/decorators/hydration';
  * @param params
  */
 export function attachHydrationCache(this: Provider, params: MiddlewareParams): void {
-	if (this.params.remoteState?.hydrationStore == null) {
-		return;
-	}
+	params.ctx.isReady.then(() => {
+		if (this.params.remoteState?.hydrationStore == null) {
+			return;
+		}
 
-	const {cache} = params.ctx;
+		const {cache} = params.ctx;
 
-	this.params.remoteState.hydrationStore.init(this.cacheId);
-	const hydrationCache = addHydrationCache(this.params.remoteState.hydrationStore, cache, this.cacheId);
+		const withHydrationCache = addHydrationCache(this.params.remoteState.hydrationStore, cache, this.cacheId);
 
-	Object.defineProperty(params.ctx, 'cache', {
-		enumerable: true,
-		configurable: true,
-		writable: false,
-		value: hydrationCache
-	});
+		Object.set(params.ctx, 'cache', withHydrationCache);
+	}).catch(stderr);
 }
