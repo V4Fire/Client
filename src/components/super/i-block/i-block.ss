@@ -37,8 +37,12 @@
 	 */
 	- SSR = require('@config/config').webpack.ssr
 
-	/** If set to true, then during SSR rendering, the component can be immediately formed as a string, not a VDOM tree */
-	- renderSSRAsString = false
+	/**
+	* If set to true, the component will always be rendered by creating an intermediate VNODE tree.
+	* Enabling this option may negatively affect rendering speed in SSR.
+	* However, this mode is necessary for using some directives.
+	*/
+	- forceRenderAsVNode = false
 
 	/**
 	 * If set to false, the component will generate a special markup to

@@ -16,31 +16,40 @@ module.exports = [
 	/**
 	 * Normalizes Webpack SVG `require` attributes
 	 *
-	 * @param {object} opts
-	 * @param {string} opts.name
-	 * @param {object} opts.attrs
+	 * @param {object} params
+	 * @param {string} params.tag
+	 * @param {object} params.attrs
 	 */
-	function normalizeSvgRequire({name, attrs}) {
-		if (name !== 'img') {
+	function normalizeSvgRequire({tag, attrs}) {
+		if (tag !== 'img') {
 			return;
 		}
 
 		const
 			src = attrs[':src'];
 
-		if (src && /require\(.*?\.svg[\\"']+\)/.test(src[0])) {
+		if (src && /require\(.*?\.svg["'\\]+\)/.test(src[0])) {
 			src[0] += '.replace(/^"|"$/g, \'\')';
 		}
 	},
 
 	/**
 	 * Normalizes V4Fire tag attributes
-	 * @param {object} attrs
+	 *
+	 * @param {object} params
+	 * @param {object} params.tplName
+	 * @param {object} params.attrs
+	 * @param {object} params.forceRenderAsVNode
+	 * @throws {Error} if the attributes contain invalid values
 	 */
-	function normalizeV4Attrs({attrs}) {
+	function normalizeV4Attrs({tplName, attrs, forceRenderAsVNode}) {
 		if (webpack.ssr) {
 			delete attrs['v-once'];
 			delete attrs['v-memo'];
+
+			if (attrs['v-render'] && forceRenderAsVNode === false) {
+				throw new Error(`("${tplName}") To use the \`v-render\` directive with SSR, you need to switch the component to rendering mode in VNODE using the \`forceRenderAsVNode\` constant`);
+			}
 		}
 
 		Object.forEach(attrs, (attr, key) => {
