@@ -30,6 +30,9 @@ import type Friend from 'components/friends/friend';
  * ```
  */
 export function set(this: Friend, data: Nullable<Dictionary>): Array<Promise<unknown>> {
+	console.log('client set');
+	console.log(Object.fastClone(data));
+
 	if (data == null) {
 		return [];
 	}

@@ -19,6 +19,8 @@ const
  * This method is required for `syncStorageState` to work.
  */
 export function initFromStorage(this: Friend): CanPromise<boolean> {
+	console.log('client initFromStorage');
+
 	if (this.globalName == null) {
 		return false;
 	}
@@ -41,6 +43,8 @@ export function initFromStorage(this: Friend): CanPromise<boolean> {
 	return this[key] = $a.promise(async () => {
 		const
 			data = await this.storage.get('[[STORE]]');
+
+		console.log(Object.fastClone(data));
 
 		void this.lfc.execCbAtTheRightTime(() => {
 			const
@@ -93,6 +97,9 @@ export function initFromStorage(this: Friend): CanPromise<boolean> {
  * @param [data] - additional data to save
  */
 export async function saveToStorage(this: Friend, data?: Dictionary): Promise<boolean> {
+	console.log('client saveToStorage');
+	console.log(Object.fastClone(data));
+
 	if (this.globalName == null) {
 		return false;
 	}
@@ -114,6 +121,8 @@ export async function saveToStorage(this: Friend, data?: Dictionary): Promise<bo
  * The function takes the result of `convertStateToStorageReset` and maps it to the component.
  */
 export async function resetStorage(this: Friend): Promise<boolean> {
+	console.log('client resetStorage');
+
 	if (this.globalName == null) {
 		return false;
 	}

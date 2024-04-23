@@ -429,6 +429,9 @@ export default abstract class iBlockState extends iBlockMods {
 	 * @param [_type] - the call type
 	 */
 	protected syncStorageState(data?: Dictionary, _type: ConverterCallType = 'component'): Dictionary {
+		console.log('client syncStorageState');
+		console.log(Object.fastClone(data));
+
 		return {...data};
 	}
 
@@ -439,6 +442,9 @@ export default abstract class iBlockState extends iBlockMods {
 	 * @param [data] - advanced data
 	 */
 	protected convertStateToStorageReset(data?: Dictionary): Dictionary {
+		console.log('client convertStateToStorageReset');
+		console.log(Object.fastClone(data));
+
 		const
 			stateFields = this.syncStorageState(data),
 			state = {};
