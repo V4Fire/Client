@@ -40,6 +40,7 @@ module.exports = {
 	MODULE: s(config.typescript().client.compilerOptions.module),
 
 	LOCALE: s(LOCALE),
+	REGION: s(REGION),
 	LANG_PACKS: s(config.i18n.langPacksStore),
 
 	COMPONENTS: projectGraph.then(({components}) => {

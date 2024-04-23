@@ -467,8 +467,17 @@ See `super/i-static-page/modules/theme` for more information.
 A value of the system locale.
 
 ```js
-console.log(this.r);
+console.log(this.r.locale);
 this.r.locale = 'ru';
+```
+
+#### region
+
+A value of the system region.
+
+```js
+console.log(this.r.region);
+this.r.region = 'RU';
 ```
 
 #### reset

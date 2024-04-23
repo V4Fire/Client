@@ -147,7 +147,7 @@
     "@types/jasmine": "3.10.3",
     "@types/semver": "7.3.10",
     "@types/webpack": "5.28.0",
-    "@v4fire/core": "3.96.0",
+    "@v4fire/core": "github:V4Fire/Core#i18n_region",
     "@v4fire/linters": "1.9.0",
     "dpdm": "3.10.0",
     "husky": "7.0.4",
