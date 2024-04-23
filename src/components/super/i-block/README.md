@@ -487,9 +487,11 @@ True if the application needs to be built for SSR.
        SSR only content
 ```
 
-#### [renderSSRAsString = `false`]
+#### [forceRenderAsVNode = `false`]
 
-If set to true, then during SSR rendering, the component can be immediately formed as a string, not a VDOM tree.
+If set to true, the component will always be rendered by creating an intermediate VNODE tree.
+Enabling this option may negatively affect rendering speed in SSR.
+However, this mode is necessary for using some directives.
 
 ```
 - namespace [%fileName%]
@@ -497,7 +499,7 @@ If set to true, then during SSR rendering, the component can be immediately form
 - include 'components/super/i-block'|b as placeholder
 
 - template index() extends ['i-block'].index
-  - renderSSRAsString = true
+  - forceRenderAsVNode = true
 ```
 
 #### [ssrRendering = `true`]

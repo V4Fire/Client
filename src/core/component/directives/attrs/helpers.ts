@@ -24,7 +24,7 @@ import { modRgxp, styleAttrs, classAttrs } from 'core/component/directives/attrs
  * Normalizes the property attribute name by removing prefixes and formatting modifiers
  *
  * @param name
- * @throws {SyntaxError} if the v-bind modifier is invalid
+ * @throws {SyntaxError} if the `v-bind` modifier is invalid
  */
 export function normalizePropertyAttribute(name: string): string {
 	let attrName = name.startsWith(':') ? name.slice(1) : name;
