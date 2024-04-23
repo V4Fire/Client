@@ -250,6 +250,12 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 		return iLockPageScroll.lockPageScroll(this, this.$refs.window);
 	}
 
+	/** {@link iLockPageScroll.prototype.unlockPageScrollOnDestroy} */
+	@hook('beforeCreate')
+	unlockPageScrollOnDestroy(): void {
+		iLockPageScroll.unlockPageScrollOnDestroy(this);
+	}
+
 	/** {@link iOpenToggle.prototype.onOpenedChange} */
 	async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
 		await this.setMod('hidden', e.type === 'remove' ? true : e.value === 'false');

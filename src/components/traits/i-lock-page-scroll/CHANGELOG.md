@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2023-04-??)
+
+#### :rocket: New Feature
+
+* Added the `unlockPageScrollOnDestroy` method
+
 ## v4.0.0-beta.45 (2023-12-07)
 
 #### :bug: Bug Fix

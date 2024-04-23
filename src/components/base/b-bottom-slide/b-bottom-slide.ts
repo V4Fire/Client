@@ -248,6 +248,12 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iOpen, 
 		return iLockPageScroll.lockPageScroll(this, this.$refs.view);
 	}
 
+	/** {@link iLockPageScroll.prototype.unlockPageScrollOnDestroy} */
+	@hook('beforeCreate')
+	unlockPageScrollOnDestroy(): void {
+		iLockPageScroll.unlockPageScrollOnDestroy(this);
+	}
+
 	/**
 	 * {@link iOpen.prototype.open}
 	 *
@@ -370,14 +376,6 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iOpen, 
 	protected initOffset(): void {
 		this.geometry.setOffset(this.visible);
 		void this.updateWindowPosition();
-	}
-
-	/**
-	 * Unlocks the page scroll when the component is destroyed
-	 */
-	@hook('beforeCreate')
-	protected unlockPageScrollOnDestroy(): void {
-		this.async.worker(() => this.unlockPageScroll().catch(stderr));
 	}
 
 	/**

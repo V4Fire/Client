@@ -100,6 +100,24 @@ export default class bWindow extends iBlock implements iLockPageScroll {
 }
 ```
 
+### unlockPageScrollOnDestroy
+
+Calls the `unlockPageScroll` method when the component is destroyed
+
+```typescript
+import iLockPageScroll from 'components/traits/i-lock-page-scroll/i-lock-page-scroll';
+import iBlock, { component } from 'components/super/i-block/i-block';
+
+@component()
+export default class bWindow extends iBlock implements iLockPageScroll {
+  /** {@link iLockPageScroll.unlockPageScrollOnDestroy} */
+  @hook('beforeCreate')
+  unlockPageScrollOnDestroy(): void {
+    iLockPageScroll.unlockPageScrollOnDestroy(this);
+  }
+}
+```
+
 ## Helpers
 
 The trait provides a bunch of helper functions to initialize event listeners.

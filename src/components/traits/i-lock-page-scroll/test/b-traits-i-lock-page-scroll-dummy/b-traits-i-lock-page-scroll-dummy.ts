@@ -8,7 +8,7 @@
 
 import { derive } from 'core/functools/trait';
 
-import bDummy, { component } from 'components/dummies/b-dummy/b-dummy';
+import bDummy, { component, hook } from 'components/dummies/b-dummy/b-dummy';
 import iLockPageScroll from 'components/traits/i-lock-page-scroll/i-lock-page-scroll';
 
 export * from 'components/dummies/b-dummy/b-dummy';
@@ -17,6 +17,12 @@ interface bTraitsILockPageScrollDummy extends Trait<typeof iLockPageScroll> {}
 
 @component()
 @derive(iLockPageScroll)
-class bTraitsILockPageScrollDummy extends bDummy {}
+class bTraitsILockPageScrollDummy extends bDummy {
+	/** {@link iLockPageScroll.prototype.unlockPageScrollOnDestroy} */
+	@hook('beforeCreate')
+	unlockPageScrollOnDestroy(): void {
+		iLockPageScroll.unlockPageScrollOnDestroy(this);
+	}
+}
 
 export default bTraitsILockPageScrollDummy;

@@ -79,6 +79,12 @@ class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 		}
 	}
 
+	/** {@link iLockPageScroll.prototype.unlockPageScrollOnDestroy} */
+	@hook('beforeCreate')
+	unlockPageScrollOnDestroy(): void {
+		iLockPageScroll.unlockPageScrollOnDestroy(this);
+	}
+
 	protected override syncStorageState(): Dictionary {
 		return {
 			'mods.opened': this.mods.opened

@@ -141,6 +141,20 @@ export default abstract class iLockPageScroll {
 		});
 	};
 
+	/** {@link iLockPageScroll.prototype.unlockPageScrollOnDestroy} */
+	static unlockPageScrollOnDestroy: AddSelf<iLockPageScroll['unlockPageScrollOnDestroy'], iBlock & iLockPageScroll> = (component) => {
+		const {
+			r,
+			$async: $a
+		} = component.unsafe;
+
+		$a.worker(() => {
+			component.unlockPageScroll().catch(stderr);
+			delete r[$$.paddingRight];
+			delete r[$$.scrollTop];
+		});
+	};
+
 	/**
 	 * Initializes modifier event listeners for the specified components
 	 *
@@ -150,11 +164,8 @@ export default abstract class iLockPageScroll {
 	 * @param component
 	 */
 	static initModEvents<T extends iBlock>(component: T & iLockPageScroll): void {
-		const {
-			r,
-			$async: $a,
-			localEmitter: $e
-		} = component.unsafe;
+		const
+			{localEmitter: $e} = component.unsafe;
 
 		$e.on('block.mod.*.opened.*', (e: ModEvent) => {
 			if (e.type === 'remove' && e.reason !== 'removeMod') {
@@ -162,12 +173,6 @@ export default abstract class iLockPageScroll {
 			}
 
 			void component[e.value === 'false' || e.type === 'remove' ? 'unlockPageScroll' : 'lockPageScroll']();
-		});
-
-		$a.worker(() => {
-			component.unlockPageScroll().catch(stderr);
-			delete r[$$.paddingRight];
-			delete r[$$.scrollTop];
 		});
 	}
 
@@ -247,6 +252,13 @@ export default abstract class iLockPageScroll {
 	 * Unlocks scrolling of the document
 	 */
 	unlockPageScroll(): Promise<void> {
+		return Object.throw();
+	}
+
+	/**
+	 * Unlocks the page scroll when the component is destroyed
+	 */
+	unlockPageScrollOnDestroy(): void {
 		return Object.throw();
 	}
 }
