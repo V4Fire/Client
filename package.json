@@ -55,7 +55,7 @@
     "@config/config": "npm:config@1.31.0",
     "@swc/core": "1.2.153",
     "@swc/helpers": "0.3.8",
-    "@vue/compiler-sfc": "3.4.19",
+    "@vue/compiler-sfc": "3.2.47",
     "chalk": "4.1.2",
     "cookiejar": "^2.1.4",
     "cross-env": "7.0.3",
@@ -70,7 +70,7 @@
     "snakeskin": "github:SnakeskinTpl/Snakeskin#new-var",
     "tslib": "2.4.1",
     "vinyl": "2.2.1",
-    "vue": "3.4.19"
+    "vue": "3.2.47"
   },
   "optionalDependencies": {
     "@pzlr/build-core": "2.13.0",
