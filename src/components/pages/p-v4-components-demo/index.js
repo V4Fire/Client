@@ -56,5 +56,6 @@ package('p-v4-components-demo')
 		'core/cookies',
 		'core/html',
 
-		'models/modules/session'
+		'models/modules/session',
+		'models/hydration'
 	);
