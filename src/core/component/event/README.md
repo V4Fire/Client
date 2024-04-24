@@ -28,6 +28,11 @@ requiring additional configuration or setup.
 This event is triggered when there is a change in the language locale of the application.
 See the `core/i18n` module for details.
 
+### i18n.setRegion
+
+This event is triggered when there is a change in the region of the application.
+See the `core/i18n` module for details.
+
 ### net.status
 
 This event is triggered whenever there is a change in the status of the Internet connection.

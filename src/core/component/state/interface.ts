@@ -81,6 +81,11 @@ export interface State {
 	locale?: Language;
 
 	/**
+	 * The application default region
+	 */
+	region?: Region;
+
+	/**
 	 * A list of registered AB experiments
 	 */
 	experiments?: Experiments;
