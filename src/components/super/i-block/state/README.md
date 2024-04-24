@@ -393,10 +393,10 @@ For instance, `created`, `mounted` or `destroyed`.
 
 True if the component is in the context of SSR or hydration.
 
-#### isClientOnly
+#### preventSSRRendering
 
 True if the component should not render it's content during server-side rendering, and it is in the context of SSR/hydration now.
-This getter is used to display a skeleton placeholder instead of the actual component content during server-side rendering.
+This getter is used to hide the component's content behind the teleport during server-side rendering (SSR), also it can be used to display a skeleton placeholder instead of the actual component's content during SSR.
 
 #### remoteState
 

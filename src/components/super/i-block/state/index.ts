@@ -65,7 +65,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 * True if the component should not render it's content during server-side rendering,
 	 * and it is in the context of SSR/hydration now
 	 */
-	get isClientOnly(): boolean {
+	get preventSSRRendering(): boolean {
 		return this.isRelatedToSSR && !this.ssrRendering;
 	}
 
