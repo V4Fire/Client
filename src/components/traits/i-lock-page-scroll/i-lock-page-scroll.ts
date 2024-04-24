@@ -13,6 +13,7 @@
 
 import symbolGenerator from 'core/symbol';
 import { is } from 'core/browser';
+import type { WorkerLikeP } from 'core/async';
 
 import type iBlock from 'components/super/i-block/i-block';
 import type { ModEvent } from 'components/super/i-block/i-block';
@@ -33,11 +34,14 @@ export default abstract class iLockPageScroll {
 		const {
 			r,
 			r: {unsafe: {async: $a}},
-			unsafe: {async: componentAsync}
+			unsafe: {async: componentAsync, tmp: componentTmp}
 		} = component;
 
+		const
+			destructor = () => iLockPageScroll.unlockPageScrollOnDestroy(component);
+
 		componentAsync.worker(
-			iLockPageScroll.unlockPageScrollOnDestroy.bind(iLockPageScroll, component)
+			<WorkerLikeP>(componentTmp[$$.unlockPageScrollDestructor] ??= destructor)
 		);
 
 		if (is.mobile !== false && is.iOS !== false) {
@@ -236,16 +240,12 @@ export default abstract class iLockPageScroll {
 	 * @param component
 	 */
 	protected static unlockPageScrollOnDestroy(component: iBlock & iLockPageScroll): void {
-		const {
-			r,
-			$async: $a
-		} = component.unsafe;
+		const
+			{r} = component.unsafe;
 
-		$a.worker(() => {
-			component.unlockPageScroll().catch(stderr);
-			delete r[$$.paddingRight];
-			delete r[$$.scrollTop];
-		});
+		component.unlockPageScroll().catch(stderr);
+		delete r[$$.paddingRight];
+		delete r[$$.scrollTop];
 	}
 
 	/**
