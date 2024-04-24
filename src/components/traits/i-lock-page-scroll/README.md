@@ -66,7 +66,8 @@ The trait specifies a bunch of methods to implement.
 
 ### lockPageScroll
 
-Locks scrolling of the document, preventing any scrolling of the document except within that node.
+Locks scrolling of the document, preventing any scrolling of the document except within that node and
+registers the destructor, which unlocks the page scroll when the component is destroyed.
 The method has a default implementation.
 
 ```typescript
@@ -96,24 +97,6 @@ export default class bWindow extends iBlock implements iLockPageScroll {
   /** {@link iLockPageScroll.unlockPageScroll} */
   unlockPageScroll(): Promise<void> {
     return iLockPageScroll.unlockPageScroll(this);
-  }
-}
-```
-
-### unlockPageScrollOnDestroy
-
-Calls the `unlockPageScroll` method when the component is destroyed
-
-```typescript
-import iLockPageScroll from 'components/traits/i-lock-page-scroll/i-lock-page-scroll';
-import iBlock, { component } from 'components/super/i-block/i-block';
-
-@component()
-export default class bWindow extends iBlock implements iLockPageScroll {
-  /** {@link iLockPageScroll.unlockPageScrollOnDestroy} */
-  @hook('beforeCreate')
-  unlockPageScrollOnDestroy(): void {
-    iLockPageScroll.unlockPageScrollOnDestroy(this);
   }
 }
 ```

@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added the `unlockPageScrollOnDestroy` method
+* The destructor, which unlocks the page scroll when the component is destroyed, will be registered once the `lockPageScroll` method is called
 
 ## v4.0.0-beta.45 (2023-12-07)
 

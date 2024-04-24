@@ -248,12 +248,6 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iOpen, 
 		return iLockPageScroll.lockPageScroll(this, this.$refs.view);
 	}
 
-	/** {@link iLockPageScroll.prototype.unlockPageScrollOnDestroy} */
-	@hook('beforeCreate')
-	unlockPageScrollOnDestroy(): void {
-		iLockPageScroll.unlockPageScrollOnDestroy(this);
-	}
-
 	/**
 	 * {@link iOpen.prototype.open}
 	 *

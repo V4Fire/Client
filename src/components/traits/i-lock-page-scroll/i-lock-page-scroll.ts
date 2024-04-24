@@ -29,11 +29,16 @@ const
 
 export default abstract class iLockPageScroll {
 	/** {@link iLockPageScroll.prototype.lockPageScroll} */
-	static lockPageScroll: AddSelf<iLockPageScroll['lockPageScroll'], iBlock> = (component, scrollableNode?) => {
+	static lockPageScroll: AddSelf<iLockPageScroll['lockPageScroll'], iBlock & iLockPageScroll> = (component, scrollableNode?) => {
 		const {
 			r,
-			r: {unsafe: {async: $a}}
+			r: {unsafe: {async: $a}},
+			unsafe: {async: componentAsync}
 		} = component;
+
+		componentAsync.worker(
+			iLockPageScroll.unlockPageScrollOnDestroy.bind(iLockPageScroll, component)
+		);
 
 		if (is.mobile !== false && is.iOS !== false) {
 			iLockPageScroll.initIOSScrollableNodeListeners(component, scrollableNode);
@@ -141,20 +146,6 @@ export default abstract class iLockPageScroll {
 		});
 	};
 
-	/** {@link iLockPageScroll.prototype.unlockPageScrollOnDestroy} */
-	static unlockPageScrollOnDestroy: AddSelf<iLockPageScroll['unlockPageScrollOnDestroy'], iBlock & iLockPageScroll> = (component) => {
-		const {
-			r,
-			$async: $a
-		} = component.unsafe;
-
-		$a.worker(() => {
-			component.unlockPageScroll().catch(stderr);
-			delete r[$$.paddingRight];
-			delete r[$$.scrollTop];
-		});
-	};
-
 	/**
 	 * Initializes modifier event listeners for the specified components
 	 *
@@ -241,6 +232,23 @@ export default abstract class iLockPageScroll {
 	}
 
 	/**
+	 * Unlock the page scroll when the component is destroyed
+	 * @param component
+	 */
+	protected static unlockPageScrollOnDestroy(component: iBlock & iLockPageScroll): void {
+		const {
+			r,
+			$async: $a
+		} = component.unsafe;
+
+		$a.worker(() => {
+			component.unlockPageScroll().catch(stderr);
+			delete r[$$.paddingRight];
+			delete r[$$.scrollTop];
+		});
+	}
+
+	/**
 	 * Locks scrolling of the document, preventing any scrolling of the document except within that node
 	 * @param [_scrollableNode] - the node within which scrolling is allowed
 	 */
@@ -252,13 +260,6 @@ export default abstract class iLockPageScroll {
 	 * Unlocks scrolling of the document
 	 */
 	unlockPageScroll(): Promise<void> {
-		return Object.throw();
-	}
-
-	/**
-	 * Unlocks the page scroll when the component is destroyed
-	 */
-	unlockPageScrollOnDestroy(): void {
 		return Object.throw();
 	}
 }
