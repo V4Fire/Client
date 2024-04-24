@@ -37,11 +37,12 @@ export default abstract class iLockPageScroll {
 			unsafe: {async: componentAsync, tmp: componentTmp}
 		} = component;
 
-		const
-			destructor = () => iLockPageScroll.unlockPageScrollOnDestroy(component);
-
 		componentAsync.worker(
-			<WorkerLikeP>(componentTmp[$$.unlockPageScrollDestructor] ??= destructor)
+			<WorkerLikeP>(componentTmp[$$.unlockPageScrollDestructor] ??= () => {
+				component.unlockPageScroll().catch(stderr);
+				delete r[$$.paddingRight];
+				delete r[$$.scrollTop];
+			})
 		);
 
 		if (is.mobile !== false && is.iOS !== false) {
@@ -233,19 +234,6 @@ export default abstract class iLockPageScroll {
 			group,
 			options: {passive: false}
 		});
-	}
-
-	/**
-	 * Unlock the page scroll when the component is destroyed
-	 * @param component
-	 */
-	protected static unlockPageScrollOnDestroy(component: iBlock & iLockPageScroll): void {
-		const
-			{r} = component.unsafe;
-
-		component.unlockPageScroll().catch(stderr);
-		delete r[$$.paddingRight];
-		delete r[$$.scrollTop];
 	}
 
 	/**
