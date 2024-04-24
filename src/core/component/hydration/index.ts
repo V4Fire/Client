@@ -14,7 +14,7 @@
 import { expandedStringify, expandedParse } from 'core/json';
 
 import { styles, emptyDataStoreKey } from 'core/component/hydration/const';
-import type { Store, HydratedData, HydratedValue } from 'core/component/hydration/interface';
+import type { Store, HydratedData, HydratedValue, Environment } from 'core/component/hydration/interface';
 
 export * from 'core/component/hydration/const';
 export * from 'core/component/hydration/interface';
@@ -35,7 +35,16 @@ export class HydrationStore {
 	 */
 	protected data: Map<HydratedValue, string> = new Map();
 
-	constructor() {
+	/**
+	 * The current environment
+	 */
+	protected readonly environment: Environment = SSR ? 'server' : 'client';
+
+	constructor(environment?: Environment) {
+		if (environment != null) {
+			this.environment = environment;
+		}
+
 		try {
 			this.store = this.parse(document.getElementById('hydration-store')?.textContent ?? '');
 
@@ -108,6 +117,21 @@ export class HydrationStore {
 	}
 
 	/**
+	 * Returns the hydrated data for the specified component ID and path
+	 *
+	 * @param componentId
+	 * @param path
+	 */
+	getByPath(componentId: string, path: string): CanUndef<HydratedValue> {
+		const
+			key = this.store.store[componentId]?.[path];
+
+		if (key != null) {
+			return this.store.data[key];
+		}
+	}
+
+	/**
 	 * Initializes hydration data storage for the given component ID
 	 * @param componentId
 	 */
@@ -127,7 +151,7 @@ export class HydrationStore {
 	 * @param data
 	 */
 	set(componentId: string, path: string, data: CanUndef<HydratedValue>): void {
-		if (data === undefined || !SSR) {
+		if (data === undefined || this.environment === 'client') {
 			return;
 		}
 
@@ -156,6 +180,23 @@ export class HydrationStore {
 	 */
 	remove(componentId: string): void {
 		delete this.store.store[componentId];
+	}
+
+	/**
+	 * Removes hydration data by the specified component ID and path
+	 *
+	 * @param componentId
+	 * @param path
+	 */
+	removeByPath(componentId: string, path: string): void {
+		const
+			key = this.store.store[componentId]![path];
+
+		if (key != null) {
+			delete this.store.data[key];
+		}
+
+		delete this.store.store[componentId]![path];
 	}
 
 	/**

@@ -29,11 +29,17 @@ export default class HydrationCacheAdapter {
 	 */
 	private readonly id: string;
 
-	constructor(store: HydrationStore, cache: Cache, id: string) {
+	/**
+	 * Cache key to save hydrated data
+	 */
+	private readonly cacheKey: string;
+
+	constructor(store: HydrationStore, cache: Cache, id: string, cacheKey: string) {
 		this.store = store;
 		this.cache = cache;
 		this.wrappedCache = Object.create(cache);
 		this.id = id;
+		this.cacheKey = cacheKey;
 
 		this.store.init(this.id);
 	}
@@ -61,17 +67,17 @@ export default class HydrationCacheAdapter {
 	 * @param key
 	 */
 	protected get(key: string): CanUndef<unknown> {
-		const dataInStore = this.store.get(this.id)?.[key];
+		const fromHydrationStore = this.store.getByPath(this.id, this.cacheKey);
 
 		if (!SSR) {
-			this.store.remove(this.id);
+			this.store.removeByPath(this.id, this.cacheKey);
+
+			if (fromHydrationStore != null) {
+				this.cache.set(key, fromHydrationStore);
+			}
 		}
 
-		if (dataInStore != null) {
-			return dataInStore;
-		}
-
-		return this.cache.get(key);
+		return fromHydrationStore ?? this.cache.get(key);
 	}
 
 	/**
@@ -81,7 +87,7 @@ export default class HydrationCacheAdapter {
 	 * @param value
 	 */
 	protected set(key: string, value: unknown): unknown {
-		this.setStore(key, value);
+		this.store.set(this.id, this.cacheKey, Object.cast(value));
 
 		return this.cache.set(key, value);
 	}
@@ -91,22 +97,12 @@ export default class HydrationCacheAdapter {
 	 * @param key
 	 */
 	protected has(key: string): boolean {
-		const dataInStore = this.store.get(this.id)?.[key];
+		const fromHydrationStore = this.store.getByPath(this.id, this.cacheKey);
 
-		if (dataInStore != null) {
+		if (fromHydrationStore != null) {
 			return true;
 		}
 
 		return this.cache.has(key);
-	}
-
-	/**
-	 * Saves the specified value to the hydration store
-	 *
-	 * @param key
-	 * @param value
-	 */
-	protected setStore(key: string, value: unknown): void {
-		this.store.set(this.id, key, Object.cast(value));
 	}
 }

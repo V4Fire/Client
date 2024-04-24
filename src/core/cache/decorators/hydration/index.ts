@@ -16,7 +16,8 @@ import type Cache from 'core/cache/interface';
  * @param store
  * @param cache
  * @param id
+ * @param cacheKey
  */
 export const addHydrationCache =
-	(store: HydrationStore, cache: Cache, id: string): Cache =>
-		new HydrationCacheAdapter(store, cache, id).getInstance();
+	(store: HydrationStore, cache: Cache, id: string, cacheKey: string): Cache =>
+		new HydrationCacheAdapter(store, cache, id, cacheKey).getInstance();
