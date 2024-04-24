@@ -13,6 +13,7 @@
 
 import symbolGenerator from 'core/symbol';
 import { is } from 'core/browser';
+import type { WorkerLikeP } from 'core/async';
 
 import type iBlock from 'components/super/i-block/i-block';
 import type { ModEvent } from 'components/super/i-block/i-block';
@@ -29,11 +30,20 @@ const
 
 export default abstract class iLockPageScroll {
 	/** {@link iLockPageScroll.prototype.lockPageScroll} */
-	static lockPageScroll: AddSelf<iLockPageScroll['lockPageScroll'], iBlock> = (component, scrollableNode?) => {
+	static lockPageScroll: AddSelf<iLockPageScroll['lockPageScroll'], iBlock & iLockPageScroll> = (component, scrollableNode?) => {
 		const {
 			r,
-			r: {unsafe: {async: $a}}
+			r: {unsafe: {async: $a}},
+			unsafe: {async: componentAsync, tmp: componentTmp}
 		} = component;
+
+		componentAsync.worker(
+			<WorkerLikeP>(componentTmp[$$.unlockPageScrollDestructor] ??= () => {
+				component.unlockPageScroll().catch(stderr);
+				delete r[$$.paddingRight];
+				delete r[$$.scrollTop];
+			})
+		);
 
 		if (is.mobile !== false && is.iOS !== false) {
 			iLockPageScroll.initIOSScrollableNodeListeners(component, scrollableNode);
@@ -150,11 +160,8 @@ export default abstract class iLockPageScroll {
 	 * @param component
 	 */
 	static initModEvents<T extends iBlock>(component: T & iLockPageScroll): void {
-		const {
-			r,
-			$async: $a,
-			localEmitter: $e
-		} = component.unsafe;
+		const
+			{localEmitter: $e} = component.unsafe;
 
 		$e.on('block.mod.*.opened.*', (e: ModEvent) => {
 			if (e.type === 'remove' && e.reason !== 'removeMod') {
@@ -162,12 +169,6 @@ export default abstract class iLockPageScroll {
 			}
 
 			void component[e.value === 'false' || e.type === 'remove' ? 'unlockPageScroll' : 'lockPageScroll']();
-		});
-
-		$a.worker(() => {
-			component.unlockPageScroll().catch(stderr);
-			delete r[$$.paddingRight];
-			delete r[$$.scrollTop];
 		});
 	}
 
