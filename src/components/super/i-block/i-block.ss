@@ -32,6 +32,12 @@
 	/** A selector to mount component via teleport or false */
 	- teleport = false
 
+	/** True if the application needs to be built for SSR. */
+	- SSR = require('@config/config').webpack.ssr
+
+	/** The function that returns `true` if the application is in a hydration mode. */
+	- hydration = require('@config/config').webpack.hydration
+
 	/**
 	 * If set to false, the component will generate a special markup to
 	 * allow it to not render during server-side rendering
@@ -280,13 +286,19 @@
 
 								- block bodyFooter
 
-						- block serverSkeleton
+						- block skeleton
+							< template v-if = $slots['skeleton']
+								+= self.slot('skeleton')
 
-						< template v-if = isClientOnly
-							< teleport :to = $el
+						- if SSR || hydration()
+							< template v-if = preventSSRRendering
+								< teleport :to = $el
+									+= self.renderRootContent()
+
+							< template v-else
 								+= self.renderRootContent()
 
-						< template v-else
+						- else
 							+= self.renderRootContent()
 
 - template mono() extends ['i-block'].index

@@ -472,6 +472,32 @@ A selector to mount component via teleport or false.
   - teleport = '#content'
 ```
 
+#### SSR
+
+True if the application needs to be built for SSR.
+
+```
+- namespace [%fileName%]
+- include 'components/super/i-block'|b as placeholder
+- template index() extends ['i-block'].index
+  - block body
+    - if SSR
+       SSR only content
+```
+
+#### hydration
+
+The function that returns `true` if the application is in a hydration mode.
+
+```
+- namespace [%fileName%]
+- include 'components/super/i-block'|b as placeholder
+- template index() extends ['i-block'].index
+  - block body
+    - if hydration()
+      Hydration mode only content
+```
+
 #### [ssrRendering = `true`]
 
 If set to false, the component will generate a special markup to allow it to not render during server-side rendering.
@@ -557,4 +583,71 @@ Applies the `Typograf` library for the specified content and returns the result.
 - template index() extends ['i-block'].index
   - block body
     += self.typograf('Hello "world"')
+```
+
+#### name
+
+Returns the component name.
+
+```
+- namespace [%fileName%]
+
+- include 'components/super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - block body
+    < .${self.name()}
+      Hello World
+```
+
+#### render
+
+Renders the specified content by using the passed options.
+
+```
+- namespace [%fileName%]
+
+- include 'components/super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - block body
+    += self.render({renderKey: 'controls', wait: 'promisifyOnce.bind(null, "needLoad")'})
+      < b-button
+        Hello World
+
+      < b-input
+```
+
+#### getTpl
+
+Returns a link to a template by the specified path.
+
+```
+- namespace [%fileName%]
+
+- include 'components/super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - block body
+    += self.getTpl('b-some-component-template/')
+```
+
+#### loadModules
+
+Loads modules by the specified paths and dynamically inserted the provided content when them are loaded.
+
+```
+- namespace [%fileName%]
+
+- include 'components/super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - block body
+    += self.loadModules('components/form/b-button')
+      < b-button
+        Hello world
+
+    += self.loadModules(['components/form/b-button', 'components/form/b-input'], {renderKey: 'controls', wait: 'promisifyOnce.bind(null, "needLoad")'})
+      < b-button
+        Hello world
 ```
