@@ -20,13 +20,14 @@ const
   hydrationStore = new HydrationStore();
 
 const
-  id = 'uniqueKeyForTheHydration';
+  id = 'uniqueKeyForTheHydration',
+  cacheKey = 'cacheKey';
 
 hydrationStore.init(id);
 hydrationStore.set('foo', { key: 'value' });
 
 const
-  hydrationCache = addHydrationCache(cache, hydrationStore, id);
+  hydrationCache = addHydrationCache(cache, hydrationStore, id, cacheKey);
 
 hydrationCache.get('foo'); // { key: 'value' }
 ```
