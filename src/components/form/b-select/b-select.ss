@@ -52,7 +52,7 @@
 						< template v-if = item
 							< component &
 								:is = Object.isFunction(item) ? item(el, i) : item |
-								:v-attrs = getItemProps(el, i)
+								v-attrs = getItemProps(el, i)
 							.
 
 						< template v-else
