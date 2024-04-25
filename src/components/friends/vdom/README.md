@@ -160,7 +160,22 @@ This function is useful when you want to decompose your component template into 
 
 Please note that the result of `getRenderFn` is in the context of the component from which `vdom` is called.
 This will have implications for the component hierarchy, i.e.,
-the created fragment's `$parent` will be the same as the component that owns vdom.
+the created fragment's `$parent` will be the same as the component that owns vdom except for the `$slots` property.
+If your component uses slots, you should pass the `$slots` property explicitly. Otherwise, the slots within your component will not be rendered.
+
+```
+- namespace [%fileName%]
+
+- include 'components/super/i-static-page/i-static-page.component.ss'|b as placeholder
+
+- template sayHello()
+  < .hello
+    += self.slot('hello')
+
+- template index() extends ['i-static-page.component'].index
+  - block body
+    < .content v-render = vdom.getRenderFn('pV4ComponentsDemo.sayHello')({$slots})
+```
 
 You can explicitly pass through the context of the component that should serve as the basis for the created fragment.
 This is especially important to consider when working with slots.
