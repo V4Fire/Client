@@ -40,8 +40,6 @@ export default class HydrationCacheAdapter {
 		this.wrappedCache = Object.create(cache);
 		this.id = id;
 		this.cacheKey = cacheKey;
-
-		this.store.init(this.id);
 	}
 
 	/**

@@ -6,7 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Provider, { Middlewares, provider } from 'core/data';
+import Provider, { Middlewares, ProviderOptions, provider } from 'core/data';
+import { HydrationStore } from 'core/component';
 
 import { attachHydrationCache } from 'core/data/middlewares/hydration-cache';
 
@@ -22,4 +23,13 @@ export default class HydrationCache extends Provider {
 		...Provider.middlewares,
 		attachHydrationCache
 	};
+
+	public constructor(opts?: ProviderOptions) {
+		// Hydration store saves a data only for the server side
+		if (opts?.remoteState != null) {
+			opts.remoteState.hydrationStore = new HydrationStore('server');
+		}
+
+		super(opts);
+	}
 }
