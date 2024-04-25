@@ -160,7 +160,7 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * Sets a new system locale
 	 */
-	set region(value: Region) {
+	set region(value: CanUndef<Region>) {
 		this.field.set('regionStore', value);
 		setI18NParam('region', value);
 	}
