@@ -17,6 +17,9 @@ test.describe('core/data/middlewares/hydration-cache', () => {
 	let
 		component: JSHandle<bDummy>;
 
+	const
+		response = {message: 'ok'};
+
 	test.beforeEach(async ({page, demoPage}) => {
 		await demoPage.goto();
 
