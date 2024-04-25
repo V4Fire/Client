@@ -96,7 +96,7 @@ export function createImgElement(
 	};
 
 	return {
-		toElement(document = globalThis.document) {
+		toElement: (document = globalThis.document) => {
 			const
 				img = document.createElement('img');
 
@@ -105,7 +105,12 @@ export function createImgElement(
 					Object.assign(img[name], prop);
 
 				} else if (Object.isTruly(prop)) {
-					img[name] = prop;
+					if (Object.isString(prop)) {
+						img.setAttribute(name, prop);
+
+					} else {
+						img[name] = prop;
+					}
 				}
 			});
 
@@ -117,7 +122,7 @@ export function createImgElement(
 			return img;
 		},
 
-		toVNode(create) {
+		toVNode: (create) => {
 			const
 				img: VNode = create('img');
 
@@ -157,7 +162,7 @@ export function createPictureElement(
 	commonParams: ImageOptions = imageParams
 ): VirtualElement<HTMLElement> {
 	return {
-		toElement(document = globalThis.document) {
+		toElement: (document = globalThis.document) => {
 			const
 				picture = document.createElement('picture');
 
@@ -167,7 +172,7 @@ export function createPictureElement(
 			return picture;
 		},
 
-		toVNode(create) {
+		toVNode: (create) => {
 			const
 				picture: VNode = create('picture');
 
@@ -198,7 +203,7 @@ export function createSourceElements(
 	commonParams: ImageOptions = imageParams
 ): VirtualElement<DocumentFragment, []> {
 	return {
-		toElement(document = globalThis.document) {
+		toElement: (document = globalThis.document) => {
 			const
 				fragment = document.createDocumentFragment();
 
@@ -207,15 +212,28 @@ export function createSourceElements(
 			}
 
 			imageParams.sources.forEach((source) => {
-				const node = document.createElement('source');
-				addPropsFromSource(Object.cast(node), source);
+				const
+					node = document.createElement('source'),
+					props = {};
+
+				addPropsFromSource(props, source);
+
+				Object.entries(props).forEach(([name, value]) => {
+					if (Object.isString(value)) {
+						node.setAttribute(name, value);
+
+					} else {
+						node[name] = value;
+					}
+				});
+
 				fragment.appendChild(node);
 			});
 
 			return fragment;
 		},
 
-		toVNode(create) {
+		toVNode: (create) => {
 			const
 				fragment: VNode[] = [];
 

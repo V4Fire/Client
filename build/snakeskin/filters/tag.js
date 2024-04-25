@@ -43,6 +43,10 @@ module.exports = [
 	 * @throws {Error} if the attributes contain invalid values
 	 */
 	function normalizeV4Attrs({tplName, attrs, forceRenderAsVNode}) {
+		if (attrs['class'] && !attrs['class'].join().trim()) {
+			delete attrs['class'];
+		}
+
 		if (webpack.ssr) {
 			delete attrs['v-once'];
 			delete attrs['v-memo'];
