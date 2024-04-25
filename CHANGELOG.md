@@ -11,9 +11,15 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.? (2024-04-25)
+
+#### :bug: Bug Fix
+
+* Fixed ts-config to restore the functionality of linters.
+
 ## v3.72.0 (2024-04-25)
 
-#### 🚀 New Feature
+#### :rocket: New Feature
 
 * Added a new accessor for the current `region` in `i-static-page`.
 
