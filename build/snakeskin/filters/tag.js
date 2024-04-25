@@ -43,20 +43,36 @@ module.exports = [
 	 * @throws {Error} if the attributes contain invalid values
 	 */
 	function normalizeV4Attrs({tplName, attrs, forceRenderAsVNode}) {
+		// Remove empty class attributes
 		if (attrs['class'] && !attrs['class'].join().trim()) {
 			delete attrs['class'];
 		}
 
 		if (webpack.ssr) {
+			// In SSR, these directives are meaningless
 			delete attrs['v-once'];
 			delete attrs['v-memo'];
 
+			// For the v-render directive to work, compilation into an intermediate VDOM is required
 			if (attrs['v-render'] && forceRenderAsVNode === false) {
 				throw new Error(`("${tplName}") To use the \`v-render\` directive with SSR, you need to switch the component to rendering mode in VNODE using the \`forceRenderAsVNode\` constant`);
 			}
+
+			// For SSR, all `:v-attrs` calls should be normalized like a regular directive call
+			if (attrs[':v-attrs']) {
+				attrs['v-attrs'] = attrs[':v-attrs'].slice();
+				delete attrs[':v-attrs'];
+			}
+
+		// To ensure correct functioning on the client side with functional components,
+		// we normalize all calls to the v-attrs directive as props
+		} else if (attrs['v-attrs']) {
+			attrs[':v-attrs'] = attrs['v-attrs'].slice();
+			delete attrs['v-attrs'];
 		}
 
 		Object.forEach(attrs, (attr, key) => {
+			// Ensuring correct functioning of refs inside functional components
 			if (key === 'ref') {
 				const
 					ref = attrs[key][0];
@@ -68,6 +84,7 @@ module.exports = [
 				return;
 			}
 
+			// Ensuring correct functioning of refs inside functional components
 			if (key === ':ref') {
 				const
 					ref = attrs[key];
@@ -78,6 +95,7 @@ module.exports = [
 				return;
 			}
 
+			// For event handler optimization
 			if (
 				key === 'v-on' ||
 				key.startsWith('@') ||
@@ -91,8 +109,8 @@ module.exports = [
 				return;
 			}
 
-			const
-				dataAttrBind = ':-';
+			// Sugar syntax for :data- attributes
+			const dataAttrBind = ':-';
 
 			if (key.startsWith(dataAttrBind)) {
 				attrs[`:data-${key.slice(dataAttrBind.length)}`] = attr;
@@ -100,6 +118,7 @@ module.exports = [
 				return;
 			}
 
+			// All static props of a component should start with `:`
 			if (isStaticV4Prop.test(key)) {
 				const
 					tmp = key.dasherize(key.startsWith(':'));
