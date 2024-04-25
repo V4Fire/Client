@@ -102,5 +102,5 @@ export interface State {
 	 * This field is typically used in cases of SSR and hydration.
 	 * {@link HydrationStore}
 	 */
-	hydrationStore: HydrationStore;
+	hydrationStore?: HydrationStore;
 }
