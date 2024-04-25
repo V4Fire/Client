@@ -3316,6 +3316,7 @@ __metadata:
     "@v4fire/core": "npm:3.99.0"
     "@v4fire/design-system": "npm:1.23.0"
     "@v4fire/linters": "npm:1.9.0"
+    "@v4fire/typescript-check": "npm:1.4.3"
     arg: "npm:5.0.1"
     autoprefixer: "npm:10.4.2"
     browserslist: "npm:4.19.1"
@@ -3731,7 +3732,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@v4fire/typescript-check@npm:1.4.3":
+"@v4fire/typescript-check@npm:1.4.3, @v4fire/typescript-check@npm:^1.4.0":
   version: 1.4.3
   resolution: "@v4fire/typescript-check@npm:1.4.3"
   dependencies:
