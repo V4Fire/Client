@@ -1,5 +1,5 @@
 {
-  "hash": "ff36220f58f3461dcfe70b0dc9e204ac3514c46e11a5b0962eef65d4cc6f16f8",
+  "hash": "c4911bff75c0ca2f3024d9e09335939f8f157e130c83169772f795a60f5658ee",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -838,6 +838,36 @@
             "src/components/base/b-list/b-list.styl"
           ],
           "tpl": "src/components/base/b-list/b-list.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-prevent-ssr",
+        {
+          "index": "src/components/base/b-prevent-ssr/index.js",
+          "declaration": {
+            "name": "b-prevent-ssr",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-prevent-ssr",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/base/b-prevent-ssr/b-prevent-ssr.ts",
+          "styles": [],
+          "tpl": "src/components/base/b-prevent-ssr/b-prevent-ssr.ss",
           "etpl": null
         }
       ],
@@ -2355,6 +2385,7 @@
               "b-router",
               "b-dynamic-page",
               "b-remote-provider",
+              "b-prevent-ssr",
               "b-list",
               "b-tree",
               "b-window",
@@ -2399,6 +2430,7 @@
             "b-router",
             "b-dynamic-page",
             "b-remote-provider",
+            "b-prevent-ssr",
             "b-list",
             "b-tree",
             "b-window",

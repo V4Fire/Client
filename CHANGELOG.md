@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Updated the `ssrRendering` prop usage mechanism `components/super/i-block`
 
+#### :rocket: New Feature
+
+* Added component `components/base/b-prevent-ssr`
+
 #### :bug: Bug Fix
 
 * Set the component's hydration store if only the component is in the context of SSR
