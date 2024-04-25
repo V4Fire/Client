@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.? (2024-04-25)
+
+#### 🚀 New Feature
+
+* Added a new accessor for the current `region` in `i-static-page`.
+
 ## v3.71.0 (2024-04-19)
 
 #### :rocket: New Feature

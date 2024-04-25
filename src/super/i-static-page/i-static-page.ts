@@ -14,7 +14,7 @@
 import symbolGenerator from 'core/symbol';
 
 import { RestrictedCache } from 'core/cache';
-import { setLocale, locale } from 'core/i18n';
+import { setI18NParam, locale, region } from 'core/i18n';
 import { reset, ResetType } from 'core/component';
 
 import type bRouter from 'base/b-router/b-router';
@@ -147,7 +147,22 @@ export default abstract class iStaticPage extends iPage {
 			document.documentElement.setAttribute('lang', value);
 		} catch {}
 
-		setLocale(value);
+		setI18NParam('locale', value);
+	}
+
+	/**
+	 * System region
+	 */
+	get region(): CanUndef<Region> {
+		return this.field.get<CanUndef<Region>>('regionStore');
+	}
+
+	/**
+	 * Sets a new system locale
+	 */
+	set region(value: Region) {
+		this.field.set('regionStore', value);
+		setI18NParam('region', value);
 	}
 
 	/**
@@ -187,7 +202,11 @@ export default abstract class iStaticPage extends iPage {
 		return lang;
 	})
 
-	protected localeStore!: string;
+	protected localeStore!: Language;
+
+	/** @see [[iStaticPage.region]]  */
+	@field()
+	protected regionStore: CanUndef<Region> = region.value;
 
 	/**
 	 * Cache of root modifiers
@@ -324,6 +343,20 @@ export default abstract class iStaticPage extends iPage {
 		}
 
 		this.locale = locale;
+		this.forceUpdate().catch(stderr);
+	}
+
+	/**
+	 * Synchronization of the `regionStore` field
+	 * @param region
+	 */
+	@watch(['regionStore', 'globalEmitter:i18n.setRegion'])
+	protected syncRegionWatcher(region: Region): void {
+		if (this.region === region) {
+			return;
+		}
+
+		this.region = region;
 		this.forceUpdate().catch(stderr);
 	}
 

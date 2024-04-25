@@ -54,4 +54,8 @@ i18n.emitter.on('setLocale', (...args) => {
 	emitter.emit('i18n.setLocale', ...args);
 });
 
+i18n.emitter.on('setRegion', (...args) => {
+	emitter.emit('i18n.setRegion', ...args);
+});
+
 export default emitter;

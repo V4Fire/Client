@@ -188,6 +188,43 @@ module.exports = async (page, params) => {
 			});
 		});
 
+		describe('`region`', () => {
+			it('simple usage', async () => {
+				expect(await root.evaluate((ctx) => Boolean(ctx.region))).toBeTrue();
+
+				expect(
+					await root.evaluate((ctx) => {
+						ctx.region = 'RU';
+						return ctx.region;
+					})
+				).toBe('RU');
+			});
+
+			it('watching for changes', async () => {
+				const scan = await root.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.region = 'RU';
+					ctx.watch('region', (val, oldVal) => {
+						res.push([val, oldVal]);
+					});
+
+					ctx.region = 'US';
+					await ctx.nextTick();
+
+					ctx.region = 'RU';
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					['US', undefined],
+					['RU', 'US']
+				]);
+			});
+		});
+
 		describe('`reset`', () => {
 			it('simple usage', async () => {
 				expect(
