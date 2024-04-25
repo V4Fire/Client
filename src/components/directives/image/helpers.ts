@@ -88,12 +88,12 @@ export function createImgElement(
 			img.setAttribute('data-img', 'failed');
 		},
 
-		style: {
-			opacity: Object.isTruly(imageParams.preview) ? 0 : undefined
-		},
-
 		...optionalAttrs
 	};
+
+	if (Object.isTruly(imageParams.preview)) {
+		Object.assign(attrs, {style: {opacity: 0}});
+	}
 
 	return {
 		toElement: (document = globalThis.document) => {
