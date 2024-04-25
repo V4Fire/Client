@@ -12,7 +12,7 @@ import { Utils } from 'tests/helpers';
 
 import type * as Hydration from 'core/component/hydration';
 
-test.describe.only('core/component/hydration converting to JSON', () => {
+test.describe('core/component/hydration converting to JSON', () => {
 	let
 		hydrationAPI: JSHandle<typeof Hydration>,
 		serverHydrationStore: JSHandle<Hydration.HydrationStore>;
