@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.? (2024-04-25)
+
+#### 🚀 New Feature
+
+* Added a new accessor for the current `region` in `i-static-page`.
+
 ## v3.33.0 (2022-12-28)
 
 #### :rocket: New Feature
