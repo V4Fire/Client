@@ -162,7 +162,8 @@
     "webpack": "^5.76.2"
   },
   "resolutions": {
-    "sharp": "0.31.3"
+    "sharp": "0.31.3",
+    "@v4fire/typescript-check": "1.4.3"
   },
   "packageManager": "yarn@4.0.2"
 }
