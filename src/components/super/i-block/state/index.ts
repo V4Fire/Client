@@ -62,12 +62,10 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * True if the component should not render it's content during server-side rendering,
-	 * and it is in the context of SSR/hydration now
+	 * If true, the component will render it's content during SSR
 	 */
-	get preventSSRRendering(): boolean {
-		return this.isRelatedToSSR && !this.ssrRendering;
-	}
+	@field((o) => o.sync.link())
+	protected ssrRendering!: boolean;
 
 	/**
 	 * A link to an application state object located in `core/component/client-state`.
@@ -530,5 +528,17 @@ export default abstract class iBlockState extends iBlockMods {
 	 */
 	protected beforeDestroy(): void {
 		this.componentStatus = 'destroyed';
+	}
+
+	/**
+	 * Allows the content rendering if the component is in a hydration context
+	 */
+	@hook('mounted')
+	protected async shouldRenderOnHydration(): Promise<void> {
+		if (HYDRATION) {
+			await this.async.nextTick();
+
+			this.ssrRendering = true;
+		}
 	}
 }

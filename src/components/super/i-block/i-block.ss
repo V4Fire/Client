@@ -33,10 +33,10 @@
 	- teleport = false
 
 	/** True if the application needs to be built for SSR. */
-	- SSR = require('@config/config').webpack.ssr
+	: SSR = require('@config/config').webpack.ssr
 
-	/** The function that returns `true` if the application is in a hydration mode. */
-	- hydration = require('@config/config').webpack.hydration
+	/** True if the application is in a hydration context. */
+	: hydration = require('@config/config').webpack.hydration()
 
 	/**
 	 * If set to false, the component will generate a special markup to
@@ -290,12 +290,8 @@
 							< template v-if = $slots['skeleton']
 								+= self.slot('skeleton')
 
-						- if SSR || hydration()
-							< template v-if = preventSSRRendering
-								< teleport :to = $el
-									+= self.renderRootContent()
-
-							< template v-else
+						- if SSR || hydration
+							< template v-if = ssrRendering
 								+= self.renderRootContent()
 
 						- else

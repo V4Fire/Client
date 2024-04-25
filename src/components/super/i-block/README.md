@@ -487,15 +487,15 @@ True if the application needs to be built for SSR.
 
 #### hydration
 
-The function that returns `true` if the application is in a hydration mode.
+True if the application is in a hydration context.
 
 ```
 - namespace [%fileName%]
 - include 'components/super/i-block'|b as placeholder
 - template index() extends ['i-block'].index
   - block body
-    - if hydration()
-      Hydration mode only content
+    - if hydration
+      Hydration context only content
 ```
 
 #### [ssrRendering = `true`]
