@@ -181,7 +181,8 @@ class bExample extends iBlock {
 
 ### [ssrRendering = `true`]
 
-If set to false, the component will not render its content during server-side rendering.
+If set to false, the component will not render it's content during server-side rendering.
+This should be used with non-functional components. If you need to disable the rendering of a functional component in server-side rendering, use a wrapper component `components/base/b-prevent-ssr`.
 
 ### [wait]
 
