@@ -11,6 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+
+## v4.0.0-beta.?? (2024-04-??)
+
+#### :bug: Bug Fix
+
+* Renamed `bRouterProps` to `iRouterProps`. The incorrect name had caused infinite
+retries to load a non-existent template.
+
 ## v4.0.0-beta.94 (2024-04-24)
 
 #### :bug: Bug Fix
