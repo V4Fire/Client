@@ -7,17 +7,17 @@
  */
 
 /**
- * [[include:core/component/hydration/README.md]]
+ * [[include:core/hydration-store/README.md]]
  * @packageDocumentation
  */
 
 import { expandedStringify, expandedParse } from 'core/json';
 
-import { styles, emptyDataStoreKey } from 'core/component/hydration/const';
-import type { Store, HydratedData, HydratedValue, Environment } from 'core/component/hydration/interface';
+import { styles, emptyDataStoreKey } from 'core/hydration-store/const';
+import type { Store, HydratedData, HydratedValue, Environment } from 'core/hydration-store/interface';
 
-export * from 'core/component/hydration/const';
-export * from 'core/component/hydration/interface';
+export * from 'core/hydration-store/const';
+export * from 'core/hydration-store/interface';
 
 export class HydrationStore {
 	/**

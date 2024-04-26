@@ -13,7 +13,7 @@ The hydration store value will be deleted after the first get operation. After t
 import { addHydrationCache } from 'core/cache/decorators/hydration';
 
 import SimpleCache from 'core/cache/simple';
-import { HydrationStore } from 'core/component';
+import { HydrationStore } from 'core/hydration-store';
 
 const
   cache = new SimpleCache(),

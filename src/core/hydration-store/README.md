@@ -1,9 +1,9 @@
-# core/component/hydration
+# core/hydration-store
 
 This module offers an API to store hydrated component data.
 
 ```js
-import { HydrationStore } from 'core/component';
+import { HydrationStore } from 'core/hydration-store';
 
 const hydrationStore = new HydrationStore();
 

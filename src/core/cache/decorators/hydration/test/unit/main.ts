@@ -13,7 +13,7 @@ import { Utils } from 'tests/helpers';
 
 import type * as Cache from 'core/cache';
 import type * as Decorator from 'core/cache/decorators/hydration';
-import type * as Hydration from 'core/component/hydration';
+import type * as Hydration from 'core/hydration-store';
 
 test.describe('core/cache/decorators/hydration', () => {
 	let
@@ -31,7 +31,7 @@ test.describe('core/cache/decorators/hydration', () => {
 		await demoPage.goto();
 
 		const cacheAPI = await Utils.import<typeof Cache>(page, './node_modules/@v4fire/core/src/core/cache');
-		const hydrationAPI = await Utils.import<typeof Hydration>(page, 'core/component/hydration');
+		const hydrationAPI = await Utils.import<typeof Hydration>(page, 'core/hydration-store');
 		const decoratorAPI = await Utils.import<typeof Decorator>(page, 'core/cache/decorators/hydration');
 
 		cache = await cacheAPI.evaluateHandle((ctx) => new ctx.Cache());
