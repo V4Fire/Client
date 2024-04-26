@@ -10,7 +10,7 @@ import type { JSHandle, Page } from 'playwright';
 import test from 'tests/config/unit/test';
 import { Utils } from 'tests/helpers';
 
-import type * as Hydration from 'core/component/hydration';
+import type * as Hydration from 'core/hydration-store';
 
 test.describe('core/component/hydration converting to JSON', () => {
 	let
@@ -20,7 +20,7 @@ test.describe('core/component/hydration converting to JSON', () => {
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 
-		hydrationAPI = await Utils.import<typeof Hydration>(page, 'core/component/hydration');
+		hydrationAPI = await Utils.import<typeof Hydration>(page, 'core/hydration-store');
 		serverHydrationStore = await hydrationAPI.evaluateHandle((ctx) => new ctx.HydrationStore('server'));
 	});
 
@@ -34,7 +34,7 @@ test.describe('core/component/hydration converting to JSON', () => {
 		const valueById = await clientHydrationStore.evaluate((ctx) => ctx.get('componentId'));
 		await test.expect(valueById).toEqual({foo: {bar: 'baz'}});
 
-		const valueByPath = await clientHydrationStore.evaluate((ctx) => ctx.getByPath('componentId', 'foo'));
+		const valueByPath = await clientHydrationStore.evaluate((ctx) => ctx.get('componentId', 'foo'));
 		await test.expect(valueByPath).toEqual({bar: 'baz'});
 	});
 
@@ -54,13 +54,13 @@ test.describe('core/component/hydration converting to JSON', () => {
 	test('should remove value from the JSON store when it is removed by path from the store', async ({page}) => {
 		await serverHydrationStore.evaluate((ctx) => ctx.set('componentId', 'foo', {bar: 'baz'}));
 
-		await serverHydrationStore.evaluate((ctx) => ctx.removeByPath('componentId', 'foo'));
+		await serverHydrationStore.evaluate((ctx) => ctx.remove('componentId', 'foo'));
 
 		await appendJSONToDOM(page);
 
 		const clientHydrationStore = await hydrationAPI.evaluateHandle((ctx) => new ctx.HydrationStore('client'));
 
-		const valueByPath = await clientHydrationStore.evaluate((ctx) => ctx.getByPath('componentId', 'foo'));
+		const valueByPath = await clientHydrationStore.evaluate((ctx) => ctx.get('componentId', 'foo'));
 		await test.expect(valueByPath).toBeUndefined();
 	});
 
@@ -85,7 +85,7 @@ test.describe('core/component/hydration converting to JSON', () => {
 
 		const clientHydrationStore = await hydrationAPI.evaluateHandle((ctx) => new ctx.HydrationStore('client'));
 
-		const valueByPath = await clientHydrationStore.evaluate((ctx) => ctx.getByPath('componentId', 'foo'));
+		const valueByPath = await clientHydrationStore.evaluate((ctx) => ctx.get('componentId', 'foo'));
 		await test.expect(valueByPath).toBeUndefined();
 	});
 
