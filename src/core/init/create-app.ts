@@ -72,12 +72,12 @@ export async function createApp(
 
 		try {
 			ssrContent = (await renderToString(app)).replace(/<\/?ssr-fragment>/g, '');
-			hydratedData = `<noframes id="hydration-store" style="display: none">${state.hydrationStore!.toString()}</noframes>`;
+			hydratedData = `<noframes id="hydration-store" style="display: none">${state.hydrationStore.toString()}</noframes>`;
 
 			return {
 				state,
 				content: ssrContent + hydratedData,
-				styles: (await Promise.all(state.hydrationStore!.styles.values())).map((i) => i.default).join('')
+				styles: (await Promise.all(state.hydrationStore.styles.values())).map((i) => i.default).join('')
 			};
 
 		} finally {

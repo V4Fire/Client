@@ -3,7 +3,9 @@
 This module offers an API to store hydrated component data.
 
 ```js
-import { hydrationStore } from 'core/component';
+import { HydrationStore } from 'core/component';
+
+const hydrationStore = new HydrationStore();
 
 const myComponentId = 'u42';
 

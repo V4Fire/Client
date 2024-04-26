@@ -71,8 +71,10 @@ export default abstract class iBlockProviders extends iBlockState {
 	 */
 	@hook('after:beforeDataCreate')
 	initLoad(data?: unknown | InitLoadCb, opts: InitLoadOptions = {}): CanPromise<void> {
+		const {hydrationStore} = this.remoteState;
+
 		if (SSR) {
-			this.remoteState.hydrationStore!.init(this.componentId);
+			hydrationStore.init(this.componentId);
 		}
 
 		const
@@ -86,10 +88,10 @@ export default abstract class iBlockProviders extends iBlockState {
 
 		const hydrationMode =
 			HYDRATION &&
-			this.remoteState.hydrationStore!.has(this.componentId);
+			hydrationStore.has(this.componentId);
 
 		if (hydrationMode) {
-			this.state.set(this.remoteState.hydrationStore!.get(this.componentId));
+			this.state.set(hydrationStore.get(this.componentId));
 			Promise.resolve(this.state.initFromStorage()).catch(stderr);
 
 			done();
@@ -354,7 +356,7 @@ export default abstract class iBlockProviders extends iBlockState {
 	 */
 	@hook('mounted')
 	protected clearComponentHydratedData(): void {
-		this.remoteState.hydrationStore?.remove(this.componentId);
+		this.remoteState.hydrationStore.remove(this.componentId);
 	}
 
 	protected override initBaseAPI(): void {

@@ -15,10 +15,10 @@ import type { Cookies } from 'core/cookies';
 import type { Experiments } from 'core/abt';
 import type { InitialRoute, AppliedRoute } from 'core/router';
 
-import type { HydrationStore } from 'core/component';
-
 import type ThemeManager from 'core/theme-manager';
 import type PageMetaData from 'core/page-meta-data';
+
+import type { HydrationStore } from 'core/component/hydration';
 
 export interface State {
 	/**
@@ -57,6 +57,12 @@ export interface State {
 	pageMetaData: PageMetaData;
 
 	/**
+	 * A storage for hydrated data.
+	 * During SSR, data is saved in this storage and then restored from it on the client.
+	 */
+	hydrationStore: HydrationStore;
+
+	/**
 	 * True, if the application is connected to the Internet
 	 */
 	isOnline?: boolean;
@@ -89,10 +95,4 @@ export interface State {
 
 	/** {@link Async} */
 	async: Async;
-
-	/**
-	 * This field is typically used in cases of SSR and hydration.
-	 * {@link HydrationStore}
-	 */
-	hydrationStore?: HydrationStore;
 }

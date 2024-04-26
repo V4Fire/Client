@@ -69,7 +69,8 @@ export default abstract class iData extends iDataHandlers {
 		}
 
 		const {
-			async: $a
+			async: $a,
+			remoteState: {hydrationStore}
 		} = this;
 
 		const label = <AsyncOptions>{
@@ -77,8 +78,7 @@ export default abstract class iData extends iDataHandlers {
 			join: 'replace'
 		};
 
-		const
-			callSuper = () => super.initLoad(() => this.db, opts);
+		const callSuper = () => super.initLoad(() => this.db, opts);
 
 		try {
 			if (opts.emitStartEvent !== false) {
@@ -96,10 +96,10 @@ export default abstract class iData extends iDataHandlers {
 				this.saveDataToRootStore(data);
 
 				if (data !== undefined) {
-					this.hydrationStore?.set(this.componentId, providerHydrationKey, Object.cast(data));
+					hydrationStore.set(this.componentId, providerHydrationKey, Object.cast(data));
 
 				} else {
-					this.hydrationStore?.setEmpty(this.componentId, providerHydrationKey);
+					hydrationStore.setEmpty(this.componentId, providerHydrationKey);
 				}
 
 				this.db = this.convertDataToDB<this['DB']>(data);
@@ -111,7 +111,7 @@ export default abstract class iData extends iDataHandlers {
 
 			if (this.canUseHydratedData) {
 				const
-					store = this.remoteState.hydrationStore!.get(this.componentId),
+					store = hydrationStore.get(this.componentId),
 					data = Object.cast<CanUndef<this['DB']>>(store?.[providerHydrationKey]);
 
 				if (store != null) {

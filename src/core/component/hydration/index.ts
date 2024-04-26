@@ -112,6 +112,10 @@ export class HydrationStore {
 	 * @param componentId
 	 */
 	init(componentId: string): void {
+		if (!SSR) {
+			return;
+		}
+
 		this.store.store[componentId] ??= Object.createDict();
 	}
 
