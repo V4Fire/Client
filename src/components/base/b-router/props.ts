@@ -15,7 +15,7 @@ import type { StaticRoutes, RouteOption } from 'components/base/b-router/interfa
 import type bRouter from 'components/base/b-router/b-router';
 
 @component()
-export default class bRouterProps extends iData {
+export default class iRouterProps extends iData {
 	/**
 	 * Type: page parameters
 	 */
