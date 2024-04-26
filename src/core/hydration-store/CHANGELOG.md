@@ -20,6 +20,10 @@ Changelog
 * Added the ability to set the current environment in the hydration store
 * Added getting and removing the hydration store value by path
 
+#### :house: Internal
+
+* Incremental serialization of the hydration store
+
 ## v4.0.0-beta.43 (2023-11-26)
 
 #### :rocket: New Feature
