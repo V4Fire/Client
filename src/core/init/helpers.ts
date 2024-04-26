@@ -18,8 +18,7 @@ import HydrationStore from 'core/hydration-store';
 import * as net from 'core/net';
 import * as cookies from 'core/cookies';
 
-import { HydrationStore } from 'core/component';
-import type { State } from 'core/component';
+import { HydrationStore, State } from 'core/component';
 import type { InitAppOptions, CreateAppOptions } from 'core/init/interface';
 
 /**
