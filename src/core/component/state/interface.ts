@@ -15,8 +15,6 @@ import type { Cookies } from 'core/cookies';
 import type { Experiments } from 'core/abt';
 import type { InitialRoute, AppliedRoute } from 'core/router';
 
-import type { HydrationStore } from 'core/component';
-
 import type ThemeManager from 'core/theme-manager';
 import type PageMetaData from 'core/page-meta-data';
 
@@ -97,10 +95,4 @@ export interface State {
 
 	/** {@link Async} */
 	async: Async;
-
-	/**
-	 * This field is typically used in cases of SSR and hydration.
-	 * {@link HydrationStore}
-	 */
-	hydrationStore?: HydrationStore;
 }
