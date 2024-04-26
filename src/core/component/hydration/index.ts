@@ -105,29 +105,31 @@ export class HydrationStore {
 	}
 
 	/**
-	 * Returns the hydrated data for the component associated with the given ID
+	 * Retrieves the hydrated data for the component associated with the given ID.
+	 * If a path is provided, it retrieves the hydrated value at the given path.
+	 *
 	 * @param componentId
+	 * @param [path]
 	 */
-	get(componentId: string): CanUndef<HydratedData> {
+	get(componentId: string): CanUndef<HydratedData>;
+	get(componentId: string, path: string): CanUndef<HydratedValue>;
+	get(componentId: string, path?: string): CanUndef<HydratedData | HydratedValue> {
 		const
 			data = this.store.store[componentId];
 
-		if (data != null) {
+		if (data == null) {
+			return;
+		}
+
+		if (path == null) {
 			return Object.fromEntries(
 				Object.entries(data).map(([key, value]) => [key, this.store.data[value!]])
 			);
-		}
-	}
 
-	/**
-	 * Returns the hydrated data for the specified component ID and path
-	 *
-	 * @param componentId
-	 * @param path
-	 */
-	getByPath(componentId: string, path: string): CanUndef<HydratedValue> {
+		}
+
 		const
-			key = this.store.store[componentId]?.[path];
+			key = data[path];
 
 		if (key != null) {
 			return this.store.data[key];
@@ -178,20 +180,18 @@ export class HydrationStore {
 	}
 
 	/**
-	 * Removes hydration data by the specified component ID
-	 * @param componentId
-	 */
-	remove(componentId: string): void {
-		delete this.store.store[componentId];
-	}
-
-	/**
-	 * Removes hydration data by the specified component ID and path
+	 * Removes hydration data by the specified component ID.
+	 * If a path is provided, it removes the hydrated value at the given path.
 	 *
 	 * @param componentId
-	 * @param path
+	 * @param [path]
 	 */
-	removeByPath(componentId: string, path: string): void {
+	remove(componentId: string, path?: string): void {
+		if (path == null) {
+			delete this.store.store[componentId];
+			return;
+		}
+
 		const
 			key = this.store.store[componentId]![path];
 

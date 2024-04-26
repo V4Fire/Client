@@ -51,7 +51,7 @@ test.describe('core/cache/decorators/hydration', () => {
 		await decorator.evaluate((ctx, key) => ctx.set(key, 'foo'), serverCacheKey);
 
 		const data = await hydrationStore.evaluate(
-			(ctx, [id, key]) => ctx.getByPath(id, key),
+			(ctx, [id, key]) => ctx.get(id, key),
 			[hydrationId, hydrationCacheKey]
 		);
 
