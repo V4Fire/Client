@@ -34,7 +34,7 @@ import {
 
 import type { StaticRoutes, TransitionMethod, UnsafeBRouter } from 'components/base/b-router/interface';
 
-import bRouterProps from 'components/base/b-router/props';
+import iRouterProps from 'components/base/b-router/props';
 import Transition from 'components/base/b-router/modules/transition';
 
 import * as on from 'components/base/b-router/modules/handlers';
@@ -51,7 +51,7 @@ const
 	$$ = symbolGenerator();
 
 @component()
-export default class bRouter extends bRouterProps {
+export default class bRouter extends iRouterProps {
 	public override async!: Async<this>;
 
 	/**
