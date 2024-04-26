@@ -41,7 +41,7 @@ test.describe('core/data/middlewares/hydration-cache', () => {
 
 			const {provider} = ctx.dataProvider;
 
-			return provider.params.remoteState?.hydrationStore?.get(provider.cacheId);
+			return provider.params.remoteState?.hydrationStore.get(provider.cacheId);
 		});
 
 		await test.expect(Object.values(response)[0]).toEqual({message: 'ok'});
