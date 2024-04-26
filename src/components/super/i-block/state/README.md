@@ -382,6 +382,14 @@ This can affect the "back" navigation logic. Sometimes this behavior does not me
 But if we switch `syncRouterStoreOnInit` to true, the component will force its state to be synchronized with
 the router after initialization.
 
+### Fields
+
+#### ssrRendering
+
+If true, the component will render its content during SSR.
+The parameter is linked to the `ssrRenderingProp` prop. If the `ssrRenderingProp` is set to `false` and
+the component is in a hydration context, the parameter will be set to `true` after the component has been mounted.
+
 ### Getters
 
 #### hook
@@ -392,11 +400,6 @@ For instance, `created`, `mounted` or `destroyed`.
 #### isRelatedToSSR
 
 True if the component is in the context of SSR or hydration.
-
-#### preventSSRRendering
-
-True if the component should not render it's content during server-side rendering, and it is in the context of SSR/hydration now.
-This getter is used to hide the component's content behind the teleport during server-side rendering (SSR), also it can be used to display a skeleton placeholder instead of the actual component's content during SSR.
 
 #### remoteState
 
