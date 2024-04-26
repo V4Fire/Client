@@ -19,7 +19,7 @@ import type ThemeManager from 'core/theme-manager';
 import type PageMetaData from 'core/page-meta-data';
 import type HydrationStore from 'core/hydration-store';
 
-import type { HydrationStore } from 'core/component/hydration';
+import type { HydrationStore } from 'core/hydration-store';
 
 export interface State {
 	/**
