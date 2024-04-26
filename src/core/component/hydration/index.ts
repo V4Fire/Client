@@ -125,7 +125,7 @@ export class HydrationStore {
 	 * @param componentId
 	 */
 	init(componentId: string): void {
-		if (!SSR) {
+		if (this.environment === 'client') {
 			return;
 		}
 
