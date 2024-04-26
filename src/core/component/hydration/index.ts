@@ -40,6 +40,9 @@ export class HydrationStore {
 	 */
 	protected readonly environment: Environment = SSR ? 'server' : 'client';
 
+	/**
+	 * @param environment - the current environment
+	 */
 	constructor(environment?: Environment) {
 		if (environment != null) {
 			this.environment = environment;
