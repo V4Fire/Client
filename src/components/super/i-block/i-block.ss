@@ -36,7 +36,7 @@
 	: SSR = require('@config/config').webpack.ssr
 
 	/** True if the application is in a hydration context. */
-	: hydration = require('@config/config').webpack.hydration()
+	: HYDRATION = require('@config/config').webpack.hydration()
 
 	/**
 	 * If set to false, the component will generate a special markup to
@@ -290,7 +290,7 @@
 							< template v-if = $slots['skeleton']
 								+= self.slot('skeleton')
 
-						- if SSR || hydration
+						- if SSR || HYDRATION
 							< template v-if = ssrRendering
 								+= self.renderRootContent()
 
