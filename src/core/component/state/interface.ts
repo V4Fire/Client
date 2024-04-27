@@ -19,10 +19,6 @@ import type ThemeManager from 'core/theme-manager';
 import type PageMetaData from 'core/page-meta-data';
 import type HydrationStore from 'core/hydration-store';
 
-import type { HydrationStore } from 'core/hydration-store';
-
-import type { HydrationStore } from 'core/hydration-store';
-
 export interface State {
 	/**
 	 * The unique identifier for the application process

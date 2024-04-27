@@ -7,7 +7,7 @@
  */
 
 import Provider, { Middlewares, ProviderOptions, provider } from 'core/data';
-import { HydrationStore } from 'core/hydration-store';
+import HydrationStore from 'core/hydration-store';
 
 import { attachHydrationCache } from 'core/data/middlewares/hydration-cache';
 
