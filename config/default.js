@@ -924,8 +924,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		const client = this.extend({}, server, {
 			configFile,
 			compilerOptions: {
-				module: this.webpack.ssr ? 'commonjs' : module
+				module,
+				target: 'esnext'
 			}
+		});
+
+		this.extend(server.compilerOptions, {
+			module: 'commonjs',
+			target: 'esnext'
 		});
 
 		return {

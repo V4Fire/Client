@@ -30,34 +30,21 @@ const
 module.exports = function jsRules() {
 	return {
 		test: isJsFile,
-		oneOf: [
+		exclude: isExternalDep,
+		use: [
 			{
-				exclude: isExternalDep,
-				use: [
-					{
-						loader: 'swc-loader',
-						options: swcOptions.js
-					},
-					{
-						loader: 'monic-loader',
-						options: inherit(monic.javascript, {
-							replacers: [
-								include('build/monic/require-context'),
-								include('build/monic/super-import'),
-								include('build/monic/dynamic-component-import')
-							]
-						})
-					}
-				]
+				loader: 'swc-loader',
+				options: swcOptions.js
 			},
 			{
-				exclude: /\/node_modules\/core-js\//,
-				use: [
-					{
-						loader: 'swc-loader',
-						options: swcOptions.js
-					}
-				]
+				loader: 'monic-loader',
+				options: inherit(monic.javascript, {
+					replacers: [
+						include('build/monic/require-context'),
+						include('build/monic/super-import'),
+						include('build/monic/dynamic-component-import')
+					]
+				})
 			}
 		]
 	};
