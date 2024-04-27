@@ -21,18 +21,14 @@ test.describe('core/data/middlewares/hydration-cache', () => {
 		await demoPage.goto();
 
 		const provider = new RequestInterceptor(page, /api/);
+
 		provider.response(200, {message: 'ok'});
 		await provider.start();
 
-		component = await Component.createComponent(
-			page,
-			'b-dummy',
-
-			{
-				'data-id': 'target',
-				dataProvider: 'test.HydrationCache'
-			}
-		);
+		component = await Component.createComponent(page, 'b-dummy', {
+			'data-id': 'target',
+			dataProvider: 'test.HydrationCache'
+		});
 
 		await Component.waitForComponentStatus(page, '[data-id="target"]', 'ready');
 	});

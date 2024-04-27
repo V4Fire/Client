@@ -1,11 +1,12 @@
 # core/cache/decorators/hydration
 
-This module provides the decorator that allows to use the data from the hydration store in a cache.
+This module provides a decorator that enables data from the hydration store to be integrated with a cache structure.
 
 ## How it works
 
-The decorator creates a cache wrapper that uses the data from the hydration store to get the initial data.
-The hydration store value will be deleted after the first get operation. After that, the cache will work as usual.
+The decorator creates a caching wrapper that retrieves initial data from the hydration store.
+After the first retrieval, the data in the hydration store is deleted.
+Subsequently, the cache operates as usual.
 
 ## Usage
 
@@ -24,12 +25,12 @@ const
   cacheKey = 'cacheKey';
 
 hydrationStore.init(id);
-hydrationStore.set('foo', { key: 'value' });
+hydrationStore.set('foo', {key: 'value'});
 
 const
   hydrationCache = addHydrationCache(cache, hydrationStore, id, cacheKey);
 
-hydrationCache.get('foo'); // { key: 'value' }
+hydrationCache.get('foo'); // {key: 'value'}
 ```
 
 

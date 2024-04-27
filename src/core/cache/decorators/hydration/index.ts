@@ -12,7 +12,7 @@ import type Cache from 'core/cache/interface';
 import HydrationCacheAdapter from 'core/cache/decorators/hydration/adapter';
 
 /**
- * Wraps the specified cache with the hydration adapter
+ * Wraps the specified cache using the hydration adapter
  *
  * @param store
  * @param cache

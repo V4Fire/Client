@@ -7,5 +7,4 @@
  */
 
 export * from '@v4fire/core/core/data/middlewares';
-
-export { attachHydrationCache } from 'core/data/middlewares/hydration-cache';
+export * from 'core/data/middlewares/hydration-cache';

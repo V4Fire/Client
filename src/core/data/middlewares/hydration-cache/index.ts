@@ -6,9 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type Provider from 'core/data';
 import type { MiddlewareParams } from 'core/request';
 
-import type Provider from 'core/data';
+// @ts-ignore (vue/webstorm)
 import { addHydrationCache } from 'core/cache/decorators/hydration';
 
 /**

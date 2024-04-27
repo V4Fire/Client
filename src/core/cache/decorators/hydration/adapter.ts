@@ -11,30 +11,37 @@ import type Cache from 'core/cache/interface';
 
 export default class HydrationCacheAdapter {
 	/**
-	 * Storage to save hydrated data
+	 * A storage for saving hydrated data
 	 */
-	private readonly store: HydrationStore;
+	protected readonly store: HydrationStore;
 
 	/**
-	 * Original cache object
+	 * The original cache object
 	 */
-	private readonly cache: Cache;
+	protected readonly cache: Cache;
 
 	/**
-	 * Wrapped cache object
+	 * The wrapped cache object
 	 */
-	private readonly wrappedCache: Cache;
+	protected readonly wrappedCache: Cache;
 
 	/**
-	 * Unique identifier of the hydration store
+	 * The unique identifier of the hydration store
 	 */
-	private readonly id: string;
+	protected readonly id: string;
 
 	/**
 	 * Cache key to save hydrated data
 	 */
-	private readonly cacheKey: string;
+	protected readonly cacheKey: string;
 
+	/**
+	 *
+	 * @param store
+	 * @param cache
+	 * @param id
+	 * @param cacheKey
+	 */
 	constructor(store: HydrationStore, cache: Cache, id: string, cacheKey: string) {
 		this.store = store;
 		this.cache = cache;

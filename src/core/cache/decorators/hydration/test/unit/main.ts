@@ -12,13 +12,15 @@ import test from 'tests/config/unit/test';
 import { Utils } from 'tests/helpers';
 
 import type * as Cache from 'core/cache';
+
+// @ts-ignore (vue)
 import type * as Decorator from 'core/cache/decorators/hydration';
-import type * as Hydration from 'core/hydration-store';
+import type * as HydrationStore from 'core/hydration-store';
 
 test.describe('core/cache/decorators/hydration', () => {
 	let
 		cache: JSHandle<Cache.Cache>,
-		hydrationStore: JSHandle<Hydration.HydrationStore>,
+		hydrationStore: JSHandle<HydrationStore.default>,
 		decorator: JSHandle<ReturnType<typeof Decorator['addHydrationCache']>>;
 
 	const
@@ -31,13 +33,13 @@ test.describe('core/cache/decorators/hydration', () => {
 		await demoPage.goto();
 
 		const cacheAPI = await Utils.import<typeof Cache>(page, './node_modules/@v4fire/core/src/core/cache');
-		const hydrationAPI = await Utils.import<typeof Hydration>(page, 'core/hydration-store');
+		const hydrationAPI = await Utils.import<typeof HydrationStore>(page, 'core/hydration-store');
 		const decoratorAPI = await Utils.import<typeof Decorator>(page, 'core/cache/decorators/hydration');
 
 		cache = await cacheAPI.evaluateHandle((ctx) => new ctx.Cache());
 
 		// We are imitating the server-side hydration
-		hydrationStore = await hydrationAPI.evaluateHandle((ctx) => new ctx.HydrationStore('server'));
+		hydrationStore = await hydrationAPI.evaluateHandle(({default: HydrationStore}) => new HydrationStore('server'));
 
 		decorator = await decoratorAPI.evaluateHandle(
 			(ctx, [cache, hydrationStore, cacheId, requestKey]) =>

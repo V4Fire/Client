@@ -1,6 +1,6 @@
 # core/data/middlewares/hydration-cache
 
-This module provides the middleware that allows to use the data from the hydration store in a cache.
+This module provides middleware that enables the use of data from the hydration store in a cache.
 It uses the [core/cache/decorators/hydration](../../../cache/decorators/hydration/README.md) module to achieve this.
 
 ## Usage
@@ -20,4 +20,3 @@ class Provider extends Super {
   ];
 }
 ```
-
