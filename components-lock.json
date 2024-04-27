@@ -1,5 +1,5 @@
 {
-  "hash": "7701f2b2b8ecc8701eb277ab4d83f312c0254828961e8e02aaebad028a50c070",
+  "hash": "6c0366fe51c6f28a7d6b2183ef42f089f4acdc31af82572c494d38b316d30cbe",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2462,7 +2462,7 @@
               "core/cookies",
               "core/html",
               "models/modules/session",
-              "models/hydration"
+              "core/data/middlewares/hydration-cache/test/provider"
             ]
           },
           "name": "p-v4-components-demo",
@@ -2507,7 +2507,7 @@
             "core/cookies",
             "core/html",
             "models/modules/session",
-            "models/hydration"
+            "core/data/middlewares/hydration-cache/test/provider"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
@@ -2520,10 +2520,10 @@
               "components/traits/i-control-list/i-control-list",
               "core/browser",
               "core/cookies",
+              "core/data/middlewares/hydration-cache/test/provider",
               "core/html",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
-              "models/hydration",
               "models/modules/session"
             ]
           },
@@ -2538,10 +2538,10 @@
               "components/traits/i-control-list/i-control-list",
               "core/browser",
               "core/cookies",
+              "core/data/middlewares/hydration-cache/test/provider",
               "core/html",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
-              "models/hydration",
               "models/modules/session"
             ]
           },

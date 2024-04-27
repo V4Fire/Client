@@ -43,7 +43,10 @@ test.describe('core/cache/decorators/hydration', () => {
 
 		decorator = await decoratorAPI.evaluateHandle(
 			(ctx, [cache, hydrationStore, cacheId, requestKey]) =>
-				ctx.addHydrationCache(hydrationStore, cache, cacheId, requestKey),
+				ctx.addHydrationCache(cache, hydrationStore, {
+					id: cacheId,
+					cacheKey: requestKey
+				}),
 
 			<const>[cache, hydrationStore, hydrationId, hydrationCacheKey]
 		);

@@ -14,7 +14,23 @@ import { addHydrationCache } from 'core/cache/decorators/hydration';
 
 /**
  * Attaches a hydration cache to the specified context
+ *
  * @param params
+ *
+ * @example
+ * ```typescript
+ * import { attachHydrationCache } from 'core/data/middlewares/hydration-cache';
+ *
+ * import Super, { provider, ProviderOptions, Middlewares } from 'core/data';
+ *
+ * @provider
+ * class Provider extends Super {
+ *   static override readonly middlewares: Middlewares = [
+ *     ...Super.middlewares,
+ *     attachHydrationCache
+ *   ];
+ * }
+ * ```
  */
 export function attachHydrationCache(this: Provider, params: MiddlewareParams): void {
 	const
@@ -38,10 +54,13 @@ export function attachHydrationCache(this: Provider, params: MiddlewareParams): 
 		});
 
 		const withHydrationCache = addHydrationCache(
-			this.params.remoteState.hydrationStore,
 			cache,
-			this.cacheId,
-			cacheKey
+			this.params.remoteState.hydrationStore,
+
+			{
+				id: this.cacheId,
+				cacheKey
+			}
 		);
 
 		Object.set(ctx, 'cache', withHydrationCache);

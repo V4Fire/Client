@@ -57,5 +57,5 @@ package('p-v4-components-demo')
 		'core/html',
 
 		'models/modules/session',
-		'models/hydration'
+		'core/data/middlewares/hydration-cache/test/provider'
 	);

@@ -9,6 +9,8 @@
 import type HydrationStore from 'core/hydration-store';
 import type Cache from 'core/cache/interface';
 
+import type { HydrationCacheOptions } from 'core/cache/decorators/hydration/interface';
+
 export default class HydrationCacheAdapter {
 	/**
 	 * A storage for saving hydrated data
@@ -31,23 +33,22 @@ export default class HydrationCacheAdapter {
 	protected readonly id: string;
 
 	/**
-	 * Cache key to save hydrated data
+	 * The cache key to save hydrated data
 	 */
 	protected readonly cacheKey: string;
 
 	/**
 	 *
-	 * @param store
 	 * @param cache
-	 * @param id
-	 * @param cacheKey
+	 * @param store
+	 * @param options
 	 */
-	constructor(store: HydrationStore, cache: Cache, id: string, cacheKey: string) {
+	constructor(cache: Cache, store: HydrationStore, options: HydrationCacheOptions) {
 		this.store = store;
 		this.cache = cache;
 		this.wrappedCache = Object.create(cache);
-		this.id = id;
-		this.cacheKey = cacheKey;
+		this.id = options.id;
+		this.cacheKey = options.cacheKey;
 	}
 
 	/**
