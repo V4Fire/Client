@@ -44,6 +44,6 @@ test.describe('core/data/middlewares/hydration-cache', () => {
 			return provider.params.remoteState?.hydrationStore.get(provider.cacheId);
 		});
 
-		await test.expect(Object.values(response)[0]).toEqual({message: 'ok'});
+		await test.expect(Object.values(response!)[0]).toEqual({message: 'ok'});
 	});
 });
