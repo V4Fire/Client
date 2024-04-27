@@ -1,0 +1,8 @@
+[production]
+fully supports es6
+
+[development]
+last 1 chrome version
+
+[ssr]
+node 18

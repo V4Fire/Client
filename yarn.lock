@@ -4371,9 +4371,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@swc/core-darwin-arm64@npm:1.5.0":
+  version: 1.5.0
+  resolution: "@swc/core-darwin-arm64@npm:1.5.0"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
 "@swc/core-darwin-x64@npm:1.2.153":
   version: 1.2.153
   resolution: "@swc/core-darwin-x64@npm:1.2.153"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@swc/core-darwin-x64@npm:1.5.0":
+  version: 1.5.0
+  resolution: "@swc/core-darwin-x64@npm:1.5.0"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
@@ -4392,10 +4406,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@swc/core-linux-arm-gnueabihf@npm:1.5.0":
+  version: 1.5.0
+  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.5.0"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
 "@swc/core-linux-arm64-gnu@npm:1.2.153":
   version: 1.2.153
   resolution: "@swc/core-linux-arm64-gnu@npm:1.2.153"
   conditions: os=linux & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-arm64-gnu@npm:1.5.0":
+  version: 1.5.0
+  resolution: "@swc/core-linux-arm64-gnu@npm:1.5.0"
+  conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
@@ -4406,10 +4434,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@swc/core-linux-arm64-musl@npm:1.5.0":
+  version: 1.5.0
+  resolution: "@swc/core-linux-arm64-musl@npm:1.5.0"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
 "@swc/core-linux-x64-gnu@npm:1.2.153":
   version: 1.2.153
   resolution: "@swc/core-linux-x64-gnu@npm:1.2.153"
   conditions: os=linux & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-x64-gnu@npm:1.5.0":
+  version: 1.5.0
+  resolution: "@swc/core-linux-x64-gnu@npm:1.5.0"
+  conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
@@ -4420,9 +4462,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@swc/core-linux-x64-musl@npm:1.5.0":
+  version: 1.5.0
+  resolution: "@swc/core-linux-x64-musl@npm:1.5.0"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
 "@swc/core-win32-arm64-msvc@npm:1.2.153":
   version: 1.2.153
   resolution: "@swc/core-win32-arm64-msvc@npm:1.2.153"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@swc/core-win32-arm64-msvc@npm:1.5.0":
+  version: 1.5.0
+  resolution: "@swc/core-win32-arm64-msvc@npm:1.5.0"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
@@ -4434,9 +4490,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@swc/core-win32-ia32-msvc@npm:1.5.0":
+  version: 1.5.0
+  resolution: "@swc/core-win32-ia32-msvc@npm:1.5.0"
+  conditions: os=win32 & cpu=ia32
+  languageName: node
+  linkType: hard
+
 "@swc/core-win32-x64-msvc@npm:1.2.153":
   version: 1.2.153
   resolution: "@swc/core-win32-x64-msvc@npm:1.2.153"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@swc/core-win32-x64-msvc@npm:1.5.0":
+  version: 1.5.0
+  resolution: "@swc/core-win32-x64-msvc@npm:1.5.0"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -4491,10 +4561,81 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@swc/core@npm:1.5.0":
+  version: 1.5.0
+  resolution: "@swc/core@npm:1.5.0"
+  dependencies:
+    "@swc/core-darwin-arm64": "npm:1.5.0"
+    "@swc/core-darwin-x64": "npm:1.5.0"
+    "@swc/core-linux-arm-gnueabihf": "npm:1.5.0"
+    "@swc/core-linux-arm64-gnu": "npm:1.5.0"
+    "@swc/core-linux-arm64-musl": "npm:1.5.0"
+    "@swc/core-linux-x64-gnu": "npm:1.5.0"
+    "@swc/core-linux-x64-musl": "npm:1.5.0"
+    "@swc/core-win32-arm64-msvc": "npm:1.5.0"
+    "@swc/core-win32-ia32-msvc": "npm:1.5.0"
+    "@swc/core-win32-x64-msvc": "npm:1.5.0"
+    "@swc/counter": "npm:^0.1.2"
+    "@swc/types": "npm:^0.1.5"
+  peerDependencies:
+    "@swc/helpers": ^0.5.0
+  dependenciesMeta:
+    "@swc/core-darwin-arm64":
+      optional: true
+    "@swc/core-darwin-x64":
+      optional: true
+    "@swc/core-linux-arm-gnueabihf":
+      optional: true
+    "@swc/core-linux-arm64-gnu":
+      optional: true
+    "@swc/core-linux-arm64-musl":
+      optional: true
+    "@swc/core-linux-x64-gnu":
+      optional: true
+    "@swc/core-linux-x64-musl":
+      optional: true
+    "@swc/core-win32-arm64-msvc":
+      optional: true
+    "@swc/core-win32-ia32-msvc":
+      optional: true
+    "@swc/core-win32-x64-msvc":
+      optional: true
+  peerDependenciesMeta:
+    "@swc/helpers":
+      optional: true
+  checksum: 3efccc4e2c62a2c9890b8f0804f4e49b0eed63a63f848500f5816e80830f6ebbbb59e66db631a26ef926c97c0f023a4397e8b8a4c355f94f78ad6ffd0e3839b6
+  languageName: node
+  linkType: hard
+
+"@swc/counter@npm:^0.1.2, @swc/counter@npm:^0.1.3":
+  version: 0.1.3
+  resolution: "@swc/counter@npm:0.1.3"
+  checksum: df8f9cfba9904d3d60f511664c70d23bb323b3a0803ec9890f60133954173047ba9bdeabce28cd70ba89ccd3fd6c71c7b0bd58be85f611e1ffbe5d5c18616598
+  languageName: node
+  linkType: hard
+
 "@swc/helpers@npm:0.3.8":
   version: 0.3.8
   resolution: "@swc/helpers@npm:0.3.8"
   checksum: b1b143e3494905a544e24936dd0e96af0c5f409c0e005e0a0e60f1cb0164fca60f91dcab196330fb4ce358bad9ffac73d4846c2349314c6b0c95e58cff9d0fdf
+  languageName: node
+  linkType: hard
+
+"@swc/helpers@npm:0.5.11":
+  version: 0.5.11
+  resolution: "@swc/helpers@npm:0.5.11"
+  dependencies:
+    tslib: "npm:^2.4.0"
+  checksum: 54d66ade8010e6ba526a9d73b8bcdbb01c806a24f2d3786640ef3081065e8fba398d9b890df4847744c33d086412fd9a6570b5e99e8001ea1462efc5ce0f3847
+  languageName: node
+  linkType: hard
+
+"@swc/types@npm:^0.1.5":
+  version: 0.1.6
+  resolution: "@swc/types@npm:0.1.6"
+  dependencies:
+    "@swc/counter": "npm:^0.1.3"
+  checksum: b42fbca6f1ad56d1909fa6114b62107418a665730bb9b4d8bd8fa1c86921f8758a73959928342638fb57490b5d618a46881045fa9f094763a00f939944835d36
   languageName: node
   linkType: hard
 
@@ -4693,7 +4834,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/cookiejar@npm:^2":
+"@types/cookiejar@npm:2":
   version: 2.1.5
   resolution: "@types/cookiejar@npm:2.1.5"
   checksum: 04d5990e87b6387532d15a87d9ec9b2eb783039291193863751dcfd7fc723a3b3aa30ce4c06b03975cba58632e933772f1ff031af23eaa3ac7f94e71afa6e073
@@ -5401,7 +5542,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@v4fire/cli@npm:^1.6.0":
+"@v4fire/cli@npm:1.6.0":
   version: 1.6.0
   resolution: "@v4fire/cli@npm:1.6.0"
   dependencies:
@@ -5441,15 +5582,15 @@ __metadata:
     "@storybook/addon-links": "npm:7.0.23"
     "@storybook/blocks": "npm:7.0.23"
     "@storybook/testing-library": "npm:0.0.14-next.2"
-    "@swc/core": "npm:1.2.153"
-    "@swc/helpers": "npm:0.3.8"
-    "@types/cookiejar": "npm:^2"
+    "@swc/core": "npm:1.5.0"
+    "@swc/helpers": "npm:0.5.11"
+    "@types/cookiejar": "npm:2"
     "@types/dompurify": "npm:3.0.5"
     "@types/jest": "npm:29.5.1"
     "@types/semver": "npm:7.3.10"
     "@types/webpack": "npm:5.28.0"
     "@types/webpack-env": "npm:1.18.1"
-    "@v4fire/cli": "npm:^1.6.0"
+    "@v4fire/cli": "npm:1.6.0"
     "@v4fire/config": "npm:1.0.0"
     "@v4fire/core": "github:V4Fire/Core#v4"
     "@v4fire/design-system": "npm:1.23.0"
@@ -5465,8 +5606,9 @@ __metadata:
     chrome-trace-event: "npm:1.0.3"
     cli-progress: "npm:3.10.0"
     collection.js: "npm:6.8.1"
-    cookiejar: "npm:^2.1.4"
+    cookiejar: "npm:2.1.4"
     copy-dir: "npm:1.3.0"
+    core-js: "npm:3.37.0"
     cross-env: "npm:7.0.3"
     css-loader: "npm:5.2.0"
     css-minimizer-webpack-plugin: "npm:3.4.1"
@@ -5537,8 +5679,9 @@ __metadata:
     svgo: "npm:2.8.0"
     svgo-loader: "npm:3.0.0"
     svgo-sync: "npm:0.5.1"
+    swc-loader: "npm:0.2.6"
     terser-webpack-plugin: "npm:5.3.1"
-    to-string-loader: "npm:^1.2.0"
+    to-string-loader: "npm:1.2.0"
     ts-jest: "npm:29.1.0"
     ts-loader: "npm:9.2.6"
     tslib: "npm:2.4.1"
@@ -5559,6 +5702,8 @@ __metadata:
     "@pzlr/stylus-inheritance":
       optional: true
     "@statoscope/webpack-plugin":
+      optional: true
+    "@swc/core":
       optional: true
     "@types/webpack-env":
       optional: true
@@ -5681,6 +5826,8 @@ __metadata:
     svgo-loader:
       optional: true
     svgo-sync:
+      optional: true
+    swc-loader:
       optional: true
     terser-webpack-plugin:
       optional: true
@@ -9506,7 +9653,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookiejar@npm:^2.1.4":
+"cookiejar@npm:2.1.4":
   version: 2.1.4
   resolution: "cookiejar@npm:2.1.4"
   checksum: 4a184f5a0591df8b07d22a43ea5d020eacb4572c383e853a33361a99710437eaa0971716c688684075bbf695b484f5872e9e3f562382e46858716cb7fc8ce3f4
@@ -9543,6 +9690,13 @@ __metadata:
   dependencies:
     browserslist: "npm:^4.21.10"
   checksum: 80ac1ae86bd619709f0d684341129dd1c90f0866a1e48d54a0f53b1a5807ff38152685966ffa8fb0edb91325b5d60a5a3c5d2a6eb31a52002052c1944a5d639d
+  languageName: node
+  linkType: hard
+
+"core-js@npm:3.37.0":
+  version: 3.37.0
+  resolution: "core-js@npm:3.37.0"
+  checksum: 97feac0b54b95d928bda6a6e611cf34963a265a5fe8ab46ed35bbc9d32a14221bf6bede5d6cd4b0c0f30e8440cf1eff0c4f0c242d719c561e5dd73d3b005d63c
   languageName: node
   linkType: hard
 
@@ -23407,6 +23561,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"swc-loader@npm:0.2.6":
+  version: 0.2.6
+  resolution: "swc-loader@npm:0.2.6"
+  dependencies:
+    "@swc/counter": "npm:^0.1.3"
+  peerDependencies:
+    "@swc/core": ^1.2.147
+    webpack: ">=2"
+  checksum: fe90948c02a51bb8ffcff1ce3590e01dc12860b0bb7c9e22052b14fa846ed437781ae265614a5e14344bea22001108780f00a6e350e28c0b3499bc4cd11335fb
+  languageName: node
+  linkType: hard
+
 "symbol-tree@npm:^3.2.4":
   version: 3.2.4
   resolution: "symbol-tree@npm:3.2.4"
@@ -23820,7 +23986,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"to-string-loader@npm:^1.2.0":
+"to-string-loader@npm:1.2.0":
   version: 1.2.0
   resolution: "to-string-loader@npm:1.2.0"
   dependencies:

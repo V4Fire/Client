@@ -21,7 +21,6 @@ const
 	tsTransformers = include('build/ts-transformers');
 
 const
-	typescript = config.typescript(),
 	monic = config.monic();
 
 const
@@ -40,11 +39,8 @@ module.exports = function tsRules() {
 		exclude: isExternalDep,
 		use: [
 			{
-				loader: 'ts-loader',
-				options: {
-					...(webpack.ssr ? typescript.server : typescript.client),
-					getCustomTransformers: tsTransformers
-				}
+				loader: 'swc-loader',
+				options: webpack.swc().ts
 			},
 
 			{
