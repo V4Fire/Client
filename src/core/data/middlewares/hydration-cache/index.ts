@@ -12,6 +12,10 @@ import type { MiddlewareParams } from 'core/request';
 // @ts-ignore (vue/webstorm)
 import { addHydrationCache } from 'core/cache/decorators/hydration';
 
+//#if runtime has dummyComponents
+import('core/data/middlewares/hydration-cache/test/provider');
+//#endif
+
 /**
  * Attaches a hydration cache to the specified context
  *
