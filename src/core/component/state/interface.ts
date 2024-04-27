@@ -21,6 +21,8 @@ import type HydrationStore from 'core/hydration-store';
 
 import type { HydrationStore } from 'core/hydration-store';
 
+import type { HydrationStore } from 'core/component/hydration';
+
 export interface State {
 	/**
 	 * The unique identifier for the application process
