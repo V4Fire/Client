@@ -97,25 +97,41 @@ export class HydrationStore {
 	}
 
 	/**
-	 * Returns true if the component with the provided ID contains hydrated data
-	 * @param componentId
+	 * Initializes hydration data storage for the given entity ID
+	 * @param id
 	 */
-	has(componentId: string): boolean {
-		return componentId in this.store.store;
+	init(id: string): void {
+		if (this.environment === 'client') {
+			return;
+		}
+
+		this.store.store[id] ??= Object.createDict();
 	}
 
 	/**
-	 * Retrieves the hydrated data for the component associated with the given ID.
-	 * If a path is provided, it retrieves the hydrated value at the given path.
-	 *
-	 * @param componentId
-	 * @param [path]
+	 * Returns true if the entity with the provided ID contains hydrated data
+	 * @param id
 	 */
-	get(componentId: string): CanUndef<HydratedData>;
-	get(componentId: string, path: string): CanUndef<HydratedValue>;
-	get(componentId: string, path?: string): CanUndef<HydratedData | HydratedValue> {
+	has(id: string): boolean {
+		return id in this.store.store;
+	}
+
+	/**
+	 * Retrieves the hydrated data for the entity associated with the given ID
+	 * @param id
+	 */
+	get(id: string): CanUndef<HydratedData>;
+
+	/**
+	 * Retrieves the hydrated data for the entity associated with the given ID and path
+	 *
+	 * @param id
+	 * @param path
+	 */
+	get(id: string, path: string): CanUndef<HydratedValue>;
+	get(id: string, path?: string): CanUndef<HydratedData | HydratedValue> {
 		const
-			data = this.store.store[componentId];
+			data = this.store.store[id];
 
 		if (data == null) {
 			return;
@@ -125,7 +141,6 @@ export class HydrationStore {
 			return Object.fromEntries(
 				Object.entries(data).map(([key, value]) => [key, this.store.data[value!]])
 			);
-
 		}
 
 		const
@@ -137,25 +152,13 @@ export class HydrationStore {
 	}
 
 	/**
-	 * Initializes hydration data storage for the given component ID
-	 * @param componentId
-	 */
-	init(componentId: string): void {
-		if (this.environment === 'client') {
-			return;
-		}
-
-		this.store.store[componentId] ??= Object.createDict();
-	}
-
-	/**
-	 * Sets hydration data for the specified component ID and path
+	 * Sets hydration data for the specified entity ID and path
 	 *
-	 * @param componentId
+	 * @param id
 	 * @param path
 	 * @param data
 	 */
-	set(componentId: string, path: string, data: CanUndef<HydratedValue>): void {
+	set(id: string, path: string, data: CanUndef<HydratedValue>): void {
 		if (data === undefined || this.environment === 'client') {
 			return;
 		}
@@ -163,43 +166,43 @@ export class HydrationStore {
 		const
 			key = this.getDataKey(data);
 
-		this.init(componentId);
-		this.store.store[componentId]![path] = key;
+		this.init(id);
+		this.store.store[id]![path] = key;
 		this.store.data[key] = data;
 	}
 
 	/**
-	 * Sets empty hydration data for the specified component ID and path
+	 * Sets empty hydration data for the specified entity ID and path
 	 *
-	 * @param componentId
+	 * @param id
 	 * @param path
 	 */
-	setEmpty(componentId: string, path: string): void {
-		this.init(componentId);
-		this.store.store[componentId]![path] = emptyDataStoreKey;
+	setEmpty(id: string, path: string): void {
+		this.init(id);
+		this.store.store[id]![path] = emptyDataStoreKey;
 	}
 
 	/**
-	 * Removes hydration data by the specified component ID.
-	 * If a path is provided, it removes the hydrated value at the given path.
+	 * Removes the hydration data for the specified entity ID.
+	 * If a path is provided, it removes the hydrated value at that path.
 	 *
-	 * @param componentId
+	 * @param id
 	 * @param [path]
 	 */
-	remove(componentId: string, path?: string): void {
+	remove(id: string, path?: string): void {
 		if (path == null) {
-			delete this.store.store[componentId];
+			delete this.store.store[id];
 			return;
 		}
 
 		const
-			key = this.store.store[componentId]![path];
+			key = this.store.store[id]![path];
 
 		if (key != null) {
 			delete this.store.data[key];
 		}
 
-		delete this.store.store[componentId]![path];
+		delete this.store.store[id]![path];
 	}
 
 	/**

@@ -1,6 +1,6 @@
 # core/hydration-store
 
-This module offers an API to store hydrated component data.
+This module offers an API to store hydrated data for any entities.
 
 ```js
 import { HydrationStore } from 'core/hydration-store';
@@ -28,18 +28,18 @@ There are two ways to use this API.
 
 ### Server-side
 
-In this case, the module's API is used to save component data,
+In this case, the module's API is used to save entity data,
 followed by JSON serialization and insertion somewhere in the markup.
 
 Please note that when storing the data,
-it is recommended to use the `hydrationStore` field of the component instead of importing it separately.
+it is recommended to use the `hydrationStore` field of the entity instead of importing it separately.
 
-Also, please keep in mind that serialized data should be placed within a node with the ID `hydration-store`.
+Also, please keep in mind that serialized data should be placed within a node with the identifier `hydration-store`.
 
 ### Client-side
 
-In this case, the module will automatically load data from the markup element with the ID `hydration-store`.
-Afterward, you will be able to access the saved data for any component by its `componentId`.
+In this case, the module will automatically load data from the markup element with the identifier `hydration-store`.
+Afterward, you will be able to access the saved data for any entity by its id.
 
 ### Styles
 
