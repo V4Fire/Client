@@ -21,7 +21,7 @@ import SyncPromise from 'core/promise/sync';
 import config from 'config';
 
 import type { AsyncOptions } from 'core/async';
-import { component, hydrationStore } from 'core/component';
+import { component } from 'core/component';
 
 import type iData from 'components/super/i-data/i-data';
 
@@ -71,6 +71,8 @@ export default abstract class iBlockProviders extends iBlockState {
 	 */
 	@hook('after:beforeDataCreate')
 	initLoad(data?: unknown | InitLoadCb, opts: InitLoadOptions = {}): CanPromise<void> {
+		const {hydrationStore} = this.remoteState;
+
 		if (SSR) {
 			hydrationStore.init(this.componentId);
 		}
@@ -354,7 +356,7 @@ export default abstract class iBlockProviders extends iBlockState {
 	 */
 	@hook('mounted')
 	protected clearComponentHydratedData(): void {
-		hydrationStore.remove(this.componentId);
+		this.remoteState.hydrationStore.remove(this.componentId);
 	}
 
 	protected override initBaseAPI(): void {

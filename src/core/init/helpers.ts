@@ -17,7 +17,7 @@ import ThemeManager, { SystemThemeExtractorStub } from 'core/theme-manager';
 import * as net from 'core/net';
 import * as cookies from 'core/cookies';
 
-import type { State } from 'core/component';
+import { HydrationStore, State } from 'core/component';
 import type { InitAppOptions, CreateAppOptions } from 'core/init/interface';
 
 /**
@@ -57,7 +57,8 @@ export function getAppParams(opts: InitAppOptions): {
 			}
 		),
 
-		pageMetaData: opts.pageMetaData ?? new PageMetaData(opts.location)
+		pageMetaData: opts.pageMetaData ?? new PageMetaData(opts.location),
+		hydrationStore: opts.hydrationStore ?? new HydrationStore()
 	};
 
 	resolvedState.async.worker(() => {

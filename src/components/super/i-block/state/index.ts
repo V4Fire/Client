@@ -17,7 +17,7 @@ import type Async from 'core/async';
 import type { BoundFn } from 'core/async';
 
 import { i18nFactory } from 'core/prelude/i18n';
-import { component, app, hydrationStore, Hook, State } from 'core/component';
+import { component, app, hydratedStyles, Hook, State } from 'core/component';
 
 import type bRouter from 'components/base/b-router/b-router';
 import type iBlock from 'components/super/i-block/i-block';
@@ -51,7 +51,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 * Checks whether the hydrated data can be used
 	 */
 	get canUseHydratedData(): boolean {
-		return HYDRATION && hydrationStore.has(this.componentId);
+		return HYDRATION && this.remoteState.hydrationStore.has(this.componentId);
 	}
 
 	/**
@@ -400,14 +400,10 @@ export default abstract class iBlockState extends iBlockMods {
 		opts?: WaitDecoratorOptions
 	): CanPromise<undefined | ReturnType<F>> {
 		let
-			needWrap = true;
-
-		let
-			cb;
+			cb: CanUndef<AnyFunction>;
 
 		if (Object.isFunction(cbOrOpts)) {
 			cb = cbOrOpts;
-			needWrap = false;
 
 		} else {
 			opts = cbOrOpts;
@@ -415,7 +411,7 @@ export default abstract class iBlockState extends iBlockMods {
 
 		opts = {...opts, join: false};
 
-		if (!needWrap) {
+		if (Object.isFunction(cb)) {
 			return wait(status, {...opts, fn: cb}).call(this);
 		}
 
@@ -535,13 +531,6 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * Hook handler: the component is preparing to be destroyed
-	 */
-	protected beforeDestroy(): void {
-		this.componentStatus = 'destroyed';
-	}
-
-	/**
 	 * Initializes the theme modifier and attaches a listener to monitor changes of the theme
 	 */
 	@hook('created')
@@ -554,5 +543,24 @@ export default abstract class iBlockState extends iBlockMods {
 			'theme.change',
 			(theme: Theme) => this.setMod('theme', theme.value)
 		);
+	}
+
+	/**
+	 * Hydrates the component styles for SSR
+	 */
+	@hook('created')
+	protected hydrateStyles(): void {
+		const stylesToHydrate = hydratedStyles.get(this.componentName);
+
+		if (stylesToHydrate != null) {
+			this.remoteState.hydrationStore.styles.set(this.componentName, stylesToHydrate);
+		}
+	}
+
+	/**
+	 * Hook handler: the component is preparing to be destroyed
+	 */
+	protected beforeDestroy(): void {
+		this.componentStatus = 'destroyed';
 	}
 }
