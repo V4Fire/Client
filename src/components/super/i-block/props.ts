@@ -111,7 +111,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 	readonly dependenciesProp?: Iterable<Module>;
 
 	/**
-	 * If false, the component will not render it's content during SSR
+	 * If false, the component will not render its content during SSR
 	 */
 	@prop({type: Boolean, forceDefault: true})
 	readonly ssrRenderingProp: boolean = true;

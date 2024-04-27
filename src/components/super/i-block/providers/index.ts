@@ -70,10 +70,9 @@ export default abstract class iBlockProviders extends iBlockState {
 	@hook('after:beforeDataCreate')
 	initLoad(data?: unknown | InitLoadCb, opts: InitLoadOptions = {}): CanPromise<void> {
 		if (SSR) {
-			if (this.ssrRendering) {
-				hydrationStore.init(this.componentId);
+			hydrationStore.init(this.componentId);
 
-			} else {
+			if (!this.ssrRendering) {
 				return;
 			}
 		}

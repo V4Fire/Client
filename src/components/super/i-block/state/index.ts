@@ -62,9 +62,20 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * If true, the component will render it's content during SSR
+	 * If true, the component will render its content during SSR.
+	 *
+	 * In a hydration context, the field value is determined by the `renderOnHydration` flag value,
+	 * which is stored in a `hydrationStore` during SSR for components with a `ssrRenderingProp` value set to `false`.
+	 * In other instances, the field value is derived from the `ssrRenderingProp` prop.
 	 */
-	@field((o) => o.sync.link())
+	@field((o) => {
+		if (HYDRATION) {
+			const store = hydrationStore.get(o.componentId);
+			return !Boolean(store?.renderOnHydration);
+		}
+
+		return o.ssrRenderingProp;
+	})
 	protected ssrRendering!: boolean;
 
 	/**
@@ -531,11 +542,23 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
+	 * Stores a boolean flag in the `hydrationStore` during SSR that determines whether components content
+	 * should be rendered during the hydration, if server-side rendering has been disabled for the component
+	 */
+	@hook('created')
+	protected storeRenderOnHydration(): void {
+		if (SSR && !this.ssrRendering) {
+			this.hydrationStore?.set(this.componentId, 'renderOnHydration', true);
+		}
+	}
+
+	/**
 	 * Allows the content rendering if the component is in a hydration context
+	 * and server-side rendering of the component has been disabled using the `ssrRenderingProp` prop
 	 */
 	@hook('mounted')
 	protected async shouldRenderOnHydration(): Promise<void> {
-		if (HYDRATION) {
+		if (HYDRATION && !this.ssrRendering) {
 			await this.async.nextTick();
 
 			this.ssrRendering = true;
