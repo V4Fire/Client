@@ -12,9 +12,9 @@
 
 - template index() extends ['i-block'].index
 	- block innerRoot
-		< template v-if = !preventRendering
+		< template v-if = ssrRendering
 			+= self.slot()
 
 	- block skeleton
-		< template v-if = preventRendering && $slots['fallback']
+		< template v-if = !ssrRendering && $slots['fallback']
 			+= self.slot('fallback')
