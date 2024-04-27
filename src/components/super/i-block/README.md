@@ -486,7 +486,7 @@ True if the application needs to be built for SSR.
        SSR only content
 ```
 
-#### hydration
+#### HYDRATION
 
 True if the application is in a hydration context.
 
@@ -495,7 +495,7 @@ True if the application is in a hydration context.
 - include 'components/super/i-block'|b as placeholder
 - template index() extends ['i-block'].index
   - block body
-    - if hydration
+    - if HYDRATION
       Hydration context only content
 ```
 

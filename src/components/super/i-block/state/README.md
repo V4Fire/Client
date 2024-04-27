@@ -387,8 +387,9 @@ the router after initialization.
 #### ssrRendering
 
 If true, the component will render its content during SSR.
-The parameter is linked to the `ssrRenderingProp` prop. If the `ssrRenderingProp` is set to `false` and
-the component is in a hydration context, the parameter will be set to `true` after the component has been mounted.
+In a hydration context, the field value is determined by the `renderOnHydration` flag value, which is
+stored in a `hydrationStore` during SSR for components with a `ssrRenderingProp` value set to `false`.
+In other instances, the field value is derived from the `ssrRenderingProp` prop.
 
 ### Getters
 
