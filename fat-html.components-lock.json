@@ -1,5 +1,5 @@
 {
-  "hash": "7bb5f7b05322d939855bfdca96d2e32667704adb9d03c488a62c7c5c6a3c3cda",
+  "hash": "5a4d2a336984dd1ee0c0b713d0fbc356477b43181475f21b226b799ae574825f",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2461,8 +2461,7 @@
               "core/browser",
               "core/cookies",
               "core/html",
-              "models/modules/session",
-              "core/data/middlewares/hydration-cache/test/provider"
+              "models/modules/session"
             ]
           },
           "name": "p-v4-components-demo",
@@ -2506,8 +2505,7 @@
             "core/browser",
             "core/cookies",
             "core/html",
-            "models/modules/session",
-            "core/data/middlewares/hydration-cache/test/provider"
+            "models/modules/session"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
@@ -2520,7 +2518,6 @@
               "components/traits/i-control-list/i-control-list",
               "core/browser",
               "core/cookies",
-              "core/data/middlewares/hydration-cache/test/provider",
               "core/html",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
@@ -2538,7 +2535,6 @@
               "components/traits/i-control-list/i-control-list",
               "core/browser",
               "core/cookies",
-              "core/data/middlewares/hydration-cache/test/provider",
               "core/html",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
