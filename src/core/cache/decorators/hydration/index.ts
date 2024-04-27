@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { HydrationStore } from 'core/hydration-store';
+import type HydrationStore from 'core/hydration-store';
 
 import type Cache from 'core/cache/interface';
 import HydrationCacheAdapter from 'core/cache/decorators/hydration/adapter';

@@ -3,7 +3,7 @@
 This module offers an API to store hydrated data for any entities.
 
 ```js
-import { HydrationStore } from 'core/hydration-store';
+import HydrationStore from 'core/hydration-store';
 
 const hydrationStore = new HydrationStore();
 

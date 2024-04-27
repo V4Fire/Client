@@ -19,7 +19,7 @@ import type { Store, HydratedData, HydratedValue, Environment } from 'core/hydra
 export * from 'core/hydration-store/const';
 export * from 'core/hydration-store/interface';
 
-export class HydrationStore {
+export default class HydrationStore {
 	/**
 	 * A dictionary containing the necessary styles for hydration
 	 */

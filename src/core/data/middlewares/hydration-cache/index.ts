@@ -5,6 +5,7 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
 import type { MiddlewareParams } from 'core/request';
 
 import type Provider from 'core/data';
