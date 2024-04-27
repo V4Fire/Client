@@ -13,11 +13,12 @@ import CookieStorage from 'core/kv-storage/engines/cookie';
 
 import PageMetaData from 'core/page-meta-data';
 import ThemeManager, { SystemThemeExtractorStub } from 'core/theme-manager';
+import HydrationStore from 'core/hydration-store';
 
 import * as net from 'core/net';
 import * as cookies from 'core/cookies';
 
-import { HydrationStore, State } from 'core/component';
+import type { State } from 'core/component';
 import type { InitAppOptions, CreateAppOptions } from 'core/init/interface';
 
 /**
@@ -58,6 +59,7 @@ export function getAppParams(opts: InitAppOptions): {
 		),
 
 		pageMetaData: opts.pageMetaData ?? new PageMetaData(opts.location),
+
 		hydrationStore: opts.hydrationStore ?? new HydrationStore()
 	};
 

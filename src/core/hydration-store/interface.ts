@@ -22,3 +22,5 @@ export type HydratedValue =
 	Dictionary<HydratedValue>;
 
 export type HydratedData = Dictionary<HydratedValue>;
+
+export type Environment = 'server' | 'client';

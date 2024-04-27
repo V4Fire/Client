@@ -9,6 +9,17 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :boom: Breaking Change
+
+* Moved the hydration store to a separate module from `core/component/hydration` -> `core/hydration-store`
+
+#### :rocket: New Feature
+
+* Added the ability to set the current environment in the hydration store
+* Added getting and removing the hydration store value by path
+
 ## v4.0.0-beta.43 (2023-11-26)
 
 #### :rocket: New Feature

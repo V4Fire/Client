@@ -103,7 +103,7 @@ import type PageMetaData from 'core/page-meta-data';
 import type { Experiments } from 'core/abt';
 import type { InitialRoute } from 'core/router';
 
-import type { HydrationStore } from 'core/component';
+import type HydrationStore from 'core/hydration-store';
 
 interface InitAppOptions {
   /**

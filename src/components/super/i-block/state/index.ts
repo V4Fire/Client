@@ -17,7 +17,8 @@ import type Async from 'core/async';
 import type { BoundFn } from 'core/async';
 
 import { i18nFactory } from 'core/prelude/i18n';
-import { component, app, hydratedStyles, Hook, State } from 'core/component';
+import { component, app, Hook, State } from 'core/component';
+import { styles as hydratedStyles } from 'core/hydration-store';
 
 import type bRouter from 'components/base/b-router/b-router';
 import type iBlock from 'components/super/i-block/i-block';

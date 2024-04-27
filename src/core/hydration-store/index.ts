@@ -7,19 +7,19 @@
  */
 
 /**
- * [[include:core/component/hydration/README.md]]
+ * [[include:core/hydration-store/README.md]]
  * @packageDocumentation
  */
 
 import { expandedStringify, expandedParse } from 'core/json';
 
-import { styles, emptyDataStoreKey } from 'core/component/hydration/const';
-import type { Store, HydratedData, HydratedValue } from 'core/component/hydration/interface';
+import { styles, emptyDataStoreKey } from 'core/hydration-store/const';
+import type { Store, HydratedData, HydratedValue, Environment } from 'core/hydration-store/interface';
 
-export * from 'core/component/hydration/const';
-export * from 'core/component/hydration/interface';
+export * from 'core/hydration-store/const';
+export * from 'core/hydration-store/interface';
 
-export class HydrationStore {
+export default class HydrationStore {
 	/**
 	 * A dictionary containing the necessary styles for hydration
 	 */
@@ -35,7 +35,19 @@ export class HydrationStore {
 	 */
 	protected data: Map<HydratedValue, string> = new Map();
 
-	constructor() {
+	/**
+	 * The current environment
+	 */
+	protected readonly environment: Environment = SSR ? 'server' : 'client';
+
+	/**
+	 * @param environment - the current environment
+	 */
+	constructor(environment?: Environment) {
+		if (environment != null) {
+			this.environment = environment;
+		}
+
 		try {
 			this.store = this.parse(document.getElementById('hydration-store')?.textContent ?? '');
 
@@ -85,77 +97,112 @@ export class HydrationStore {
 	}
 
 	/**
-	 * Returns true if the component with the provided ID contains hydrated data
-	 * @param componentId
+	 * Initializes hydration data storage for the given entity ID
+	 * @param id
 	 */
-	has(componentId: string): boolean {
-		return componentId in this.store.store;
+	init(id: string): void {
+		if (this.environment === 'client') {
+			return;
+		}
+
+		this.store.store[id] ??= Object.createDict();
 	}
 
 	/**
-	 * Returns the hydrated data for the component associated with the given ID
-	 * @param componentId
+	 * Returns true if the entity with the provided ID contains hydrated data
+	 * @param id
 	 */
-	get(componentId: string): CanUndef<HydratedData> {
-		const
-			data = this.store.store[componentId];
+	has(id: string): boolean {
+		return id in this.store.store;
+	}
 
-		if (data != null) {
+	/**
+	 * Retrieves the hydrated data for the entity associated with the given ID
+	 * @param id
+	 */
+	get(id: string): CanUndef<HydratedData>;
+
+	/**
+	 * Retrieves the hydrated data for the entity associated with the given ID and path
+	 *
+	 * @param id
+	 * @param path
+	 */
+	get(id: string, path: string): CanUndef<HydratedValue>;
+	get(id: string, path?: string): CanUndef<HydratedData | HydratedValue> {
+		const
+			data = this.store.store[id];
+
+		if (data == null) {
+			return;
+		}
+
+		if (path == null) {
 			return Object.fromEntries(
 				Object.entries(data).map(([key, value]) => [key, this.store.data[value!]])
 			);
 		}
-	}
 
-	/**
-	 * Initializes hydration data storage for the given component ID
-	 * @param componentId
-	 */
-	init(componentId: string): void {
-		if (!SSR) {
-			return;
+		const
+			key = data[path];
+
+		if (key != null) {
+			return this.store.data[key];
 		}
-
-		this.store.store[componentId] ??= Object.createDict();
 	}
 
 	/**
-	 * Sets hydration data for the specified component ID and path
+	 * Sets hydration data for the specified entity ID and path
 	 *
-	 * @param componentId
+	 * @param id
 	 * @param path
 	 * @param data
 	 */
-	set(componentId: string, path: string, data: CanUndef<HydratedValue>): void {
-		if (data === undefined || !SSR) {
+	set(id: string, path: string, data: CanUndef<HydratedValue>): void {
+		if (data === undefined || this.environment === 'client') {
 			return;
 		}
 
 		const
 			key = this.getDataKey(data);
 
-		this.init(componentId);
-		this.store.store[componentId]![path] = key;
+		this.init(id);
+		this.store.store[id]![path] = key;
 		this.store.data[key] = data;
 	}
 
 	/**
-	 * Sets empty hydration data for the specified component ID and path
+	 * Sets empty hydration data for the specified entity ID and path
 	 *
-	 * @param componentId
+	 * @param id
 	 * @param path
 	 */
-	setEmpty(componentId: string, path: string): void {
-		this.init(componentId);
-		this.store.store[componentId]![path] = emptyDataStoreKey;
+	setEmpty(id: string, path: string): void {
+		this.init(id);
+		this.store.store[id]![path] = emptyDataStoreKey;
 	}
 
 	/**
-	 * Removes hydration data by the specified component ID
-	 * @param componentId
+	 * Removes the hydration data for the specified entity ID.
+	 * If a path is provided, it removes the hydrated value at that path.
+	 *
+	 * @param id
+	 * @param [path]
 	 */
-	remove(componentId: string): void {
-		delete this.store.store[componentId];
+	remove(id: string, path?: string): void {
+		if (path == null) {
+			delete this.store.store[id];
+			return;
+		}
+
+		const
+			key = this.store.store[id]![path];
+
+		if (key != null) {
+			delete this.store.data[key];
+		}
+
+		delete this.store.store[id]![path];
 	}
 
 	/**
