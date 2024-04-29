@@ -32,7 +32,7 @@ export default class HydrationStore {
 
 	/**
 	 * {@link Store} in JSON format.
-	 * It uses for incrementally serialization of the store.
+	 * It is used for incremental serialization of the store.
 	 */
 	protected readonly storeJSON: StoreJSON = this.createInitialStore();
 

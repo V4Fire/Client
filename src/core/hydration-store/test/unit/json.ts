@@ -33,10 +33,10 @@ test.describe('core/component/hydration converting to JSON', () => {
 		const clientHydrationStore = await hydrationAPI.evaluateHandle(({default: HydrationStore}) => new HydrationStore('client'));
 
 		const valueById = await clientHydrationStore.evaluate((ctx) => ctx.get('componentId'));
-		await test.expect(valueById).toEqual({foo: {bar: 'baz'}});
+		test.expect(valueById).toEqual({foo: {bar: 'baz'}});
 
 		const valueByPath = await clientHydrationStore.evaluate((ctx) => ctx.get('componentId', 'foo'));
-		await test.expect(valueByPath).toEqual({bar: 'baz'});
+		test.expect(valueByPath).toEqual({bar: 'baz'});
 	});
 
 	test('should remove value from the JSON store when it is removed from the store', async ({page}) => {
@@ -50,7 +50,7 @@ test.describe('core/component/hydration converting to JSON', () => {
 		const clientHydrationStore = await hydrationAPI.evaluateHandle(({default: HydrationStore}) => new HydrationStore('client'));
 
 		const valueById = await clientHydrationStore.evaluate((ctx) => ctx.get('componentId'));
-		await test.expect(valueById).toBeUndefined();
+		test.expect(valueById).toBeUndefined();
 	});
 
 	test('should remove value from the JSON store when it is removed by path from the store', async ({page}) => {
@@ -64,7 +64,7 @@ test.describe('core/component/hydration converting to JSON', () => {
 		const clientHydrationStore = await hydrationAPI.evaluateHandle(({default: HydrationStore}) => new HydrationStore('client'));
 
 		const valueByPath = await clientHydrationStore.evaluate((ctx) => ctx.get('componentId', 'foo'));
-		await test.expect(valueByPath).toBeUndefined();
+		test.expect(valueByPath).toBeUndefined();
 	});
 
 	test('should clear the JSON store when the store is cleared', async ({page}) => {
@@ -78,7 +78,7 @@ test.describe('core/component/hydration converting to JSON', () => {
 		const clientHydrationStore = await hydrationAPI.evaluateHandle(({default: HydrationStore}) => new HydrationStore('client'));
 
 		const valueById = await clientHydrationStore.evaluate((ctx) => ctx.get('componentId'));
-		await test.expect(valueById).toBeUndefined();
+		test.expect(valueById).toBeUndefined();
 	});
 
 	test('should set empty object to the JSON store when the store is set empty', async ({page}) => {
@@ -92,7 +92,7 @@ test.describe('core/component/hydration converting to JSON', () => {
 		const clientHydrationStore = await hydrationAPI.evaluateHandle(({default: HydrationStore}) => new HydrationStore('client'));
 
 		const valueByPath = await clientHydrationStore.evaluate((ctx) => ctx.get('componentId', 'foo'));
-		await test.expect(valueByPath).toBeUndefined();
+		test.expect(valueByPath).toBeUndefined();
 	});
 
 	async function appendJSONToDOM(page: Page): Promise<void> {

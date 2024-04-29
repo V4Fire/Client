@@ -41,14 +41,18 @@ test.describe('core/cache/decorators/hydration', () => {
 		// We are imitating the server-side hydration
 		hydrationStore = await hydrationAPI.evaluateHandle(({default: HydrationStore}) => new HydrationStore('server'));
 
-		decorator = await decoratorAPI.evaluateHandle(
-			(ctx, [cache, hydrationStore, cacheId, requestKey]) =>
-				ctx.addHydrationCache(cache, hydrationStore, {
-					id: cacheId,
-					cacheKey: requestKey
-				}),
+		const args = <const>[
+			cache,
+			hydrationStore,
+			hydrationId,
+			hydrationCacheKey
+		];
 
-			<const>[cache, hydrationStore, hydrationId, hydrationCacheKey]
+		decorator = await decoratorAPI.evaluateHandle(
+			(ctx, [cache, hydrationStore, id, cacheKey]) =>
+				ctx.addHydrationCache(cache, hydrationStore, {id, cacheKey}),
+
+			args
 		);
 	});
 
@@ -60,7 +64,7 @@ test.describe('core/cache/decorators/hydration', () => {
 			[hydrationId, hydrationCacheKey]
 		);
 
-		await test.expect(data).toBe('foo');
+		test.expect(data).toBe('foo');
 	});
 
 	test([
@@ -71,7 +75,7 @@ test.describe('core/cache/decorators/hydration', () => {
 
 		const cacheValue = await decorator.evaluate((ctx, key) => ctx.get(key), clientCacheKey);
 
-		await test.expect(cacheValue).toBe('foo');
+		test.expect(cacheValue).toBe('foo');
 	});
 
 	test('should get a cache from the hydration store and remove it', async () => {
@@ -80,7 +84,7 @@ test.describe('core/cache/decorators/hydration', () => {
 		await decorator.evaluate((ctx, key) => ctx.get(key), clientCacheKey);
 		const hydrationValue = await decorator.evaluate((ctx, key) => ctx.get(key), hydrationCacheKey);
 
-		await test.expect(hydrationValue).toBeUndefined();
+		test.expect(hydrationValue).toBeUndefined();
 	});
 
 	test('should save a value from the hydration store to the cache after getting it', async () => {
@@ -89,6 +93,6 @@ test.describe('core/cache/decorators/hydration', () => {
 		await decorator.evaluate((ctx, key) => ctx.get(key), clientCacheKey);
 
 		const cacheValue = await cache.evaluate((ctx, key) => ctx.get(key), clientCacheKey);
-		await test.expect(cacheValue).toBe('foo');
+		test.expect(cacheValue).toBe('foo');
 	});
 });
