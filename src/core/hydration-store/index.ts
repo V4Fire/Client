@@ -14,7 +14,7 @@
 import { expandedStringify, expandedParse } from 'core/json';
 
 import { styles, emptyDataStoreKey } from 'core/hydration-store/const';
-import type { Store, HydratedData, HydratedValue, Environment } from 'core/hydration-store/interface';
+import type { Store, HydratedData, HydratedValue, Environment, StoreJSON } from 'core/hydration-store/interface';
 
 export * from 'core/hydration-store/const';
 export * from 'core/hydration-store/interface';
@@ -29,6 +29,12 @@ export default class HydrationStore {
 	 * Hydrated data store
 	 */
 	protected store: Store;
+
+	/**
+	 * {@link Store} in JSON format.
+	 * It uses for incrementally serialization of the store.
+	 */
+	protected readonly storeJSON: StoreJSON = this.createInitialStore();
 
 	/**
 	 * A dictionary where the keys are the stored data and the values are their IDs
@@ -52,10 +58,7 @@ export default class HydrationStore {
 			this.store = this.parse(document.getElementById('hydration-store')?.textContent ?? '');
 
 		} catch {
-			this.store = {
-				data: Object.createDict(),
-				store: Object.createDict()
-			};
+			this.store = this.createInitialStore();
 		}
 	}
 
@@ -63,37 +66,20 @@ export default class HydrationStore {
 	 * Returns a JSON string representation of the hydrated data
 	 */
 	toString(): string {
-		const extraTypes = [
-			Date,
-			typeof BigInt === 'function' ? BigInt : Object,
-			Function,
-			Map,
-			Set
-		];
+		const {store, data} = this.storeJSON;
 
-		const toJSON = extraTypes.reduce<Array<Nullable<PropertyDescriptor>>>((res, constr) => {
-			if ('toJSON' in constr.prototype) {
-				res.push(Object.getOwnPropertyDescriptor(constr.prototype, 'toJSON'));
+		return `{"store":${shallowStringify(store)},"data":${shallowStringify(data)}}`;
 
-				// @ts-ignore (ts)
-				delete constr.prototype.toJSON;
+		function shallowStringify(obj: Dictionary<string>): string {
+			let res = '';
 
-			} else {
-				res.push(null);
-			}
+			Object.entries(obj).forEach(([key, value], index) => {
+				const separator = index < Object.size(obj) - 1 ? ',' : '';
+				res += `"${key}":${value}${separator}`;
+			});
 
-			return res;
-		}, []);
-
-		const serializedData = JSON.stringify(this.store, expandedStringify);
-
-		toJSON.forEach((fn, i) => {
-			if (fn != null) {
-				Object.defineProperty(extraTypes[i].prototype, 'toJSON', fn);
-			}
-		});
-
-		return serializedData;
+			return `{${res}}`;
+		}
 	}
 
 	/**
@@ -106,6 +92,7 @@ export default class HydrationStore {
 		}
 
 		this.store.store[id] ??= Object.createDict();
+		this.storeJSON.store[id] ??= '';
 	}
 
 	/**
@@ -169,6 +156,9 @@ export default class HydrationStore {
 		this.init(id);
 		this.store.store[id]![path] = key;
 		this.store.data[key] = data;
+
+		this.storeJSON.store[id] = this.serializeData(this.store.store[id]!);
+		this.storeJSON.data[key] = this.serializeData(data);
 	}
 
 	/**
@@ -180,6 +170,7 @@ export default class HydrationStore {
 	setEmpty(id: string, path: string): void {
 		this.init(id);
 		this.store.store[id]![path] = emptyDataStoreKey;
+		this.storeJSON.store[id] = this.serializeData(this.store.store[id]!);
 	}
 
 	/**
@@ -192,6 +183,7 @@ export default class HydrationStore {
 	remove(id: string, path?: string): void {
 		if (path == null) {
 			delete this.store.store[id];
+			delete this.storeJSON.store[id];
 			return;
 		}
 
@@ -200,6 +192,7 @@ export default class HydrationStore {
 
 		if (key != null) {
 			delete this.store.data[key];
+			delete this.storeJSON.data[key];
 		}
 
 		delete this.store.store[id]![path];
@@ -212,7 +205,26 @@ export default class HydrationStore {
 		this.data.clear();
 		this.styles.clear();
 
-		Object.forEach(this.store, (store: Dictionary) => {
+		this.clearStore(this.store);
+		this.clearStore(this.storeJSON);
+	}
+
+	/**
+	 * Creates the initial store
+	 */
+	protected createInitialStore<T extends Store | StoreJSON>(): T {
+		return Object.cast({
+			store: Object.createDict(),
+			data: Object.createDict()
+		});
+	}
+
+	/**
+	 * Clears the hydrated data store
+	 * @param store
+	 */
+	protected clearStore(store: Store | StoreJSON): void {
+		Object.forEach(store, (store: Dictionary) => {
 			Object.forEach(store, (_, key) => {
 				delete store[key];
 			});
@@ -241,5 +253,43 @@ export default class HydrationStore {
 	 */
 	protected parse(store: string): Store {
 		return JSON.parse(store, expandedParse) ?? Object.createDict();
+	}
+
+	/**
+	 * Serializes the specified data
+	 * @param data
+	 */
+	protected serializeData(data: unknown): string {
+		const extraTypes = [
+			Date,
+			typeof BigInt === 'function' ? BigInt : Object,
+			Function,
+			Map,
+			Set
+		];
+
+		const toJSON = extraTypes.reduce<Array<Nullable<PropertyDescriptor>>>((res, constr) => {
+			if ('toJSON' in constr.prototype) {
+				res.push(Object.getOwnPropertyDescriptor(constr.prototype, 'toJSON'));
+
+				// @ts-ignore (ts)
+				delete constr.prototype.toJSON;
+
+			} else {
+				res.push(null);
+			}
+
+			return res;
+		}, []);
+
+		const serializedData = JSON.stringify(data, expandedStringify);
+
+		toJSON.forEach((fn, i) => {
+			if (fn != null) {
+				Object.defineProperty(extraTypes[i].prototype, 'toJSON', fn);
+			}
+		});
+
+		return serializedData;
 	}
 }
