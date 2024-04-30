@@ -839,7 +839,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				},
 				env: {
 					mode: 'usage',
-					coreJs: '3.37.0'
+					coreJs: '3.36.1'
 				}
 			};
 
