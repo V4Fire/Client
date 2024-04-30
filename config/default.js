@@ -830,6 +830,34 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				default: def,
 				type: 'number'
 			});
+		},
+
+		swc() {
+			const base = {
+				jsc: {
+					externalHelpers: true
+				},
+				env: {
+					mode: 'usage',
+					coreJs: '3.36.1'
+				}
+			};
+
+			return {
+				ts: {
+					...base,
+					jsc: {
+						...base.jsc,
+						parser: {
+							syntax: 'typescript',
+							decorators: true
+						}
+					}
+				},
+				js: {
+					...base
+				}
+			};
 		}
 	},
 
@@ -896,8 +924,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		const client = this.extend({}, server, {
 			configFile,
 			compilerOptions: {
-				module: this.webpack.ssr ? 'commonjs' : module
+				module,
+				target: 'esnext'
 			}
+		});
+
+		this.extend(server.compilerOptions, {
+			module: 'commonjs',
+			target: 'esnext'
 		});
 
 		return {
