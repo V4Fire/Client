@@ -6,7 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-'use strict';
-
-require('core/shims/ssr/request-idle-callback');
-require('core/shims/ssr/request-animation-frame');
+import 'core/shims/set-immediate';
+import 'core/shims/ssr';
