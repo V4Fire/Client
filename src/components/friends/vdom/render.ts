@@ -94,9 +94,7 @@ export function getRenderFactory(this: Friend, path: string): CanUndef<RenderFac
 		fn = Object.get(tpl, chunks.slice(1));
 
 	if (Object.isFunction(fn)) {
-		if (SSR) {
-			this.ctx.hydrateStyles(chunks[0]);
-		}
+		this.ctx.hydrateStyles(chunks[0]);
 
 		return fn();
 	}

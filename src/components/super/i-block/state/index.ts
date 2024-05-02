@@ -441,6 +441,10 @@ export default abstract class iBlockState extends iBlockMods {
 	 */
 	@hook('created')
 	hydrateStyles(name: string = this.componentName): void {
+		if (!SSR) {
+			return;
+		}
+
 		const stylesToHydrate = hydratedStyles.get(name);
 
 		if (stylesToHydrate != null) {

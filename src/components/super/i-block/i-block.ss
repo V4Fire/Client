@@ -255,9 +255,7 @@
 				< ${teleport ? 'teleport' : '?'} to = ${teleport}
 					< _ v-attrs = rootAttrs | ${rootAttrs|!html}
 						{{ void(vdom.saveRenderContext()) }}
-
-						- if SSR
-							{{ void(hydrateStyles('${self.name()}')) }}
+						{{ void(hydrateStyles('${self.name()}')) }}
 
 						/**
 						 * Generates a slot declaration by the specified parameters
