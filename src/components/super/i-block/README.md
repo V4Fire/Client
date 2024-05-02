@@ -509,7 +509,7 @@ whereas for templates that are rendered as a separate render function,
 rather than as a component, the value `'mono'` should be used.
 
 Also, if you are creating a template that you want to use separately of a component,
-you can simply inherit from `ё`['i-block'].mono`.
+you can simply inherit from `['i-block'].mono`.
 
 ```
 - namespace [%fileName%]
@@ -641,3 +641,9 @@ Loads modules by the specified paths and dynamically inserted the provided conte
       < b-button
         Hello world
 ```
+
+### Blocks
+
+#### skeleton
+
+Used for rendering a fallback content such as a loading indicators (skeletons). If necessary, this block should be overridden in the component that extends the `i-block` superclass.

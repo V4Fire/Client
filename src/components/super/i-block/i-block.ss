@@ -284,7 +284,6 @@
 								- block bodyFooter
 
 						- block skeleton
-							+= self.slot('skeleton')
 
 						- if SSR || HYDRATION
 							< template v-if = ssrRendering
