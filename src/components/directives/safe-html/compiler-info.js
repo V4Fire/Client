@@ -1,5 +1,3 @@
-- namespace [%fileName%]
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'components/super/i-page'|b as placeholder
+'use strict';
 
-- template index() extends ['i-page'].index
-	- rootTag = 'main'
+exports.innerHTML = true;

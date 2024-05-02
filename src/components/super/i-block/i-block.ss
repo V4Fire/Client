@@ -18,7 +18,7 @@
 	- componentName = ''
 
 	/** The root tag type. If not specified, it will be taken from the component `rootTag` prop. */
-	- rootTag = null
+	- rootTag = 'div'
 
 	/** Should or not to create an extra wrapper inside the root tag */
 	- rootWrapper = false
@@ -31,6 +31,13 @@
 
 	/** A selector to mount component via teleport or false */
 	- teleport = false
+
+	/**
+	* If set to true, the component will always be rendered by creating an intermediate VNODE tree.
+	* Enabling this option may negatively affect rendering speed in SSR.
+	* However, this mode is necessary for using some directives.
+	*/
+	- forceRenderAsVNode = false
 
 	/** True if the application needs to be built for SSR */
 	- SSR = require('@config/config').webpack.ssr
@@ -220,7 +227,7 @@
 
 	: componentId = 'data-cached-class-component-id'
 
-	- if require('@config/config').webpack.ssr
+	- if SSR
 		? rootAttrs[':' + componentId] = 'String(renderComponentId)'
 
 	- else
@@ -243,6 +250,7 @@
 				< ${teleport ? 'teleport' : '?'} to = ${teleport}
 					< _ v-attrs = rootAttrs | ${rootAttrs|!html}
 						{{ void(vdom.saveRenderContext()) }}
+						{{ void(hydrateStyles('${self.name()}')) }}
 
 						/**
 						 * Generates a slot declaration by the specified parameters

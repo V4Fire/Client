@@ -27,7 +27,6 @@ import type { ButtonType } from 'components/form/b-button/interface';
 
 @component()
 export default abstract class iButtonProps extends iData {
-	override readonly rootTag: string = 'span';
 	override readonly dataProviderProp: DataProviderProp = 'Provider';
 	override readonly defaultRequestFilter: RequestFilter = true;
 
