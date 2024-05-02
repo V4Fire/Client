@@ -53,7 +53,7 @@ ComponentEngine.directive('icon', {
 
 	getSSRProps(params: DirectiveParams): Dictionary {
 		const href = SyncPromise.resolve(getIconHref(params.value ?? params.arg)).unwrap();
-		return {innerHTML: `<use href="${href}" />`};
+		return {innerHTML: `<use xlink:href="${href}" />`};
 	}
 });
 
