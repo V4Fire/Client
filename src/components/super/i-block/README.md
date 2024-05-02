@@ -181,8 +181,10 @@ class bExample extends iBlock {
 
 ### [ssrRendering = `true`]
 
-If set to false, the component will not render it's content during server-side rendering.
-This should be used with non-functional components. If you need to disable the rendering of a functional component in server-side rendering, use a wrapper component `components/base/b-prevent-ssr`.
+If set to false, the component will not render its content during server-side rendering.
+This should be used with non-functional components.
+If you need to disable the rendering of a functional component in server-side rendering,
+use the wrapper component `components/base/b-prevent-ssr`.
 
 ### [wait]
 
@@ -488,7 +490,7 @@ True if the application needs to be built for SSR.
 
 #### HYDRATION
 
-True if the application is in a hydration context.
+True if the application needs to be built for hydration.
 
 ```
 - namespace [%fileName%]
@@ -497,19 +499,6 @@ True if the application is in a hydration context.
   - block body
     - if HYDRATION
       Hydration context only content
-```
-
-#### [ssrRendering = `true`]
-
-If set to false, the component will generate a special markup to allow it to not render during server-side rendering.
-
-```
-- namespace [%fileName%]
-
-- include 'components/super/i-block'|b as placeholder
-
-- template index() extends ['i-block'].index
-  - ssrRendering = false
 ```
 
 #### [renderMode = `component`]
@@ -532,6 +521,21 @@ you can simply inherit from `ё`['i-block'].mono`.
 ```
 
 ### Methods
+
+#### name
+
+Returns the component name.
+
+```
+- namespace [%fileName%]
+
+- include 'components/super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - block body
+    < .${self.name()}
+      Hello World
+```
 
 #### slot
 
@@ -586,21 +590,6 @@ Applies the `Typograf` library for the specified content and returns the result.
     += self.typograf('Hello "world"')
 ```
 
-#### name
-
-Returns the component name.
-
-```
-- namespace [%fileName%]
-
-- include 'components/super/i-block'|b as placeholder
-
-- template index() extends ['i-block'].index
-  - block body
-    < .${self.name()}
-      Hello World
-```
-
 #### render
 
 Renders the specified content by using the passed options.
@@ -635,7 +624,7 @@ Returns a link to a template by the specified path.
 
 #### loadModules
 
-Loads modules by the specified paths and dynamically inserted the provided content when them are loaded.
+Loads modules by the specified paths and dynamically inserted the provided content when they are loaded.
 
 ```
 - namespace [%fileName%]

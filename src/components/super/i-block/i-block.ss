@@ -32,17 +32,11 @@
 	/** A selector to mount component via teleport or false */
 	- teleport = false
 
-	/** True if the application needs to be built for SSR. */
-	: SSR = require('@config/config').webpack.ssr
+	/** True if the application needs to be built for SSR */
+	- SSR = require('@config/config').webpack.ssr
 
-	/** True if the application is in a hydration context. */
+	/** True if the application needs to be built for hydration */
 	: HYDRATION = require('@config/config').webpack.hydration()
-
-	/**
-	 * If set to false, the component will generate a special markup to
-	 * allow it to not render during server-side rendering
-	 */
-	- ssrRendering = true
 
 	/**
 	 * Defines the rendering mode of the template.
@@ -66,7 +60,7 @@
 		- return name.split('.').slice(-1)[0].dasherize()
 
 	/**
-	 * Loads modules by the specified paths and dynamically inserted the provided content when them are loaded
+	 * Loads modules by the specified paths and dynamically inserted the provided content when they are loaded
 	 *
 	 * @param {(string|Array<string>)} path - the module path or list of paths
 	 * @param {{renderKey: string, wait: string}} [opts] - additional options

@@ -428,10 +428,12 @@ This can provide a more consistent navigation experience, especially when using 
 
 #### ssrRendering
 
-If true, the component will render its content during SSR.
-In a hydration context, the field value is determined by the `renderOnHydration` flag value, which is
-stored in a `hydrationStore` during SSR for components with a `ssrRenderingProp` value set to `false`.
-In other instances, the field value is derived from the `ssrRenderingProp` prop.
+If set to false, the component will not render its content during SSR.
+
+In a hydration context, the field value is determined by the value of the `renderOnHydration` flag,
+which is stored in a `hydrationStore` during SSR for components that
+have the `ssrRenderingProp` value set to false.
+In other cases, the field value is derived from the `ssrRenderingProp` property.
 
 ### Getters
 
