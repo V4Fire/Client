@@ -17,7 +17,7 @@
 				< component &
 					v-for = {item, props} in firstChunkItems |
 					:is = item |
-					:v-attrs = props
+					v-attrs = props
 				.
 
 			< .&__tombstones &

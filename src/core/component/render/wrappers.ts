@@ -354,7 +354,13 @@ export function wrapRenderSlot<T extends typeof renderSlot>(original: T): T {
  */
 export function wrapWithCtx<T extends typeof withCtx>(original: T): T {
 	return Object.cast(function withCtx(this: ComponentInterface, fn: Function) {
-		return original((slotArgs: object) => fn(slotArgs, slotArgs));
+		return original((...args: unknown[]) => {
+			if (fn.length - args.length > 0) {
+				args = args.concat(new Array(fn.length - args.length).fill(undefined));
+			}
+
+			return fn(...args.concat(args[0]));
+		});
 	});
 }
 

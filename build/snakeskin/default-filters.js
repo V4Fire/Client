@@ -30,27 +30,42 @@ const
 	TYPE_OF = Symbol('Type of component to create'),
 	SMART_PROPS = Symbol('Smart component props');
 
-const bind = {
+const bemBind = {
 	bind: [
 		(o) => o.getVar('$attrs'),
 		'typeof rootTag !== "undefined" ? rootTag : undefined'
 	]
 };
 
+const tagNameBind = {
+	bind: [
+		...bemBind.bind,
+		'typeof forceRenderAsVNode !== "undefined" ? forceRenderAsVNode : undefined'
+	]
+};
+
+const tagBind = {
+	bind: [
+		...tagNameBind.bind,
+		'TPL_NAME',
+		'$i++'
+	]
+};
+
 Snakeskin.importFilters({
-	tagFilter: Snakeskin.setFilterParams(tagFilter, {bind: ['TPL_NAME', '$i++']}),
-	tagNameFilter: Snakeskin.setFilterParams(tagNameFilter, bind),
-	bemFilter: Snakeskin.setFilterParams(bemFilter, bind),
+	tagFilter: Snakeskin.setFilterParams(tagFilter, tagBind),
+	tagNameFilter: Snakeskin.setFilterParams(tagNameFilter, tagNameBind),
+	bemFilter: Snakeskin.setFilterParams(bemFilter, bemBind),
 	line: Snakeskin.setFilterParams((_, line) => line, {bind: [(o) => o.i]})
 });
 
-function tagFilter({name, attrs = {}}, tplName, cursor) {
-	Object.forEach(tagFilters, (filter) => filter({name, attrs}));
+function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplName, cursor) {
+	Object.forEach(tagFilters, (filter) => filter({tplName, tag, attrs, rootTag, forceRenderAsVNode}));
 
 	const isSimpleTag =
-		name !== 'component' &&
+		tag !== 'component' &&
 		!attrs[TYPE_OF] &&
-		!validators.blockName(name);
+		!validators.blockName(tag);
 
 	if (isSimpleTag) {
 		return;
@@ -63,7 +78,7 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 		componentName = attrs[TYPE_OF];
 
 	} else {
-		componentName = name === 'component' ? 'iBlock' : name.camelize(false);
+		componentName = tag === 'component' ? 'iBlock' : tag.camelize(false);
 	}
 
 	const
@@ -157,12 +172,12 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 	}
 }
 
-function tagNameFilter(tag, attrs, rootTag) {
+function tagNameFilter(tag, attrs, rootTag, forceRenderAsVNode) {
 	attrs ??= {};
 
 	tag = $C(tagNameFilters)
 		.to(tag)
-		.reduce((tag, filter) => filter(tag, attrs, rootTag));
+		.reduce((tag, filter) => filter({tag, attrs, rootTag, forceRenderAsVNode}));
 
 	const
 		componentName = tag.camelize(false),

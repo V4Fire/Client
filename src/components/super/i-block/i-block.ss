@@ -18,7 +18,7 @@
 	- componentName = ''
 
 	/** The root tag type. If not specified, it will be taken from the component `rootTag` prop. */
-	- rootTag = null
+	- rootTag = 'div'
 
 	/** Should or not to create an extra wrapper inside the root tag */
 	- rootWrapper = false
@@ -33,15 +33,22 @@
 	- teleport = false
 
 	/**
+	 * True if the application needs to be built for SSR
+	 */
+	- SSR = require('@config/config').webpack.ssr
+
+	/**
+	* If set to true, the component will always be rendered by creating an intermediate VNODE tree.
+	* Enabling this option may negatively affect rendering speed in SSR.
+	* However, this mode is necessary for using some directives.
+	*/
+	- forceRenderAsVNode = false
+
+	/**
 	 * If set to false, the component will generate a special markup to
 	 * allow it to not render during server-side rendering
 	 */
 	- ssrRendering = true
-
-	/**
-	 * True if the application needs to be built for SSR
-	 */
-	- SSR = require('@config/config').webpack.ssr
 
 	/**
 	 * Defines the rendering mode of the template.

@@ -74,7 +74,7 @@ export default abstract class iBlockProviders extends iBlockState {
 		const {hydrationStore} = this.remoteState;
 
 		if (SSR) {
-			hydrationStore.init(this.componentId);
+			this.hydrationStore?.init(this.componentId);
 		}
 
 		const

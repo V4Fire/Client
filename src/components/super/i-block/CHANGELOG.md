@@ -13,6 +13,8 @@ Changelog
 
 #### :rocket: New Feature
 
+* Added Snakeskin constant `SSR` to determine that the template is being assembled for SSR
+* Added Snakeskin constant `renderSSRAsString` for optimizing component assembly under SSR
 * Added an optional `name` parameter to the `hydrateStyles` method.
 This parameter allows specifying the name of the component for which styles should be hydrated.
 * Added a registration of styles for templates in SSR
