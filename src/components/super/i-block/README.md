@@ -179,7 +179,7 @@ class bExample extends iBlock {
 }
 ```
 
-### [ssrRendering = `true`]
+### [ssrRenderingProp = `true`]
 
 If set to false, the component will not render its content during server-side rendering.
 This should be used with non-functional components.

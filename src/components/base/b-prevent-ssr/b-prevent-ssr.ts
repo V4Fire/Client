@@ -17,7 +17,6 @@ export * from 'components/super/i-block/i-block';
 
 @component()
 class bPreventSsr extends iBlock {
-	/** @inheritDoc */
 	@prop({forceDefault: true})
 	override readonly ssrRenderingProp: boolean = false;
 }
