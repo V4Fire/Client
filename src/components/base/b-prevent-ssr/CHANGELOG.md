@@ -13,4 +13,4 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added component
+* Initial release
