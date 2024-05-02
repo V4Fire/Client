@@ -436,6 +436,19 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
+	 * Hydrates the component styles for SSR
+	 * @param name
+	 */
+	@hook('created')
+	hydrateStyles(name: string = this.componentName): void {
+		const stylesToHydrate = hydratedStyles.get(name);
+
+		if (stylesToHydrate != null) {
+			this.remoteState.hydrationStore.styles.set(name, stylesToHydrate);
+		}
+	}
+
+	/**
 	 * This method serves as a two-way connector between the component and its storage.
 	 *
 	 * During the component's initialization, it requests its associated data from the storage,
@@ -544,18 +557,6 @@ export default abstract class iBlockState extends iBlockMods {
 			'theme.change',
 			(theme: Theme) => this.setMod('theme', theme.value)
 		);
-	}
-
-	/**
-	 * Hydrates the component styles for SSR
-	 */
-	@hook('created')
-	protected hydrateStyles(): void {
-		const stylesToHydrate = hydratedStyles.get(this.componentName);
-
-		if (stylesToHydrate != null) {
-			this.remoteState.hydrationStore.styles.set(this.componentName, stylesToHydrate);
-		}
 	}
 
 	/**

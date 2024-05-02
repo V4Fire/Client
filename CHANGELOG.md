@@ -11,6 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added an optional `name` parameter to the `hydrateStyles` method.
+This parameter allows specifying the name of the component for which styles should be hydrated.  `components/super/i-block/
+* Added a registration of styles for templates in SSR `components/super/i-block/
+* Added a registration of styles in the `getRenderFactory` method for templates in SSR `components/friends/vdom`
+
+#### :house: Internal
+
+* The `hydrateStyles` method has been made public `components/super/i-block/
+
 ## v4.0.0-beta.93 (2024-04-19)
 
 #### :house: Internal

@@ -225,7 +225,7 @@
 
 	: componentId = 'data-cached-class-component-id'
 
-	- if require('@config/config').webpack.ssr
+	- if SSR
 		? rootAttrs[':' + componentId] = 'String(renderComponentId)'
 
 	- else
@@ -248,6 +248,9 @@
 				< ${teleport ? 'teleport' : '?'} to = ${teleport}
 					< _ v-attrs = rootAttrs | ${rootAttrs|!html}
 						{{ void(vdom.saveRenderContext()) }}
+
+						- if SSR
+							{{ void(hydrateStyles('${self.name()}')) }}
 
 						/**
 						 * Generates a slot declaration by the specified parameters
