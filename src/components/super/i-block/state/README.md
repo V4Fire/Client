@@ -586,11 +586,12 @@ This method will be used when calling `state.resetRouter`.
 
 #### hydrateStyles
 
-This method is used to hydrate the component styles for SSR.
-By default it gets called for the current component when the component is created.
+This method is used to hydrate the component styles for server-side rendering (SSR).
+It is automatically invoked for the current component upon creation.
 
-This method is automatically called during the component's lifecycle, so you typically don't need to call it manually.
-However, if you need to force a hydration of styles, you can call it like this:
+Since this method is called automatically during the component's lifecycle,
+there is generally no need to call it manually.
+However, if you need to manually force a hydration of styles, you can call it as follows:
 
 ```typescript
 yourComponentInstance.hydrateStyles('yourComponentName');

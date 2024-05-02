@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added a registration of styles in the `getRenderFactory` method for templates in SSR
+* Added style registration in the `getRenderFactory` method for templates in SSR
 
 ## 4.0.0-beta.87 (2024-04-12)
 

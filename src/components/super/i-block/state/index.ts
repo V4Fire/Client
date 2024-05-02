@@ -437,18 +437,18 @@ export default abstract class iBlockState extends iBlockMods {
 
 	/**
 	 * Hydrates the component styles for SSR
-	 * @param name
+	 * @param [componentName]
 	 */
 	@hook('created')
-	hydrateStyles(name: string = this.componentName): void {
+	hydrateStyles(componentName: string = this.componentName): void {
 		if (!SSR) {
 			return;
 		}
 
-		const stylesToHydrate = hydratedStyles.get(name);
+		const stylesToHydrate = hydratedStyles.get(componentName);
 
 		if (stylesToHydrate != null) {
-			this.remoteState.hydrationStore.styles.set(name, stylesToHydrate);
+			this.remoteState.hydrationStore.styles.set(componentName, stylesToHydrate);
 		}
 	}
 
