@@ -37,8 +37,6 @@ import {
 	bindRemoteWatchers,
 	customWatcherRgxp,
 
-	hydratedStyles,
-
 	RawWatchHandler,
 	WatchPath,
 
@@ -141,6 +139,14 @@ export default abstract class iBlockBase extends iBlockFriends {
 	@computed()
 	get isFunctional(): boolean {
 		return this.meta.params.functional === true;
+	}
+
+	/**
+	 * True if all component watchers are operating in functional mode
+	 */
+	@computed()
+	get isFunctionalWatchers(): boolean {
+		return SSR || this.isFunctional;
 	}
 
 	/**
@@ -448,12 +454,12 @@ export default abstract class iBlockBase extends iBlockFriends {
 		optsOrHandler: AsyncWatchOptions | RawWatchHandler<this, T>,
 		handlerOrOpts?: RawWatchHandler<this, T> | AsyncWatchOptions
 	): void {
-		const
-			{async: $a} = this;
-
 		if (SSR) {
 			return;
 		}
+
+		const
+			{async: $a} = this;
 
 		let
 			handler: RawWatchHandler<this, T>,
@@ -665,28 +671,14 @@ export default abstract class iBlockBase extends iBlockFriends {
 		}
 
 		if (!this.meta.params.root) {
-			['app', 'appProcessId', 'hydrationStore', 'ssrState'].forEach((prop) => {
-				Object.defineProperty(this, prop, {
-					enumerable: true,
-					configurable: true,
+			Object.defineProperty(this, 'app', {
+				enumerable: true,
+				configurable: true,
 
-					get() {
-						return prop in this.r ? this.r[prop] : undefined;
-					}
-				});
+				get() {
+					return 'app' in this.r ? this.r['app'] : undefined;
+				}
 			});
-		}
-	}
-
-	/**
-	 * Hydrates the component styles for SSR
-	 */
-	@hook('created')
-	protected hydrateStyles(): void {
-		const stylesToHydrate = hydratedStyles.get(this.componentName);
-
-		if (stylesToHydrate != null) {
-			this.hydrationStore?.styles.set(this.componentName, stylesToHydrate);
 		}
 	}
 }

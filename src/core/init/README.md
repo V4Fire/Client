@@ -1,241 +1,156 @@
 # core/init
 
-This module provides an initializer for the application.
-All tasks from the module will be completed before the initialization of the application itself.
-You can add additional tasks before initialization.
+This module provides an application initialization function.
+Additionally, you can declare tasks that must be guaranteed to be completed before creating the application.
+For example, initializing a user session or experiment.
 
-## Why is this module needed?
+## Usage
 
-When developing applications, it is often necessary to do some work before initializing the entire application.
-For example, get the AB experiment ID for a user (if any).
-This module solves this problem by allowing you to define tasks
-that will block application initialization until all required dependencies are resolved.
-
-## How does this module work?
-
-The code responsible for initializing the application is located in the `core/init/semaphore` module.
-The module exports a factory for the default initialization function, which is wrapped in an asynchronous semaphore.
-This means that this function can be called multiple times from different modules,
-but in fact, it will be executed only once and only when all necessary conditions are met.
-
-The necessary conditions for executing this function are represented as flags and
-described in the `core/init/flags` module.
-The module simply exports an array of string flags.
-In turn, these flags should be passed when calling the application initialization function.
-You can do this by calling the `ready` method on the application initialization parameters object.
-If all the flags specified in this array were passed as arguments to the initialization function,
-then only then will the initialization itself be called, and only once.
-
-__core/init/flags.ts__
-
-```js
-import parentFlags from '@super/core/init/flags';
-
-export default [
-  ...parentFlags,
-  'sleep'
-];
-```
-
-__core/init/sleep.ts__
+Typically, explicit application initialization is required when organizing SSR.
+We call the initialization function and pass the necessary environment parameters to it.
+In this case, the function will return a promise with values needed to be delivered to the client — this is
+a rendered string with markup, the necessary CSS styles and the application state.
 
 ```typescript
-import type { InitAppOptions } from 'core/init/interface';
-
-export default function initSleep(params: InitAppOptions) {
-  setTimeout(() => {
-    params.ready('sleep');
-  }, 100);
-};
-```
-
-__core/init/index.ts__
-
-```typescript
-import initAppSuper from '@super/core/init';
-import initSleep from 'core/init/sleep';
-
-import type { InitAppOptions, App } from 'core/init/interface';
-
-export default async function initApp(
-  rootComponent: Nullable<string>,
-  opts: InitAppOptions
-): Promise<App> {
-  const app = initAppSuper(rootComponent, opts);
-  initSleep(opts).catch(stderr);
-  return app;
-}
-```
-
-### Built-in initialization flags
-
-Any V4Fire application needs to perform a series of actions before primary rendering.
-These actions are described by standard initialization flags.
-
-```js
-export default [
-  'DOMReady',
-  'ABTReady',
-  'prefetchReady',
-  'stateReady'
-];
-```
-
-### DOMReady
-
-The application initializes only after the DOMContentReady event.
-For SSR, this flag is set immediately.
-
-### ABTReady
-
-A stub for initializing the A/B experiment context.
-By default, the flag is set immediately, but you can override the `core/init/abt` module and set your own logic.
-
-__core/init/abt.ts__
-
-```typescript
-import { initGlobalEnv } from 'core/env';
-
-import type { InitAppOptions } from 'core/init/interface';
-
-export default async function initABT(params: InitAppOptions): Promise<void> {
-  initGlobalEnv(params);
-  void params.ready('ABTReady');
-}
-```
-
-### prefetchReady
-
-A stub for pre-requesting data providers and other sources.
-By default, the flag is set immediately, but you can override the `core/init/prefetch` module and set your own logic.
-
-__core/init/prefetch.ts__
-
-```typescript
-import { initGlobalEnv } from 'core/env';
-
-import type { InitAppOptions } from 'core/init/interface';
-
-export default async function initPrefetch(params: InitAppOptions): Promise<void> {
-  initGlobalEnv(params);
-  void params.ready('prefetchReady');
-}
-```
-
-### stateReady
-
-Initializing the application global state (user session initialization, online status loading, etc.).
-
-__core/init/abt.ts__
-
-```typescript
-import { initGlobalEnv } from 'core/env';
-
-import * as net from 'core/net';
-import * as session from 'core/session';
-
-import state from 'core/component/client-state';
-
-import type { InitAppOptions } from 'core/init/interface';
-
-export default async function initState(params: InitAppOptions): Promise<void> {
-  initGlobalEnv(params);
-  state.isOnline = true;
-
-  net.isOnline()
-    .then((v) => {
-      state.isOnline = v.status;
-      state.lastOnlineDate = v.lastOnline;
-    })
-
-    .catch(stderr);
-
-  try {
-    await session.isExists().then((v) => state.isAuth = v);
-
-  } catch (err) {
-    stderr(err);
-  }
-
-  void params.ready('stateReady');
-}
-```
-
-## How to work with this module for SSR rendering?
-
-In the case of traditional application initialization,
-we usually do not need to manually call the creation of the root component, since it is created automatically.
-On the contrary, in the case of SSR, we need to be able to manually call the initialization for each request.
-
-Therefore, the main `core/init` module exports a function that will not be automatically called in the case of SSR.
-The result of the function depends on the context.
-In SSR, the function will return an object of the following format: `{content: string; styles: string}`.
-Here, the `content` is a string containing the rendered application, and `styles` are the required styles.
-When working in a browser context,
-the function will return a reference to the element where the root component was mounted.
-
-When calling this function from SSR, it is necessary to pass the name of the root component being created,
-and additional parameters can also be passed.
-
-```typescript
-import { initApp, createInitAppSemaphore } from 'core';
-
-import type { ComponentOptions } from 'core/component/engines';
+import { initApp } from 'core/init';
+import { createCookieStore } from 'core/cookies';
 
 initApp('p-v4-components-demo', {
-  ready: createInitAppSemaphore(),
-  route: '/user/12345',
-
-  setup(rootComponentParams: ComponentOptions) {
-    rootComponentParams.inject = {
-      ...rootComponentParams.inject,
-      hydrationStore: 'hydrationStore'
-    };
-  },
-
-  globalEnv: {
-    ssr: {
-      document: {
-        get cookie() {
-          return 'cookie string';
-        },
-
-        set cookie(cookie) {
-          // Set the passed cookie
-          // ...
-        }
-      }
-    },
-
-    location: {
-      href: 'https://example.com/user/12345'
-    }
-  }
-}).then(({content: renderedHTML, styles: inlinedStyles}) => {
-  console.log(renderedHTML, inlinedStyles);
-})
+  location: new URL('https://example.com/user/12345'),
+  cookies: createCookieStore('id=1')
+}).then(({content: renderedHTML, styles: inlinedStyles, state}) => {
+  console.log(renderedHTML, inlinedStyles, state);
+});
 ```
 
-### Additional initialization options
+### Application state
+
+The state of the created application is formed based on the parameters passed to the initialization function.
+The state interface is described in the `core/component/state` module.
 
 ```typescript
+import { initApp } from 'core';
+import { createCookieStore } from 'core/cookies';
+
+initApp('p-v4-components-demo', {
+  location: new URL('https://example.com/user/12345'),
+  cookies: createCookieStore('id=1')
+}).then(({content: renderedHTML, styles: inlinedStyles, state}) => {
+  console.log(renderedHTML, inlinedStyles, state);
+});
+```
+
+To work with the state from a component context, you should use a special getter called `remoteState`.
+
+```typescript
+import iBlock, { component } from 'components/super/i-block/i-block';
+
+@component()
+class bExample extends iBlock {
+  created() {
+    console.log(this.remoteState.location.href);
+  }
+}
+```
+
+To access the state via a global reference, you can use `app.state` from the `core/component` module.
+But keep in mind that working with state through global import will not work with SSR.
+
+```typescript
+import { app } from 'core/component';
+
+console.log(app.state?.location);
+```
+
+### Initializing Client-Side Browser Application
+
+During initialization in the browser, all necessary calls are made automatically.
+After initialization, the root component node will have an id attribute equal to `root-component`.
+This means you can access the component context simply by using the `component` property of
+the root component node.
+
+```js
+console.log(document.querySelector('#root-component')?.component.componentName);
+```
+
+Or you can use the `app` object imported from `core/component`.
+This object contains three properties:
+
+* `context` is the context of the created application;
+* `component` is the context of the application's root component;
+* `state` is the global state of the created application.
+
+```js
+import { app } from 'core/component';
+
+console.log(app?.context.directive('v-attrs'));
+console.log(app?.component.componentName);
+console.log(app?.state.isAuth);
+```
+
+### Additional Initialization Options
+
+```typescript
+import type Async from 'core/async';
+import type * as net from 'core/net';
+
+import type { Session } from 'core/session';
+import type { CookieStore } from 'core/cookies';
+
+import type ThemeManager from 'core/theme-manager';
+import type PageMetaData from 'core/page-meta-data';
+
+import type { Experiments } from 'core/abt';
+import type { InitialRoute } from 'core/router';
+
+import type HydrationStore from 'core/hydration-store';
+
 interface InitAppOptions {
   /**
-   * Sets the passed flag to a ready status.
-   * When all the declared flags are ready, the application itself will be initialized.
-   *
-   * @param flag
+   * The unique identifier for the application process
    */
-  ready(flag: string): Promise<(
-    rootComponentName: Nullable<string>,
-    opts: InitAppOptions
-  ) => Promise<HTMLElement | AppSSR>>;
+  appProcessId?: string;
 
   /**
-   * A link to the element where the application should be mounted.
-   * This parameter is only used when initializing the application in a browser.
+   * True, if the current user session is authorized
    */
-  targetToMount?: Element;
+  isAuth?: boolean;
+
+  /**
+   * An API for managing user session
+   */
+  session: Session;
+
+  /**
+   * A store of application cookies
+   */
+  cookies: CookieStore;
+
+  /**
+   * An API for working with the target document's URL
+   */
+  location: URL;
+
+  /**
+   * An API for managing app themes from the Design System
+   */
+  theme?: ThemeManager;
+
+  /**
+   * An API for working with the meta information of the current page
+   */
+  pageMetaData?: PageMetaData;
+
+  /**
+   * A storage for hydrated data.
+   * During SSR, data is saved in this storage and then restored from it on the client.
+   */
+  hydrationStore?: HydrationStore;
+
+  /**
+   * An API to work with a network, such as testing of the network connection, etc.
+   */
+  net?: typeof net;
 
   /**
    * The initial route for initializing the router.
@@ -244,74 +159,94 @@ interface InitAppOptions {
   route?: InitialRoute;
 
   /**
-   * An object whose properties will extend the global object.
-   * For example, for SSR rendering, the proper functioning of APIs such as `document.cookie` or `location` is required.
-   * Using this object, polyfills for all necessary APIs can be passed through.
+   * The application default locale
    */
-  globalEnv?: GlobalEnvironment;
+  locale?: Language;
+
+  /**
+   * A list of registered AB experiments
+   */
+  experiments?: Experiments;
+
+  /**
+   * A link to the element where the application should be mounted.
+   * This parameter is only used when initializing the application in a browser.
+   */
+  targetToMount?: Nullable<HTMLElement>;
 
   /**
    * A function that is called before the initialization of the root component
    * @param rootComponentParams
    */
   setup?(rootComponentParams: ComponentOptions): void;
-}
 
-export interface GlobalEnvironment extends Dictionary {
-  /**
-   * A shim for the `window.location` API
-   */
-  location?: Location;
-
-  /**
-   * SSR environment object
-   */
-  ssr?: {
-    /**
-     * A shim for the `window.document` API
-     */
-    document?: Document;
-  };
+  /** {@link Async} */
+  async?: Async;
 }
 ```
 
-### Initializing the global environment for SSR
+## Registering Additional Tasks Prior to Application Initialization
 
-To initialize the global environment passed as parameters to the initApp function,
-use a special function from the `core/env` module.
+To specify a list of tasks before initializing the application,
+you need to return them as a default export in the form of a dictionary from the `core/init/dependencies` module.
+
+```js
+import { loadSession } from 'core/init/dependencies/load-session';
+import { loadedHydratedPage } from 'core/init/dependencies/loaded-hydrated-page';
+import { whenDOMLoaded } from 'core/init/dependencies/when-dom-loaded';
+
+export default {
+  loadSession,
+  loadedHydratedPage,
+  whenDOMLoaded
+};
+```
+
+Tasks are described as ordinary functions that take an environment and settings object and return a promise.
+Functions can change values in the environment object.
+Based on this object, the state of the entire application will be formed later.
+
+Note that all tasks will be performed in parallel.
+However, there is a way to describe that some tasks should wait for the preliminary execution of others.
+
+```js
+import { loadSession } from 'core/init/dependencies/load-session';
+import { loadedHydratedPage } from 'core/init/dependencies/loaded-hydrated-page';
+import { whenDOMLoaded } from 'core/init/dependencies/when-dom-loaded';
+
+import { dependency } from 'core/init/dependencies/helpers';
+
+export default {
+  loadSession,
+
+  // Can specify as many dependencies as you want, separated by commas
+  loadedHydratedPage: dependency(loadedHydratedPage, 'loadSession'),
+
+  // * means that this task should be executed after all others
+  whenDOMLoaded: dependency(loadedHydratedPage, '*')
+};
+```
+
+The helper `dependency` returns an object of the form.
 
 ```typescript
-import { initGlobalEnv } from 'core/env';
+import type { State } from 'core/component';
 
-import type { InitAppOptions } from 'core/init/interface';
-
-export default async function initPrefetch(params: InitAppOptions): Promise<void> {
-  initGlobalEnv(params);
-  void params.ready('prefetchReady');
+interface Dependency {
+  fn(params: State): Promise<void>;
+  wait: Set<string>;
 }
 ```
 
-## Getting the root component in the browser
+You can manually add or remove additional dependencies, or, again, use the `dependency` function for this.
 
-During the initialization of the root component in the browser,
-it is assigned an ID attribute with `root-component` as the value.
+### Built-In Dependencies
 
-This means you can access the component context simply by using the `component` property of
-the node with the id of `root-component`.
+Please note that V4Fire expects the initialization of three basic states described in the modules:
 
-```js
-console.log(document.querySelector('#root-component')?.component.componentName);
-```
+* `core/init/dependencies/load-session`
+* `core/init/dependencies/check-online`
+* `core/init/dependencies/loaded-hydrated-page`
+* `core/init/dependencies/when-dom-loaded`
 
-Or you can use the `app` object imported from `core/component`.
-This object contains two properties:
-
-* `context` is the context of the created application;
-* `component` is the context of the application's root component.
-
-```js
-import { app } from 'core/component';
-
-console.log(app?.context.directive('v-attrs'));
-console.log(app?.component.componentName);
-```
+You can override them or introduce new ones to suit your needs.

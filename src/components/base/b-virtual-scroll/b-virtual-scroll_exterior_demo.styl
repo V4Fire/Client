@@ -1,0 +1,30 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+b-virtual-scroll_exterior_demo extends b-virtual-scroll
+	/exterior &__option-el
+		position relative
+
+		display flex
+		justify-content center
+		align-items center
+
+		size 200px
+		margin 20px
+
+		background-color red
+
+		&:after
+			content attr(data-index)
+			font-size 20px
+			color #FFF
+
+	/exterior &__skeleton
+		size 200px
+		margin 20px
+		background-color gray

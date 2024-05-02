@@ -82,8 +82,6 @@ module.exports = {
 		s(getThemes(getDS(), config.theme.include() || [config.theme.default()])) :
 		null,
 
-	DETECT_USER_PREFERENCES: s(config.theme.detectUserPreferences()),
-
 	POST_PROCESS_THEME: s(config.theme.postProcessor),
 
 	DS: runtime.passDesignSystem && pzlr.designSystem ?

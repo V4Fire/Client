@@ -6,11 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { State } from 'core/component/state';
 import type { CreateAppFunction } from 'core/component/engines';
-
 import type { ComponentInterface } from 'core/component/interface';
 
 export interface App {
 	context: Nullable<ReturnType<CreateAppFunction>>;
 	component: Nullable<ComponentInterface>;
+	state: Nullable<State>;
 }

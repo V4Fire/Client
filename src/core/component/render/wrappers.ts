@@ -118,15 +118,13 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			vnode = createVNode(name, attrs, isRegular ? slots : [], patchFlag, dynamicProps);
 
 		vnode.props ??= {};
-		vnode.props.getRoot ??= () =>
-			('getRoot' in this ? this.getRoot?.() : null) ??
-			this.$root;
+		vnode.props.getRoot ??= this.$getRoot(this);
 
 		vnode.props.getParent ??= () => vnode.virtualParent?.value != null ?
 			vnode.virtualParent.value :
 			this;
 
-		if (vnode.ref != null && vnode.ref.i == null) {
+		if (!SSR && vnode.ref != null && vnode.ref.i == null) {
 			vnode.ref.i ??= {
 				refs: this.$refs,
 				setupState: {}
@@ -194,7 +192,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			vnode.patchFlag |= functionalVNode.patchFlag;
 		}
 
-		if (Object.size(functionalVNode.dynamicProps) > 0) {
+		if (!SSR && Object.size(functionalVNode.dynamicProps) > 0) {
 			vnode.dynamicProps ??= [];
 			functionalVNode.dynamicProps?.forEach((propName) => {
 				if (isHandler.test(propName)) {
@@ -243,8 +241,7 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 			return name;
 		}
 
-		const
-			appCtx = SSR ? this.app : app.context;
+		const {context: appCtx} = SSR ? this.app : app;
 
 		if (isComponent.test(name) && appCtx != null) {
 			return appCtx.component(name) ?? original(name);
@@ -262,7 +259,7 @@ export function wrapResolveDirective<T extends typeof resolveDirective>(
 	original: T
 ): T {
 	return Object.cast(function resolveDirective(this: ComponentInterface, name: string) {
-		const appCtx = SSR ? this.app : app.context;
+		const {context: appCtx} = SSR ? this.app : app;
 		return appCtx != null ? appCtx.directive(name) ?? original(name) : original(name);
 	});
 }

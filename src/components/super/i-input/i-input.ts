@@ -248,9 +248,6 @@ export default abstract class iInput extends iInputHandlers implements iVisible,
 			valid: CanUndef<ValidationResult<this['FormValue']>>,
 			failedValidation: CanUndef<ValidationError>;
 
-		const
-			focusedEl = document.activeElement;
-
 		for (const decl of this.validators) {
 			const
 				isArray = Object.isArray(decl),
@@ -315,10 +312,6 @@ export default abstract class iInput extends iInputHandlers implements iVisible,
 
 		} else {
 			void this.removeMod('valid');
-		}
-
-		if (focusedEl != null && 'focus' in focusedEl) {
-			(<HTMLElement>focusedEl).focus();
 		}
 
 		if (valid === true) {

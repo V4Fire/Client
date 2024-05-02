@@ -489,18 +489,15 @@ __components/pages/p-v4-components-demo/p-v4-components-demo.ess__
 
 #### isAuth
 
-True if the current user is authorized.
-See `core/session` for more information.
+True if the current user is authorized. See `core/session` for more information.
 
 #### isOnline
 
-True if there is a connection to the Internet
-See `core/net` for more information.
+True if there is a connection to the Internet.
 
 #### lastOnlineDate
 
-The last date when the application was online.
-See `core/net` for more information.
+Last date when the application was online.
 
 #### activePage
 
@@ -509,7 +506,7 @@ See [[bDynamicPage]] for more information.
 
 ### pageMetaData
 
-A module for manipulating page metadata, such as the page title or description.
+An API for managing the meta information of a page, such as the title, description, and other meta tags.
 
 ```js
 this.r.pageMetaData.title = 'Example';

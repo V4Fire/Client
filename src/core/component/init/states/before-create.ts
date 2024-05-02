@@ -65,7 +65,7 @@ export function beforeCreateState(
 		configurable: true,
 		enumerable: false,
 		writable: true,
-		value: () => {
+		value() {
 			if (component.hook !== 'beforeDestroy' && component.hook !== 'destroyed') {
 				beforeDestroyState(component);
 			}
@@ -80,7 +80,7 @@ export function beforeCreateState(
 		configurable: true,
 		enumerable: false,
 		writable: true,
-		value: (ref: unknown) => {
+		value(ref: unknown) {
 			if (ref == null) {
 				return undefined;
 			}
@@ -91,6 +91,70 @@ export function beforeCreateState(
 
 			return `${String(ref)}:${unsafe.componentId}`;
 		}
+	});
+
+	const $getRoot = Symbol('$getRoot');
+
+	Object.defineProperty(unsafe, '$getRoot', {
+		configurable: true,
+		enumerable: false,
+		writable: true,
+		value: <ComponentInterface['$getRoot']>((ctx) => {
+			if ($getRoot in ctx) {
+				return ctx[$getRoot];
+			}
+
+			const fn = () => ('getRoot' in ctx ? ctx.getRoot?.() : null) ?? ctx.$root;
+
+			Object.defineProperty(ctx, $getRoot, {
+				configurable: true,
+				enumerable: true,
+				writable: false,
+				value: fn
+			});
+
+			return fn;
+		})
+	});
+
+	const $getParent = Symbol('$getParent');
+
+	Object.defineProperty(unsafe, '$getParent', {
+		configurable: true,
+		enumerable: false,
+		writable: true,
+		value: <ComponentInterface['$getParent']>((ctx, restArgs) => {
+			const targetCtx = restArgs != null && 'ctx' in restArgs ? restArgs.ctx ?? ctx : ctx;
+
+			if ($getParent in targetCtx) {
+				return targetCtx[$getParent];
+			}
+
+			let fn: CanUndef<Function>;
+
+			if (restArgs != null) {
+				// VNODE
+				if ('type' in restArgs && 'children' in restArgs) {
+					fn = () => restArgs.virtualParent?.value != null ? restArgs.virtualParent.value : ctx;
+
+				} else if ('ctx' in restArgs) {
+					fn = () => restArgs.ctx ?? ctx;
+				}
+			}
+
+			if (fn == null) {
+				fn = () => ctx;
+			}
+
+			Object.defineProperty(targetCtx, $getParent, {
+				configurable: true,
+				enumerable: true,
+				writable: false,
+				value: fn
+			});
+
+			return fn;
+		})
 	});
 
 	const
@@ -145,6 +209,20 @@ export function beforeCreateState(
 				.filter((el) => el.component != null)
 				.map((el) => el.component);
 		}
+	});
+
+	unsafe.$async.worker(() => {
+		// We are cleaning memory in a deferred way, because this API may be needed when processing the destroyed hook
+		setTimeout(() => {
+			['$root', '$parent', '$normalParent', '$children'].forEach((key) => {
+				Object.defineProperty(unsafe, key, {
+					configurable: true,
+					enumerable: true,
+					writable: false,
+					value: null
+				});
+			});
+		}, 1000);
 	});
 
 	if (opts?.addMethods) {

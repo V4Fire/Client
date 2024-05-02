@@ -6,15 +6,60 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type Async from 'core/async';
+import type * as net from 'core/net';
+
+import type { Session } from 'core/session';
+import type { Cookies } from 'core/cookies';
+
 import type { Experiments } from 'core/abt';
-import type { CookieStore } from 'core/cookies';
 import type { InitialRoute, AppliedRoute } from 'core/router';
 
+import type ThemeManager from 'core/theme-manager';
+import type PageMetaData from 'core/page-meta-data';
+import type HydrationStore from 'core/hydration-store';
+
 export interface State {
+	/**
+	 * The unique identifier for the application process
+	 */
+	appProcessId: string;
+
 	/**
 	 * True, if the current user session is authorized
 	 */
 	isAuth?: boolean;
+
+	/**
+	 * An API for managing user session
+	 */
+	session: Session;
+
+	/**
+	 * An API for working with cookies
+	 */
+	cookies: Cookies;
+
+	/**
+	 * An API for working with the target document's URL
+	 */
+	location: URL;
+
+	/**
+	 * An API for managing app themes from the Design System
+	 */
+	theme: ThemeManager;
+
+	/**
+	 * An API for working with the meta information of the current page
+	 */
+	pageMetaData: PageMetaData;
+
+	/**
+	 * A storage for hydrated data.
+	 * During SSR, data is saved in this storage and then restored from it on the client.
+	 */
+	hydrationStore: HydrationStore;
 
 	/**
 	 * True, if the application is connected to the Internet
@@ -27,48 +72,26 @@ export interface State {
 	lastOnlineDate?: Date;
 
 	/**
-	 * The application default language
+	 * An API to work with a network, such as testing of the network connection, etc.
 	 */
-	lang?: Language;
+	net: typeof net;
+
+	/**
+	 * The initial value for the active route.
+	 * This field is typically used in cases of SSR and hydration.
+	 */
+	route?: InitialRoute | AppliedRoute;
+
+	/**
+	 * The application default locale
+	 */
+	locale?: Language;
 
 	/**
 	 * A list of registered AB experiments
 	 */
 	experiments?: Experiments;
 
-	/**
-	 * Initial value for the active route.
-	 * This field is typically used in cases of SSR and hydration.
-	 */
-	route?: InitialRoute | AppliedRoute;
-
-	/**
-	 * A store of application cookies
-	 */
-	cookies?: CookieStore;
-
-	/**
-	 * A shim for the `window.document` API
-	 */
-	document?: Document;
-
-	/**
-	 * An object whose properties will extend the global object.
-	 * For example, for SSR rendering, the proper functioning of APIs such as `document.cookie` or `location` is required.
-	 * Using this object, polyfills for all necessary APIs can be passed through.
-	 *
-	 * @example
-	 * ```js
-	 * ({
-	 *   globalEnv: {
-	 *     location: {
-	 *       href: 'https://foo.com'
-	 *     }
-	 *   }
-	 * })
-	 * ```
-	 */
-	globalEnv?: GlobalEnvironment;
+	/** {@link Async} */
+	async: Async;
 }
-
-export interface GlobalEnvironment extends Dictionary {}

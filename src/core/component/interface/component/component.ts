@@ -11,17 +11,15 @@
 import type Async from 'core/async';
 import type { BoundFn, ProxyCb, EventId } from 'core/async';
 
-import type { State } from 'core/component/state';
-import type { HydrationStore } from 'core/component/hydration';
-import type { VNode, Slots, ComponentOptions, SetupContext, CreateAppFunction } from 'core/component/engines';
 import type { ComponentMeta } from 'core/component/meta';
+import type { VNode, Slots, ComponentOptions, SetupContext } from 'core/component/engines';
 
 import type { Hook } from 'core/component/interface/lc';
 import type { ModsProp, ModsDict } from 'core/component/interface/mod';
 import type { SyncLinkCache } from 'core/component/interface/link';
 import type { RenderEngine } from 'core/component/interface/engine';
 
-import type { ComponentElement, ComponentEmitterOptions } from 'core/component/interface/component/types';
+import type { ComponentApp, ComponentElement, ComponentEmitterOptions } from 'core/component/interface/component/types';
 import type { WatchPath, WatchOptions, RawWatchHandler } from 'core/component/interface/watch';
 import type { UnsafeGetter, UnsafeComponentInterface } from 'core/component/interface/component/unsafe';
 
@@ -40,14 +38,9 @@ export abstract class ComponentInterface {
 	readonly Component!: ComponentInterface;
 
 	/**
-	 * A link to the application object
+	 * References to the instance of the entire application and its state
 	 */
-	readonly app!: ReturnType<CreateAppFunction>;
-
-	/**
-	 * The unique identifier for the application process
-	 */
-	readonly appProcessId!: string;
+	readonly app!: ComponentApp;
 
 	/**
 	 * The unique component identifier.
@@ -219,18 +212,6 @@ export abstract class ComponentInterface {
 	 * This object contains all information of the component properties, methods, etc.
 	 */
 	protected readonly meta!: ComponentMeta;
-
-	/**
-	 * Hydrated data repository.
-	 * This API is used only for SSR.
-	 */
-	protected readonly hydrationStore?: HydrationStore;
-
-	/**
-	 * The global state with which the SSR rendering process is initialized.
-	 * This API is used only for SSR.
-	 */
-	protected readonly ssrState?: State;
 
 	/**
 	 * A dictionary containing component attributes that are not identified as input properties
@@ -549,6 +530,27 @@ export abstract class ComponentInterface {
 	protected $resolveRef(_ref: null | undefined): undefined;
 	protected $resolveRef(_ref: unknown): string;
 	protected $resolveRef(_ref: unknown): CanUndef<string | Function> {
+		return Object.throw();
+	}
+
+	/**
+	 * Returns a function for getting the root component based on the context of the current component
+	 * @param _ctx
+	 */
+	protected $getRoot(_ctx: ComponentInterface): () => ComponentInterface {
+		return Object.throw();
+	}
+
+	/**
+	 * Returns a function for getting the parent component based on the context of the current component
+	 *
+	 * @param _ctx
+	 * @param _restArgs
+	 */
+	protected $getParent(
+		_ctx: ComponentInterface,
+		_restArgs?: {ctx?: ComponentInterface} | VNode
+	): () => ComponentInterface {
 		return Object.throw();
 	}
 

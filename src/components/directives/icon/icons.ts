@@ -49,7 +49,7 @@ if (!SSR && MODULE === 'ES2020') {
 		ctx = require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/, 'lazy');
 	}
 
-} else if (IS_PROD) {
+} else if (!SSR && IS_PROD) {
 	ctx = require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/);
 
 } else {
