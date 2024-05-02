@@ -67,6 +67,7 @@ async function renderComponent(page: Page): Promise<JSHandle<bPreventSsr>> {
 
 			fallback: {
 				type: 'div',
+
 				children: {
 					default: 'fallback'
 				},

@@ -659,4 +659,5 @@ Loads modules by the specified paths and dynamically inserted the provided conte
 
 #### skeleton
 
-Used for rendering a fallback content such as a loading indicators (skeletons). If necessary, this block should be overridden in the component that extends the `i-block` superclass.
+A block for rendering fallback content such as loading indicators or skeletons.
+If necessary, this block should be overridden in the component that extends the `iBlock` superclass.
