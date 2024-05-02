@@ -23,7 +23,7 @@ test.describe('<b-prevent-ssr>', () => {
 
 		await target.evaluate(async (ctx) => {
 			// @ts-ignore We can't define the `HYDRATION` global value here,
-			// so setting the field explicitly to simulate the on mount logic
+			// so setting the field explicitly to simulate the `onMount` logic
 			ctx.field.set('ssrRendering', true);
 
 			await ctx.nextTick();
@@ -50,10 +50,6 @@ test.describe('<b-prevent-ssr>', () => {
 	);
 });
 
-/**
- * Renders the `bPreventSsr` component with specified children and returns the `Promise<JSHandle>`
- * @param page
- */
 async function renderComponent(page: Page): Promise<JSHandle<bPreventSsr>> {
 	return Component.createComponent<bPreventSsr>(page, 'b-prevent-ssr', {
 		attrs: {},
@@ -63,15 +59,18 @@ async function renderComponent(page: Page): Promise<JSHandle<bPreventSsr>> {
 				children: {
 					default: 'content'
 				},
+
 				attrs: {
 					id: 'test-content'
 				}
 			},
+
 			fallback: {
 				type: 'div',
 				children: {
 					default: 'fallback'
 				},
+
 				attrs: {
 					id: 'test-fallback'
 				}
