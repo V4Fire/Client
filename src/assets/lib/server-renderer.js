@@ -595,9 +595,9 @@ function renderTeleportVNode(push, vnode, parentComponent, slotScopeId) {
 const { isVNode: isVNode$1 } = Vue.ssrUtils;
 async function unrollBuffer$1(buffer) {
 	if (buffer.hasAsync) {
-		let ret = '';
+		var ret = '';
 		for (var i = 0; i < buffer.length; i++) {
-			let item = buffer[i];
+			var item = buffer[i];
 
 			if (shared.isPromise(item)) {
 				item = await item;
@@ -614,18 +614,19 @@ async function unrollBuffer$1(buffer) {
 		// Prevent memory leaks
 		buffer.splice(0, buffer.length);
 		return ret;
-	}
-	else {
+
+	} else {
 		// sync buffer can be more efficiently unrolled without unnecessary await
 		// ticks
 		return unrollBufferSync$1(buffer);
 	}
 }
 function unrollBufferSync$1(buffer) {
-	let ret = '';
+	var ret = '';
 
 	for (var i = 0; i < buffer.length; i++) {
-		let item = buffer[i];
+		var item = buffer[i];
+
 		if (shared.isString(item)) {
 			ret += item;
 
