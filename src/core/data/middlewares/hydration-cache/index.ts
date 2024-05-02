@@ -18,23 +18,7 @@ import('core/data/middlewares/hydration-cache/test/provider');
 
 /**
  * Attaches a hydration cache to the specified context
- *
  * @param params
- *
- * @example
- * ```typescript
- * import { attachHydrationCache } from 'core/data/middlewares/hydration-cache';
- *
- * import Super, { provider, ProviderOptions, Middlewares } from 'core/data';
- *
- * @provider
- * class Provider extends Super {
- *   static override readonly middlewares: Middlewares = [
- *     ...Super.middlewares,
- *     attachHydrationCache
- *   ];
- * }
- * ```
  */
 export function attachHydrationCache(this: Provider, params: MiddlewareParams): void {
 	const

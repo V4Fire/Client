@@ -7,8 +7,8 @@
  */
 
 import type HydrationStore from 'core/hydration-store';
-import type Cache from 'core/cache/interface';
 
+import type Cache from 'core/cache/interface';
 import type { HydrationCacheOptions } from 'core/cache/decorators/hydration/interface';
 
 export default class HydrationCacheAdapter {
@@ -38,17 +38,17 @@ export default class HydrationCacheAdapter {
 	protected readonly cacheKey: string;
 
 	/**
-	 *
-	 * @param cache
-	 * @param store
-	 * @param options
+	 * @param cache - the cache instance that needs to be wrapped
+	 * @param store - the hydration store where cached data may be persisted or restored from
+	 * @param opts - additional cache options
 	 */
-	constructor(cache: Cache, store: HydrationStore, options: HydrationCacheOptions) {
+	constructor(cache: Cache, store: HydrationStore, opts: HydrationCacheOptions) {
 		this.store = store;
 		this.cache = cache;
 		this.wrappedCache = Object.create(cache);
-		this.id = options.id;
-		this.cacheKey = options.cacheKey;
+
+		this.id = opts.id;
+		this.cacheKey = opts.cacheKey;
 	}
 
 	/**
@@ -56,7 +56,6 @@ export default class HydrationCacheAdapter {
 	 */
 	getInstance(): Cache {
 		this.implementAPI();
-
 		return this.wrappedCache;
 	}
 
@@ -95,7 +94,6 @@ export default class HydrationCacheAdapter {
 	 */
 	protected set(key: string, value: unknown): unknown {
 		this.store.set(this.id, this.cacheKey, Object.cast(value));
-
 		return this.cache.set(key, value);
 	}
 

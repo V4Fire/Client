@@ -34,7 +34,7 @@ export default class HydrationStore {
 	 * {@link Store} in JSON format.
 	 * It is used for incremental serialization of the store.
 	 */
-	protected readonly storeJSON: StoreJSON = this.createInitialStore();
+	protected readonly storeJSON: StoreJSON = this.createStore();
 
 	/**
 	 * A dictionary where the keys are the stored data and the values are their IDs
@@ -58,7 +58,7 @@ export default class HydrationStore {
 			this.store = this.parse(document.getElementById('hydration-store')?.textContent ?? '');
 
 		} catch {
-			this.store = this.createInitialStore();
+			this.store = this.createStore();
 		}
 	}
 
@@ -210,9 +210,25 @@ export default class HydrationStore {
 	}
 
 	/**
+	 * Returns a unique ID for the specified data
+	 * @param data
+	 */
+	protected getDataKey(data: HydratedValue): string {
+		let
+			key = this.data.get(data);
+
+		if (key == null) {
+			key = Object.fastHash(Math.random());
+			this.data.set(data, key);
+		}
+
+		return key;
+	}
+
+	/**
 	 * Creates the initial store
 	 */
-	protected createInitialStore<T extends Store | StoreJSON>(): T {
+	protected createStore<T extends Store | StoreJSON>(): T {
 		return Object.cast({
 			store: Object.createDict(),
 			data: Object.createDict()
@@ -229,22 +245,6 @@ export default class HydrationStore {
 				delete store[key];
 			});
 		});
-	}
-
-	/**
-	 * Returns a unique ID for the specified data
-	 * @param data
-	 */
-	protected getDataKey(data: HydratedValue): string {
-		let
-			key = this.data.get(data);
-
-		if (key == null) {
-			key = Object.fastHash(Math.random());
-			this.data.set(data, key);
-		}
-
-		return key;
 	}
 
 	/**

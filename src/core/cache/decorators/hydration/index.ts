@@ -7,8 +7,8 @@
  */
 
 import type HydrationStore from 'core/hydration-store';
-
 import type Cache from 'core/cache/interface';
+
 import HydrationCacheAdapter from 'core/cache/decorators/hydration/adapter';
 import type { HydrationCacheOptions } from 'core/cache/decorators/hydration/interface';
 
@@ -17,34 +17,10 @@ export * from 'core/cache/decorators/hydration/interface';
 /**
  * Wraps the specified cache to integrate it with the hydration store
  *
- * @param cache - cache to wrap
- * @param store - hydration store
- * @param options - hydration cache options
- *
- * @example
- * ```typescript
- * import { addHydrationCache } from 'core/cache/decorators/hydration';
- *
- * import SimpleCache from 'core/cache/simple';
- * import HydrationStore from 'core/hydration-store';
- *
- * const
- * cache = new SimpleCache(),
- * hydrationStore = new HydrationStore();
- *
- * const
- *   id = 'uniqueKeyForTheHydration',
- *   cacheKey = 'cacheKey';
- *
- * hydrationStore.init(id);
- * hydrationStore.set('foo', {key: 'value'});
- *
- * const
- *   hydrationCache = addHydrationCache(cache, hydrationStore, {id, cacheKey});
- *
- * hydrationCache.get('foo'); // {key: 'value'}
- * ```
+ * @param cache - the cache instance that needs to be wrapped
+ * @param store - the hydration store where cached data may be persisted or restored from
+ * @param opts - additional cache options
  */
 export const addHydrationCache =
-	(cache: Cache, store: HydrationStore, options: HydrationCacheOptions): Cache =>
-		new HydrationCacheAdapter(cache, store, options).getInstance();
+	(cache: Cache, store: HydrationStore, opts: HydrationCacheOptions): Cache =>
+		new HydrationCacheAdapter(cache, store, opts).getInstance();

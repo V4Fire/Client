@@ -32,5 +32,3 @@ const
 
 hydrationCache.get('foo'); // {key: 'value'}
 ```
-
-

@@ -6,12 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type HydrationCacheAdapter from 'core/cache/decorators/hydration/adapter';
-
 export interface HydrationCacheOptions {
-	/** {@link HydrationCacheAdapter.id} */
+	/**
+	 * The unique identifier for the hydration store
+	 */
 	id: string;
 
-	/** {@link HydrationCacheAdapter.cacheKey} */
+	/**
+	 * The cache key used to save and retrieve hydrated data
+	 */
 	cacheKey: string;
 }

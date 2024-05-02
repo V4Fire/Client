@@ -73,26 +73,29 @@ test.describe('core/cache/decorators/hydration', () => {
 	].join(' '), async () => {
 		await decorator.evaluate((ctx, key) => ctx.set(key, 'foo'), serverCacheKey);
 
-		const cacheValue = await decorator.evaluate((ctx, key) => ctx.get(key), clientCacheKey);
+		const cacheValue =
+			await decorator.evaluate((ctx, key) => ctx.get(key), clientCacheKey);
 
 		test.expect(cacheValue).toBe('foo');
 	});
 
 	test('should get a cache from the hydration store and remove it', async () => {
 		await decorator.evaluate((ctx, key) => ctx.set(key, 'foo'), serverCacheKey);
-
 		await decorator.evaluate((ctx, key) => ctx.get(key), clientCacheKey);
-		const hydrationValue = await decorator.evaluate((ctx, key) => ctx.get(key), hydrationCacheKey);
+
+		const hydrationValue =
+			await decorator.evaluate((ctx, key) => ctx.get(key), hydrationCacheKey);
 
 		test.expect(hydrationValue).toBeUndefined();
 	});
 
 	test('should save a value from the hydration store to the cache after getting it', async () => {
 		await decorator.evaluate((ctx, key) => ctx.set(key, 'foo'), serverCacheKey);
-
 		await decorator.evaluate((ctx, key) => ctx.get(key), clientCacheKey);
 
-		const cacheValue = await cache.evaluate((ctx, key) => ctx.get(key), clientCacheKey);
+		const cacheValue =
+			await cache.evaluate((ctx, key) => ctx.get(key), clientCacheKey);
+
 		test.expect(cacheValue).toBe('foo');
 	});
 });
