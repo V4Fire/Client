@@ -54,10 +54,40 @@ export default class HydrationStore {
 			this.environment = environment;
 		}
 
-		try {
-			this.store = this.parse(document.getElementById('hydration-store')?.textContent ?? '');
+		if (this.environment === 'client') {
+			const store = document.getElementById('hydration-store');
 
-		} catch {
+			if (store != null) {
+				this.store = this.parse(store.textContent ?? 'null');
+
+				let
+					isValidData = true;
+
+				if (Object.isDictionary(this.store)) {
+					const
+						entries = Object.entries(this),
+						validKeys = Object.keys(this.createStore());
+
+					if (
+						entries.length !== 2 ||
+						entries.some(([key, value]) => !validKeys.includes(key) || !Object.isDictionary(value))
+					) {
+						isValidData = false;
+					}
+
+				} else {
+					isValidData = false;
+				}
+
+				if (!isValidData) {
+					throw new TypeError('Incorrect format of hydrated data');
+				}
+
+			} else {
+				this.store = this.createStore();
+			}
+
+		} else {
 			this.store = this.createStore();
 		}
 	}
@@ -168,6 +198,10 @@ export default class HydrationStore {
 	 * @param path
 	 */
 	setEmpty(id: string, path: string): void {
+		if (this.environment === 'client') {
+			return;
+		}
+
 		this.init(id);
 		this.store.store[id]![path] = emptyDataStoreKey;
 		this.storeJSON.store[id] = this.serializeData(this.store.store[id]!);
