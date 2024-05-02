@@ -17,7 +17,7 @@ To suppress the rendering of a component's content during SSR, use the `ssrRende
 This method changes the value of a corresponding field, which cannot be applied to functional components.
 For functional components, use this wrapper component to prevent content rendering during SSR.
 
-Additionally, if necessary, content can be passed to the fallback slot,
+Additionally, if necessary, content can be passed to the skeleton slot,
 which will be rendered if the `ssrRendering` field value is set to false.
 
 ## Slots
@@ -32,13 +32,13 @@ The component supports a couple of slots to provide.
        Click on me!
    ```
 
-2. `fallback` to provide a fallback content such as a loading indicator (skeleton):
+2. `skeleton` to provide a fallback content such as a loading indicator (skeleton):
 
    ```
    < b-prevent-ssr
      < b-button
        Click on me!
 
-     < template #fallback
+     < template #skeleton
        += self.getTpl('b-skeleton/')('rect', {animation: 'm'}, {':style': ({width: '64px', height: '32px'}|json)})
    ```

@@ -17,4 +17,4 @@
 
 	- block skeleton
 		< template v-if = !ssrRendering
-			+= self.slot('fallback')
+			+= self.slot('skeleton')
