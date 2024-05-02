@@ -17,6 +17,7 @@ interface bTraitsILockPageScrollDummy extends Trait<typeof iLockPageScroll> {}
 
 @component()
 @derive(iLockPageScroll)
-class bTraitsILockPageScrollDummy extends bDummy {}
+class bTraitsILockPageScrollDummy extends bDummy {
+}
 
 export default bTraitsILockPageScrollDummy;

@@ -583,3 +583,16 @@ but not override it (`router.push(null, {...route, ...componentData})`).
 
 Returns a dictionary with the default component properties to reset the router state.
 This method will be used when calling `state.resetRouter`.
+
+#### hydrateStyles
+
+This method is used to hydrate the component styles for server-side rendering (SSR).
+It is automatically invoked for the current component upon creation.
+
+Since this method is called automatically during the component's lifecycle,
+there is generally no need to call it manually.
+However, if you need to manually force a hydration of styles, you can call it as follows:
+
+```typescript
+yourComponentInstance.hydrateStyles('yourComponentName');
+```
