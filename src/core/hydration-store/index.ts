@@ -65,7 +65,7 @@ export default class HydrationStore {
 
 				if (Object.isDictionary(this.store)) {
 					const
-						entries = Object.entries(this),
+						entries = Object.entries(this.store),
 						validKeys = Object.keys(this.createStore());
 
 					if (
@@ -122,7 +122,6 @@ export default class HydrationStore {
 		}
 
 		this.store.store[id] ??= Object.createDict();
-		this.storeJSON.store[id] ??= '';
 	}
 
 	/**
