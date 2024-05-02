@@ -16,5 +16,5 @@
 			+= self.slot()
 
 	- block skeleton
-		< template v-if = !ssrRendering && $slots['fallback']
+		< template v-if = !ssrRendering
 			+= self.slot('fallback')

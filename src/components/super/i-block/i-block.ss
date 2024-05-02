@@ -287,8 +287,7 @@
 								- block bodyFooter
 
 						- block skeleton
-							< template v-if = $slots['skeleton']
-								+= self.slot('skeleton')
+							+= self.slot('skeleton')
 
 						- if SSR || HYDRATION
 							< template v-if = ssrRendering
