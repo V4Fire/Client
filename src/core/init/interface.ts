@@ -58,6 +58,12 @@ export type InitAppOptions = CreateAppOptions & Overwrite<State, {
 	pageMetaData?: State['pageMetaData'];
 
 	/**
+	 * A storage for hydrated data.
+	 * During SSR, data is saved in this storage and then restored from it on the client.
+	 */
+	hydrationStore?: State['hydrationStore'];
+
+	/**
 	 * The initial route for initializing the router.
 	 * Usually, this value is used during SSR.
 	 */

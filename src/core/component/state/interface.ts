@@ -17,6 +17,7 @@ import type { InitialRoute, AppliedRoute } from 'core/router';
 
 import type ThemeManager from 'core/theme-manager';
 import type PageMetaData from 'core/page-meta-data';
+import type HydrationStore from 'core/hydration-store';
 
 export interface State {
 	/**
@@ -53,6 +54,12 @@ export interface State {
 	 * An API for working with the meta information of the current page
 	 */
 	pageMetaData: PageMetaData;
+
+	/**
+	 * A storage for hydrated data.
+	 * During SSR, data is saved in this storage and then restored from it on the client.
+	 */
+	hydrationStore: HydrationStore;
 
 	/**
 	 * True, if the application is connected to the Internet

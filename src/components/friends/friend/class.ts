@@ -114,6 +114,11 @@ export default class Friend {
 		return this.ctx.dom;
 	}
 
+	/** {@link iBlock.remoteState} */
+	protected get remoteState(): this['CTX']['remoteState'] {
+		return this.ctx.remoteState;
+	}
+
 	constructor(component: iBlock) {
 		this.ctx = component.unsafe;
 		this.component = component;

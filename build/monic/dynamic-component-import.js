@@ -115,7 +115,7 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 
 			if (ssr) {
 				if (!entryDeps.has(resourceName)) {
-					imports.unshift(`require('core/component/hydration').styles.set('${resourceName}', (${decl})).get('${resourceName}')`);
+					imports.unshift(`require('core/hydration-store').styles.set('${resourceName}', (${decl})).get('${resourceName}')`);
 				}
 
 			} else {

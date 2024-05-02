@@ -16,7 +16,6 @@ import AppClass, {
 	rootComponents,
 
 	State,
-	HydrationStore,
 	ComponentElement
 
 } from 'core/component';
@@ -53,12 +52,7 @@ export async function createApp(
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const {renderToString} = require('assets/lib/server-renderer');
 
-		Object.assign(rootComponentParams.inject, {
-			hydrationStore: 'hydrationStore'
-		});
-
 		const
-			hydrationStore = new HydrationStore(),
 			app = new AppClass(rootComponentParams);
 
 		Object.defineProperty(globalApp, 'state', {
@@ -71,7 +65,6 @@ export async function createApp(
 		});
 
 		app.provide('app', {context: app, state});
-		app.provide('hydrationStore', hydrationStore);
 
 		let
 			ssrContent: string,
@@ -79,12 +72,12 @@ export async function createApp(
 
 		try {
 			ssrContent = (await renderToString(app)).replace(/<\/?ssr-fragment>/g, '');
-			hydratedData = `<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`;
+			hydratedData = `<noframes id="hydration-store" style="display: none">${state.hydrationStore.toString()}</noframes>`;
 
 			return {
 				state,
 				content: ssrContent + hydratedData,
-				styles: (await Promise.all(hydrationStore.styles.values())).map((i) => i.default).join('')
+				styles: (await Promise.all(state.hydrationStore.styles.values())).map((i) => i.default).join('')
 			};
 
 		} finally {

@@ -95,6 +95,12 @@ export interface State {
   pageMetaData: PageMetaData;
 
   /**
+   * A storage for hydrated data.
+   * During SSR, data is saved in this storage and then restored from it on the client.
+   */
+  hydrationStore?: HydrationStore;
+
+  /**
    * True, if the application is connected to the Internet
    */
   isOnline?: boolean;

@@ -22,7 +22,6 @@ import type iBlock from 'components/super/i-block/i-block';
 import {
 
 	component,
-	hydrationStore,
 
 	InitLoadCb,
 	InitLoadOptions,
@@ -70,7 +69,8 @@ export default abstract class iData extends iDataHandlers {
 		}
 
 		const {
-			async: $a
+			async: $a,
+			remoteState: {hydrationStore}
 		} = this;
 
 		const label = <AsyncOptions>{
@@ -78,8 +78,7 @@ export default abstract class iData extends iDataHandlers {
 			join: 'replace'
 		};
 
-		const
-			callSuper = () => super.initLoad(() => this.db, opts);
+		const callSuper = () => super.initLoad(() => this.db, opts);
 
 		try {
 			if (opts.emitStartEvent !== false) {
@@ -97,10 +96,10 @@ export default abstract class iData extends iDataHandlers {
 				this.saveDataToRootStore(data);
 
 				if (data !== undefined) {
-					this.hydrationStore?.set(this.componentId, providerHydrationKey, Object.cast(data));
+					hydrationStore.set(this.componentId, providerHydrationKey, Object.cast(data));
 
 				} else {
-					this.hydrationStore?.setEmpty(this.componentId, providerHydrationKey);
+					hydrationStore.setEmpty(this.componentId, providerHydrationKey);
 				}
 
 				this.db = this.convertDataToDB<this['DB']>(data);

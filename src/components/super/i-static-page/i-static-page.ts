@@ -316,7 +316,7 @@ export default abstract class iStaticPage extends iPage {
 
 	protected override beforeDestroy(): void {
 		super.beforeDestroy();
-		this.hydrationStore?.clear();
+		this.remoteState.hydrationStore.clear();
 
 		const
 			isThisApp = new RegExp(RegExp.escape(`:${RegExp.escape(this.remoteState.appProcessId)}:`));
