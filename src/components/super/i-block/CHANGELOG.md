@@ -27,6 +27,12 @@ Changelog
 
 #### :house: Internal
 
+* Updated the `ssrRendering` prop usage mechanism
+
+## v4.0.0-beta.91 (2024-04-19)
+
+#### :house: Internal
+
 * Removed optional chaining from load function in loadModules block to ensure compliance with ES2018
 
 ## 4.0.0-beta.79 (2024-03-29)

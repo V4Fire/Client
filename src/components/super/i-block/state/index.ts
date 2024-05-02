@@ -49,6 +49,18 @@ export default abstract class iBlockState extends iBlockMods {
 	isReadyOnce: boolean = false;
 
 	/**
+	 * A dictionary with component shadow statuses.
+	 * Switching to these states doesn't trigger the component to re-render.
+	 *
+	 * {@link iBlock.componentStatus}
+	 */
+	static readonly shadowComponentStatuses: ComponentStatuses = {
+		inactive: true,
+		destroyed: true,
+		unloaded: true
+	};
+
+	/**
 	 * Checks whether the hydrated data can be used
 	 */
 	get canUseHydratedData(): boolean {
@@ -61,6 +73,25 @@ export default abstract class iBlockState extends iBlockMods {
 	get isRelatedToSSR(): boolean {
 		return SSR || this.canUseHydratedData;
 	}
+
+	/**
+	 * If set to false, the component will not render its content during SSR.
+	 *
+	 * In a hydration context, the field value is determined by the value of the `renderOnHydration` flag,
+	 * which is stored in a `hydrationStore` during SSR for components that
+	 * have the `ssrRenderingProp` value set to false.
+	 * In other cases, the field value is derived from the `ssrRenderingProp` property.
+	 */
+	@field((o) => {
+		if (HYDRATION) {
+			const store = o.remoteState.hydrationStore.get(o.componentId);
+			return !Boolean(store?.renderOnHydration);
+		}
+
+		return o.ssrRenderingProp;
+	})
+
+	protected ssrRendering!: boolean;
 
 	/**
 	 * A link to the global state of the application.
@@ -257,18 +288,6 @@ export default abstract class iBlockState extends iBlockMods {
 	get route(): CanUndef<this['r']['CurrentPage']> {
 		return this.field.get('route', this.r);
 	}
-
-	/**
-	 * A dictionary with component shadow statuses.
-	 * Switching to these states doesn't trigger the component to re-render.
-	 *
-	 * {@link iBlock.componentStatus}
-	 */
-	static readonly shadowComponentStatuses: ComponentStatuses = {
-		inactive: true,
-		destroyed: true,
-		unloaded: true
-	};
 
 	/**
 	 * A string value indicating the initialization status of the component.
@@ -561,6 +580,30 @@ export default abstract class iBlockState extends iBlockMods {
 			'theme.change',
 			(theme: Theme) => this.setMod('theme', theme.value)
 		);
+	}
+
+	/**
+	 * Stores a boolean flag in the hydrationStore during SSR,
+	 * which determines whether the content of components should be rendered during hydration
+	 * if server-side rendering is disabled for the component
+	 */
+	@hook('created')
+	protected storeRenderOnHydration(): void {
+		if (SSR && !this.ssrRendering) {
+			this.remoteState.hydrationStore.set(this.componentId, 'renderOnHydration', true);
+		}
+	}
+
+	/**
+	 * Allows content to be rendered if the component is in a hydration context,
+	 * and server-side rendering has been disabled for the component using the `ssrRenderingProp` property
+	 */
+	@hook('mounted')
+	protected async shouldRenderOnHydration(): Promise<void> {
+		if (HYDRATION && !this.ssrRendering) {
+			await this.async.nextTick();
+			this.ssrRendering = true;
+		}
 	}
 
 	/**
