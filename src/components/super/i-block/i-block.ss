@@ -45,11 +45,6 @@
 	- ssrRendering = true
 
 	/**
-	 * True if the application needs to be built for SSR
-	 */
-	- SSR = require('@config/config').webpack.ssr
-
-	/**
 	 * Defines the rendering mode of the template.
 	 * For regular components, the default value of `'component'` can be used,
 	 * whereas for templates that are rendered as a separate render function,
