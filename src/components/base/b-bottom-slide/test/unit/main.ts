@@ -754,4 +754,22 @@ test.describe('<b-bottom-slide> functional cases', () => {
 				.toBe(contentHeight + imageSize);
 		});
 	});
+
+	test('should unlock the page scroll on destroy', async ({page}) => {
+		await page.addStyleTag({
+			content: '.b-bottom-slide__window {transition: 0.1s}'
+		});
+
+		const
+			component = await renderBottomSlide(page, {heightMode: 'content'}),
+			lockClassName = /lock-page-scroll-desktop-true/;
+
+		await open(page, component);
+
+		await test.expect(page.locator(':root')).toHaveClass(lockClassName);
+
+		await component.evaluate((ctx) => ctx.unsafe.$destroy());
+
+		await test.expect(page.locator(':root')).not.toHaveClass(lockClassName);
+	});
 });
