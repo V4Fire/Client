@@ -75,6 +75,10 @@ export default abstract class iBlockProviders extends iBlockState {
 
 		if (SSR) {
 			hydrationStore.init(this.componentId);
+
+			if (!this.ssrRendering) {
+				return;
+			}
 		}
 
 		const

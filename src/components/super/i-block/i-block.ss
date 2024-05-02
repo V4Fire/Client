@@ -33,22 +33,17 @@
 	- teleport = false
 
 	/**
-	 * True if the application needs to be built for SSR
-	 */
-	- SSR = require('@config/config').webpack.ssr
-
-	/**
 	* If set to true, the component will always be rendered by creating an intermediate VNODE tree.
 	* Enabling this option may negatively affect rendering speed in SSR.
 	* However, this mode is necessary for using some directives.
 	*/
 	- forceRenderAsVNode = false
 
-	/**
-	 * If set to false, the component will generate a special markup to
-	 * allow it to not render during server-side rendering
-	 */
-	- ssrRendering = true
+	/** True if the application needs to be built for SSR */
+	- SSR = require('@config/config').webpack.ssr
+
+	/** True if the application needs to be built for hydration */
+	: HYDRATION = require('@config/config').webpack.hydration()
 
 	/**
 	 * Defines the rendering mode of the template.
@@ -72,7 +67,7 @@
 		- return name.split('.').slice(-1)[0].dasherize()
 
 	/**
-	 * Loads modules by the specified paths and dynamically inserted the provided content when them are loaded
+	 * Loads modules by the specified paths and dynamically inserted the provided content when they are loaded
 	 *
 	 * @param {(string|Array<string>)} path - the module path or list of paths
 	 * @param {{renderKey: string, wait: string}} [opts] - additional options
@@ -296,12 +291,10 @@
 
 								- block bodyFooter
 
-						- if !ssrRendering
-							< template v-if = !ssrRendering
-								+= self.render({wait: 'async.idle.bind(async)'})
-									+= self.renderRootContent()
+						- block skeleton
 
-							< template v-else
+						- if SSR || HYDRATION
+							< template v-if = ssrRendering
 								+= self.renderRootContent()
 
 						- else

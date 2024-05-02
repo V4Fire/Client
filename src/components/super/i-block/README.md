@@ -179,9 +179,12 @@ class bExample extends iBlock {
 }
 ```
 
-### [ssrRendering = `true`]
+### [ssrRenderingProp = `true`]
 
 If set to false, the component will not render its content during server-side rendering.
+This should be used with non-functional components.
+If you need to disable the rendering of a functional component in server-side rendering,
+use the wrapper component `components/base/b-prevent-ssr`.
 
 ### [wait]
 
@@ -472,21 +475,6 @@ A selector to mount component via teleport or false.
   - teleport = '#content'
 ```
 
-#### SSR
-
-True if the application needs to be built for SSR.
-
-```
-- namespace [%fileName%]
-
-- include 'components/super/i-block'|b as placeholder
-
-- template index() extends ['i-block'].index
-  - block body
-    - if SSR
-       SSR only content
-```
-
 #### [forceRenderAsVNode = `false`]
 
 If set to true, the component will always be rendered by creating an intermediate VNODE tree.
@@ -495,24 +483,35 @@ However, this mode is necessary for using some directives.
 
 ```
 - namespace [%fileName%]
-
 - include 'components/super/i-block'|b as placeholder
-
 - template index() extends ['i-block'].index
   - forceRenderAsVNode = true
 ```
 
-#### [ssrRendering = `true`]
+#### SSR
 
-If set to false, the component will generate a special markup to allow it to not render during server-side rendering.
+True if the application needs to be built for SSR.
 
 ```
 - namespace [%fileName%]
-
 - include 'components/super/i-block'|b as placeholder
-
 - template index() extends ['i-block'].index
-  - ssrRendering = false
+  - block body
+    - if SSR
+       SSR only content
+```
+
+#### HYDRATION
+
+True if the application needs to be built for hydration.
+
+```
+- namespace [%fileName%]
+- include 'components/super/i-block'|b as placeholder
+- template index() extends ['i-block'].index
+  - block body
+    - if HYDRATION
+      Hydration context only content
 ```
 
 #### [renderMode = `component`]
@@ -523,7 +522,7 @@ whereas for templates that are rendered as a separate render function,
 rather than as a component, the value `'mono'` should be used.
 
 Also, if you are creating a template that you want to use separately of a component,
-you can simply inherit from `ё`['i-block'].mono`.
+you can simply inherit from `['i-block'].mono`.
 
 ```
 - namespace [%fileName%]
@@ -535,6 +534,21 @@ you can simply inherit from `ё`['i-block'].mono`.
 ```
 
 ### Methods
+
+#### name
+
+Returns the component name.
+
+```
+- namespace [%fileName%]
+
+- include 'components/super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - block body
+    < .${self.name()}
+      Hello World
+```
 
 #### slot
 
@@ -588,3 +602,62 @@ Applies the `Typograf` library for the specified content and returns the result.
   - block body
     += self.typograf('Hello "world"')
 ```
+
+#### render
+
+Renders the specified content by using the passed options.
+
+```
+- namespace [%fileName%]
+
+- include 'components/super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - block body
+    += self.render({renderKey: 'controls', wait: 'promisifyOnce.bind(null, "needLoad")'})
+      < b-button
+        Hello World
+
+      < b-input
+```
+
+#### getTpl
+
+Returns a link to a template by the specified path.
+
+```
+- namespace [%fileName%]
+
+- include 'components/super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - block body
+    += self.getTpl('b-some-component-template/')
+```
+
+#### loadModules
+
+Loads modules by the specified paths and dynamically inserted the provided content when they are loaded.
+
+```
+- namespace [%fileName%]
+
+- include 'components/super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - block body
+    += self.loadModules('components/form/b-button')
+      < b-button
+        Hello world
+
+    += self.loadModules(['components/form/b-button', 'components/form/b-input'], {renderKey: 'controls', wait: 'promisifyOnce.bind(null, "needLoad")'})
+      < b-button
+        Hello world
+```
+
+### Blocks
+
+#### skeleton
+
+A block for rendering fallback content such as loading indicators or skeletons.
+If necessary, this block should be overridden in the component that extends the `iBlock` superclass.
