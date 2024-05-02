@@ -583,18 +583,6 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * Hydrates the component styles for SSR
-	 */
-	@hook('created')
-	protected hydrateStyles(): void {
-		const stylesToHydrate = hydratedStyles.get(this.componentName);
-
-		if (stylesToHydrate != null) {
-			this.remoteState.hydrationStore.styles.set(this.componentName, stylesToHydrate);
-		}
-	}
-
-	/**
 	 * Stores a boolean flag in the hydrationStore during SSR,
 	 * which determines whether the content of components should be rendered during hydration
 	 * if server-side rendering is disabled for the component
