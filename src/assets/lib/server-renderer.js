@@ -595,16 +595,18 @@ function renderTeleportVNode(push, vnode, parentComponent, slotScopeId) {
 const { isVNode: isVNode$1 } = Vue.ssrUtils;
 async function unrollBuffer$1(buffer) {
 	if (buffer.hasAsync) {
-		let ret = '';
-		for (let i = 0; i < buffer.length; i++) {
-			let item = buffer[i];
+		var ret = '';
+		for (var i = 0; i < buffer.length; i++) {
+			var item = buffer[i];
+
 			if (shared.isPromise(item)) {
 				item = await item;
 			}
+
 			if (shared.isString(item)) {
 				ret += item;
-			}
-			else {
+
+			} else {
 				ret += await unrollBuffer$1(item);
 			}
 		}
@@ -612,21 +614,23 @@ async function unrollBuffer$1(buffer) {
 		// Prevent memory leaks
 		buffer.splice(0, buffer.length);
 		return ret;
-	}
-	else {
+
+	} else {
 		// sync buffer can be more efficiently unrolled without unnecessary await
 		// ticks
 		return unrollBufferSync$1(buffer);
 	}
 }
 function unrollBufferSync$1(buffer) {
-	let ret = '';
-	for (let i = 0; i < buffer.length; i++) {
-		let item = buffer[i];
+	var ret = '';
+
+	for (var i = 0; i < buffer.length; i++) {
+		var item = buffer[i];
+
 		if (shared.isString(item)) {
 			ret += item;
-		}
-		else {
+
+		} else {
 			// since this is a sync buffer, child buffers are never promises
 			ret += unrollBufferSync$1(item);
 		}
@@ -646,14 +650,18 @@ async function renderToString(input, context = {}) {
 	vnode.appContext = input._context;
 	// provide the ssr context to the tree
 	input.provide(Vue.ssrContextKey, context);
+
 	const buffer = await renderComponentVNode(vnode);
 	const result = await unrollBuffer$1(buffer);
+
 	await resolveTeleports(context);
+
 	if (context.__watcherHandles) {
 		for (const unwatch of context.__watcherHandles) {
 			unwatch();
 		}
 	}
+
 	return result;
 }
 async function resolveTeleports(context) {
