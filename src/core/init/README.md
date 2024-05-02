@@ -103,11 +103,13 @@ import type PageMetaData from 'core/page-meta-data';
 import type { Experiments } from 'core/abt';
 import type { InitialRoute } from 'core/router';
 
+import type HydrationStore from 'core/hydration-store';
+
 interface InitAppOptions {
   /**
    * The unique identifier for the application process
    */
-  appProcessId: string;
+  appProcessId?: string;
 
   /**
    * True, if the current user session is authorized
@@ -132,12 +134,18 @@ interface InitAppOptions {
   /**
    * An API for managing app themes from the Design System
    */
-  theme: ThemeManager;
+  theme?: ThemeManager;
 
   /**
    * An API for working with the meta information of the current page
    */
-  pageMetaData: PageMetaData;
+  pageMetaData?: PageMetaData;
+
+  /**
+   * A storage for hydrated data.
+   * During SSR, data is saved in this storage and then restored from it on the client.
+   */
+  hydrationStore?: HydrationStore;
 
   /**
    * An API to work with a network, such as testing of the network connection, etc.

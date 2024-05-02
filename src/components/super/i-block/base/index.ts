@@ -37,8 +37,6 @@ import {
 	bindRemoteWatchers,
 	customWatcherRgxp,
 
-	hydratedStyles,
-
 	RawWatchHandler,
 	WatchPath,
 
@@ -673,28 +671,14 @@ export default abstract class iBlockBase extends iBlockFriends {
 		}
 
 		if (!this.meta.params.root) {
-			['app', 'hydrationStore'].forEach((prop) => {
-				Object.defineProperty(this, prop, {
-					enumerable: true,
-					configurable: true,
+			Object.defineProperty(this, 'app', {
+				enumerable: true,
+				configurable: true,
 
-					get() {
-						return prop in this.r ? this.r[prop] : undefined;
-					}
-				});
+				get() {
+					return 'app' in this.r ? this.r['app'] : undefined;
+				}
 			});
-		}
-	}
-
-	/**
-	 * Hydrates the component styles for SSR
-	 */
-	@hook('created')
-	protected hydrateStyles(): void {
-		const stylesToHydrate = hydratedStyles.get(this.componentName);
-
-		if (stylesToHydrate != null) {
-			this.hydrationStore?.styles.set(this.componentName, stylesToHydrate);
 		}
 	}
 }

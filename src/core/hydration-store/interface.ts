@@ -11,6 +11,11 @@ export interface Store {
 	store: Dictionary<Dictionary<string>>;
 }
 
+export interface StoreJSON {
+	data: Dictionary<string>;
+	store: Dictionary<string>;
+}
+
 export type HydratedValue =
 	JSONLikeValue |
 	bigint |
@@ -22,3 +27,5 @@ export type HydratedValue =
 	Dictionary<HydratedValue>;
 
 export type HydratedData = Dictionary<HydratedValue>;
+
+export type Environment = 'server' | 'client';
