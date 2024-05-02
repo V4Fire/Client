@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2024-??-??)
+## v4.0.0-beta.?? (2024-04-??)
 
 #### :rocket: New Feature
 
@@ -20,9 +20,25 @@ This parameter allows specifying the name of the component for which styles shou
 * Added a registration of styles for templates in SSR `components/super/i-block/
 * Added a registration of styles in the `getRenderFactory` method for templates in SSR `components/friends/vdom`
 
+#### :bug: Bug Fix
+
+* Renamed `bRouterProps` to `iRouterProps`. The incorrect name had caused infinite
+retries to load a non-existent template.
+
 #### :house: Internal
 
 * The `hydrateStyles` method has been made public `components/super/i-block/
+
+## v4.0.0-beta.94 (2024-04-24)
+
+#### :bug: Bug Fix
+
+* Unlock the page scroll when the component is destroyed `bBottomSlide`
+* Now styles for dynamically loaded components with `loadModules` are included in the fat-html build `build/monic`
+
+#### :rocket: New Feature
+
+* The destructor, which unlocks the page scroll when the component is destroyed, will be registered once the `lockPageScroll` method is called `iLockPageScroll`
 
 ## v4.0.0-beta.93 (2024-04-19)
 
