@@ -6,6 +6,8 @@ var Vue = require('vue');
 var shared = require('@vue/shared');
 var compilerSsr = require('@vue/compiler-ssr');
 
+var timers = require('node:timers/promises');
+
 function _interopNamespaceDefault(e) {
 	var n = Object.create(null);
 	if (e) {
@@ -593,21 +595,28 @@ function renderTeleportVNode(push, vnode, parentComponent, slotScopeId) {
 }
 
 const { isVNode: isVNode$1 } = Vue.ssrUtils;
-async function unrollBuffer$1(buffer) {
+async function unrollBuffer$1(buffer, start = {t: Date.now()}) {
 	if (buffer.hasAsync) {
 		var ret = '';
+
 		for (var i = 0; i < buffer.length; i++) {
 			var item = buffer[i];
 
 			if (shared.isPromise(item)) {
 				item = await item;
+				start.t += Date.now() - start.t;
+			}
+
+			if (Date.now() - start.t > 30) {
+				await timers.setTimeout(5);
+				start.t = Date.now();
 			}
 
 			if (shared.isString(item)) {
 				ret += item;
 
 			} else {
-				ret += await unrollBuffer$1(item);
+				ret += await unrollBuffer$1(item, start);
 			}
 		}
 
@@ -618,10 +627,11 @@ async function unrollBuffer$1(buffer) {
 	} else {
 		// sync buffer can be more efficiently unrolled without unnecessary await
 		// ticks
-		return unrollBufferSync$1(buffer);
+		return unrollBufferSync$1(buffer, start);
 	}
 }
-function unrollBufferSync$1(buffer) {
+
+function unrollBufferSync$1(buffer, start) {
 	var ret = '';
 
 	for (var i = 0; i < buffer.length; i++) {
@@ -632,7 +642,7 @@ function unrollBufferSync$1(buffer) {
 
 		} else {
 			// since this is a sync buffer, child buffers are never promises
-			ret += unrollBufferSync$1(item);
+			ret += unrollBufferSync$1(item, start);
 		}
 	}
 
