@@ -9,7 +9,7 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.?? (2024-05-??)
+## v4.0.0-beta.95 (2024-05-06)
 
 #### :house: Internal
 
