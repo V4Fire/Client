@@ -132,6 +132,16 @@ await this.moduleLoader.addToBucket('form', {
 console.log([...await this.moduleLoader.loadBucket('form')]);
 ```
 
+### waitSignal
+
+The `waitSignal` function returns a function that returns a promise.
+This promise resolves when a signal is sent using the `sendSignal` function.
+If the signal has already been sent, the promise will already be resolved.
+
+### sendSignal
+
+The `sendSignal` function allows you to send a signal that resolves a corresponding promise by key.
+
 ## Snakeskin helpers
 
 ### loadModules
@@ -175,4 +185,19 @@ This option expects a string expression (because it is code-generation) with a f
 
 < button @click = emit('forceRender')
   Show form
+```
+
+Or you can use signal methods to defer load modules:
+
+```
+< .container v-async-target
+  += self.loadModules(['components/form/b-button', 'components/form/b-input'], {wait: 'moduleLoader.waitSignal("load-controls")'})
+    < b-button
+      Press on me!
+
+    < b-input :placeholder = 'Enter your name'
+```
+
+```
+  this.moduleLoader.sendSignal('load-controls');
 ```
