@@ -547,17 +547,6 @@ this.r.theme.current = 'dark';
 
 See `components/super/i-static-page/modules/theme` for more information.
 
-### Accessors
-
-#### locale
-
-The application locale.
-
-```js
-console.log(this.r);
-this.r.locale = 'ru';
-```
-
 ### Methods
 
 #### reset
