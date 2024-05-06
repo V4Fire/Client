@@ -49,3 +49,13 @@
 					wait: "localEmitter.promisifyOnce.bind(null, 'dummy2')"
 				}) .
 					< b-friends-module-loader-dummy2
+
+		< template v-if = stage === 'load module only after signal received'
+					< .&__result v-async-target
+						+= self.loadModules('components/friends/module-loader/test/b-friends-module-loader-dummy/b-friends-module-loader-dummy1')
+							< b-friends-module-loader-dummy1
+
+						+= self.loadModules('components/friends/module-loader/test/b-friends-module-loader-dummy/b-friends-module-loader-dummy2', { &
+							wait: "moduleLoader.waitSignal('dummy2')"
+						}) .
+							< b-friends-module-loader-dummy2

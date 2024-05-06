@@ -11,6 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-05-??)
+
+#### :rocket: New Feature
+
+* Add new methods `waitSignal` and `sendSignal` for deffer module load `module-loader`
 
 ## v4.0.0-beta.95 (2024-05-06)
 

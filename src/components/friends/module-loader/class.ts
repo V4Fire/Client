@@ -15,17 +15,67 @@ interface ModuleLoader {
 	addToBucket(bucketName: string): CanPromise<IterableIterator<Module[]>>;
 }
 
+/**
+ * Internal structure to store information about received signals and signals being awaited.
+ * Contains a promise that will be resolved by the associated signal and a function that resolves this promise.
+ */
+interface SignalWaiter {
+	promise: Promise<void>;
+	resolver: CanUndef<Function>;
+}
+
 @fakeMethods(
 	'load',
 	'loadBucket',
 	'addToBucket'
 )
-
 class ModuleLoader extends Friend {
 	/**
 	 * A dictionary with registered buckets to load
 	 */
 	protected moduleBuckets: Map<string, Set<Module>> = new Map();
+
+	/**
+	 * Registered signal waiters
+	 */
+	private readonly waiters: Map<string, CanUndef<SignalWaiter>> = new Map();
+
+	/**
+	 * Send signal to load modules associated with the specified key
+	 */
+	sendSignal(key: string): void {
+		let waiter = this.waiters.get(key);
+
+		if (waiter === undefined) {
+			waiter = {
+				promise: Promise.resolve(),
+				resolver: undefined
+			};
+
+			this.waiters.set(key, waiter);
+
+		} else if (waiter.resolver !== undefined) {
+			waiter.resolver();
+			waiter.resolver = undefined;
+		}
+	}
+
+	/**
+	 * Returns a function that returns a promise resolving when the signal to load is received
+	 */
+	waitSignal(key: string): Function {
+		const waiter = this.waiters.get(key);
+
+		if (waiter) {
+			return () => waiter.promise;
+		}
+
+		let resolver;
+		const promise = new Promise<void>((resolve) => resolver = resolve);
+		this.waiters.set(key, {promise, resolver});
+
+		return () => promise;
+	}
 }
 
 export default ModuleLoader;
