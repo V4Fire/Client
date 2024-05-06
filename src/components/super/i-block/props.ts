@@ -31,8 +31,8 @@ export default abstract class iBlockProps extends ComponentInterface {
 	/**
 	 * The component root tag type
 	 */
-	@prop(String)
-	readonly rootTag: string = 'div';
+	@prop({type: String, required: false})
+	readonly rootTag?: string;
 
 	/**
 	 * If set to true, the component will log informational messages in addition to errors and warnings.

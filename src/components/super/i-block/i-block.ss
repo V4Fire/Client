@@ -17,7 +17,7 @@
 	/** The hardcoded name of the component. If a name is not explicitly set, it will be based on the template file name. */
 	- componentName = ''
 
-	/** The root tag type. If not specified, it will be taken from the component `rootTag` prop. */
+	/** The root tag type. This value will be used if a similarly named runtime prop is not passed to the component. */
 	- rootTag = 'div'
 
 	/** Should or not to create an extra wrapper inside the root tag */

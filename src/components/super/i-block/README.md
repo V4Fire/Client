@@ -110,7 +110,7 @@ If the prop is not provided, the ID will be generated at runtime.
 The unique or global name of the component.
 Used to synchronize component data with various external storages.
 
-### [rootTag = `'div'`]
+### [rootTag]
 
 The component root tag type.
 
@@ -412,7 +412,8 @@ If a name is not explicitly set, it will be based on the template file name.
 
 #### [rootTag]
 
-The root tag type. If not specified, it will be taken from the component `rootTag` prop.
+The root tag type.
+This value will be used if a similarly named runtime prop is not passed to the component.
 
 ```
 - namespace [%fileName%]
