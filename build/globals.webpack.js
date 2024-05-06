@@ -48,6 +48,7 @@ module.exports = {
 	API_URL: s(API_URL),
 
 	LOCALE: s(LOCALE),
+	REGION: typeof REGION !== 'undefined' ? s(REGION) : undefined,
 	LANG_KEYSETS: s(collectI18NKeysets(locales)),
 	LANG_PACKS: s(config.i18n.langPacksStore),
 

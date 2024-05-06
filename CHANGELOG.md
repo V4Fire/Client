@@ -12,7 +12,12 @@ Changelog
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
 
-## v4.0.0-beta.?? (2024-04-??)
+## v4.0.0-beta.?? (2024-05-??)
+
+#### :house: Internal
+
+* Add `REGION` to webpack globals `build`
+* Listen for i18n `setRegion` event `core/component/event`
 
 #### :bug: Bug Fix
 
