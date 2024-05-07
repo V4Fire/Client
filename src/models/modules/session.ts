@@ -133,10 +133,10 @@ export default class Session extends Provider {
 
 		return Provider.borrowRequestPromiseAPI(req, req.catch(async (err) => {
 			const
-				response = Object.get<Response>((<RequestError>err).details.deref(), 'response'),
+				response = err instanceof RequestError ? err.details.deref()?.response : null,
 				{auth, params} = await session;
 
-			if (response) {
+			if (response != null) {
 				const
 					r = () => this.updateRequest(url, Object.cast(event), <RequestFunctionResponse>factory);
 

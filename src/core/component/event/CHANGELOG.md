@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.95 (2024-05-06)
+
+#### :house: Internal
+
+* Listen for i18n `setRegion` event
+
 ## 4.0.0-beta.81 (2024-04-01)
 
 #### :bug: Bug Fix
