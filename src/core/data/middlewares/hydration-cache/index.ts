@@ -24,7 +24,7 @@ export function attachHydrationCache(this: Provider, middlewareParams: Middlewar
 	const
 		{ctx} = middlewareParams;
 
-	middlewareParams.ctx.isReady.then(() => {
+	ctx.isReady.then(() => {
 		if (this.params.remoteState?.hydrationStore == null) {
 			return;
 		}
