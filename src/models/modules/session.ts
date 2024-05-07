@@ -15,7 +15,8 @@ import Provider, {
 
 	RequestFunctionResponse,
 	Response,
-	RequestPromise
+	RequestPromise,
+	RequestError
 
 } from 'core/data';
 
@@ -132,7 +133,7 @@ export default class Session extends Provider {
 
 		return Provider.borrowRequestPromiseAPI(req, req.catch(async (err) => {
 			const
-				response = Object.get<Response>(err, 'details.response'),
+				response = Object.get<Response>((<RequestError>err).details.deref(), 'response'),
 				{auth, params} = await session;
 
 			if (response) {
