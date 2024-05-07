@@ -18,13 +18,13 @@ import('core/data/middlewares/hydration-cache/test/provider');
 
 /**
  * Attaches a hydration cache to the specified context
- * @param params
+ * @param middlewareParams
  */
-export function attachHydrationCache(this: Provider, params: MiddlewareParams): void {
+export function attachHydrationCache(this: Provider, middlewareParams: MiddlewareParams): void {
 	const
-		{ctx} = params;
+		{ctx} = middlewareParams;
 
-	ctx.isReady.then(() => {
+	middlewareParams.ctx.isReady.then(() => {
 		if (this.params.remoteState?.hydrationStore == null) {
 			return;
 		}
@@ -36,7 +36,7 @@ export function attachHydrationCache(this: Provider, params: MiddlewareParams): 
 		const cacheKey = Object.fastHash({
 			id: this.cacheId,
 			query: params.querySerializer(ctx.query),
-			api: Object.isFunction(url) ? url() : url,
+			api: Object.isFunction(url) ? url(middlewareParams) : url,
 			cacheStrategy: params.cacheStrategy,
 			method: params.method
 		});
