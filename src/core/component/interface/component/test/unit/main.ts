@@ -15,7 +15,7 @@ import { Component } from 'tests/helpers';
 import type bComponentInterfaceDummy from 'core/component/interface/component/test/b-component-interface-dummy/b-component-interface-dummy';
 import { evalTree, treeToString, trim } from 'core/component/interface/component/test/helpers';
 
-test.describe.fixme('core/component/interface', () => {
+test.describe('core/component/interface', () => {
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 		await Component.waitForComponentTemplate(page, 'b-component-interface-dummy');
