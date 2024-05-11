@@ -9,7 +9,7 @@
 'use strict';
 
 const
-	{src, webpack} = require('@config/config'),
+	{src, webpack, platform, es} = require('@config/config'),
 	{hash, output: outputPattern} = include('build/helpers');
 
 /**
@@ -32,7 +32,8 @@ module.exports = function output({buildId}) {
 		Object.assign(params, {
 			libraryTarget: 'commonjs2',
 			chunkLoading: 'require',
-			chunkFormat: 'commonjs'
+			chunkFormat: 'commonjs',
+			filename: `${platform}_${es()}_[name].js`
 		});
 
 	} else {
