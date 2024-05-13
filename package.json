@@ -57,7 +57,7 @@
     "@vue/compiler-sfc": "3.2.47",
     "chalk": "4.1.2",
     "cookiejar": "2.1.4",
-    "core-js": "3.36.1",
+    "core-js": "3.37.0",
     "cross-env": "7.0.3",
     "dompurify-v2": "npm:dompurify@2.4.7",
     "dompurify-v3": "npm:dompurify@3.0.8",

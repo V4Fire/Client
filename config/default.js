@@ -839,25 +839,22 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				},
 				env: {
 					mode: 'usage',
-					coreJs: '3.36.1'
+					coreJs: '3.37.0'
 				}
 			};
 
-			return {
-				ts: {
-					...base,
-					jsc: {
-						...base.jsc,
-						parser: {
-							syntax: 'typescript',
-							decorators: true
-						}
+			const ts = this.config.extend({}, base, {
+				jsc: {
+					parser: {
+						syntax: 'typescript',
+						decorators: true
 					}
-				},
-				js: {
-					...base
 				}
-			};
+			});
+
+			const js = this.config.extend({}, base);
+
+			return {js, ts};
 		}
 	},
 
@@ -925,13 +922,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			configFile,
 			compilerOptions: {
 				module,
-				target: 'esnext'
+				target: 'es2020'
 			}
 		});
 
-		this.extend(server.compilerOptions, {
-			module: 'commonjs',
-			target: 'esnext'
+		this.extend(server, {
+			compilerOptions: {
+				module: 'commonjs',
+				target: 'es2020'
+			}
 		});
 
 		return {
