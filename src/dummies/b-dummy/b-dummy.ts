@@ -33,6 +33,8 @@ import historyApiRouterEngine from 'core/router/engines/browser-history';
 
 import iData, {
 
+	prop,
+	system,
 	component,
 	field,
 	hook,
@@ -66,6 +68,11 @@ interface bDummy extends Trait<typeof iLockPageScroll>, Trait<typeof iObserveDOM
 
 @derive(iLockPageScroll, iObserveDOM)
 class bDummy extends iData implements iLockPageScroll, iObserveDOM {
+	@prop()
+	pageProp?: string;
+
+	@system((o) => o.sync.link())
+	page?: string;
 
 	@field()
 	testField: unknown = undefined;

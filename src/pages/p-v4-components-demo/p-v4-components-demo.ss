@@ -14,6 +14,8 @@
 	- block body
 		: config = require('@config/config').build
 
+		< b-dummy :pageProp = someField
+
 		- forEach config.components => @component
 			- if config.inspectComponents
 				< b-v4-component-demo

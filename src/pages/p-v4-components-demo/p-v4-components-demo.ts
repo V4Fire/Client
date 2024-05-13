@@ -37,7 +37,7 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	 * Field for tests purposes
 	 */
 	@field()
-	someField: unknown = {some: 'val'};
+	someField: unknown = 'foo';
 
 	protected beforeCreate(): void {
 		console.time('Render');
