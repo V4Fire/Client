@@ -19,6 +19,7 @@ const
 	o = require('@v4fire/config/options').option;
 
 const
+	browserslist = require('browserslist'),
 	{nanoid} = require('nanoid');
 
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
@@ -833,12 +834,27 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		swc() {
+			let
+				env = 'development';
+
+			if (this.ssr) {
+				env = 'ssr';
+
+			} else if (this.config.environment != null) {
+				env = this.config.environment;
+			}
+
+			const
+				browsersListConfig = browserslist.findConfig('.'),
+				targets = browsersListConfig[env];
+
 			const base = {
 				jsc: {
 					externalHelpers: true
 				},
 				env: {
 					mode: 'usage',
+					targets,
 					coreJs: '3.37.0'
 				}
 			};

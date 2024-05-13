@@ -82,7 +82,7 @@
     "@v4fire/design-system": "1.23.0",
     "arg": "5.0.1",
     "autoprefixer": "10.4.2",
-    "browserslist": "4.19.1",
+    "browserslist": "4.23.0",
     "buble": "0.20.0",
     "cli-progress": "3.10.0",
     "collection.js": "6.8.1",

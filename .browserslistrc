@@ -1,5 +1,5 @@
 [production]
-fully supports es6
+chrome >= 51, firefox >= 54, ios >= 10, safari >= 10, opera >= 38
 
 [development]
 last 1 chrome version
