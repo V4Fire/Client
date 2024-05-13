@@ -12,6 +12,8 @@
 
 - template index() extends ['i-data'].index
 	- block body
+		{{ page }}
+
 		< template v-if = testComponent
 			< component &
 				ref = testComponent |

@@ -14,7 +14,7 @@
 import type { VNode } from 'core/component/engines';
 
 import type iBlock from 'components/super/i-block/i-block';
-import iData, { component, field } from 'components/super/i-data/i-data';
+import iData, { prop, component, field, system } from 'components/super/i-data/i-data';
 
 export * from 'components/super/i-data/i-data';
 
@@ -25,6 +25,12 @@ export * from 'components/super/i-data/i-data';
 })
 
 class bDummy extends iData {
+	@prop()
+	pageProp?: string;
+
+	@system((o) => o.sync.link())
+	page?: string;
+
 	/**
 	 * Name of the test component
 	 */
