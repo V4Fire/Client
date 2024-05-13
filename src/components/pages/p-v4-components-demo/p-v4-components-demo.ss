@@ -33,4 +33,7 @@
 
 		< hr
 
-		< b-dynamic-page :keepAlive = true
+		< b-dynamic-page &
+			:page = activePage |
+			:keepAlive = true
+		.

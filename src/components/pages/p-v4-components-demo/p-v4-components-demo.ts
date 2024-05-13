@@ -46,6 +46,13 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	@field()
 	someField: unknown = 'foo';
 
+	/**
+	 * Название активной страницы
+	 */
+	override get activePage(): CanUndef<string> {
+		return this.route && this.field.get<string>('route.meta.component');
+	}
+
 	protected beforeCreate(): void {
 		//#unless runtime has storybook
 		// eslint-disable-next-line no-console

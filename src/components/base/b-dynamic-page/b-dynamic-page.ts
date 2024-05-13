@@ -349,6 +349,7 @@ export default class bDynamicPage extends iDynamicPage {
 			r
 		} = this;
 
+		console.log(Date.now(), 'render filter - create promise');
 		return new SyncPromise((resolve) => {
 			this.onPageChange = onPageChange(resolve, this.route);
 		});
@@ -423,6 +424,7 @@ export default class bDynamicPage extends iDynamicPage {
 					}
 				}
 
+				console.log(Date.now(), 'render filter - resolve');
 				resolve(true);
 			};
 		}
@@ -627,5 +629,13 @@ export default class bDynamicPage extends iDynamicPage {
 		if (!SSR) {
 			this.sync.mod('hidden', 'page', (v) => !Object.isTruly(v));
 		}
+	}
+
+	updated(): void {
+		this.console.log(Date.now(), 'b-dynamic-page updated');
+	}
+
+	mounted(): void {
+		this.console.log(Date.now(), 'b-dynamic-page mounted');
 	}
 }
