@@ -9,7 +9,7 @@
 'use strict';
 
 const
-	{src, webpack, platform, es} = require('@config/config'),
+	{src, webpack} = require('@config/config'),
 	{hash, output: outputPattern} = include('build/helpers');
 
 /**
