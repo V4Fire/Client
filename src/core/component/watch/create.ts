@@ -118,10 +118,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		const normalizedOpts: WatchOptions = {
 			collapse: true,
 			...opts,
-			...watchInfo?.opts,
-			mutationFilter: () => {
-				console.log(111)
-			}
+			...watchInfo?.opts
 		};
 
 		const
