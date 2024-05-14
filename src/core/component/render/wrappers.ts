@@ -355,6 +355,10 @@ export function wrapRenderSlot<T extends typeof renderSlot>(original: T): T {
 export function wrapWithCtx<T extends typeof withCtx>(original: T): T {
 	return Object.cast(function withCtx(this: ComponentInterface, fn: Function) {
 		return original((...args: unknown[]) => {
+			if (args.length === 1) {
+				return fn(args[0], args[0]);
+			}
+
 			if (fn.length - args.length > 0) {
 				args = args.concat(new Array(fn.length - args.length).fill(undefined));
 			}
