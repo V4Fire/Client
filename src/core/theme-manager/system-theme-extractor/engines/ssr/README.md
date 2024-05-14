@@ -13,7 +13,7 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-  const ssrExtractor = new SystemThemeExtractorSsr(req.headers);
+  const ssrExtractor = new SystemThemeExtractorSSR(req.headers);
   // ...
 });
 ```

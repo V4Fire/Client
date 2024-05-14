@@ -13,7 +13,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2024-??-??)
 
-TODO: release notes.
+#### :house: Internal
+
+* Now SSR build is bundled into a single file
 
 ## v4.0.0-beta.94 (2024-04-24)
 
