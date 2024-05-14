@@ -37,7 +37,9 @@ module.exports = [
 	 */
 	function expandRootTag({tag, attrs, rootTag, forceRenderAsVNode}) {
 		if (tag === '_') {
-			const tag = [`rootTag || ${JSON.stringify(rootTag ?? 'div')}`];
+			const
+				def = JSON.stringify(rootTag ?? 'div'),
+				tag = [`'rootTag' in self ? (rootTag || ${def}) : ${def}`];
 
 			if (webpack.ssr && forceRenderAsVNode) {
 				attrs[':is'] = tag;
