@@ -33,7 +33,7 @@ module.exports = function output({buildId}) {
 			libraryTarget: 'commonjs2',
 			chunkLoading: 'require',
 			chunkFormat: 'commonjs',
-			filename: `${platform}_${es()}_[name].js`
+			filename: '[name].js'
 		});
 
 	} else {
