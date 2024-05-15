@@ -1,5 +1,5 @@
 {
-  "hash": "51102764629c71bd060f85ea349dc7cbefce47c41b9cb493d1c5bdd2d25e47fd",
+  "hash": "29d19bd4410053374beb5c0946db53de4e450cf6e919db6691b3827e05e41b8d",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -84,6 +84,36 @@
             "src/components/form/b-button/b-button.styl"
           ],
           "tpl": "src/components/form/b-button/b-button.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-cache-ssr",
+        {
+          "index": "src/components/base/b-cache-ssr/index.js",
+          "declaration": {
+            "name": "b-cache-ssr",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-cache-ssr",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/base/b-cache-ssr/b-cache-ssr.ts",
+          "styles": [],
+          "tpl": "src/components/base/b-cache-ssr/b-cache-ssr.ss",
           "etpl": null
         }
       ],
@@ -2457,6 +2487,7 @@
               "b-router",
               "b-dynamic-page",
               "b-remote-provider",
+              "b-cache-ssr",
               "b-prevent-ssr",
               "b-list",
               "b-tree",
@@ -2502,6 +2533,7 @@
             "b-router",
             "b-dynamic-page",
             "b-remote-provider",
+            "b-cache-ssr",
             "b-prevent-ssr",
             "b-list",
             "b-tree",
