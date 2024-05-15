@@ -16,9 +16,7 @@ import iBlock, { component, prop } from 'components/super/i-block/i-block';
 export * from 'components/super/i-block/i-block';
 
 @component()
-class bPreventSsr extends iBlock {
+export default class bPreventSSR extends iBlock {
 	@prop({forceDefault: true})
 	override readonly ssrRenderingProp: boolean = false;
 }
-
-export default bPreventSsr;
