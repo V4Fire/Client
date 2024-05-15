@@ -16,7 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Now SSR build is bundled into a single file
-* Use forked lib/server-renderer everywhere in ssr build
+* Use the forked `lib/server-renderer` everywhere in the SSR build
 
 ## v4.0.0-beta.95 (2024-05-06)
 
