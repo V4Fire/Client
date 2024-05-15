@@ -12,8 +12,8 @@
 
 - template index() extends ['i-block'].index
 	- block innerRoot
-		< template v-if = $ssrCache[cacheKey] != null
-			< _ v-html = $ssrCache[cacheKey]
+		< template v-if = $ssrCache.has(cacheKey)
+			< _ v-html = $ssrCache.get(cacheKey)
 
 		< template v-else
 			< _

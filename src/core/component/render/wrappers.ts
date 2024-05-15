@@ -498,7 +498,7 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 					push = args[pushI];
 
 				const canCache =
-					'$ssrCache' in this && this.$ssrCache != null && this.$ssrCache[cacheKey] == null &&
+					'$ssrCache' in this && this.$ssrCache != null && !this.$ssrCache.has(cacheKey) &&
 					'globalName' in this && this.globalName != null &&
 					Object.isFunction(push);
 
@@ -514,7 +514,7 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 						res = ssrRenderSlot(...args);
 
 					unrollBuffer(buf)
-						.then((res) => this.$ssrCache![cacheKey] = res)
+						.then((res) => this.$ssrCache!.set(cacheKey, res))
 						.catch(stderr);
 
 					return res;
