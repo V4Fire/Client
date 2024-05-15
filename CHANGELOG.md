@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Now SSR build is bundled into a single file
+* Use forked lib/server-renderer everywhere in ssr build
 
 ## v4.0.0-beta.95 (2024-05-06)
 
@@ -23,7 +24,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Add `REGION` to webpack globals `build`
 * Listen for i18n `setRegion` event `core/component/event`
-
 
 ## v4.0.0-beta.94 (2024-04-24)
 
