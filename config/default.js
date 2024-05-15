@@ -547,7 +547,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		aliases() {
 			return {
-				dompurify: this.config.es().toLowerCase() === 'es5' ? 'dompurify-v2' : 'dompurify-v3'
+				dompurify: this.config.es().toLowerCase() === 'es5' ? 'dompurify-v2' : 'dompurify-v3',
+				'vue/server-renderer': 'assets/lib/server-renderer.js'
 			};
 		},
 
