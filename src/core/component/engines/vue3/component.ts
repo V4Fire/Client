@@ -92,20 +92,22 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 
 			init.beforeCreateState(ctx, meta, {implementEventAPI: true});
 
-			if (ctx.canFunctional !== true) {
-				this._.type.serverPrefetch = () => {
-					const init = ctx.$initializer;
+			if (SSR) {
+				if (ctx.canFunctional !== true) {
+					this._.type.serverPrefetch = () => {
+						const init = ctx.$initializer;
 
-					try {
-						return SyncPromise.resolve(init).unwrap();
+						try {
+							return SyncPromise.resolve(init).unwrap();
 
-					} catch {
-						return init;
-					}
-				};
+						} catch {
+							return init;
+						}
+					};
 
-			} else {
-				delete this._.type.serverPrefetch;
+				} else {
+					delete this._.type.serverPrefetch;
+				}
 			}
 		},
 
