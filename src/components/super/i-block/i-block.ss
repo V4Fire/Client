@@ -228,7 +228,7 @@
 	: componentId = 'data-cached-class-component-id'
 
 	- if SSR
-		? rootAttrs[':' + componentId] = 'String(renderComponentId)'
+		? rootAttrs[':' + componentId] = 'String(!canFunctional)'
 
 	- else
 		? rootAttrs[componentId] = 'true'

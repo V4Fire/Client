@@ -377,10 +377,10 @@ const styles = {
 };
 ```
 
-### [renderComponentId = `true`]
+### [canFunctional]
 
-Whether to add classes to the component markup with its unique identifier.
-For functional components, the value of this parameter can only be false.
+True if the component renders as a regular one, but can be rendered as a functional.
+This parameter is used during SSR and when hydrating the page.
 
 ### [getRoot]
 

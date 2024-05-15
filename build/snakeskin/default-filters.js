@@ -148,13 +148,13 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 		isSmartFunctional = attrs[SMART_PROPS] && (isFunctional || funcDir);
 
 	if (isFunctional && webpack.ssr) {
-		attrs[':renderComponentId'] = [false];
+		attrs[':canFunctional'] = [true];
 	}
 
 	if (isSmartFunctional) {
 		if (funcDir == null || funcDir === 'true') {
 			if (webpack.ssr) {
-				attrs[':renderComponentId'] = [false];
+				attrs[':canFunctional'] = [true];
 
 			} else {
 				attrs['is'] = [`${attrs['is'][0]}-functional`];
@@ -162,7 +162,7 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 
 		} else if (funcDir !== 'false') {
 			if (webpack.ssr) {
-				attrs[':renderComponentId'] = [!funcDir];
+				attrs[':canFunctional'] = [funcDir];
 
 			} else {
 				attrs[':is'] = [`'${attrs['is'][0]}' + (${funcDir} ? '-functional' : '')`];

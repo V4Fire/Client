@@ -69,6 +69,12 @@ export abstract class ComponentInterface {
 	readonly globalName?: string;
 
 	/**
+	 * True if the component renders as a regular one, but can be rendered as a functional.
+	 * This parameter is used during SSR and when hydrating the page.
+	 */
+	readonly canFunctional?: boolean;
+
+	/**
 	 * A reference to the class instance of the component.
 	 * This parameter is primarily used for instance checks and to access default property values of components.
 	 * Note that all components of the same type share a single class instance.

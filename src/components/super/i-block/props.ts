@@ -306,12 +306,8 @@ export default abstract class iBlockProps extends ComponentInterface {
 	@prop({type: Object, required: false})
 	override readonly styles?: Dictionary<CanArray<string> | Dictionary<string>>;
 
-	/**
-	 * Whether to add classes to the component markup with its unique identifier.
-	 * For functional components, the value of this parameter can only be false.
-	 */
 	@prop({type: Boolean, forceDefault: true})
-	readonly renderComponentId: boolean = true;
+	override readonly canFunctional: boolean = false;
 
 	@prop({type: Function, required: false})
 	override readonly getRoot?: () => this['Root'];

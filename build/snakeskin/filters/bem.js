@@ -56,10 +56,10 @@ module.exports = [
 				attrs[visited] = true;
 
 				if (attrs[':class']) {
-					attrs[':class'] = [`[].concat((${attrs[':class'][0]}), renderComponentId ? componentId : "", ${provideClasses})`];
+					attrs[':class'] = [`[].concat((${attrs[':class'][0]}), !canFunctional ? componentId : "", ${provideClasses})`];
 
 				} else {
-					attrs[':class'] = [`[].concat(renderComponentId ? componentId : [], ${provideClasses})`];
+					attrs[':class'] = [`[].concat(!canFunctional ? componentId : [], ${provideClasses})`];
 				}
 
 				if (attrs[':style']) {

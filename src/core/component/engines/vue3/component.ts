@@ -91,6 +91,22 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			});
 
 			init.beforeCreateState(ctx, meta, {implementEventAPI: true});
+
+			if (ctx.canFunctional !== true) {
+				this._.type.serverPrefetch = () => {
+					const init = ctx.$initializer;
+
+					try {
+						return SyncPromise.resolve(init).unwrap();
+
+					} catch {
+						return init;
+					}
+				};
+
+			} else {
+				delete this._.type.serverPrefetch;
+			}
 		},
 
 		created(): void {
@@ -135,19 +151,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 
 		renderTriggered(...args: unknown[]): void {
 			init.renderTriggeredState(getComponentContext(this), ...args);
-		},
-
-		serverPrefetch(): CanPromise<any> {
-			const
-				ctx = getComponentContext(this),
-				init = ctx.$initializer;
-
-			try {
-				return SyncPromise.resolve(init).unwrap();
-
-			} catch {
-				return init;
-			}
 		}
 	};
 }
