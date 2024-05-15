@@ -21,12 +21,8 @@ export default abstract class iBlockProps extends ComponentInterface {
 	@prop({type: String, required: false})
 	override readonly componentIdProp?: string;
 
-	/**
-	 * The unique or global name of the component.
-	 * Used to synchronize component data with various external storages.
-	 */
 	@prop({type: String, required: false})
-	readonly globalName?: string;
+	override readonly globalName?: string;
 
 	/**
 	 * The component root tag type

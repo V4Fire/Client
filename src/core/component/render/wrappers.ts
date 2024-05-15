@@ -482,6 +482,45 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 				return ssrRenderComponent(component, props, ...args);
 			});
 		}
+
+		if (Object.isFunction(api.ssrRenderSlot)) {
+			const {ssrRenderSlot} = api;
+
+			type RenderSlotArgs = [unknown, string, unknown, unknown, Function, unknown];
+
+			Object.set(api, 'ssrRenderSlot', (...args: RenderSlotArgs) => {
+				const
+					slotName = args[1];
+
+				const
+					pushI = args.length - 2,
+					push = args[pushI];
+
+				const canCache =
+					'$ssrCache' in this && this.$ssrCache != null &&
+					'globalName' in this && this.globalName != null &&
+					Object.isFunction(push);
+
+				if (canCache) {
+					const buf: Array<CanPromise<CanArray<string>>> = [];
+
+					args[args.length - 2] = (str: CanPromise<CanArray<string>>) => {
+						buf.push(str);
+						push(str);
+					};
+
+					const res = ssrRenderSlot(...args);
+
+					Promise.all(buf).then((buf) => {
+						this.$ssrCache![`${this.globalName}-${slotName}`] = buf.flat(Infinity).join('');
+					}).catch(stderr);
+
+					return res;
+				}
+
+				return ssrRenderSlot(...args);
+			});
+		}
 	}
 
 	return api;

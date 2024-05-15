@@ -10,6 +10,7 @@
 
 import type Async from 'core/async';
 import type { BoundFn, ProxyCb, EventId } from 'core/async';
+import type { AbstractCache } from 'core/cache';
 
 import type { ComponentMeta } from 'core/component/meta';
 import type { VNode, Slots, ComponentOptions, SetupContext } from 'core/component/engines';
@@ -60,6 +61,12 @@ export abstract class ComponentInterface {
 	 * The component name in dash-style without special postfixes like `-functional`
 	 */
 	readonly componentName!: string;
+
+	/**
+	 * The unique or global name of the component.
+	 * Used to synchronize component data with various external storages.
+	 */
+	readonly globalName?: string;
 
 	/**
 	 * A reference to the class instance of the component.
@@ -270,6 +277,11 @@ export abstract class ComponentInterface {
 	 * This property is used by restricted/private consumers, such as private directives or component engines.
 	 */
 	protected readonly $async!: Async<ComponentInterface>;
+
+	/**
+	 * Cache for rendered SSR templates
+	 */
+	protected readonly $ssrCache?: AbstractCache<string>;
 
 	/**
 	 * A promise that resolves when the component is initialized.

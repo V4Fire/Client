@@ -14,6 +14,8 @@ package('p-v4-components-demo')
 		'b-router',
 		'b-dynamic-page',
 		'b-remote-provider',
+
+		'b-cache-ssr',
 		'b-prevent-ssr',
 
 		'b-list',

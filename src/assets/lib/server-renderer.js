@@ -620,8 +620,6 @@ async function unrollBuffer$1(buffer, start = {t: Date.now()}) {
 			}
 		}
 
-		// Prevent memory leaks
-		buffer.splice(0, buffer.length);
 		return ret;
 
 	} else {
@@ -646,10 +644,9 @@ function unrollBufferSync$1(buffer, start) {
 		}
 	}
 
-	// Prevent memory leaks
-	buffer.splice(0, buffer.length);
 	return ret;
 }
+
 async function renderToString(input, context = {}) {
 	if (isVNode$1(input)) {
 		// raw vnode, wrap with app (for context)
