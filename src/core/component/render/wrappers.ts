@@ -490,14 +490,15 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 
 			Object.set(api, 'ssrRenderSlot', (...args: RenderSlotArgs) => {
 				const
-					slotName = args[1];
+					slotName = args[1],
+					cacheKey = `${this.globalName}-${slotName}`;
 
 				const
 					pushI = args.length - 2,
 					push = args[pushI];
 
 				const canCache =
-					'$ssrCache' in this && this.$ssrCache != null &&
+					'$ssrCache' in this && this.$ssrCache != null && this.$ssrCache[cacheKey] == null &&
 					'globalName' in this && this.globalName != null &&
 					Object.isFunction(push);
 
@@ -509,11 +510,12 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 						push(str);
 					};
 
-					const res = ssrRenderSlot(...args);
+					const
+						res = ssrRenderSlot(...args);
 
-					Promise.all(buf).then((buf) => {
-						this.$ssrCache![`${this.globalName}-${slotName}`] = buf.flat(Infinity).join('');
-					}).catch(stderr);
+					unrollBuffer(buf)
+						.then((res) => this.$ssrCache![cacheKey] = res)
+						.catch(stderr);
 
 					return res;
 				}
@@ -524,4 +526,23 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 	}
 
 	return api;
+
+	async function unrollBuffer(buf: Array<CanPromise<CanArray<string>>>): Promise<string> {
+		let res = '';
+
+		for (let val of buf) {
+			if (Object.isPromise(val)) {
+				val = await val;
+			}
+
+			if (Object.isString(val)) {
+				res += val;
+				continue;
+			}
+
+			res += await unrollBuffer(val);
+		}
+
+		return res;
+	}
 }
