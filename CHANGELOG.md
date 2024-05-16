@@ -11,11 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2024-05-??)
+## v4.0.0-beta.96 (2024-05-16)
 
 #### :rocket: New Feature
 
-* Add new methods `waitSignal` and `sendSignal` for deffer module load `module-loader`
+* Added new methods waitSignal and sendSignal for deferred module loading `components/friends/module-loader`
 
 ## v4.0.0-beta.95 (2024-05-06)
 
