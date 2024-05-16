@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-05-??)
+
+#### :rocket: New Feature
+
+* Add new methods `waitSignal` and `sendSignal` for deffer module load
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change
