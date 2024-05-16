@@ -56,7 +56,7 @@ test.describe('friends/module-loader', () => {
 		await test.expect(page.locator(resultSelector)).toHaveText('Dummy module #1');
 	});
 
-	test('module should be loaded only after its associated "wait" function is resolved', async ({page}) => {
+	test('the module should be loaded only after its associated "wait" function is resolved', async ({page}) => {
 		let contents: Array<Promise<string>> = [];
 
 		page.on('response', (response) => {
@@ -65,7 +65,7 @@ test.describe('friends/module-loader', () => {
 			}
 		});
 
-		const target = await renderDummy(page, 'load module only after wait is resolved');
+		const target = await renderDummy(page, 'load the module only after the wait is resolved');
 
 		await BOM.waitForIdleCallback(page);
 
@@ -90,7 +90,7 @@ test.describe('friends/module-loader', () => {
 		].join(' '));
 	});
 
-	test('module should be loaded only after its associated signal is sent', async ({page}) => {
+	test('the module should be loaded only after its associated signal is sent', async ({page}) => {
 		let contents: Array<Promise<string>> = [];
 
 		page.on('response', (response) => {
@@ -99,7 +99,7 @@ test.describe('friends/module-loader', () => {
 			}
 		});
 
-		const target = await renderDummy(page, 'load module only after signal received');
+		const target = await renderDummy(page, 'load the module only after the signal is received');
 
 		await BOM.waitForIdleCallback(page);
 
@@ -124,12 +124,6 @@ test.describe('friends/module-loader', () => {
 		].join(' '));
 	});
 
-	/**
-	 * Returns the rendered `b-friends-module-loader-dummy` component
-	 *
-	 * @param page
-	 * @param stage
-	 */
 	async function renderDummy(page: Page, stage: string) {
 		await Component.waitForComponentTemplate(page, componentName);
 		return Component.createComponent(page, componentName, {stage});
@@ -149,8 +143,8 @@ test.describe('friends/module-loader', () => {
 	}
 
 	/**
-	 * Initiates an asynchronous rendering of a specified component using signal.
-	 * The function returns a promise that resolves after the rendering process is completed.
+	 * Initiates the asynchronous rendering of a specified component using a signal.
+	 * The function returns a promise that resolves once the rendering process is completed.
 	 *
 	 * @param dummy
 	 * @param target
