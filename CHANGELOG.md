@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-05-??)
+
+#### :bug: Bug Fix
+
+* Reverted https://github.com/V4Fire/Client/commit/1612a56f951929c9aa59f9743bd6a4fc20872a51 `build/monic`
+
 ## v4.0.0-beta.96 (2024-05-16)
 
 #### :rocket: New Feature

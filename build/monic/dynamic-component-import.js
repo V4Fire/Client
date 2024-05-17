@@ -9,7 +9,7 @@
 'use strict';
 
 const
-	{typescript, webpack: {ssr}} = require('@config/config'),
+	{typescript, webpack, webpack: {ssr}} = require('@config/config'),
 	{commentModuleExpr: commentExpr} = include('build/const');
 
 const
@@ -22,7 +22,8 @@ const importRgxp = new RegExp(
 
 const
 	hasImport = importRgxp.removeFlags('g'),
-	isESImport = typescript().client.compilerOptions.module === 'ES2020';
+	isESImport = typescript().client.compilerOptions.module === 'ES2020',
+	fatHTML = webpack.fatHTML();
 
 /**
  * A Monic replacer is used to enable dynamic imports of components
@@ -98,27 +99,33 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 			imports.push(decl);
 		}
 
-		const
-			stylPath = `${fullPath}.styl`;
+		/**
+		 * For fathtml, we do not include dynamically loaded CSS because it leads to duplication
+		 * of the CSS itself and the associated assets.
+		 */
+		if (!fatHTML) {
+			const
+				stylPath = `${fullPath}.styl`;
 
-		let
-			decl;
+			let
+				decl;
 
-		if (ssr || isESImport) {
-			decl = `import(${magicComments} '${stylPath}')`;
+			if (ssr || isESImport) {
+				decl = `import(${magicComments} '${stylPath}')`;
 
-		} else {
-			decl = `new Promise(function (r) { return r(require('${stylPath}')); })`;
-		}
-
-		if (ssr) {
-			if (!entryDeps.has(resourceName)) {
-				imports.unshift(`require('core/component/hydration').styles.set('${resourceName}', (${decl})).get('${resourceName}')`);
+			} else {
+				decl = `new Promise(function (r) { return r(require('${stylPath}')); })`;
 			}
 
-		} else {
-			decl = `function () { return ${decl}; }`;
-			imports[0] = `TPLS['${resourceName}'] ? ${imports[0]} : ${imports[0]}.then(${decl}, function (err) { stderr(err); return ${decl}(); })`;
+			if (ssr) {
+				if (!entryDeps.has(resourceName)) {
+					imports.unshift(`require('core/component/hydration').styles.set('${resourceName}', (${decl})).get('${resourceName}')`);
+				}
+
+			} else {
+				decl = `function () { return ${decl}; }`;
+				imports[0] = `TPLS['${resourceName}'] ? ${imports[0]} : ${imports[0]}.then(${decl}, function (err) { stderr(err); return ${decl}(); })`;
+			}
 		}
 
 		if (ssr) {
