@@ -67,7 +67,7 @@ export default class Store {
 				} else if (Object.isArray(val)) {
 					yield* val;
 
-				} else {
+				} else if (Object.isPlainObject(val)) {
 					yield* traverse(Object.values(val));
 				}
 			}
