@@ -7,3 +7,4 @@
  */
 
 export * from 'core/page-meta-data/elements/title/engines/dom';
+export * from 'core/page-meta-data/elements/title/engines/ssr';

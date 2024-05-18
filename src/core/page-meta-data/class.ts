@@ -9,7 +9,7 @@
 import { isAbsURL, concatURLs } from 'core/url';
 
 import { ssrEngine, domEngine } from 'core/page-meta-data/elements/abstract/engines';
-import { domTitleEngine } from 'core/page-meta-data/elements/title';
+import { ssrTitleEngine, domTitleEngine } from 'core/page-meta-data/elements/title';
 
 import Store from 'core/page-meta-data/store';
 
@@ -51,7 +51,7 @@ export class PageMetaData {
 		const attrs = {text: value};
 
 		const title = new Title(
-			SSR ? ssrEngine : domTitleEngine,
+			SSR ? ssrTitleEngine : domTitleEngine,
 			attrs
 		);
 
