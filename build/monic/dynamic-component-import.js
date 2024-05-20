@@ -100,7 +100,7 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 		}
 
 		/**
-		 * For fathtml, we do not include dynamically loaded CSS because it leads to duplication
+		 * In FatHTML, we do not include dynamically loaded CSS because it leads to duplication
 		 * of the CSS itself and the associated assets.
 		 */
 		if (!fatHTML) {
