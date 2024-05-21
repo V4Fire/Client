@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-05-??)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition when switching routes
+
 ## v4.0.0-beta.95 (2024-05-06)
 
 #### :bug: Bug Fix

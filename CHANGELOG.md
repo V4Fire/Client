@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-05-??)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition when switching routes `bRouter`
+
 ## v4.0.0-beta.96 (2024-05-16)
 
 #### :rocket: New Feature
