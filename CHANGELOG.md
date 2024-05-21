@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed a race condition when switching routes `bRouter`
+* Reverted style dynamic load for fat-html from v4.0.0-beta.94 `build/monic`
 
 ## v4.0.0-beta.96 (2024-05-16)
 
