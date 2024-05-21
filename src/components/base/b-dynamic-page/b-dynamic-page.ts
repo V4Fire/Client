@@ -329,6 +329,16 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	/**
+	 * Clears all pending rendering tasks except for the last one
+	 */
+	protected clearRenderTasks(): void {
+		[...this.renderGroups].slice(0, -1).forEach((group) => {
+			this.async.clearAll({group: new RegExp(RegExp.escape(`asyncComponents:${group}`))});
+			this.renderGroups.delete(group);
+		});
+	}
+
+	/**
 	 * The render loop filter for `asyncRender`
 	 */
 	protected renderFilter(): CanPromise<boolean> {
@@ -350,11 +360,6 @@ export default class bDynamicPage extends iDynamicPage {
 		} = this;
 
 		return new SyncPromise((resolve) => {
-			[...this.renderGroups].slice(0, this.renderGroups.size - 2).forEach((group) => {
-				this.async.clearAll({group: new RegExp(RegExp.escape(`asyncComponents:${group}`))});
-				this.renderGroups.delete(group);
-			});
-
 			this.onPageChange = onPageChange(resolve, this.route);
 		});
 

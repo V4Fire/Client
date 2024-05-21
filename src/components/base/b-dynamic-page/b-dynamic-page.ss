@@ -35,3 +35,5 @@
 				v-attrs = {'@hook:destroyed': createPageDestructor()} |
 				${attrs}
 			.
+
+			{{ void(clearRenderTasks()) }}
