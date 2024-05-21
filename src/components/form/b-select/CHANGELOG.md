@@ -9,6 +9,26 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.72 (2024-03-13)
+
+#### :bug: Bug Fix
+
+* Fixed the loss of the keydown event handler when recreating a functional component
+* Fixed the issue of the dropdown not closing when clicking on an element with stop propagation
+
+## v4.0.0-beta.70 (2024-03-05)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with missing methods `element` and `elements` in the Block prototype
+
+## 4.0.0-beta.71 (2024-03-12)
+
+#### :bug: Bug Fix
+
+* Fixed an error that the text in native mode was not synchronized with the value
+* Implemented correct switching between elements when pressing the `Tab` key
+
 ## v4.0.0-beta.40 (2023-11-17)
 
 #### :boom: Breaking Change

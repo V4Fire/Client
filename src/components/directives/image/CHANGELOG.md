@@ -9,7 +9,29 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.?.? (2024-01-??)
+## 4.0.0-beta.86 (2024-04-11)
+
+#### :boom: Breaking Change
+
+* The directive cannot be applied to img, picture, or object elements
+
+#### :rocket: New Feature
+
+* Added support for standard img tag attributes
+
+## 4.0.0-beta.84 (2024-04-11)
+
+#### :bug: Bug Fix
+
+* Fixed an error with incorrect handling of the empty required `src` attribute
+
+## 4.0.0-beta.81 (2024-04-01)
+
+#### :bug: Bug Fix
+
+* Fixed an error with incorrect handling of errors caused by the Async wrapper
+
+## v4.0.0-beta.47 (2024-01-16)
 
 #### :bug: Bug Fix
 

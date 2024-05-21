@@ -71,6 +71,10 @@ export default class bButton extends iBlock implements iProgress {
 }
 ```
 
+### initDisableBehavior
+
+Initializes the disable-on-progress behavior for the specified component.
+
 ## Styles
 
 The trait provides a bunch of optional styles for the component.

@@ -71,3 +71,11 @@ export interface UnsafeBDynamicPage<CTX extends bDynamicPage = bDynamicPage> ext
 	// @ts-ignore (access)
 	wrapCache: CTX['wrapCache'];
 }
+
+export interface OnBeforeSwitchPage {
+	/**
+	 * Saves the scroll position of an element
+	 * @param el
+	 */
+	saveScroll(el: Element): void;
+}

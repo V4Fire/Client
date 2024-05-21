@@ -49,7 +49,7 @@ export default class Scroll {
 	 * @param [scrollIntoViewOpts]
 	 */
 	static async scrollIntoViewIfNeeded(
-		ctx: Page | ElementHandle,
+		ctx: Page,
 		selector: string,
 		scrollIntoViewOpts: Dictionary
 	): Promise<void> {

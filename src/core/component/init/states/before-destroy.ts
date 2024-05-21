@@ -37,7 +37,7 @@ export function beforeDestroyState(component: ComponentInterface): void {
 	}
 
 	setTimeout(() => {
-		if ($el != null && !$el.isConnected && unsafe.meta.params.functional === true) {
+		if ($el != null && !$el.isConnected && $el.component == null) {
 			unsafe.$renderEngine.r.destroy($el);
 		}
 
@@ -55,5 +55,8 @@ export function beforeDestroyState(component: ComponentInterface): void {
 		Object.setPrototypeOf(unsafe, destroyedComponent);
 
 		dropRawComponentContext(unsafe);
-	}, 0);
+
+	// To avoid freezing during cleaning of a larger number of components at once,
+	// a little randomness is added to the process
+	}, Math.floor(Math.random() * 1000));
 }

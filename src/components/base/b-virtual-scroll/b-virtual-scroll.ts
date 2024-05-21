@@ -71,9 +71,9 @@ export * from 'components/base/b-virtual-scroll/interface';
 
 export { RequestFn, RemoteData, RequestQueryFn, GetData };
 
-DOM.addToPrototype(watchForIntersection, appendChild);
-VDOM.addToPrototype(render, create);
-Block.addToPrototype(getFullElementName);
+DOM.addToPrototype({watchForIntersection, appendChild});
+VDOM.addToPrototype({render, create});
+Block.addToPrototype({getFullElementName});
 
 const
 	$$ = symbolGenerator();

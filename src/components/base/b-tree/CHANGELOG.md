@@ -9,6 +9,21 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.55 (2024-02-08)
+
+#### :boom: Breaking Change
+
+* Now all nested trees are rendered as functional
+* Now, by default, folded items are not rendered
+
+#### :rocket: New Feature
+
+* Added new values for the `lazyRender` prop
+
+#### :bug: Bug Fix
+
+* Fixed errors when using the tree as a functional component
+
 ## v4.0.0-beta.37 (2023-10-27)
 
 #### :bug: Bug Fix

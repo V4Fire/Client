@@ -88,8 +88,8 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 		attrs[':componentIdProp'] = [`componentId + ${JSON.stringify(id)}`];
 	}
 
-	attrs[':getRoot'] = ["self.tmp.__getRoot__ ??= () => ('getRoot' in self ? self.getRoot?.() : null) ?? self.$root"];
-	attrs[':getParent'] = ["self.tmp.__getParent__ ??= () => typeof $restArgs !== 'undefined' ? $restArgs?.ctx ?? self : self"];
+	attrs[':getRoot'] = ['$getRoot(self)'];
+	attrs[':getParent'] = ["$getParent(self, typeof $restArgs !== 'undefined' ? $restArgs : undefined)"];
 
 	if (component.inheritMods !== false && !attrs[':modsProp']) {
 		attrs[':modsProp'] = ['sharedMods'];

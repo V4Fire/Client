@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.95 (2024-05-06)
+
+#### :house: Internal
+
+* Add `REGION` to webpack globals
+
+## 4.0.0-beta.75 (2024-03-22)
+
+#### :house: Internal
+
+* Removed the restriction on loading styles if a template is loaded
+
 ## v3.24.1 (2022-08-19)
 
 #### :rocket: New Feature

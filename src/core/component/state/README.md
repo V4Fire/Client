@@ -1,69 +1,68 @@
 # core/component/state
 
-The module provides a global store for all components to access,
-which can be used to provide data from external modules to components.
-The store is similar to Redux, but much simpler and easier to use.
-Components can subscribe to the store to receive updates whenever the data in the store changes,
-and they can also update the store themselves if necessary.
-This allows for a centralized location for managing data that can be accessed by all components throughout
-the application.
+This module defines an interface for the entire application's state.
+The state can include user sessions, cookie store, etc.
 
-## Usage
+> Note that the module provides types only.
+If you want to use global state on the client side, look at the module `core/component/client-state`,
+but be aware that using global state might lead to issues when implementing SSR.
 
-```js
-import state, { watch, set, unset } from 'core/component/state';
+## Interface
 
-// Online status check
-console.log(state.isOnline);
+```typescript
+import type { Experiments } from 'core/abt';
+import type { CookieStore } from 'core/cookies';
+import type { InitialRoute, AppliedRoute } from 'core/router';
 
-// Watching the session
-watch('isAuth', (value, oldValue) => {
-  console.log(value, oldValue);
-});
+export interface State {
+  /**
+   * True, if the current user session is authorized
+   */
+  isAuth?: boolean;
 
-// Addin a new property to the state
-set('newProp', someValue);
+  /**
+   * True, if the application is connected to the Internet
+   */
+  isOnline?: boolean;
+
+  /**
+   * Date of the last Internet connection
+   */
+  lastOnlineDate?: Date;
+
+  /**
+   * The application default language
+   */
+  lang?: Language;
+
+  /**
+   * A list of registered AB experiments
+   */
+  experiments?: Experiments;
+
+  /**
+   * Initial value for the active route.
+   * This field is typically used in cases of SSR and hydration.
+   */
+  route?: InitialRoute | AppliedRoute;
+
+  /**
+   * A store of application cookies
+   */
+  cookies?: CookieStore;
+
+  /**
+   * A shim for the `window.document` API
+   */
+  document?: Document;
+
+  /**
+   * An object whose properties will extend the global object.
+   * For example, for SSR rendering, the proper functioning of APIs such as `document.cookie` or `location` is required.
+   * Using this object, polyfills for all necessary APIs can be passed through.
+   */
+  globalEnv?: GlobalEnvironment;
+}
+
+export interface GlobalEnvironment extends Dictionary {}
 ```
-
-## Built-in state
-
-V4Fire supports out of the box integration with the `core/session`, `core/net`, and `core/abt` modules.
-
-### state.isAuth
-
-This property signifies if the session has been authorized or not.
-
-### state.isOnline
-
-This property signifies if an Internet connection is currently active or not.
-
-### state.lastOnlineDate
-
-This property indicates the date of the most recent Internet connection.
-
-### state.experiments
-
-This property contains a list of registered AB experiments.
-
-### state.globalEnv
-
-An object whose properties will extend the global object.
-For example, for SSR rendering, the proper functioning of APIs such as `document.cookie` or `location` is required.
-Using this object, polyfills for all necessary APIs can be passed through.
-
-```js
-import { set } from 'core/component/state';
-
-set('globalEnv', {
-  location: {
-    href: 'https://foo.com'
-  }
-});
-```
-
-## API
-
-By default, this module exports a link to the store object itself.
-Additionally, it provides methods for setting and unsetting new store properties, as well as watching for changes.
-To observe store modifications, the module utilizes the `core/watch` functionality.
-For a comprehensive understanding of object observation, please consult the documentation for this module.

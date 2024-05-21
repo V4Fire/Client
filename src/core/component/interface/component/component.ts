@@ -13,7 +13,7 @@ import type { BoundFn, ProxyCb, EventId } from 'core/async';
 
 import type { State } from 'core/component/state';
 import type { HydrationStore } from 'core/component/hydration';
-import type { VNode, Slots, ComponentOptions, SetupContext } from 'core/component/engines';
+import type { VNode, Slots, ComponentOptions, SetupContext, CreateAppFunction } from 'core/component/engines';
 import type { ComponentMeta } from 'core/component/meta';
 
 import type { Hook } from 'core/component/interface/lc';
@@ -21,7 +21,7 @@ import type { ModsProp, ModsDict } from 'core/component/interface/mod';
 import type { SyncLinkCache } from 'core/component/interface/link';
 import type { RenderEngine } from 'core/component/interface/engine';
 
-import type { ComponentElement } from 'core/component/interface/component/types';
+import type { ComponentElement, ComponentEmitterOptions } from 'core/component/interface/component/types';
 import type { WatchPath, WatchOptions, RawWatchHandler } from 'core/component/interface/watch';
 import type { UnsafeGetter, UnsafeComponentInterface } from 'core/component/interface/component/unsafe';
 
@@ -40,9 +40,14 @@ export abstract class ComponentInterface {
 	readonly Component!: ComponentInterface;
 
 	/**
-	 * The unique application identifier
+	 * A link to the application object
 	 */
-	readonly appId!: string;
+	readonly app!: ReturnType<CreateAppFunction>;
+
+	/**
+	 * The unique identifier for the application process
+	 */
+	readonly appProcessId!: string;
 
 	/**
 	 * The unique component identifier.
@@ -69,6 +74,11 @@ export abstract class ComponentInterface {
 	 * Note that all components of the same type share a single class instance.
 	 */
 	readonly instance!: this;
+
+	/**
+	 * True if the component has been rendered at least once
+	 */
+	readonly renderedOnce: boolean = false;
 
 	/**
 	 * Additional modifiers for the component.
@@ -440,18 +450,32 @@ export abstract class ComponentInterface {
 	 *
 	 * @param event
 	 * @param handler
+	 * @param [opts]
 	 */
-	protected $on<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>): EventId;
+	protected $on<E = unknown, R = unknown>(
+		event: string,
+		handler: ProxyCb<E, R, this>,
+		opts?: ComponentEmitterOptions
+	): EventId;
 
 	/**
 	 * Attaches a listener to the specified component's events
 	 *
 	 * @param events
 	 * @param handler
+	 * @param [opts]
 	 */
-	protected $on<E = unknown, R = unknown>(events: string[], handler: ProxyCb<E, R, this>): EventId[];
+	protected $on<E = unknown, R = unknown>(
+		events: string[],
+		handler: ProxyCb<E, R, this>,
+		opts?: ComponentEmitterOptions
+	): EventId[];
 
-	protected $on<E = unknown, R = unknown>(_event: CanArray<string>, _handler: ProxyCb<E, R, this>): CanArray<EventId> {
+	protected $on<E = unknown, R = unknown>(
+		_event: CanArray<string>,
+		_handler: ProxyCb<E, R, this>,
+		_opts?: ComponentEmitterOptions
+	): CanArray<EventId> {
 		return Object.throw();
 	}
 
@@ -460,20 +484,31 @@ export abstract class ComponentInterface {
 	 *
 	 * @param event
 	 * @param handler
+	 * @param [opts]
 	 */
-	protected $once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>): EventId;
+	protected $once<E = unknown, R = unknown>(
+		event: string,
+		handler: ProxyCb<E, R, this>,
+		opts?: ComponentEmitterOptions
+	): EventId;
 
 	/**
 	 * Attaches a disposable listener to the specified component's event
 	 *
 	 * @param events
 	 * @param handler
+	 * @param opts
 	 */
-	protected $once<E = unknown, R = unknown>(events: string[], handler: ProxyCb<E, R, this>): EventId[];
+	protected $once<E = unknown, R = unknown>(
+		events: string[],
+		handler: ProxyCb<E, R, this>,
+		opts?: ComponentEmitterOptions
+	): EventId[];
 
 	protected $once<E = unknown, R = unknown>(
 		_event: CanArray<string>,
-		_handler: ProxyCb<E, R, this>
+		_handler: ProxyCb<E, R, this>,
+		_opts?: ComponentEmitterOptions
 	): CanArray<EventId> {
 		return Object.throw();
 	}
@@ -514,6 +549,27 @@ export abstract class ComponentInterface {
 	protected $resolveRef(_ref: null | undefined): undefined;
 	protected $resolveRef(_ref: unknown): string;
 	protected $resolveRef(_ref: unknown): CanUndef<string | Function> {
+		return Object.throw();
+	}
+
+	/**
+	 * Returns a function for getting the root component based on the context of the current component
+	 * @param _ctx
+	 */
+	protected $getRoot(_ctx: ComponentInterface): () => ComponentInterface {
+		return Object.throw();
+	}
+
+	/**
+	 * Returns a function for getting the parent component based on the context of the current component
+	 *
+	 * @param _ctx
+	 * @param _restArgs
+	 */
+	protected $getParent(
+		_ctx: ComponentInterface,
+		_restArgs?: {ctx?: ComponentInterface} | VNode
+	): () => ComponentInterface {
 		return Object.throw();
 	}
 

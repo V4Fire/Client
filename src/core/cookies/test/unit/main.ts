@@ -15,11 +15,13 @@ import type * as CookiesAPI from 'core/cookies';
 
 test.describe('core/cookies', () => {
 	let
-		cookiesAPI: JSHandle<typeof CookiesAPI>;
+		cookiesAPI: JSHandle<CookiesAPI.Cookies>;
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
-		cookiesAPI = await Utils.import(page, 'core/cookies');
+
+		const api: JSHandle<typeof CookiesAPI> = await Utils.import(page, 'core/cookies');
+		cookiesAPI = await api.evaluateHandle((ctx) => ctx.from(document));
 	});
 
 	test.describe('`get`', () => {
@@ -28,17 +30,19 @@ test.describe('core/cookies', () => {
 		});
 
 		test('should return the value of a cookie by its name', async () => {
-			const
-				testVal = await cookiesAPI.evaluate((cookies) => cookies.get('testCookie'));
+			const res = await cookiesAPI.evaluate(
+				(cookies) => cookies.get('testCookie')
+			);
 
-			test.expect(testVal).toBe('testCookieVal');
+			test.expect(res).toBe('testCookieVal');
 		});
 
 		test('should return `undefined` when trying to get the value of a non-existent cookie', async () => {
-			const
-				testVal = await cookiesAPI.evaluate((cookies) => cookies.get('unreachableCookie'));
+			const res = await cookiesAPI.evaluate(
+				(cookies) => cookies.get('unreachableCookie')
+			);
 
-			test.expect(testVal).toBeUndefined();
+			test.expect(res).toBeUndefined();
 		});
 	});
 
@@ -48,58 +52,56 @@ test.describe('core/cookies', () => {
 		});
 
 		test('should return true if the cookie exists', async () => {
-			const
-				testVal = await cookiesAPI.evaluate((cookies) => cookies.has('testCookie'));
+			const res = await cookiesAPI.evaluate(
+				(cookies) => cookies.has('testCookie')
+			);
 
-			test.expect(testVal).toBe(true);
+			test.expect(res).toBe(true);
 		});
 
 		test('should return false if the cookie does not exist', async () => {
-			const
-				testVal = await cookiesAPI.evaluate((cookies) => cookies.has('unreachableCookie'));
+			const res = await cookiesAPI.evaluate(
+				(cookies) => cookies.has('unreachableCookie')
+			);
 
-			test.expect(testVal).toBe(false);
+			test.expect(res).toBe(false);
 		});
 	});
 
 	test.describe('`set`', () => {
-		test('simple usage', async ({page}) => {
+		test('simple usage', async () => {
 			await cookiesAPI.evaluate((cookies) => cookies.set('testCookie', 'testCookieVal'));
 
-			const
-				testVal = await page.evaluate(() => document.cookie);
+			const res = await cookiesAPI.evaluate(
+				(cookies) => cookies.store.cookie
+			);
 
-			test.expect(testVal.includes('testCookie=testCookieVal')).toBeTruthy();
+			test.expect(res.includes('testCookie=testCookieVal')).toBe(true);
 		});
 
-		test('should set multiply cookies', async ({context, page}) => {
-			const
-				cookieNames = ['testCookie', 'testCookie2'];
+		test('should set multiply cookies', async () => {
+			await cookiesAPI.evaluate((cookies) => {
+				cookies.set('testCookie', 'testCookieVal');
+				cookies.set('testCookie2', 'testCookieVal2');
+			});
 
-			await cookiesAPI.evaluate((cookies, cookieNames) => cookies.set(cookieNames[0], 'testCookieVal'), cookieNames);
-			await cookiesAPI.evaluate((cookies, cookieNames) => cookies.set(cookieNames[1], 'testCookieVal2'), cookieNames);
+			const res = await cookiesAPI.evaluate(
+				(cookies) => cookies.store.cookie
+			);
 
-			const
-				cookies = await context.cookies(page.url()),
-				targetCookies = cookies.filter((el) => cookieNames.includes(el.name));
-
-			test.expect(targetCookies).toEqual([
-				createCookie(),
-				createCookie({
-					name: 'testCookie2',
-					value: 'testCookieVal2'
-				})
-			]);
+			test.expect(res.includes('testCookie=testCookieVal; testCookie2=testCookieVal2')).toBe(true);
 		});
 
 		test('with the `path` option provided', async ({page, context}) => {
-			await cookiesAPI.evaluate((cookies) => cookies.set('testCookie', 'testCookieVal', {path: '/test'}));
+			await cookiesAPI.evaluate(
+				(cookies) => cookies.set('testCookie', 'testCookieVal', {path: '/test'})
+			);
 
 			const
 				origin = await page.evaluate(() => location.origin),
 				cookies = await context.cookies(`${origin}/test`);
 
-			test.expect(cookies.filter((el) => el.name === 'testCookie')).toEqual([createCookie({path: '/test'})]);
+			test.expect(cookies.filter((el) => el.name === 'testCookie')).toEqual([resolveCookieParams({path: '/test'})]);
 		});
 
 		test('with the `expires` option provided', async ({page, context}) => {
@@ -108,35 +110,28 @@ test.describe('core/cookies', () => {
 				return Math.floor(globalThis._expDate.getTime() / 1000);
 			});
 
-			await cookiesAPI.evaluate((cookies) => cookies.set('testCookie', 'testCookieVal', {expires: globalThis._expDate}));
+			await cookiesAPI.evaluate(
+				(cookies) => cookies.set('testCookie', 'testCookieVal', {expires: globalThis._expDate})
+			);
 
-			const
-				cookies = await context.cookies(page.url());
-
-			test.expect(cookies.filter((el) => el.name === 'testCookie')).toEqual([createCookie({expires})]);
+			const cookies = await context.cookies(page.url());
+			test.expect(cookies.filter((el) => el.name === 'testCookie')).toEqual([resolveCookieParams({expires})]);
 		});
 	});
 
 	test.describe('`remove`', () => {
-		test('should remove a cookie', async ({context, page}) => {
-			await cookiesAPI.evaluate((cookies) => cookies.set('testCookie', 'testCookieVal'));
+		test('should remove a cookie', async () => {
+			const res = await cookiesAPI.evaluate((cookies) => {
+				cookies.set('testCookie', 'testCookieVal');
+				cookies.remove('testCookie');
+				return cookies.store.cookie;
+			});
 
-			const
-				cookies = await context.cookies(page.url());
-
-			test.expect(cookies.find((el) => el.name === 'testCookie')).toBeTruthy();
-
-			await cookiesAPI.evaluate((cookies) => cookies.remove('testCookie'));
-
-			const
-				cookiesAfterRemove = await context.cookies(page.url());
-
-			test.expect(cookiesAfterRemove.find((el) => el.name === 'testCookie')).toBeFalsy();
-			test.expect(cookiesAfterRemove.length).toBe(cookies.length - 1);
+			test.expect(res.includes('testCookie=testCookieVal')).toBe(false);
 		});
 	});
 
-	function createCookie(params: Dictionary = {}): Cookie {
+	function resolveCookieParams(params: Dictionary = {}): Cookie {
 		return {
 			sameSite: 'Lax',
 			name: 'testCookie',

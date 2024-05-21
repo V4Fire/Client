@@ -26,21 +26,23 @@
 
 require('./dist/ssr/std');
 
-require('./dist/ssr/p-v4-components-demo')
+const jsdom = require('jsdom');
+const app = require('./dist/ssr/p-v4-components-demo');
+
+app
 	.initApp('p-v4-components-demo', {
 		route: '/user/12345',
 
+		cookies: app.cookies.createCookieStore(''),
+		document: new jsdom.JSDOM(),
+
 		globalEnv: {
-			ssr: {
-				document: {
-
-				}
-			},
-
 			location: {
 				href: 'https://example.com/user/12345'
 			}
-		}
+		},
+
+		ready: app.createInitAppSemaphore()
 	})
 
 	.then(({content, styles}) => {

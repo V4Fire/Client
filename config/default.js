@@ -544,7 +544,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @returns {object}
 		 */
 		aliases() {
-			return {};
+			return {
+				dompurify: this.config.es().toLowerCase() === 'es5' ? 'dompurify-v2' : 'dompurify-v3'
+			};
 		},
 
 		/**
@@ -554,6 +556,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		externals() {
 			return {
 				vue: 'root Vue',
+				jsdom: 'jsdom',
 				eventemitter2: 'EventEmitter2',
 				setimmediate: 'setImmediate'
 			};
@@ -1093,9 +1096,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * ```js
 		 * {
 		 *   prefersColorScheme: {
+		 *     // This flag indicates whether dark or light themes will be detected based on the user's settings.
 		 *     enabled: true,
 		 *
-		 *     // This flag indicates whether dark or light themes will be detected based on the user's settings.
 		 *     // If you want to provide custom aliases for theme names, you can pass them as a dictionary.
 		 *     // If your design system does not provide themes from this dictionary, the build will fail.
 		 *     // If you do not specify an aliases dictionary, the default values `dark` and `light` will be used.

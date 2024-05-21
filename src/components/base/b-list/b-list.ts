@@ -99,9 +99,12 @@ class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 	 * {@link iActiveItems.activeStore}
 	 * {@link bList.activeProp}
 	 */
-	@system<bList>((o) => {
-		o.watch('modelValue', (val) => o.setActive(val, true));
-		return iActiveItems.linkActiveStore(o, (val) => o.modelValue ?? val);
+	@system<bList>({
+		unique: true,
+		init: (o) => {
+			o.watch('modelValue', (val) => o.setActive(val, true));
+			return iActiveItems.linkActiveStore(o, (val) => o.modelValue ?? val);
+		}
 	})
 
 	activeStore!: this['Active'];

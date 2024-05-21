@@ -6,6 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+export interface CookieStore {
+	cookie: string;
+}
+
 export interface SetOptions {
 	/**
 	 * The path where the cookie is defined

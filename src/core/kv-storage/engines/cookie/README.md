@@ -4,22 +4,24 @@ This module offers a cookie-based engine for storing key-value data.
 However, it's important to note that due to the limitations of cookies,
 the total amount of data that can be stored using this engine should not exceed 4 kb.
 
-## How is data stored inside a cookie?
+## How is Data Stored Inside a Cookie?
 
 This engine inherits from `core/kv-storage/engines/string`,
 which means that all data inside the storage is serialized into a single string and then saved as a cookie.
 
-## How to set the cookie name where to save the data?
+## How to Set the Cookie Name Where to Save the Data?
 
 To set the name of the cookie being used, as well as additional parameters,
 you need to pass arguments to the engine's constructor.
 
 ```js
+import { from } from 'core/cookies';
 import CookieEngine from 'core/kv-storage/engines/cookie';
 
 const store = new CookieEngine('my-cookie', {
   maxAge: (7).days(),
-  secure: true
+  secure: true,
+  cookies: from(document)
 });
 
 store.set('a', '1');
@@ -28,7 +30,7 @@ store.set('b', '2');
 console.log(store.serializedData); // a{{.}}1{{#}}b{{.}}2
 ```
 
-## How to use this engine?
+## How to Use This Engine?
 
 The engine can be used independently along with the `kv-storage` module.
 
@@ -54,6 +56,9 @@ for detailed information, please refer to the documentation of that module.
 The module exports four predefined instances of the engine.
 For session storage, the cookie name being used is `v4ss`, while for local storage, it is `v4ls`.
 The `maxAge` of the local storage cookie is set to the maximum possible value.
+
+> Please note that since these instances rely on the global `document.cookie` object,
+they cannot be used when implementing SSR.
 
 ```js
 import * as kv from 'core/kv-storage';
@@ -93,8 +98,34 @@ store.get('a'); // 1
 store.get('b'); // 2
 ```
 
+Please be aware that for the engine to work correctly in SSR, it is necessary to explicitly specify an API for working with cookies.
+
+```js
+import { from } from 'core/cookies';
+import CookieEngine from 'core/kv-storage/engines/cookie';
+
+const store = new CookieEngine('my-cookie', {
+  cookies: from(cookieJar),
+  maxAge: (7).days(),
+  secure: true
+});
+
+store.get('a'); // 1
+store.get('b'); // 2
+```
+
 ```typescript
-export interface SetOptions {
+export interface StorageOptions {
+  /**
+   * An engine for managing cookies
+   */
+  cookies?: Cookies;
+
+  /**
+   * Separators for keys and values for serialization into a string
+   */
+  separators?: DataSeparators;
+
   /**
    * The path where the cookie is defined
    * @default `'/'`
@@ -143,5 +174,19 @@ export interface SetOptions {
    * @default '`lax`'
    */
   samesite?: 'strict' | 'lax' | 'none';
+}
+
+export interface DataSeparators {
+  /**
+   * This separator separates one "key-value" pair from another
+   * @default `'{{#}}'`
+   */
+  chunk: string;
+
+  /**
+   * This separator separates the key from the value
+   * @default `'{{.}}'`
+   */
+  record: string;
 }
 ```

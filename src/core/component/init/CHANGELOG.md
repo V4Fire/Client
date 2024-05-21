@@ -9,6 +9,25 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.91 (2024-04-19)
+
+#### :rocket: New Feature
+
+* Implemented the `$getRoot` and `$getParent` methods on the component's instance
+
+## v4.0.0-beta.68 (2024-02-29)
+
+#### :bug: Bug Fix
+
+* Fix the disappearance of functional components in cached pages:
+do not call the destroy method on the rendering engine if `$el` has the `component` property
+
+## v4.0.0-beta.50 (2024-01-19)
+
+#### :bug: Bug Fix
+
+* When calling the destructor, it is necessary to clean up nodes of any components
+
 ## v4.0.0-beta.49 (2024-01-17)
 
 #### :bug: Bug Fix

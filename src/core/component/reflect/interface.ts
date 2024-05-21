@@ -66,6 +66,11 @@ export interface ComponentConstructorInfo {
 	 * A link to the metaobject of the parent component
 	 */
 	parentMeta?: ComponentMeta;
+
+	/**
+	 * The name of the NPM package in which the component is defined or overridden
+	 */
+	layer?: string;
 }
 
 /**

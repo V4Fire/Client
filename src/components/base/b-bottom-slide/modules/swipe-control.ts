@@ -152,10 +152,10 @@ export default class SwipeControl extends Friend {
 
 		if (ctx.heightMode === 'content') {
 			if (!respectDirection && isThresholdPassed) {
-				void this[geometry.contentHeight / 2 < geometry.offset ? 'next' : 'prev']();
+				void ctx[geometry.contentHeight / 2 < geometry.offset ? 'next' : 'prev']();
 
 			} else if (respectDirection) {
-				void this[direction > 0 ? 'next' : 'prev']();
+				void ctx[direction > 0 ? 'next' : 'prev']();
 			}
 
 		} else {

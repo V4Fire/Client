@@ -18,8 +18,8 @@ const ts = require('typescript');
  */
 
 /**
- * A TypeScript converter to replace RegExp literals
- * with modern flags in a constructor-generated form so that polyfills can be used.
+ * A TypeScript converter that replaces RegExp literals with a constructor-generated form that supports modern flags,
+ * allowing for the use of polyfills
  *
  * @param {Context} context
  * @returns {Transformer}
@@ -34,10 +34,12 @@ const ts = require('typescript');
  * new RegExp('\\W+', 'su');
  * ```
  */
-const modernRegExpFlagsTransformer = (context) => {
+function modernRegExpFlagsTransformer(context) {
 	const modernRegExpFlags = ['s', 'y', 'u'];
 
 	/**
+	 * A visitor for the AST node
+	 *
 	 * @param {Node} node
 	 * @returns {VisitResult}
 	 */
@@ -65,6 +67,7 @@ const modernRegExpFlagsTransformer = (context) => {
 	}
 
 	return (node) => ts.visitNode(node, visitor);
-};
+}
 
+// eslint-disable-next-line @v4fire/require-jsdoc
 module.exports = () => modernRegExpFlagsTransformer;

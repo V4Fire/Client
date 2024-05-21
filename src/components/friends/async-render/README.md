@@ -3,7 +3,7 @@
 This module provides a class for rendering component fragments asynchronously.
 It helps to optimize component rendering.
 
-## How to include this module in your component?
+## How to Include this Module in Your Component?
 
 By default, any component that inherits from [[iBlock]] has the `asyncRender` property.
 However, to use the module methods, attach them explicitly to enable tree-shake code optimizations.

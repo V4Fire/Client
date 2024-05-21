@@ -158,6 +158,51 @@ test.describe('<b-input>', () => {
 				await target.evaluate(({unsafe}) => getComputedStyle(unsafe.$refs.textHint!).display)
 			).toBe('none');
 		});
+
+		test("shouldn't hide a hint if there isn't a scroll in the input", async ({page}) => {
+			const target = await renderInput(page, {
+				id: 'foo',
+				textHint: ' extra text'
+			});
+
+			const
+				input = page.locator('#foo');
+
+			await input.evaluate((ctx: HTMLInputElement) => ctx.style.width = '50px');
+
+			test.expect(await target.evaluate(({unsafe}) => {
+				const {input} = unsafe.$refs;
+				unsafe.value = '1';
+				return input.clientWidth === input.scrollWidth;
+			})).toBeTruthy();
+
+			test.expect(
+				await target.evaluate(({unsafe}) => unsafe.$refs.textHint?.innerText)
+			).toBe('1 extra text');
+
+		});
+
+		test('should hide a hint if there is a scroll in the input', async ({page}) => {
+			const target = await renderInput(page, {
+				id: 'foo',
+				textHint: ' extra text'
+			});
+
+			const
+				input = page.locator('#foo');
+
+			await input.evaluate((ctx: HTMLInputElement) => ctx.style.width = '50px');
+
+			test.expect(await target.evaluate(({unsafe}) => {
+				const {input} = unsafe.$refs;
+				unsafe.value = 'veryLongWord';
+				return input.clientWidth < input.scrollWidth;
+			})).toBeTruthy();
+
+			test.expect(
+				await target.evaluate(({unsafe}) => unsafe.$refs.textHint?.innerText)
+			).toBe('');
+		});
 	});
 
 	async function renderInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bInput>> {

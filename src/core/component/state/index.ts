@@ -11,9 +11,4 @@
  * @packageDocumentation
  */
 
-import 'core/component/state/bindings';
-
-export { default } from 'core/component/state/const';
-
-export * from 'core/component/state/const';
 export * from 'core/component/state/interface';

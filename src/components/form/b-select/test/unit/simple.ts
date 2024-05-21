@@ -6,9 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { Page } from 'playwright';
+
+import { Component } from 'tests/helpers';
 import test from 'tests/config/unit/test';
 
-import { assertValueIs, createSelector, renderSelect } from 'components/form/b-select/test/helpers';
+import { assertValueIs, createSelector, renderSelect, selectValue } from 'components/form/b-select/test/helpers';
 
 // eslint-disable-next-line max-lines-per-function
 test.describe('<b-select> simple usage', () => {
@@ -34,6 +37,29 @@ test.describe('<b-select> simple usage', () => {
 		});
 
 		await test.expect(textChanges).resolves.toEqual(['Foo', 'Bar']);
+	});
+
+	test.describe('`text` should match the selected value', () => {
+		test('with `native = true`', textShouldMatchValue({native: true}));
+
+		test('with `native = false`', textShouldMatchValue({native: false}));
+
+		function textShouldMatchValue(opts: {native: boolean}) {
+			return async ({page}: {page: Page}) => {
+				const target = await renderSelect(page, {
+					value: 0,
+					...opts,
+					items: [
+						{label: 'Foo', value: 0},
+						{label: 'Bar', value: 1}
+					]
+				});
+
+				await selectValue(page, target, 'Bar');
+
+				await test.expect(target.evaluate((ctx) => ctx.text)).toBeResolvedTo('Bar');
+			};
+		}
 	});
 
 	test('`value` of the <select> should match with the selected option', async ({page}) => {
@@ -159,6 +185,28 @@ test.describe('<b-select> simple usage', () => {
 				['SPAN', 'Foo'],
 				['SPAN', 'Bar']
 			]);
+		});
+
+		test('should close the dropdown when click on an element with .stopPropagation', async ({page}) => {
+			const btnText = 'buttonWithStopPropagation';
+			await Component.createComponent(page, 'b-button', {
+				children: {
+					default: btnText
+				}
+			});
+
+			const target = await renderSelect(page, {
+				items: [
+					{label: 'Foo', value: 0},
+					{label: 'Bar', value: 1}
+				]
+			});
+
+			await target.evaluate((ctx) => ctx.open());
+			await test.expect(page.locator(createSelector('dropdown')).isVisible()).resolves.toBeTruthy();
+
+			await page.getByText(btnText).click();
+			await test.expect(page.locator(createSelector('dropdown')).isHidden()).resolves.toBeTruthy();
 		});
 
 		test('should be rendered to a native <select> with `native = true`', async ({page}) => {

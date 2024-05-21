@@ -9,6 +9,19 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.97 (2024-05-21)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition when switching routes
+
+## v4.0.0-beta.95 (2024-05-06)
+
+#### :bug: Bug Fix
+
+* Renamed `bRouterProps` to `iRouterProps`. The incorrect name had caused infinite
+retries to load a non-existent template.
+
 ## v4.0.0-beta.10 (2023-07-27)
 
 #### :boom: Breaking Change

@@ -15,7 +15,8 @@ import Provider, {
 
 	RequestFunctionResponse,
 	Response,
-	RequestPromise
+	RequestPromise,
+	RequestError
 
 } from 'core/data';
 
@@ -117,14 +118,15 @@ export default class Session extends Provider {
 
 		return Provider.borrowRequestPromiseAPI(req, req.catch(async (err) => {
 			const
-				response = Object.get<Response>(err, 'details.response'),
+				response = err instanceof RequestError ? err.details.deref()?.response : null,
 				{auth, params} = await session;
 
-			if (response) {
+			if (response != null) {
 				const
 					r = () => this.updateRequest(url, Object.cast(event), <RequestFunctionResponse>factory);
 
 				if (response.status === 401) {
+					// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 					if (!await s.match(auth, params)) {
 						return r();
 					}

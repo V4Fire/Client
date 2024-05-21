@@ -17,6 +17,7 @@ const
 	CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 const {
+	isLayerDep,
 	isExternalDep,
 
 	RUNTIME
@@ -56,7 +57,9 @@ module.exports = function optimization({buildId, plugins}) {
 			cacheGroups: {
 				async: {
 					chunks: 'async',
-					reuseExistingChunk: true
+					minChunks: 1,
+					reuseExistingChunk: true,
+					test: isLayerDep
 				},
 
 				defaultVendors: {

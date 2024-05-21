@@ -17,7 +17,9 @@ import { ComponentEngine, VNode } from 'core/component/engines';
 import { setVNodePatchFlags, mergeProps } from 'core/component/render';
 import { getDirectiveContext, getElementId } from 'core/component/directives/helpers';
 
+import { unsupportedElements } from 'components/directives/image/const';
 import { createImageElement, getCurrentSrc } from 'components/directives/image/helpers';
+
 import type { DirectiveParams } from 'components/directives/image/interface';
 
 export * from 'components/directives/image/interface';
@@ -29,6 +31,10 @@ ComponentEngine.directive('image', {
 	beforeCreate(params: DirectiveParams, vnode: VNode): CanUndef<VNode> {
 		if (!Object.isString(vnode.type)) {
 			throw new TypeError('The `v-image` directive cannot be applied to a component');
+		}
+
+		if (unsupportedElements.has(vnode.type)) {
+			throw new TypeError('The `v-image` directive cannot be applied to `img`, `picture`, `object` elements');
 		}
 
 		const
@@ -91,7 +97,9 @@ ComponentEngine.directive('image', {
 			vnode.props.style.display = 'inline-block';
 		}
 
-		vnode.children = [createImageElement(p).toVNode(r.createVNode.bind(ctx))];
+		const imageElement = createImageElement(p).toVNode(r.createVNode.bind(ctx));
+
+		vnode.children = [imageElement];
 		vnode.dynamicChildren = Object.cast(vnode.children.slice());
 		setVNodePatchFlags(vnode, 'props', 'styles', 'children');
 
@@ -147,8 +155,20 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 		}
 
 		if (!img.complete) {
-			$a.once(img, 'load', onLoad, group);
-			$a.once(img, 'error', onError, group);
+			const
+				sleepPromise = $a.sleep(50, group),
+				loadPromise = new Promise((resolve, reject) => {
+					$a.once(img, 'load', resolve, group);
+					$a.once(img, 'error', reject, group);
+				});
+
+			Promise.all([sleepPromise, loadPromise])
+				.then(onLoad)
+				.catch((e) => {
+					if (e.type !== 'clearAsync') {
+						onError();
+					}
+				});
 
 			return;
 		}
@@ -161,7 +181,7 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 		}
 	}
 
-	async function onLoad() {
+	function onLoad() {
 		$a.off(group);
 
 		if (img == null) {
@@ -169,8 +189,6 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 		}
 
 		try {
-			await $a.sleep(50, group);
-
 			img.style.opacity = '1';
 
 			el.style['background-image'] = '';

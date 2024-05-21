@@ -90,7 +90,7 @@ export function getMod(this: Block, name: string, fromNode?: boolean): CanUndef<
  * @param value - the modifier value to set
  * @param [reason] - a reason to set the modifier
  *
- * @emits `localEmitter` `block.mod.set.$name.$value(event: SetModEvent)`
+ * @emits `localEmitter.block.mod.set.$name.$value(event: SetModEvent)`
  * @emits `mod:set:$name(event: SetModEvent)`
  * @emits `mod:set:$name:$value(event: SetModEvent)`
  *
@@ -187,7 +187,7 @@ export function setMod(this: Block, name: string, value: unknown, reason: ModEve
  * @param [value] - the modifier value to remove
  * @param [reason] - a reason to remove the modifier
  *
- * @emits `localEmitter` `block.mod.remove.$name.$value(event: ModEvent)`
+ * @emits `localEmitter.block.mod.remove.$name.$value(event: ModEvent)`
  * @emits `mod:remove:$name(event: ModEvent)`
  *
  * @example

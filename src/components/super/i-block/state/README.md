@@ -406,7 +406,7 @@ properties directly. Note that the state object is observable and can be reactiv
 #### isReady
 
 True if the current component is completely ready to work.
-The `ready` status is mean that the component is mounted an all data provider are loaded.
+The `ready` status is mean that the component is mounted and all data providers are loaded.
 
 #### isReadyOnce
 
@@ -428,7 +428,7 @@ A name of the [[Async]] group associated with the `stage` parameter.
 
 #### componentStatus
 
-A string value indicating the component initialize status:
+A string value indicating the component initializing status:
 
 1. `unloaded` - the component has just been created without any initializing:
    this status may overlap with some component hooks such as `beforeCreate` or `created`.
@@ -436,7 +436,7 @@ A string value indicating the component initialize status:
 2. `loading` - the component starts loading data from its providers:
    this status may overlap with some component hooks such as `created` or `mounted`.
    If the component has been mounted with this status, you can display this in the component UI.
-   For example by showing a loading indicator.
+   For example, by showing a loading indicator.
 
 3. `beforeReady` - the component has been fully loaded and has started preparing to render:
    this status may overlap with some component hooks such as `created` or `mounted`.
@@ -498,7 +498,7 @@ class bExample extends iBlock {
 
 This method works as a two-way connector between the component and its storage.
 
-When the component is initializing, it requests the storage for its associated data, using the `globalName` prop
+While the component is initializing, it requests the storage for its associated data, using the `globalName` prop
 as the namespace to search. When the storage is ready to provide data to the component, it passes the data to
 this method. After that, the method returns a dictionary associated with the component properties
 (you can specify a complex path with dots, like `'foo.bla.bar'` or `'mods.hidden'`).
@@ -516,7 +516,7 @@ This method will be used when calling `state.resetStorage`.
 
 This method works as a two-way connector between the component and the application router.
 
-When the component is initializing, it requests the router for its associated data.
+While the component is initializing, it requests the router for its associated data.
 The router provides the data by using this method. After that, the method returns a dictionary associated with
 the component properties (you can specify a complex path with dots, like `'foo.bla.bar'` or `'mods.hidden'`).
 

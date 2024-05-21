@@ -12,4 +12,13 @@
 
 - template index() extends ['i-data'].index
 	- block body
-		+= self.slot()
+		< template v-if = testComponent
+			< component &
+				ref = testComponent |
+				:is = testComponent |
+				:v-attrs = testComponentAttrs |
+				v-render = testComponentSlots
+			.
+
+		< template v-else
+			+= self.slot()

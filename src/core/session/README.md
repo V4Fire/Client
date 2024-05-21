@@ -1,6 +1,6 @@
 # core/session
 
-This module offers an API for managing user sessions.
+This module offers an API for managing user sessions within a browser or in Node.js.
 The API includes functions for authorizing/unauthorizing users, comparing different sessions,
 and broadcasting session events.
 
@@ -15,8 +15,37 @@ and cannot be modified by client-side scripts.
 The remaining non-sensitive information, such as a hash of the session or a simple authentication predicate,
 can be stored in the browser's local storage.
 
+## When using within a browser
+
 ```js
 import * as session from 'core/session';
+
+session.emitter.on('set', ({auth, params}) => {
+  console.log(`The session has been registered for ${auth}`);
+  console.log(params);
+});
+
+(async () => {
+  if (!await session.isExists()) {
+    session.set('[[ANONYMOUS]]');
+  }
+})();
+```
+
+## When using within Node.js
+
+```js
+import { from } from 'core/session';
+
+import * as cookies from 'core/cookies';
+import CookieEngine from 'core/kv-storage/engines/cookie';
+
+const sessionStore = new CookieEngine('my-cookie', {
+  cookies: cookies.from(cookieJar),
+  maxAge: (7).days()
+});
+
+const session = from(sessionStore);
 
 session.emitter.on('set', ({auth, params}) => {
   console.log(`The session has been registered for ${auth}`);
@@ -37,7 +66,7 @@ The active session is stored in a special object of the following type.
 ```typescript
 type SessionKey = Nullable<string | boolean>;
 
-interface Session {
+interface SessionDescriptor {
   /**
    * The session key or a simple predicate (authorized/non-authorized)
    */
@@ -77,6 +106,35 @@ session.emitter.on('clear', () => {
 The event emitter to broadcast session events.
 
 ## Functions
+
+### from
+
+Returns an API for managing the session of the specified store.
+
+```js
+import { from } from 'core/session';
+
+import * as cookies from 'core/cookies';
+import CookieEngine from 'core/kv-storage/engines/cookie';
+
+const sessionStore = new CookieEngine('my-cookie', {
+  cookies: cookies.from(cookieJar),
+  maxAge: (7).days()
+});
+
+const session = from(sessionStore);
+
+session.emitter.on('set', ({auth, params}) => {
+  console.log(`The session has been registered for ${auth}`);
+  console.log(params);
+});
+
+(async () => {
+  if (!await session.isExists()) {
+    session.set('[[ANONYMOUS]]');
+  }
+})();
+```
 
 ### isExists
 

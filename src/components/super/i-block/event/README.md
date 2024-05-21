@@ -108,6 +108,35 @@ export default class bExample extends iBlock {
 }
 ```
 
+### Adding An Event Handler To The Beginning Of The Queue
+
+By default, all handlers of a single event will be executed in the order they were added.
+That is, we know for sure that if handler A was added before B,
+then it will also be triggered earlier when the event fires.
+However, if we set the `prepend` option to true when adding a handler,
+such a handler will be added not to the end of the handler queue, but to the beginning.
+
+```typescript
+import iBlock, { component } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    this.on('onMyEvent', () => {
+      console.log(1);
+    });
+
+    this.on('onMyEvent', () => {
+      console.log(2);
+    }, {prepend: true});
+
+    // 2
+    // 1
+    this.emit('myEvent');
+  }
+}
+```
+
 ### Detaching Listeners
 
 To stop listening to an event, you can use the `off` method.

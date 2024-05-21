@@ -6,14 +6,14 @@
   "packageManager": "yarn@4.0.2",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "4.0.0-beta.49",
+  "version": "4.0.0-beta.97",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
     "url": "https://github.com/kobezzza"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   },
   "repository": {
     "type": "git",
@@ -57,7 +57,10 @@
     "@swc/helpers": "0.3.8",
     "@vue/compiler-sfc": "3.2.47",
     "chalk": "4.1.2",
+    "cookiejar": "^2.1.4",
     "cross-env": "7.0.3",
+    "dompurify-v2": "npm:dompurify@2.4.7",
+    "dompurify-v3": "npm:dompurify@3.0.8",
     "escaper": "3.0.6",
     "eventemitter2": "6.4.5",
     "jsdom": "16.7.0",
@@ -88,6 +91,7 @@
     "cssnano": "5.0.17",
     "del": "6.0.0",
     "delay": "5.0.0",
+    "doctoc": "2.2.1",
     "extract-loader": "5.1.0",
     "fast-glob": "3.2.12",
     "favicons": "7.1.0",
@@ -150,6 +154,8 @@
     "@storybook/addon-links": "7.0.23",
     "@storybook/blocks": "7.0.23",
     "@storybook/testing-library": "0.0.14-next.2",
+    "@types/cookiejar": "^2",
+    "@types/dompurify": "3.0.5",
     "@types/jest": "29.5.1",
     "@types/semver": "7.3.10",
     "@types/webpack": "5.28.0",
@@ -171,7 +177,7 @@
     "ts-jest": "29.1.0"
   },
   "peerDependencies": {
-    "@v4fire/core": "^4.0.0-alpha.9",
+    "@v4fire/core": "^4.0.0-alpha.34",
     "webpack": "^5.82.1"
   },
   "resolutions": {

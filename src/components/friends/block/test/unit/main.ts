@@ -199,7 +199,7 @@ test.describe('friends/block', () => {
 				.toHaveClass(new RegExp(prefix`_focused_true`));
 		});
 
-		test('should emit `block.mod.set.*` events', async () => {
+		test('should emit the `block.mod.set.*` events', async () => {
 			const blockModSetEventPr = target.evaluate((ctx) =>
 				ctx.unsafe.localEmitter.promisifyOnce('block.mod.set.focused.true'));
 
@@ -229,7 +229,7 @@ test.describe('friends/block', () => {
 				.not.toHaveClass(new RegExp(prefix`_focused_true`));
 		});
 
-		test('should emit `block.mod.remove.*` events', async () => {
+		test('should emit the `block.mod.remove.*` events', async () => {
 			const blockModRemoveEventPr = target.evaluate((ctx) =>
 				ctx.unsafe.localEmitter.promisifyOnce('block.mod.remove.focused.true'));
 
@@ -283,7 +283,7 @@ test.describe('friends/block', () => {
 				.toHaveClass(new RegExp(prefix`__test_focused_true`));
 		});
 
-		test('should emit `el.mod.set.{elementName}.*` events', async () => {
+		test('should emit the `el.mod.set.{elementName}.*` events', async () => {
 			const elModSetEvent = target.evaluate((ctx) =>
 				ctx.unsafe.localEmitter.promisifyOnce('el.mod.set.test.focused.true'));
 
@@ -317,7 +317,7 @@ test.describe('friends/block', () => {
 				.not.toHaveClass(new RegExp(prefix`__test_focused_true`));
 		});
 
-		test('should emit `el.mod.remove.{elementName}.*` events', async () => {
+		test('should emit the `el.mod.remove.{elementName}.*` events', async () => {
 			const elModSetEvent = target.evaluate((ctx) =>
 				ctx.unsafe.localEmitter.promisifyOnce('el.mod.remove.test.focused.true'));
 

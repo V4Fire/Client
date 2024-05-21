@@ -22,8 +22,8 @@ interface VDOM {
 	create(...descriptors: VNodeDescriptor[]): VNode[];
 	create(descriptors: VNodeDescriptor[]): VNode[];
 
-	render(vnode: VNode): Node;
-	render(vnodes: VNode[]): Node[];
+	render(vnode: VNode, group?: string): Node;
+	render(vnodes: VNode[], group?: string): Node[];
 
 	getRenderFactory(path: string): CanUndef<RenderFactory>;
 	getRenderFn(factoryOrPath: CanUndef<RenderFactory> | string, ctx?: ComponentInterface): RenderFn;

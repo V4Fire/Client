@@ -24,9 +24,9 @@ export type App = Element | AppSSR;
 
 export interface InitAppOptions extends OptionalState {
 	/**
-	 * The unique application identifier
+	 * The unique identifier for the application process
 	 */
-	appId?: string;
+	appProcessId?: string;
 
 	/**
 	 * A link to the element where the application should be mounted.

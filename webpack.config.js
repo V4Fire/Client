@@ -92,7 +92,10 @@ const tasks = (async () => {
 
 	const done = tracer.measure('Generate webpack config', {cat: ['config']});
 
-	const tasks = await $C(processes).async.map((el, i) => buildFactory(el, i));
+	const
+		tasks = await $C(processes).async
+			.filter((item) => !Object.isEmpty(item.entries))
+			.map((el, i) => buildFactory(el, i));
 
 	done();
 

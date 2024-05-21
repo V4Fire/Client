@@ -13,107 +13,25 @@
 
 import session from 'core/session/engines';
 
-import { emitter } from 'core/session/const';
-import type { Session, SessionKey, SessionParams } from 'core/session/interface';
+import { Session } from 'core/session/class';
+import type { SessionStore } from 'core/session/interface';
 
-export * from 'core/session/const';
+export * from 'core/session/class';
 export * from 'core/session/interface';
 
-/**
- * Returns true if the current session is already initialized
- */
-export async function isExists(): Promise<boolean> {
-	try {
-		return Boolean((await get()).auth);
-
-	} catch {
-		return false;
-	}
-}
+const globalSession = new Session(session);
 
 /**
- * Returns information of the current session
+ * Returns an API for managing the session of the specified store
+ * @param from
  */
-export async function get(): Promise<Session> {
-	try {
-		const
-			s = await session;
+export const from = (from: SessionStore): Session => new Session(from);
 
-		const [auth, params] = await Promise.all([
-			s.get<SessionKey>('auth'),
-			s.get<Dictionary>('params')
-		]);
+export const {emitter} = globalSession;
 
-		return {
-			auth,
-			params
-		};
-
-	} catch {
-		return {
-			auth: undefined
-		};
-	}
-}
-
-/**
- * Sets a new session with the specified parameters
- *
- * @param [auth]
- * @param [params] - additional parameters
- * @emits `set(session:` [[Session]] `)`
- */
-export async function set(auth?: SessionKey, params?: SessionParams): Promise<boolean> {
-	try {
-		const
-			s = await session;
-
-		if (auth != null) {
-			await s.set('auth', auth);
-		}
-
-		if (params != null) {
-			await s.set('params', params);
-		}
-
-		emitter.emit('set', {auth, params});
-
-	} catch {
-		return false;
-	}
-
-	return true;
-}
-
-/**
- * Clears the current session
- * @emits `clear()`
- */
-export async function clear(): Promise<boolean> {
-	try {
-		const s = await session;
-		await Promise.all([s.remove('auth'), s.remove('params')]);
-		emitter.emit('clear');
-
-	} catch {
-		return false;
-	}
-
-	return true;
-}
-
-/**
- * Matches the passed session with the current one
- *
- * @param [auth]
- * @param [params] - additional parameters
- */
-export async function match(auth?: SessionKey, params?: Nullable<SessionParams>): Promise<boolean> {
-	try {
-		const s = await get();
-		return auth === s.auth && (params === undefined || Object.fastCompare(params, s.params));
-
-	} catch {
-		return false;
-	}
-}
+export const
+	isExists = globalSession.isExists.bind(globalSession),
+	get = globalSession.get.bind(globalSession),
+	set = globalSession.set.bind(globalSession),
+	clear = globalSession.clear.bind(globalSession),
+	match = globalSession.match.bind(globalSession);

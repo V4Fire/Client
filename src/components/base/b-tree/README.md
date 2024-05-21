@@ -151,8 +151,9 @@ Also, you can see the parent component.
 
 ## Branch Folding
 
-The module supports the function of collapsing the child branches of each item. This is implemented using CSS modifiers, and by default
-elements do not have styles. Thus, you need to write some CSS rules to hide child items when the item node has the `folded` modifier.
+The module supports the function of collapsing the child branches of each item.
+This is implemented using CSS modifiers, and by default elements do not have styles.
+Thus, you need to write some CSS rules to hide child items when the item node has the `folded` modifier.
 
 For instance:
 
@@ -170,7 +171,7 @@ For instance:
 ```
 
 All elements have the `folded` modifier in `true` by default.
-To change this, just provide the modifier values as a prop.
+To change this, provide the modifier values as a prop.
 
 ```
 < b-tree &
@@ -299,7 +300,7 @@ If true, then all nested elements are folded by default.
 ### [activeProp]
 
 The active element(s) of the component.
-If the component is switched to "multiple" mode, you can pass in an iterable to define multiple active elements.
+If the component is switched to "multiple" mode, you can pass in an iterable object to define multiple active elements.
 
 ### [multiple = `false`]
 
@@ -308,17 +309,36 @@ If true, the component supports the multiple active items feature.
 ### [cancelable]
 
 If set to true, the active item can be canceled by clicking it again.
-By default, if the component is switched to the `multiple` mode, this value is set to `true`, otherwise it is set to `false`.
+By default, if the component is switched to the `multiple` mode, this value is set to `true`,
+otherwise it is set to `false`.
 
-### [lazyRender = `false`]
+### [lazyRender = `'folded'`]
 
-If set to true, the component will be lazily rendered using `asyncRender`.
-This mode allows you to optimize the rendering of large trees, but there may be "flickering" when the component is completely re-rendered.
+This option enables lazy rendering mode for the tree.
+Lazy rendering is extremely useful when displaying large trees
+and can have a dramatic effect on the rendering speed of the component.
+
+Lazy rendering has several operating strategies:
+
+1. `'folded'` - In this mode, collapsed nodes will not be rendered.
+   This is the default strategy.
+
+2. `'items'` - In this mode, all nodes of the tree are rendered asynchronously using asyncRender.
+   You can fine-tune the rendering strategy using the `renderFilter`, `nestedRenderFilter`,
+   and `renderChunks` props.
+   Please note that in this rendering mode, the tree may "flicker" during complete redrawing.
+
+3. `'all'` - In this mode, the tree is rendered fully lazily, essentially combining the `folded` and `items` modes.
+
+Also, for backward compatibility, this prop can accept boolean values:
+
+1. `false` - lazy rendering is disabled.
+2. `true` - lazy rendering in the `'items'` mode.
 
 ### [renderFilter]
 
 A common filter to render items via `asyncRender`.
-It is used to optimize the process of rendering items.
+It is used to optimize the rendering process for items.
 This option only works in `lazyRender` mode.
 
 ```
@@ -328,7 +348,7 @@ This option only works in `lazyRender` mode.
 ### [nestedRenderFilter]
 
 A filter to render nested items via `asyncRender`.
-It is used to optimize the process of rendering child items.
+It is used to optimize the rendering process for child items.
 This option only works in `lazyRender` mode.
 
 ```
@@ -337,7 +357,7 @@ This option only works in `lazyRender` mode.
 
 ### [renderChunks = `5`]
 
-Number of chunks to render per tick via `asyncRender`.
+How many sections of items will be rendered at a time using `asyncRender`.
 This option only works in `lazyRender` mode.
 
 ```

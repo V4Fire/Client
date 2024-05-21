@@ -15,9 +15,7 @@ import 'core/component/directives';
 
 export * as init from 'core/component/init';
 
-export { default as remoteState } from 'core/component/state';
 export { default as clientState, State, GlobalEnvironment } from 'core/component/client-state';
-
 export { ComponentEngine as default } from 'core/component/engines';
 
 export { runHook } from 'core/component/hook';
@@ -34,6 +32,7 @@ export {
 	isComponent,
 	rootComponents,
 
+	ASYNC_RENDER_ID,
 	PARENT
 
 } from 'core/component/const';

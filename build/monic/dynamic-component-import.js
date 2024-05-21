@@ -99,6 +99,8 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 			imports.push(decl);
 		}
 
+		// In FatHTML, we do not include dynamically loaded CSS because it leads to duplication
+		// of the CSS and its associated assets
 		if (!fatHTML) {
 			const
 				stylPath = `${fullPath}.styl`;

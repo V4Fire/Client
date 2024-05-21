@@ -133,4 +133,11 @@ export default abstract class iSliderProps extends iData {
 	 */
 	@prop({type: Number, validator: (v) => Number.isNonNegative(v)})
 	readonly autoSlidePostGestureDelay: number = 0;
+
+	/**
+	 * If set to true, the CSS scroll snap mechanism will be used for rendering slides
+	 * @see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll_snap
+	 */
+	@prop(Boolean)
+	readonly useScrollSnap: boolean = false;
 }

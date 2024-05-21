@@ -42,7 +42,7 @@ module.exports = function tsRules() {
 			{
 				loader: 'ts-loader',
 				options: {
-					...typescript.client,
+					...(webpack.ssr ? typescript.server : typescript.client),
 					getCustomTransformers: tsTransformers
 				}
 			},

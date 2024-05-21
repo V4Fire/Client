@@ -25,6 +25,7 @@ declare const BUILD_MODE: CanUndef<string>;
 
 declare const CSP_NONCE_STORE: string;
 declare const LANG_PACKS: string;
+declare const LANG_KEYSETS: Dictionary<string>;
 
 declare const HYDRATION: boolean;
 declare const MODULE: string;
@@ -46,6 +47,13 @@ declare const DETECT_USER_PREFERENCES: CanUndef<
 		aliases?: Dictionary<string>;
 	}>>
 >;
+
+/**
+ * If set to true, the theme attribute will be processed by a proxy server, such as Nginx.
+ * The proxy server will interpolate the theme value from a cookie or header to the theme attribute.
+ * Otherwise, the theme attributes will be sourced from the JS runtime.
+ */
+declare const POST_PROCESS_THEME: CanUndef<boolean>;
 
 declare const DS: CanUndef<DesignSystem>;
 declare const DS_COMPONENTS_MODS: CanUndef<{
@@ -141,7 +149,32 @@ declare var
 	 * Requires a module by the specified path.
 	 * This function should only be used when writing tests.
 	 */
-	importModule: (path: string) => any;
+	importModule: (path: string) => any,
+
+	/**
+	 * Jest mock API for test environment.
+	 */
+	jestMock: {
+		/**
+		 * Wrapper for jest `spyOn` function.
+		 * @see https://jestjs.io/docs/mock-functions
+		 */
+		spy: import('jest-mock').ModuleMocker['spyOn'];
+
+		/**
+		 * Wrapper for jest `fn` function.
+		 * @see https://jestjs.io/docs/mock-functions
+		 */
+		mock: import('jest-mock').ModuleMocker['fn'];
+	};
+
+/**
+ * The results returned by a mock or spy function from `jestMock`.
+ */
+interface JestMockResult<VAL = any> {
+	type: 'throw' | 'return';
+	value: VAL;
+}
 
 interface TouchGesturesCreateOptions {
 	/**

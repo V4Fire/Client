@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.81 (2024-04-01)
+
+#### :bug: Bug Fix
+
+* Fixed rendering of nested asynchronous tasks
+
+## v4.0.0-beta.67 (2024-02-26)
+
+#### :bug: Bug Fix
+
+* Fixed synchronous render for functional components in `waitForceRender`
+
 ## v4.0.0-beta.46 (2024-01-11)
 
 #### :bug: Bug Fix

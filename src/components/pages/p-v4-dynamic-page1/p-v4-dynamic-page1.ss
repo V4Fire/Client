@@ -17,3 +17,5 @@
 
 		< b-button.&__button-func
 			Functional button
+
+		< b-scroll-element-dummy

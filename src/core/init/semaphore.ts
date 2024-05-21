@@ -7,12 +7,13 @@
  */
 
 import { createsAsyncSemaphore } from 'core/event';
+import { disposeLazy } from 'core/lazy';
 
-import remoteState, { set } from 'core/component/state';
+import remoteState, { set } from 'core/component/client-state';
 
 import AppClass, {
 
-	app,
+	app as globalApp,
 	destroyApp,
 
 	rootComponents,
@@ -39,7 +40,7 @@ function createAppInitializer() {
 		opts: InitAppOptions
 	): Promise<App> => {
 		const
-			appId = opts.appId ?? Object.fastHash(Math.random()),
+			appProcessId = opts.appProcessId ?? Object.fastHash(Math.random()),
 			state = Object.reject(opts, ['targetToMount', 'setup']),
 			rootComponentParams = await getRootComponentParams(rootComponentName);
 
@@ -49,39 +50,45 @@ function createAppInitializer() {
 			set(key, value);
 		});
 
+		let
+			{inject} = rootComponentParams;
+
+		if (Object.isArray(inject)) {
+			inject = Object.fromArray(inject, {value: (key) => key});
+		}
+
+		rootComponentParams.inject = {
+			...inject,
+			app: 'app',
+			appProcessId: 'appProcessId'
+		};
+
 		if (SSR) {
 			const
 				// eslint-disable-next-line @typescript-eslint/no-var-requires
 				{renderToString} = require('vue/server-renderer');
 
-			let
-				{inject} = rootComponentParams;
-
-			if (Object.isArray(inject)) {
-				inject = Object.fromArray(inject, {value: (key) => key});
-			}
-
-			rootComponentParams.inject = {
-				...inject,
+			Object.assign(rootComponentParams.inject, {
 				hydrationStore: 'hydrationStore',
-				ssrState: 'ssrState',
-				appId: 'appId'
-			};
+				ssrState: 'ssrState'
+			});
 
 			const
 				hydrationStore = new HydrationStore(),
-				rootComponent = new AppClass(rootComponentParams);
+				app = new AppClass(rootComponentParams);
 
-			rootComponent.provide('appId', appId);
-			rootComponent.provide('hydrationStore', hydrationStore);
-			rootComponent.provide('ssrState', Object.fastClone(remoteState));
+			app.provide('app', app);
+			app.provide('appProcessId', appProcessId);
+			app.provide('hydrationStore', hydrationStore);
+			app.provide('ssrState', Object.fastClone(remoteState));
 
-			app.context = rootComponent;
+			let
+				ssrContent: string,
+				hydratedData: string;
 
 			try {
-				const
-					ssrContent = (await renderToString(rootComponent)).replace(/<\/?ssr-fragment>/g, ''),
-					hydratedData = `<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`;
+				ssrContent = (await renderToString(app)).replace(/<\/?ssr-fragment>/g, '');
+				hydratedData = `<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`;
 
 				return {
 					content: ssrContent + hydratedData,
@@ -89,7 +96,16 @@ function createAppInitializer() {
 				};
 
 			} finally {
-				destroyApp(appId);
+				ssrContent = '';
+				hydratedData = '';
+
+				try {
+					destroyApp(appProcessId);
+				} catch {}
+
+				try {
+					disposeLazy(app);
+				} catch {}
 			}
 		}
 
@@ -100,12 +116,21 @@ function createAppInitializer() {
 			throw new ReferenceError('Application mount node was not found');
 		}
 
-		app.context = new AppClass({
+		const app = new AppClass({
 			...rootComponentParams,
 			el: targetToMount
 		});
 
-		Object.defineProperty(app, 'component', {
+		app.provide('app', app);
+		app.provide('appProcessId', appProcessId);
+
+		Object.defineProperty(globalApp, 'context', {
+			configurable: true,
+			enumerable: true,
+			get: () => app
+		});
+
+		Object.defineProperty(globalApp, 'component', {
 			configurable: true,
 			enumerable: true,
 			get: () => document.querySelector<ComponentElement>('#root-component')?.component ?? null
@@ -127,7 +152,7 @@ function createAppInitializer() {
 				throw new ReferenceError(`The root component with the specified name "${rootComponentName}" was not found`);
 			}
 
-			return rootComponentParams;
+			return Object.fastClone(rootComponentParams);
 		}
 	};
 }

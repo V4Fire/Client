@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
 import type iOpenToggle from 'components/traits/i-open-toggle/i-open-toggle';
 
 import type bSelect from 'components/form/b-select/b-select';
@@ -13,13 +14,16 @@ import type { ModEvent, SetModEvent } from 'components/form/b-select/b-select';
 
 import { openedSelect } from 'components/form/b-select/const';
 
+const
+	$$ = symbolGenerator(),
+	navigationEventOpts = {group: 'navigation'};
+
 export default abstract class SelectEventHandlers {
 	/** {@link SelectEventHandlers.prototype.onOpenedChange} */
 	// eslint-disable-next-line @typescript-eslint/require-await
 	static async onOpenedChange(component: bSelect, e: ModEvent | SetModEvent): Promise<void> {
 		const {
-			unsafe,
-			unsafe: {async: $a}
+			unsafe
 		} = component;
 
 		if (unsafe.native) {
@@ -33,17 +37,13 @@ export default abstract class SelectEventHandlers {
 			}
 
 			if (unsafe.mods.focused !== 'true') {
-				$a.off({
-					group: 'navigation'
-				});
+				component.handleKeydown(false);
 			}
 
 			return;
 		}
 
-		$a.off({
-			group: 'navigation'
-		});
+		component.handleKeydown(false);
 
 		if (!unsafe.multiple) {
 			if (openedSelect.link != null) {
@@ -53,9 +53,7 @@ export default abstract class SelectEventHandlers {
 			openedSelect.link = unsafe;
 		}
 
-		$a.on(document, 'keydown', unsafe.onItemsNavigate.bind(unsafe), {
-			group: 'navigation'
-		});
+		component.handleKeydown(true);
 	}
 
 	/** {@link SelectEventHandlers.prototype.onNativeChange} */
@@ -124,7 +122,8 @@ export default abstract class SelectEventHandlers {
 	/** {@link SelectEventHandlers.prototype.onItemsNavigate} */
 	static async onItemsNavigate(component: bSelect, e: KeyboardEvent): Promise<void> {
 		const
-			{unsafe} = component;
+			{unsafe} = component,
+			{async: $a} = unsafe;
 
 		const validKeys = {
 			ArrowUp: true,
@@ -135,6 +134,24 @@ export default abstract class SelectEventHandlers {
 		if (unsafe.native || validKeys[e.key] !== true || unsafe.mods.focused !== 'true') {
 			if (e.key.length === 1) {
 				await unsafe.focus();
+			}
+
+			// Remove the navigation event handler if the user has switched to another element
+			if (e.key === 'Tab') {
+				const opts = {...navigationEventOpts, label: $$.onTabKeyup};
+
+				$a.on(document, 'keyup', (e: KeyboardEvent) => {
+					if (e.key === 'Tab') {
+						const isFocused = component.isFocused || component.$el?.contains(document.activeElement);
+
+						if (isFocused) {
+							$a.off(opts);
+
+						} else {
+							component.handleKeydown(false);
+						}
+					}
+				}, opts);
 			}
 
 			return;
@@ -227,8 +244,13 @@ export default abstract class SelectEventHandlers {
 			component.toggleValue(item.value);
 
 		} else {
-			component.text = item.label ?? component.text;
+			const prevText = component.text;
 			component.selectValue(item.value);
+
+			// Preserve previous text if item has no label
+			if (item.label == null) {
+				component.text = prevText;
+			}
 		}
 
 		component.emit('actionChange', component.value);
@@ -277,6 +299,22 @@ export default abstract class SelectEventHandlers {
 		}
 
 		void component.close();
+	}
+
+	/** {@link SelectEventHandlers.prototype.handleKeydown} */
+	static handleKeydown(component: bSelect, enabled: boolean): void {
+		const
+			{unsafe} = component,
+			{async: $a} = unsafe;
+
+		unsafe.keydownHandlerEnabled = enabled;
+
+		if (enabled) {
+			$a.on(document, 'keydown', unsafe.onItemsNavigate.bind(unsafe), navigationEventOpts);
+
+		} else {
+			$a.off(navigationEventOpts);
+		}
 	}
 
 	/** {@link iOpenToggle.prototype.onOpenedChange} */
@@ -333,6 +371,14 @@ export default abstract class SelectEventHandlers {
 	 * @emits `actionChange(value: V)`
 	 */
 	onTextChange(): void {
+		return Object.throw();
+	}
+
+	/**
+	 * Enables or disables `keydown` event handler
+	 * @param _enabled
+	 */
+	handleKeydown(_enabled: boolean): void {
 		return Object.throw();
 	}
 }

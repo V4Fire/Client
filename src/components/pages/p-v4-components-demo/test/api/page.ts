@@ -13,22 +13,27 @@ import { concatURLs } from 'core/url';
 import Component from 'tests/helpers/component';
 
 import type bDummy from 'components/dummies/b-dummy/b-dummy';
+import type pV4ComponentsDemo from 'components/pages/p-v4-components-demo/p-v4-components-demo';
 
 /**
  * Page object: provides an API to work with `DemoPage`
  */
 export default class DemoPage {
-
 	/** {@link Page} */
 	readonly page: Page;
 
 	/**
-	 * Server base url
+	 * Server base URL
 	 */
 	readonly baseUrl: string;
 
 	/**
-	 * Returns an initial page name
+	 * Page component reference.
+	 */
+	component?: JSHandle<pV4ComponentsDemo>;
+
+	/**
+	 * Returns the initial page name
 	 */
 	get pageName(): string {
 		return '';
@@ -46,8 +51,13 @@ export default class DemoPage {
 	 * Opens a demo page
 	 */
 	async goto(): Promise<DemoPage> {
+		const
+			root = this.page.locator('#root-component');
+
 		await this.page.goto(concatURLs(this.baseUrl, `${build.demoPage()}.html`), {waitUntil: 'networkidle'});
-		await this.page.waitForSelector('#root-component', {state: 'attached'});
+		await root.waitFor({state: 'attached'});
+
+		this.component = await root.evaluateHandle((ctx) => ctx.component);
 
 		return this;
 	}

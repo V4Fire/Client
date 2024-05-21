@@ -53,15 +53,6 @@ Returns `JSHandles` to the components instances for the specified query selector
 const componentsHandlers = await Component.getComponents(page, '.b-button');
 ```
 
-### setPropsToComponent
-
-Sets the specified props for the component which matches the specified query selector.
-
-```typescript
-
-await Component.setPropsToComponent(page, '.b-slider', {mode: 'slide'});
-```
-
 ### waitForRoot
 
 Returns `JSHandle` to the root component.

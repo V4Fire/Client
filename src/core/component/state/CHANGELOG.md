@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.59 (2024-02-15)
+
+#### :boom: Breaking Change
+
+* Everything except for interfaces has been moved to `core/component/client-state`
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :rocket: New Feature

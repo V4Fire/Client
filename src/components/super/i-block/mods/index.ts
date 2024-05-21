@@ -19,9 +19,12 @@ import { initMods, mergeMods, getReactiveMods, ModsDict, ModsDecl } from 'compon
 
 import type iBlock from 'components/super/i-block/i-block';
 import iBlockEvent from 'components/super/i-block/event';
+import type { Theme } from 'components/super/i-block/mods/interface';
 
 const
 	$$ = symbolGenerator();
+
+export * from 'components/super/i-block/mods/interface';
 
 @component()
 export default abstract class iBlockMods extends iBlockEvent {
@@ -222,11 +225,17 @@ export default abstract class iBlockMods extends iBlockEvent {
 	 */
 	@hook('created')
 	protected initThemeModListener(): void {
-		void this.setMod('theme', this.r.theme?.current);
+		if (SSR || this.r.theme == null) {
+			return;
+		}
+
+		const cur = this.r.theme.get();
+
+		void this.setMod('theme', cur.value);
 
 		this.rootEmitter.on(
 			'onTheme:change',
-			(v: string) => this.setMod('theme', v),
+			(v: Theme) => this.setMod('theme', v.value),
 			{label: $$.themeChanged}
 		);
 	}

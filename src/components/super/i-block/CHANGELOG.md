@@ -9,6 +9,76 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.91 (2024-04-19)
+
+#### :house: Internal
+
+* Removed optional chaining from load function in loadModules block to ensure compliance with ES2018
+
+## 4.0.0-beta.79 (2024-03-29)
+
+#### :house: Internal
+
+* Fixed the signature of the i18n factory passed to the data provider's parameters
+
+## 4.0.0-beta.78 (2024-03-29)
+
+#### :bug: Bug Fix
+
+* Fixed binding of the data provider to the component during initialization
+
+## 4.0.0-beta.75 (2024-03-22)
+
+#### :rocket: New Feature
+
+* Added the ability to add event handlers before the others
+
+## 4.0.0-beta.71 (2024-03-12)
+
+#### :bug: Bug Fix
+
+* Fixed the operation of loadModules during SSR
+
+## v4.0.0-beta.68 (2024-02-29)
+
+#### :bug: Bug Fix
+
+* Fixed the `wait` option in `loadModules` for SSR build
+
+## v4.0.0-beta.65 (2024-02-21)
+
+#### :bug: Bug Fix
+
+* Created separate buckets for each `loadModules` call
+* Fixed the `wait` option in `loadModules`: now, all modules are not loaded until the wait option is resolved
+
+## v4.0.0-beta.64 (2024-02-19)
+
+#### :bug: Bug Fix
+
+* Need to check for the existence of provide properties using `in`
+
+## v4.0.0-beta.57 (2024-02-13)
+
+#### :bug: Bug Fix
+
+* Fixed a memory leak in `components/super/i-block/providers`
+
+## v4.0.0-beta.55 (2024-02-08)
+
+#### :house: Internal
+
+* Create a `mono` template in `i-block` for dynamic mono components. It disables vnode attribute hoisting.
+
+## v4.0.0-beta.54 (2024-02-06)
+
+#### :bug: Bug Fix
+
+* Changed component deactivation behavior: the component is now deactivated
+before the deactivation hooks are called
+* Changed `$parent` property to getter.
+This fixes the incorrect functional parent for a regular component.
+
 ## v4.0.0-beta.44 (2023-12-06)
 
 #### :bug: Bug Fix

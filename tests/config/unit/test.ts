@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { test as base } from '@playwright/test';
+import base from 'tests/config/super/test';
 
 import DemoPage from 'components/pages/p-v4-components-demo/test/api/page';
 

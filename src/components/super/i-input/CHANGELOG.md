@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.88 (2024-04-12)
+
+#### :bug: Bug Fix
+
+* Fixed the issue of the on-screen keyboard disappearing when validators are specified on the input field
+
 ## v4.0.0-beta.40 (2023-11-17)
 
 #### :boom: Breaking Change

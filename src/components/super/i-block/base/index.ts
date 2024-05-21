@@ -655,33 +655,25 @@ export default abstract class iBlockBase extends iBlockFriends {
 		this.watch = this.instance.watch.bind(this);
 
 		if (this.getParent != null) {
-			const $parent = this.getParent() ?? this.$parent;
+			const {$parent} = this;
 
 			Object.defineProperty(this, '$parent', {
 				enumerable: true,
 				configurable: true,
-				writable: false,
-				value: $parent
+				get: () => this.getParent?.() ?? $parent
 			});
 		}
 
 		if (!this.meta.params.root) {
-			Object.defineProperty(this, 'hydrationStore', {
-				enumerable: true,
-				configurable: true,
+			['app', 'appProcessId', 'hydrationStore', 'ssrState'].forEach((prop) => {
+				Object.defineProperty(this, prop, {
+					enumerable: true,
+					configurable: true,
 
-				get() {
-					return this.r.hydrationStore;
-				}
-			});
-
-			Object.defineProperty(this, 'ssrState', {
-				enumerable: true,
-				configurable: true,
-
-				get() {
-					return this.r.ssrState;
-				}
+					get() {
+						return prop in this.r ? this.r[prop] : undefined;
+					}
+				});
 			});
 		}
 	}

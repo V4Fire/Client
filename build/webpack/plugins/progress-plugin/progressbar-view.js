@@ -80,13 +80,15 @@ module.exports = class ProgressbarView extends ProgressView {
 
 	/** @override */
 	_updateProgress(processName, newProgress) {
-		if (!this.handlers[processName].isActive) {
+		const
+			percentage = this._convertProgressToPercent(newProgress),
+			currentProgressValue = this.handlers[processName].value;
+
+		if (currentProgressValue > percentage) {
 			this._removeProgressBar(processName);
 			this._createProgressBar(processName);
 		}
 
-		this.handlers[processName].update(this._convertProgressToPercent(newProgress));
-
-		super._updateProgress(processName, newProgress);
+		this.handlers[processName].update(percentage);
 	}
 };

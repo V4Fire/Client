@@ -1,5 +1,5 @@
 {
-  "hash": "32b22f4abd1be249574f9d9bac36aa977c280334fec2c52dfca48056b15cb37e",
+  "hash": "5a4d2a336984dd1ee0c0b713d0fbc356477b43181475f21b226b799ae574825f",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -11,19 +11,27 @@
             "name": "b-bottom-slide",
             "parent": "i-block",
             "dependencies": [],
-            "libs": []
+            "libs": [
+              "components/directives/on-resize"
+            ]
           },
           "name": "b-bottom-slide",
           "parent": "i-block",
           "dependencies": [],
-          "libs": [],
+          "libs": [
+            "components/directives/on-resize"
+          ],
           "resolvedLibs": {
             "%data": "%data:Set",
-            "%data:Set": []
+            "%data:Set": [
+              "components/directives/on-resize"
+            ]
           },
           "resolvedOwnLibs": {
             "%data": "%data:Set",
-            "%data:Set": []
+            "%data:Set": [
+              "components/directives/on-resize"
+            ]
           },
           "type": "block",
           "mixin": false,
@@ -108,6 +116,70 @@
             "src/components/form/b-checkbox/b-checkbox.styl"
           ],
           "tpl": "src/components/form/b-checkbox/b-checkbox.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-component-interface-dummy",
+        {
+          "index": "src/core/component/interface/component/test/b-component-interface-dummy/index.js",
+          "declaration": {
+            "name": "b-component-interface-dummy",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-component-interface-dummy",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/interface/component/test/b-component-interface-dummy/b-component-interface-dummy.ts",
+          "styles": [
+            "src/core/component/interface/component/test/b-component-interface-dummy/b-component-interface-dummy.styl"
+          ],
+          "tpl": "src/core/component/interface/component/test/b-component-interface-dummy/b-component-interface-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-directives-ref-dummy",
+        {
+          "index": "src/core/component/directives/ref/test/b-directives-ref-dummy/index.js",
+          "declaration": {
+            "name": "b-directives-ref-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-directives-ref-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/directives/ref/test/b-directives-ref-dummy/b-directives-ref-dummy.ts",
+          "styles": [
+            "src/core/component/directives/ref/test/b-directives-ref-dummy/b-directives-ref-dummy.styl"
+          ],
+          "tpl": "src/core/component/directives/ref/test/b-directives-ref-dummy/b-directives-ref-dummy.ss",
           "etpl": null
         }
       ],
@@ -592,6 +664,70 @@
         }
       ],
       [
+        "b-functional-button-dummy",
+        {
+          "index": "src/core/component/functional/test/b-functional-button-dummy/index.js",
+          "declaration": {
+            "name": "b-functional-button-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-functional-button-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/functional/test/b-functional-button-dummy/b-functional-button-dummy.ts",
+          "styles": [
+            "src/core/component/functional/test/b-functional-button-dummy/b-functional-button-dummy.styl"
+          ],
+          "tpl": "src/core/component/functional/test/b-functional-button-dummy/b-functional-button-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-functional-dummy",
+        {
+          "index": "src/core/component/functional/test/b-functional-dummy/index.js",
+          "declaration": {
+            "name": "b-functional-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-functional-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/functional/test/b-functional-dummy/b-functional-dummy.ts",
+          "styles": [
+            "src/core/component/functional/test/b-functional-dummy/b-functional-dummy.styl"
+          ],
+          "tpl": "src/core/component/functional/test/b-functional-dummy/b-functional-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-hidden-input",
         {
           "index": "src/components/form/b-hidden-input/index.js",
@@ -870,6 +1006,38 @@
             "src/components/base/b-router/b-router.styl"
           ],
           "tpl": "src/components/base/b-router/b-router.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-scroll-element-dummy",
+        {
+          "index": "src/components/base/b-dynamic-page/test/b-scroll-element-dummy/index.js",
+          "declaration": {
+            "name": "b-scroll-element-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-scroll-element-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/base/b-dynamic-page/test/b-scroll-element-dummy/b-scroll-element-dummy.ts",
+          "styles": [
+            "src/components/base/b-dynamic-page/test/b-scroll-element-dummy/b-scroll-element-dummy.styl"
+          ],
+          "tpl": "src/components/base/b-dynamic-page/test/b-scroll-element-dummy/b-scroll-element-dummy.ss",
           "etpl": null
         }
       ],
@@ -1422,6 +1590,38 @@
         }
       ],
       [
+        "b-virtual-scroll-new",
+        {
+          "index": "src/components/base/b-virtual-scroll-new/index.js",
+          "declaration": {
+            "name": "b-virtual-scroll-new",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-virtual-scroll-new",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/base/b-virtual-scroll-new/b-virtual-scroll-new.ts",
+          "styles": [
+            "src/components/base/b-virtual-scroll-new/b-virtual-scroll-new.styl"
+          ],
+          "tpl": "src/components/base/b-virtual-scroll-new/b-virtual-scroll-new.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-window",
         {
           "index": "src/components/base/b-window/index.js",
@@ -1548,6 +1748,38 @@
           "logic": null,
           "styles": [
             "src/components/global/g-icon/g-icon.styl"
+          ],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
+        "g-slider",
+        {
+          "index": "src/components/global/g-slider/index.js",
+          "declaration": {
+            "name": "g-slider",
+            "parent": null,
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "g-slider",
+          "parent": null,
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "global",
+          "mixin": false,
+          "logic": null,
+          "styles": [
+            "src/components/global/g-slider/g-slider.styl"
           ],
           "tpl": null,
           "etpl": null
@@ -2197,8 +2429,9 @@
               "b-remote-provider",
               "b-list",
               "b-tree",
-              "b-virtual-scroll",
               "b-window",
+              "b-virtual-scroll",
+              "b-virtual-scroll-new",
               "b-bottom-slide",
               "b-slider",
               "b-sidebar",
@@ -2221,6 +2454,7 @@
               "components/directives/image",
               "components/directives/icon",
               "components/directives/in-view",
+              "components/directives/safe-html",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
               "components/traits/i-control-list/i-control-list",
@@ -2239,8 +2473,9 @@
             "b-remote-provider",
             "b-list",
             "b-tree",
-            "b-virtual-scroll",
             "b-window",
+            "b-virtual-scroll",
+            "b-virtual-scroll-new",
             "b-bottom-slide",
             "b-slider",
             "b-sidebar",
@@ -2263,6 +2498,7 @@
             "components/directives/image",
             "components/directives/icon",
             "components/directives/in-view",
+            "components/directives/safe-html",
             "core/router/engines/browser-history",
             "core/router/engines/in-memory",
             "components/traits/i-control-list/i-control-list",
@@ -2278,6 +2514,7 @@
               "components/directives/icon",
               "components/directives/image",
               "components/directives/in-view",
+              "components/directives/safe-html",
               "components/traits/i-control-list/i-control-list",
               "core/browser",
               "core/cookies",
@@ -2294,6 +2531,7 @@
               "components/directives/icon",
               "components/directives/image",
               "components/directives/in-view",
+              "components/directives/safe-html",
               "components/traits/i-control-list/i-control-list",
               "core/browser",
               "core/cookies",

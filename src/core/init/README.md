@@ -4,7 +4,7 @@ This module provides an initializer for the application.
 All tasks from the module will be completed before the initialization of the application itself.
 You can add additional tasks before initialization.
 
-## Why is this module needed?
+## Why is This Module Needed?
 
 When developing applications, it is often necessary to do some work before initializing the entire application.
 For example, get the AB experiment ID for a user (if any).
@@ -134,7 +134,7 @@ import { initGlobalEnv } from 'core/env';
 import * as net from 'core/net';
 import * as session from 'core/session';
 
-import state from 'core/component/state';
+import state from 'core/component/client-state';
 
 import type { InitAppOptions } from 'core/init/interface';
 

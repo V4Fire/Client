@@ -318,8 +318,6 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * @param value
 	 */
 	protected updateTextStore(value: string): void {
-		this.field.set('textStore', value);
-
 		const
 			{input} = this.$refs;
 
@@ -327,6 +325,8 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		if (Object.isTruly(input)) {
 			input.value = value;
 		}
+
+		this.field.set('textStore', value);
 	}
 
 	protected override normalizeAttrs(attrs: Dictionary = {}): Dictionary {
