@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.98 (2024-05-21)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition when changing props
+
 ## v4.0.0-beta.92 (2024-04-19)
 
 #### :rocket: New Feature

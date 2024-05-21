@@ -18,6 +18,32 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Now SSR build is bundled into a single file
 * Use the forked `lib/server-renderer` everywhere in the SSR build
 
+## v4.0.0-beta.98 (2024-05-21)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition when changing props `bDynamicPage`
+
+## v4.0.0-beta.97 (2024-05-21)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition when switching routes `bRouter`
+* Reverted style dynamic load for fat-html from v4.0.0-beta.94 `build/monic`
+
+## v4.0.0-beta.96 (2024-05-16)
+
+#### :rocket: New Feature
+
+* Added new methods waitSignal and sendSignal for deferred module loading `components/friends/module-loader`
+
+## v4.0.0-beta.95 (2024-05-06)
+
+#### :house: Internal
+
+* Add `REGION` to webpack globals `build`
+* Listen for i18n `setRegion` event `core/component/event`
+
 ## v4.0.0-beta.95 (2024-05-06)
 
 #### :house: Internal

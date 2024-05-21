@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
+
 import * as router from 'core/router';
 import type { Router } from 'core/router/interface';
 
@@ -14,6 +16,13 @@ import type bRouter from 'components/base/b-router/b-router';
 
 import ScrollControl from 'components/base/b-router/modules/transition/scroll-control';
 import type { TransitionContext } from 'components/base/b-router/modules/transition/interface';
+
+const
+	$$ = symbolGenerator();
+
+const transitionLabel = {
+	label: $$.transition
+};
 
 export default class Transition {
 	/**
@@ -141,19 +150,19 @@ export default class Transition {
 	async execute(): Promise<CanUndef<router.Route>> {
 		const
 			{component} = this,
-			{engine} = component.unsafe;
+			{engine, async: $a} = component.unsafe;
 
 		component.emit('beforeChange', this.ref, this.opts, this.method);
 		this.initNewRouteInfo();
 
 		this.scroll.createSnapshot();
-		await this.scroll.updateCurrentRouteScroll();
+		await $a.promise(this.scroll.updateCurrentRouteScroll(), transitionLabel);
 
 		// We didn't find any route matching the given ref
 		if (this.newRouteInfo == null) {
 			// The transition was user-generated, then we need to save the scroll
 			if (!SSR && this.method !== 'event' && this.ref != null) {
-				await engine[this.method](this.ref, this.scroll.getSnapshot());
+				await $a.promise(engine[this.method](this.ref, this.scroll.getSnapshot()), transitionLabel);
 			}
 
 			return;
@@ -206,7 +215,7 @@ export default class Transition {
 
 		const {
 			component,
-			component: {unsafe: {r}},
+			component: {unsafe: {r, async: $a}},
 
 			engine,
 			opts,
@@ -259,7 +268,7 @@ export default class Transition {
 				return;
 			}
 
-			await engine[this.method](newRoute.url, plainInfo).then(() => {
+			await $a.promise(engine[this.method](newRoute.url, plainInfo), transitionLabel).then(() => {
 				const isSoftTransition = r.route != null && Object.fastCompare(
 					router.convertRouteToPlainObjectWithoutProto(currentRoute),
 					router.convertRouteToPlainObjectWithoutProto(newRoute)

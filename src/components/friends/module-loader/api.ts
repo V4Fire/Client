@@ -14,9 +14,9 @@ import type { Module, ResolvedModule } from 'components/friends/module-loader/in
 
 /**
  * Loads the specified modules.
- * If some modules are already loaded, they won’t be loaded twice.
- * If all specified modules are already loaded, the function returns a simple value, but not a promise.
- * The resulting value is designed to use with [[AsyncRender]].
+ * If some modules are already loaded, they won't be loaded again.
+ * If all specified modules are already loaded, the function returns a simple value instead of a promise.
+ * The resulting value is intended for use with [[AsyncRender]].
  *
  * @param modules
  */
@@ -48,9 +48,10 @@ export function load(this: Friend, ...modules: Module[]): CanPromise<IterableIte
 }
 
 /**
- * Adds the specified modules to a load bucket by the specified name.
- * Notice, adding modules don’t force them to load. To load the created bucket, use the `loadBucket` method.
- * The function returns the number of added modules in the bucket.
+ * Adds the specified modules to a load bucket under the passed name.
+ * Note that adding modules does not trigger their loading.
+ * To load the created bucket, use the `loadBucket` method.
+ * The function returns the number of modules added to the bucket.
  *
  * @param bucketName
  * @param modules
@@ -79,9 +80,9 @@ export function addToBucket(this: ModuleLoader, bucketName: string, ...modules: 
 
 /**
  * Loads a bucket of modules by the specified name.
- * If some modules are already loaded, they won’t be loaded twice.
- * If all specified modules are already loaded, the function returns a simple value, but not a promise.
- * The resulting value is designed to use with [[AsyncRender]].
+ * If some modules are already loaded, they won't be loaded again.
+ * If all specified modules are already loaded, the function returns a simple value instead of a promise.
+ * The resulting value is intended for use with [[AsyncRender]].
  *
  * @param bucketName
  */
@@ -91,8 +92,8 @@ export function loadBucket(this: ModuleLoader, bucketName: string): CanPromise<I
 }
 
 /**
- * Resolves the specified module: if the module already exists in the cache, the function simply returns it.
- * Otherwise, the module will be loaded.
+ * Resolves the specified module: if the module already exists in the cache, it simply returns the existing one.
+ * If not, the module will be loaded.
  *
  * @param module
  */
@@ -108,7 +109,7 @@ export function resolveModule(this: Friend, module: Module): CanPromise<Resolved
 	}
 
 	let
-		promise;
+		promise: CanUndef<Promise<unknown>>;
 
 	switch (resolvedModule.status) {
 		case 'loaded':
@@ -139,4 +140,46 @@ export function resolveModule(this: Friend, module: Module): CanPromise<Resolved
 	}
 
 	return resolvedModule;
+}
+
+/**
+ * Sends a signal to load the modules associated with the specified name
+ * @param signalName
+ */
+export function sendSignal(this: ModuleLoader, signalName: string): void {
+	let signal = this.signals.get(signalName);
+
+	if (signal == null) {
+		signal = {
+			promise: Promise.resolve(),
+			resolver: undefined
+		};
+
+		this.signals.set(signalName, signal);
+
+	} else if (signal.resolver != null) {
+		signal.resolver();
+		signal.resolver = undefined;
+	}
+}
+
+/**
+ * Returns a function that, when called, returns a promise.
+ * This promise resolves when the signal to load the associated modules is received.
+ * The resulting value is intended for use with [[AsyncRender]].
+ *
+ * @param signalName
+ */
+export function waitSignal(this: ModuleLoader, signalName: string): () => Promise<void> {
+	const signal = this.signals.get(signalName);
+
+	if (signal != null) {
+		return () => signal.promise;
+	}
+
+	let resolver: Function;
+	const promise = new Promise<void>((resolve) => resolver = resolve);
+	this.signals.set(signalName, {promise, resolver: resolver!});
+
+	return () => promise;
 }

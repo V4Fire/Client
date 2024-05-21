@@ -14,6 +14,7 @@
 	- block rootAttrs
 		- super
 		? rootAttrs['v-async-target'] = TRUE
+		? rootAttrs['v-memo'] = '[]'
 
 	- block body
 		: graph = include('build/graph/component-params')
