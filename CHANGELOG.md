@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.98 (2024-05-21)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition when changing props `bDynamicPage`
+
 ## v4.0.0-beta.97 (2024-05-21)
 
 #### :bug: Bug Fix
