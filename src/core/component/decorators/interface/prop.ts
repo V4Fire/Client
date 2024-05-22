@@ -199,6 +199,8 @@ export interface DecoratorProp<
 	 * ```
 	 */
 	meta?: Dictionary;
+
+	disableReactivity: boolean;
 }
 
 export type Prop<T = unknown> =

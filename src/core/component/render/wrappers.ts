@@ -132,6 +132,14 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		}
 
 		if (isRegular) {
+			if (vnode.dynamicProps) {
+				for (let i = vnode.dynamicProps.length - 1; i >= 0; i--) {
+					if (component.props[vnode.dynamicProps[i]]?.disableReactivity) {
+						vnode.dynamicProps.splice(i, 1);
+					}
+				}
+			}
+
 			return vnode;
 		}
 
