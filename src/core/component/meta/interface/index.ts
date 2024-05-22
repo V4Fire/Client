@@ -75,6 +75,11 @@ export interface ComponentMeta {
 	props: Dictionary<ComponentProp>;
 
 	/**
+	 * Cached list of props with disabled reactivity
+	 */
+	propsDisableReactivity?: Set<string>;
+
+	/**
 	 * A dictionary that contains the available component modifiers.
 	 * Modifiers are a way to alter the behavior or appearance of a component without changing its underlying
 	 * functionality.

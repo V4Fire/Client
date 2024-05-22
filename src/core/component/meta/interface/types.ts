@@ -17,6 +17,7 @@ export interface ComponentProp extends PropOptions {
 	forceDefault?: boolean;
 	default?: unknown;
 	meta: Dictionary;
+	disableReactivity?: boolean;
 }
 
 export interface ComponentSystemField<CTX extends ComponentInterface = ComponentInterface> {
