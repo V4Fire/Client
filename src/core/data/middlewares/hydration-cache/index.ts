@@ -34,7 +34,7 @@ export function attachHydrationCache(this: Provider, middlewareParams: Middlewar
 			{url} = params.api ?? {};
 
 		const cacheKey = Object.fastHash({
-			id: this.cacheId,
+			id: this.providerId,
 			query: params.querySerializer(ctx.query),
 			api: Object.isFunction(url) ? url(middlewareParams) : url,
 			cacheStrategy: params.cacheStrategy,
@@ -46,7 +46,7 @@ export function attachHydrationCache(this: Provider, middlewareParams: Middlewar
 			this.params.remoteState.hydrationStore,
 
 			{
-				id: this.cacheId,
+				id: this.providerId,
 				cacheKey
 			}
 		);

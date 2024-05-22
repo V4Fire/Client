@@ -15,6 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
+* Added `providerId` as the unique identifier for the provider `core/data`
 * Now SSR build is bundled into a single file
 * Use the forked `lib/server-renderer` everywhere in the SSR build
 
