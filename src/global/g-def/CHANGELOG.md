@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added color param to `i` mixin
+
 ## v3.61.0 (2023-10-12)
 
 #### :rocket: New Feature
