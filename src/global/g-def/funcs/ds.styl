@@ -77,7 +77,7 @@ i($name, $params = null, $opts = null)
 
 	if type($params) == "object"
 		$imgPath = createURL({href: $imgPath, query: $params})
-		$color = $params.fill || $color
+		$color = $params.color || $params.fill || $color
 
 	else if type($params) == "ident"
 		$repeat = $params
