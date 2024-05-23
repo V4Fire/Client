@@ -9,6 +9,17 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an issue in `b-virtual-scroll-new` where nodes from the previous rendering cycle were not being hidden and remained displayed.
+Now, the container will always be hidden if it is empty or during the loading process until an initial render occurs.
+It is important to note that the nodes are hidden, not deleted, and will later be replaced by new nodes.
+This approach helps avoid unnecessary re-renders.
+Additionally, this fix can be considered a breaking change because the container
+node inside b-virtual-scroll will now be hidden (display: none) by default until the first successful render in the rendering cycle.
+
 ## v4.0.0-beta.90 (2024-04-17)
 
 #### :bug: Bug Fix
