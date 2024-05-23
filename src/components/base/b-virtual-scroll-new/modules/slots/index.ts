@@ -44,8 +44,11 @@ export class SlotsStateController extends Friend {
 	 * Displays the slots that should be shown when the data state is empty
 	 */
 	emptyState(): void {
+		const
+			{isInitialRender} = this.ctx.getVirtualScrollState();
+
 		this.setSlotsVisibility({
-			container: true,
+			container: !isInitialRender,
 			done: true,
 			empty: true,
 			loader: false,
@@ -59,8 +62,11 @@ export class SlotsStateController extends Friend {
 	 * Displays the slots that should be shown when the lifecycle is done
 	 */
 	doneState(): void {
+		const
+			{isInitialRender} = this.ctx.getVirtualScrollState();
+
 		this.setSlotsVisibility({
-			container: true,
+			container: !isInitialRender,
 			done: true,
 			empty: this.lastState?.empty ?? false,
 			loader: false,
@@ -75,8 +81,11 @@ export class SlotsStateController extends Friend {
 	 * @param [immediate] - if set to true, {@link requestAnimationFrame} will not be used to switch the state.
 	 */
 	loadingProgressState(immediate: boolean = false): void {
+		const
+			{isInitialRender} = this.ctx.getVirtualScrollState();
+
 		this.setSlotsVisibility({
-			container: true,
+			container: !isInitialRender,
 			loader: true,
 			tombstones: true,
 			done: false,
@@ -90,8 +99,11 @@ export class SlotsStateController extends Friend {
 	 * Displays the slots that should be shown when data loading fails
 	 */
 	loadingFailedState(): void {
+		const
+			{isInitialRender} = this.ctx.getVirtualScrollState();
+
 		this.setSlotsVisibility({
-			container: true,
+			container: !isInitialRender,
 			retry: true,
 			done: false,
 			empty: false,

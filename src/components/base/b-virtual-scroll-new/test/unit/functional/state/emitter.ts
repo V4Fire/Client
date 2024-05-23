@@ -17,6 +17,7 @@ import test from 'tests/config/unit/test';
 import { createTestHelpers, filterEmitterResults } from 'components/base/b-virtual-scroll-new/test/api/helpers';
 import type { VirtualScrollTestHelpers } from 'components/base/b-virtual-scroll-new/test/api/helpers/interface';
 import type { VirtualScrollState } from 'components/base/b-virtual-scroll-new/interface';
+import { BOM } from 'tests/helpers';
 
 test.describe('<b-virtual-scroll-new>', () => {
 	let
@@ -112,7 +113,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 	});
 
 	test.describe('all data has been loaded after the second load and reload was called', () => {
-		test('state at the time of emitting events must be correct', async () => {
+		test('state at the time of emitting events must be correct', async ({page}) => {
 			const
 				chunkSize = 12,
 				providerChunkSize = chunkSize / 2;
@@ -176,6 +177,8 @@ test.describe('<b-virtual-scroll-new>', () => {
 			await component.scrollToBottom();
 			await component.waitForLifecycleDone();
 			await component.reload();
+			await BOM.waitForIdleCallback(page);
+			await component.container.waitFor({state: 'visible'});
 			await component.waitForChildCountEqualsTo(chunkSize);
 			await component.scrollToBottom();
 			await component.waitForLifecycleDone();
