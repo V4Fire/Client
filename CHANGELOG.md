@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.99 (2024-05-23)
+
+#### :rocket: New Feature
+
+* Added color param to `i` mixin `components/global/g-def/funcs/ds.styl`
+
 ## v4.0.0-beta.98 (2024-05-21)
 
 #### :bug: Bug Fix
