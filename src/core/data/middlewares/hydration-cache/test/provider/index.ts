@@ -21,7 +21,7 @@ export default class HydrationCache extends Provider {
 
 	static override readonly middlewares: Middlewares = {
 		...Provider.middlewares,
-		attachHydrationCache
+		attachHydrationCache: attachHydrationCache()
 	};
 
 	public constructor(opts?: ProviderOptions) {

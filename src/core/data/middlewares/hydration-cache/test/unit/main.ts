@@ -6,17 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { JSHandle } from 'playwright';
-
 import test from 'tests/config/unit/test';
-import { Component, RequestInterceptor } from 'tests/helpers';
+import { Component, RequestInterceptor, Utils } from 'tests/helpers';
 
 import type bDummy from 'components/dummies/b-dummy/b-dummy';
 
-test.describe('core/data/middlewares/hydration-cache', () => {
-	let
-		component: JSHandle<bDummy>;
+import type * as TestProvider from 'core/data/middlewares/hydration-cache/test/provider';
+import type * as HydrationCache from 'core/data/middlewares/hydration-cache';
 
+test.describe('core/data/middlewares/hydration-cache', () => {
 	test.beforeEach(async ({page, demoPage}) => {
 		await demoPage.goto();
 
@@ -24,16 +22,16 @@ test.describe('core/data/middlewares/hydration-cache', () => {
 
 		provider.response(200, {message: 'ok'});
 		await provider.start();
+	});
 
-		component = await Component.createComponent(page, 'b-dummy', {
+	test('should save the response to the hydration store', async ({page}) => {
+		const component = await Component.createComponent<bDummy>(page, 'b-dummy', {
 			'data-id': 'target',
 			dataProvider: 'test.HydrationCache'
 		});
 
 		await Component.waitForComponentStatus(page, '[data-id="target"]', 'ready');
-	});
 
-	test('should save the response to the hydration store', async () => {
 		const response = await component.evaluate((ctx) => {
 			if (ctx.dataProvider?.provider == null) {
 				return;
@@ -41,8 +39,31 @@ test.describe('core/data/middlewares/hydration-cache', () => {
 
 			const {provider} = ctx.dataProvider;
 
-			return provider.params.remoteState?.hydrationStore.get(provider.cacheId);
+			return provider.params.remoteState?.hydrationStore.get(provider.providerName);
 		});
+
+		test.expect(Object.values(response!)[0]).toEqual({message: 'ok'});
+	});
+
+	test('should save the response with custom cacheId', async ({page}) => {
+		const component = await Component.createComponent<bDummy>(page, 'b-dummy');
+
+		const testProviderAPI = await Utils.import<typeof TestProvider>(page, 'core/data/middlewares/hydration-cache/test/provider');
+		const middlewareAPI = await Utils.import<typeof HydrationCache>(page, 'core/data/middlewares/hydration-cache');
+
+		const testProvider = await testProviderAPI.evaluateHandle(({default: Provider}, [middlewareAPI, component]) => {
+			// @ts-ignore (access)
+			Provider.middlewares = {
+				...Provider.middlewares,
+				attachHydrationCache: middlewareAPI.attachHydrationCache({cacheId: () => 'customCacheId'})
+			};
+
+			return new Provider({id: component.remoteState.appProcessId, remoteState: component.remoteState});
+		}, <const>[middlewareAPI, component]);
+
+		await testProvider.evaluate((ctx) => ctx.get());
+
+		const response = await testProvider.evaluate((ctx) => ctx.params.remoteState?.hydrationStore.get('customCacheId'));
 
 		test.expect(Object.values(response!)[0]).toEqual({message: 'ok'});
 	});

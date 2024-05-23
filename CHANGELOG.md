@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2024-??-??)
 
+#### :boom: Breaking Change
+
+* Added a wrapper for middleware with additional parameters `core/data/middlewares/hydration-cache`
+
 #### :house: Internal
 
 * Now SSR build is bundled into a single file
