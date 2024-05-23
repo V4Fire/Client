@@ -11,46 +11,54 @@ import type { MiddlewareParams } from 'core/request';
 
 // @ts-ignore (vue/webstorm)
 import { addHydrationCache } from 'core/cache/decorators/hydration';
+import type { HydrationCacheParams } from 'core/data/middlewares/hydration-cache/interface';
+import { defaultParams } from 'core/data/middlewares/hydration-cache/const';
 
 //#if runtime has dummyComponents
 import('core/data/middlewares/hydration-cache/test/provider');
 //#endif
 
+export * from 'core/data/middlewares/hydration-cache/interface';
+
 /**
  * Attaches a hydration cache to the specified context
- * @param middlewareParams
+ *
+ * @param params
  */
-export function attachHydrationCache(this: Provider, middlewareParams: MiddlewareParams): void {
-	const
-		{ctx} = middlewareParams;
-
-	ctx.isReady.then(() => {
-		if (this.params.remoteState?.hydrationStore == null) {
-			return;
-		}
-
+export function attachHydrationCache(params: HydrationCacheParams = defaultParams) {
+	return function middlewareWrapper(this: Provider, middlewareParams: MiddlewareParams): void {
 		const
-			{cache, params} = ctx,
-			{url} = params.api ?? {};
+			{ctx} = middlewareParams,
+			{cacheId} = params;
 
-		const cacheKey = Object.fastHash({
-			id: this.providerId,
-			query: params.querySerializer(ctx.query),
-			api: Object.isFunction(url) ? url(middlewareParams) : url,
-			cacheStrategy: params.cacheStrategy,
-			method: params.method
-		});
-
-		const withHydrationCache = addHydrationCache(
-			cache,
-			this.params.remoteState.hydrationStore,
-
-			{
-				id: this.providerId,
-				cacheKey
+		ctx.isReady.then(() => {
+			if (this.params.remoteState?.hydrationStore == null) {
+				return;
 			}
-		);
 
-		Object.set(ctx, 'cache', withHydrationCache);
-	}).catch(stderr);
+			const
+				{cache, params} = ctx,
+				{url} = params.api ?? {};
+
+			const cacheKey = Object.fastHash({
+				id: cacheId(this),
+				query: params.querySerializer(ctx.query),
+				api: Object.isFunction(url) ? url(middlewareParams) : url,
+				cacheStrategy: params.cacheStrategy,
+				method: params.method
+			});
+
+			const withHydrationCache = addHydrationCache(
+				cache,
+				this.params.remoteState.hydrationStore,
+
+				{
+					id: cacheId(this),
+					cacheKey
+				}
+			);
+
+			Object.set(ctx, 'cache', withHydrationCache);
+		}).catch(stderr);
+	};
 }

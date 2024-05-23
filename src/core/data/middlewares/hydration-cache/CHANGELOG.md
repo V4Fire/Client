@@ -11,9 +11,9 @@ Changelog
 
 ## v4.0.0-beta.?? (2024-??-??)
 
-#### :house: Internal
+#### :boom: Breaking Change
 
-* Changed a provider unique identifier for the cache
+* Added a wrapper for middleware with additional parameters
 
 #### :rocket: New Feature
 

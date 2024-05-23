@@ -9,12 +9,6 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.?? (2024-??-??)
-
-#### :house: Internal
-
-* Added `providerId` as the unique identifier for the provider
-
 ## v4.0.0-beta.57 (2024-02-13)
 
 #### :house: Internal

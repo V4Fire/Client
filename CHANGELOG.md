@@ -13,12 +13,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2024-??-??)
 
+#### :boom: Breaking Change
+
+* Added a wrapper for middleware with additional parameters `core/data/middlewares/hydration-cache`
+
 #### :house: Internal
 
 * Now SSR build is bundled into a single file
 * Use the forked `lib/server-renderer` everywhere in the SSR build
-* Added `providerId` as the unique identifier for the provider `core/data`
-* Changed a provider unique identifier for the cache `core/data/middlewares/hydration-cache`
 
 ## v4.0.0-beta.98 (2024-05-21)
 
