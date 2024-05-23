@@ -15,7 +15,7 @@ test.describe('props reactivity', () => {
 		await demoPage.goto();
 	});
 
-	test('reactive should change content', async ({page}) => {
+	test('default reactive prop should cause content to rerender', async ({page}) => {
 		const target = await Component.createComponent<bReactivePropDummyDummy>(page, 'b-reactive-wrapper-dummy', {
 			stage: 'reactive enabled'
 		});
@@ -27,7 +27,7 @@ test.describe('props reactivity', () => {
 
 	});
 
-	test('reactive disables should not change content', async ({page}) => {
+	test('reactive disabled prop should not cause content to rerender', async ({page}) => {
 		const target = await Component.createComponent<bReactivePropDummyDummy>(page, 'b-reactive-wrapper-dummy', {
 			stage: 'reactive disabled'
 		});
