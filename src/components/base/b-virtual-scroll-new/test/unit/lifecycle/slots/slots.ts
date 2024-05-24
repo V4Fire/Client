@@ -76,6 +76,51 @@ test.describe('<b-virtual-scroll-new>', () => {
 		});
 	});
 
+	test.describe('`container`', () => {
+		test('hidden after request params changed until first render', async () => {
+			const chunkSize = 12;
+
+			provider
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.response(200, {data: []})
+				.responder();
+
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({chunkSize})
+				.build({useDummy: true});
+
+			await test.expect.poll(() => provider.calls).toHaveLength(1);
+			await test.expect(component.container).toBeHidden();
+
+			await provider.respond();
+			await component.waitForChildCountEqualsTo(chunkSize);
+			await component.updateProps({request: {get: {someParam: 1}}});
+
+			await test.expect.poll(() => provider.calls).toHaveLength(2);
+			await test.expect(component.container).toBeHidden();
+
+			await provider.respond();
+			await component.waitForChildCountEqualsTo(chunkSize);
+
+			await test.expect(component.container).toBeVisible();
+
+			const
+				slots = await component.getSlotsState();
+
+			test.expect(slots).toEqual(<Required<SlotsStateObj>>{
+				container: true,
+				done: false,
+				empty: false,
+				loader: false,
+				renderNext: false,
+				retry: false,
+				tombstones: false
+			});
+		});
+	});
+
 	test.describe('`done`', () => {
 		test('activates when all data has been loaded after the initial load', async () => {
 			const chunkSize = 12;
@@ -230,7 +275,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 				slots = await component.getSlotsState();
 
 			test.expect(slots).toEqual(<Required<SlotsStateObj>>{
-				container: true,
+				container: false,
 				done: true,
 				empty: true,
 				loader: false,
@@ -259,7 +304,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 				slots = await component.getSlotsState();
 
 			test.expect(slots).toEqual(<Required<SlotsStateObj>>{
-				container: true,
+				container: false,
 				done: false,
 				empty: false,
 				loader: true,
@@ -291,7 +336,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 					slots = await component.getSlotsState();
 
 				test.expect(slots).toEqual(<Required<SlotsStateObj>>{
-					container: true,
+					container: false,
 					done: false,
 					empty: false,
 					loader: true,
@@ -326,7 +371,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 				slots = await component.getSlotsState();
 
 			test.expect(slots).toEqual(<Required<SlotsStateObj>>{
-				container: true,
+				container: false,
 				done: false,
 				empty: false,
 				loader: false,
@@ -359,7 +404,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 				slots = await component.getSlotsState();
 
 			test.expect(slots).toEqual(<Required<SlotsStateObj>>{
-				container: true,
+				container: false,
 				done: false,
 				empty: false,
 				loader: false,
@@ -469,7 +514,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 				slots = await component.getSlotsState();
 
 			test.expect(slots).toEqual(<Required<SlotsStateObj>>{
-				container: true,
+				container: false,
 				done: false,
 				empty: false,
 				loader: true,
@@ -500,7 +545,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 				slots = await component.getSlotsState();
 
 			test.expect(slots).toEqual(<Required<SlotsStateObj>>{
-				container: true,
+				container: false,
 				done: false,
 				empty: false,
 				loader: false,

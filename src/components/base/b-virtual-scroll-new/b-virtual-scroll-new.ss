@@ -15,7 +15,8 @@
 		< .&__wrapper
 			< .&__container ref = container | -test-ref = container
 				< component &
-					v-for = {item, props} in firstChunkItems |
+					v-for = {item, key, props} in firstChunkItems |
+					:key = key |
 					:is = item |
 					:v-attrs = props
 				.
