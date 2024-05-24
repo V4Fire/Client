@@ -74,6 +74,11 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
 }
 
 /**
+ * Map of component flags indicating if components have any properties with disabled reactivity.
+ */
+const componentsHaveNonReactiveProps = new Map<string, boolean>();
+
+/**
  * Wrapper for the component library `createBlock` function
  * @param original
  */
@@ -110,7 +115,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		attrs = normalizeComponentAttrs(attrs, dynamicProps, component);
 
 		const
-			{componentName, params} = component,
+			{componentName, params, props} = component,
 			{r} = this.$renderEngine;
 
 		const
@@ -132,19 +137,18 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		}
 
 		if (isRegular) {
-			if (component.propsDisableReactivity === undefined) {
-				component.propsDisableReactivity = Object.keys(component.props).reduce((list, prop) => {
-					if (component?.props[prop]?.disableReactivity) {
-						list.add(prop);
-					}
+			let hasNonReactiveProps = componentsHaveNonReactiveProps.get(componentName);
+			if (hasNonReactiveProps === undefined) {
+				hasNonReactiveProps = Object.keys(props)
+					.some((prop) => props[prop]?.disableReactivity);
 
-					return list;
-				}, new Set<string>());
+				componentsHaveNonReactiveProps.set(componentName, hasNonReactiveProps);
 			}
 
-			if (component.propsDisableReactivity.size > 0 && vnode.dynamicProps) {
+			if (hasNonReactiveProps && vnode.dynamicProps) {
 				for (let i = vnode.dynamicProps.length - 1; i >= 0; i--) {
-					if (component.propsDisableReactivity.has(vnode.dynamicProps[i])) {
+					const propName = vnode.dynamicProps[i];
+					if (props[propName]?.disableReactivity) {
 						vnode.dynamicProps.splice(i, 1);
 					}
 				}
