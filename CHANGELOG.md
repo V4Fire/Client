@@ -22,6 +22,12 @@ This approach helps avoid unnecessary re-renders.
 Additionally, this fix can be considered a breaking change because the container
 node inside b-virtual-scroll will now be hidden (display: none) by default until the first successful render in the rendering cycle. `components/base/b-virtual-scroll-new`
 
+## v4.0.0-beta.99 (2024-05-23)
+
+#### :rocket: New Feature
+
+* Added color param to `i` mixin `components/global/g-def/funcs/ds.styl`
+
 ## v4.0.0-beta.98 (2024-05-21)
 
 #### :bug: Bug Fix
