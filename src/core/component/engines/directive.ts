@@ -63,7 +63,7 @@ ComponentEngine.directive = function directive(name: string, directive?: Directi
 			}
 
 			if (vnode.virtualContext != null) {
-				vnode.virtualContext.unsafe.$on('hook:before-destroy', () => {
+				vnode.virtualContext.unsafe.$once('[[BEFORE_DESTROY]]', () => {
 					originalUnmounted.apply(this, args);
 				});
 			}
