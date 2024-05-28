@@ -258,7 +258,7 @@ export function beforeCreateState(
 
 		// If a computed property has a field or system field as a dependency
 		// and the host component does not have any watchers to this field,
-		// we need to register the "fake" watcher to force watching
+		// we need to register a "fake" watcher to enforce watching
 		watchSet.forEach((info) => {
 			const needToForceWatching =
 				watchers[info.name] == null &&
@@ -280,7 +280,7 @@ export function beforeCreateState(
 
 	// If a computed property is tied with a field or system field
 	// and the host component does not have any watchers to this field,
-	// we need to register the "fake" watcher to force watching
+	// we need to register a "fake" watcher to enforce watching
 	Object.entries(tiedFields).forEach(([name, normalizedName]) => {
 		if (normalizedName == null) {
 			return;
