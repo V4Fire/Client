@@ -24,13 +24,15 @@ export function beforeDestroyState(component: ComponentInterface, recursive: boo
 		return;
 	}
 
-	runHook('beforeDestroy', component, recursive).catch(stderr);
+	runHook('beforeDestroy', component).catch(stderr);
 	callMethodFromComponent(component, 'beforeDestroy');
 
 	const {
 		unsafe,
 		unsafe: {$el}
 	} = component;
+
+	unsafe.$emit('[[BEFORE_DESTROY]]', recursive);
 
 	unsafe.async.clearAll().locked = true;
 	unsafe.$async.clearAll().locked = true;

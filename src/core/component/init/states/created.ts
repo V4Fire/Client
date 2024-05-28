@@ -45,8 +45,8 @@ export function createdState(component: ComponentInterface): void {
 			p = parent.unsafe,
 			destroy = unsafe.$destroy.bind(unsafe);
 
-		p.$on('on-hook:before-destroy', destroy);
-		$a.worker(() => p.$off('on-hook:before-destroy', destroy));
+		p.$once('[[BEFORE_DESTROY]]', destroy);
+		$a.worker(() => p.$off('[[BEFORE_DESTROY]]', destroy));
 
 		const isRegular =
 			unsafe.meta.params.functional !== true;
