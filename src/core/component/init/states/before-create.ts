@@ -204,7 +204,7 @@ export function beforeCreateState(
 		};
 
 		p.$once('[[BEFORE_DESTROY]]', destroy);
-		this.$async.worker(() => p.$off('[[BEFORE_DESTROY]]', destroy));
+		unsafe.$async.worker(() => p.$off('[[BEFORE_DESTROY]]', destroy));
 	}
 
 	Object.defineProperty(unsafe, '$children', {
