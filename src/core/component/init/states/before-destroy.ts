@@ -14,14 +14,17 @@ import type { ComponentInterface } from 'core/component/interface';
 
 /**
  * Initializes the "beforeDestroy" state to the specified component instance
+ *
  * @param component
+ * @param [recursive] - if set to false, the destructor will be executed for the component itself,
+ *   but not for its descendants
  */
-export function beforeDestroyState(component: ComponentInterface): void {
+export function beforeDestroyState(component: ComponentInterface, recursive: boolean = true): void {
 	if (component.hook === 'beforeDestroy' || component.hook === 'destroyed') {
 		return;
 	}
 
-	runHook('beforeDestroy', component).catch(stderr);
+	runHook('beforeDestroy', component, recursive).catch(stderr);
 	callMethodFromComponent(component, 'beforeDestroy');
 
 	const {
