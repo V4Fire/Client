@@ -367,8 +367,10 @@ export abstract class ComponentInterface {
 
 	/**
 	 * Destroys the component
+	 * @param [_recursive] - if set to false, the destructor will be executed for the component itself,
+	 *   but not for its descendants
 	 */
-	protected $destroy(): void {
+	protected $destroy(_recursive: boolean = true): void {
 		return Object.throw();
 	}
 

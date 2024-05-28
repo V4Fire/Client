@@ -65,9 +65,9 @@ export function beforeCreateState(
 		configurable: true,
 		enumerable: false,
 		writable: true,
-		value: () => {
+		value: (recursive: boolean) => {
 			if (component.hook !== 'beforeDestroy' && component.hook !== 'destroyed') {
-				beforeDestroyState(component);
+				beforeDestroyState(component, recursive);
 			}
 
 			if (component.hook !== 'destroyed') {
@@ -193,6 +193,20 @@ export function beforeCreateState(
 			});
 		}
 	});
+
+	const $parent = unsafe.$parent?.unsafe;
+
+	if ($parent != null) {
+		unsafe.$async.once((event, handler) => {
+			const id = $parent.$once(event, handler);
+			return () => $parent.$off(id);
+
+		}, 'hook:beforeDestroy', (recursive: boolean) => {
+			if (recursive || meta.params.functional === true) {
+				unsafe.$destroy(recursive);
+			}
+		});
+	}
 
 	Object.defineProperty(unsafe, '$children', {
 		configurable: true,
