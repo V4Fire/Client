@@ -194,19 +194,6 @@ export function beforeCreateState(
 		}
 	});
 
-	const p = unsafe.$parent?.unsafe;
-
-	if (p != null) {
-		const destroy = (recursive: boolean) => {
-			if (recursive || meta.params.functional === true) {
-				unsafe.$destroy(recursive);
-			}
-		};
-
-		p.$once('[[BEFORE_DESTROY]]', destroy);
-		unsafe.$async.worker(() => p.$off('[[BEFORE_DESTROY]]', destroy));
-	}
-
 	Object.defineProperty(unsafe, '$children', {
 		configurable: true,
 		enumerable: true,
