@@ -30,28 +30,28 @@ export function createdState(component: ComponentInterface): void {
 		unsafe: {
 			$root: r,
 			$async: $a,
-			$normalParent: parent
+			$parent: parent
 		}
 	} = component;
 
 	unmute(unsafe.$fields);
 	unmute(unsafe.$systemFields);
 
-	const isDynamicallyMountedComponent =
-		parent != null && '$remoteParent' in r;
-
-	if (isDynamicallyMountedComponent) {
+	if (parent != null) {
 		const
-			p = parent.unsafe,
-			destroy = unsafe.$destroy.bind(unsafe);
+			isRegularComponent = unsafe.meta.params.functional !== true,
+			isDynamicallyMountedComponent = '$remoteParent' in r;
 
-		p.$once('[[BEFORE_DESTROY]]', destroy);
-		$a.worker(() => p.$off('[[BEFORE_DESTROY]]', destroy));
+		const destroy = (recursive: boolean) => {
+			if (recursive || isDynamicallyMountedComponent) {
+				unsafe.$destroy(recursive);
+			}
+		};
 
-		const isRegular =
-			unsafe.meta.params.functional !== true;
+		parent.unsafe.$once('[[BEFORE_DESTROY]]', destroy);
+		unsafe.$async.worker(() => parent.unsafe.$off('[[BEFORE_DESTROY]]', destroy));
 
-		if (isRegular) {
+		if (isDynamicallyMountedComponent && isRegularComponent) {
 			const activationHooks = Object.createDict({
 				activated: true,
 				deactivated: true
@@ -73,12 +73,15 @@ export function createdState(component: ComponentInterface): void {
 				});
 			};
 
-			if (activationHooks[p.hook] != null) {
-				onActivation(p.hook);
+			const
+				normalParent = unsafe.$normalParent!.unsafe;
+
+			if (activationHooks[normalParent.hook] != null) {
+				onActivation(normalParent.hook);
 			}
 
-			p.$on('on-hook-change', onActivation);
-			$a.worker(() => p.$off('on-hook-change', onActivation));
+			normalParent.$on('on-hook-change', onActivation);
+			$a.worker(() => normalParent.$off('on-hook-change', onActivation));
 		}
 	}
 
