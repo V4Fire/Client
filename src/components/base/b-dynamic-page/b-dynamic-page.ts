@@ -564,14 +564,10 @@ export default class bDynamicPage extends iDynamicPage {
 	@watch('emitter')
 	@watch({path: 'event', immediate: true})
 	protected syncEmitterWatcher(): void {
-		const
-			{async: $a} = this;
+		const {async: $a} = this;
 
-		const
-			group = {group: 'emitter'};
-
-		$a
-			.clearAll(group);
+		const group = {group: 'emitter'};
+		$a.clearAll(group);
 
 		if (this.event != null) {
 			$a.on(this.emitter ?? this.r, this.event, (component, e) => {
