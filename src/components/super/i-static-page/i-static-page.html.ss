@@ -120,7 +120,7 @@
 							+= h.getFaviconsDecl(canInlineSourceCode, Boolean(config.webpack.dynamicPublicPath()))
 
 					- block title
-						- if !config.webpack.hydration()
+						- if !HYDRATION
 							< title
 								{title}
 
