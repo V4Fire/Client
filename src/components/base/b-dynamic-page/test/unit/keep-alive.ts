@@ -9,6 +9,7 @@
 import test from 'tests/config/unit/test';
 
 import type iDynamicPage from 'components/super/i-dynamic-page/i-dynamic-page';
+import type bDynamicPage from 'components/base/b-dynamic-page/b-dynamic-page';
 
 import {
 
@@ -22,6 +23,7 @@ import {
 
 } from 'components/base/b-dynamic-page/test/helpers';
 
+// eslint-disable-next-line max-lines-per-function
 test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
@@ -113,6 +115,20 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 					Hooks.ACTIVATED,
 					prevHookDebugString(Hooks.DESTROYED)
 				]);
+			});
+
+			test('the number of external instances should not exceed the number of pages in keepAlive + 1', async ({page}) => {
+				const target = await renderDynamicPage(page, {
+					keepAlive: true,
+					include: Pages.DYNAMIC_1
+				});
+
+				const initialRootInstances = await target.evaluate(({r}) => r.remoteRootInstances);
+				await target.evaluate(switcher);
+
+				await test.expect(
+					target.evaluate(({r}) => r.remoteRootInstances)
+				).resolves.not.toBeGreaterThan(initialRootInstances + 1);
 			});
 
 			test('should `include` the components using an array of string names', async ({page}) => {
@@ -256,7 +272,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			});
 
 			test('should `include` components whose names match the return value of the function-matcher', async ({page}) => {
-				const include = (page, route, ctx) => ({
+				const include = (page: string, _route: iDynamicPage['route'], ctx: bDynamicPage) => ({
 					cacheKey: page,
 					cacheGroup: page,
 					createCache: () => ctx.keepAliveCache.global
@@ -308,6 +324,20 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 					Hooks.MOUNTED,
 					prevHookDebugString(Hooks.DEACTIVATED)
 				]);
+			});
+
+			test('the number of external instances should not exceed the number of pages in keepAlive + 1', async ({page}) => {
+				const target = await renderDynamicPage(page, {
+					keepAlive: true,
+					exclude: Pages.DYNAMIC_1
+				});
+
+				const initialRootInstances = await target.evaluate(({r}) => r.remoteRootInstances);
+				await target.evaluate(switcher);
+
+				await test.expect(
+					target.evaluate(({r}) => r.remoteRootInstances)
+				).resolves.not.toBeGreaterThan(initialRootInstances + (3 - 1) + 1);
 			});
 
 			test('should `exclude` the components using an array of string names', async ({page}) => {
