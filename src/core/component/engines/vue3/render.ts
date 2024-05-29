@@ -28,7 +28,9 @@ import {
 	resolveDirective as superResolveDirective,
 
 	VNodeChild,
-	VNodeArrayChildren
+	VNodeArrayChildren,
+
+	Comment
 
 } from 'vue';
 
@@ -178,6 +180,15 @@ export function render(
 ): Node[];
 
 export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, group?: string): CanArray<Node> {
+	if (Object.isArray(vnode)) {
+		if (vnode.length === 0 || vnode.every((vnode) => vnode.type === Comment)) {
+			return [];
+		}
+
+	} else if (vnode.type === Comment) {
+		return document.createDocumentFragment();
+	}
+
 	const vue = new Vue({
 		render: () => vnode,
 
