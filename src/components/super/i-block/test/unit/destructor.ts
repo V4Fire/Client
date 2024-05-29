@@ -64,7 +64,7 @@ test.describe('<i-block> calling a component\'s destructor', () => {
 		async ({page}) => {
 			const target = await renderDestructorDummy(page);
 
-			await target.evaluate(async (ctx) => {
+			await target.evaluate((ctx) => {
 				ctx.unsafe.$destroy();
 			});
 
