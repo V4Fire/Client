@@ -22,13 +22,14 @@ import type { TaskOptions, TaskParams, IterDescriptor } from 'components/friends
 const
 	isCached = Symbol('Is cached');
 
-let iteratorCounter = 0;
+let
+	iteratorCounter = 0;
 
 /**
- * Creates an asynchronous render stream from the specified value.
- * It returns a list of elements to the first synchronous render.
+ * Creates an asynchronous render stream from the specified value and returns a list of elements for
+ * the first synchronous render.
  *
- * This function helps optimize component rendering by splitting big render tasks into smaller ones.
+ * This function optimizes component rendering by splitting large render tasks into smaller ones.
  *
  * @param value
  * @param [sliceOrOpts] - elements per chunk or `[start position, elements per chunk]` or additional options
@@ -194,8 +195,7 @@ export function iterate(
 						);
 
 					} else {
-						const
-							res = createRenderTask(el, Object.isTruly(needRender));
+						const res = createRenderTask(el, Object.isTruly(needRender));
 
 						if (res != null) {
 							await res;
@@ -401,11 +401,12 @@ export function iterate(
 						$a.worker(() => destroyNode(el), {group});
 
 					} else {
-						const
-							els = el instanceof Element ? Array.from(el.querySelectorAll('.i-block-helper')) : [];
+						const children = el instanceof Element ?
+							Array.from(el.querySelectorAll('.i-block-helper')) :
+							[];
 
-						if (opts.destructor?.(el, els) !== true) {
-							nodeDestructor.call(that, el, els);
+						if (opts.destructor?.(el, children) !== true) {
+							nodeDestructor.call(that, el, children);
 						}
 					}
 				}

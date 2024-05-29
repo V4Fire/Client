@@ -18,9 +18,9 @@ import type { TaskOptions } from 'components/friends/async-render/interface';
 
 /**
  * Adds a new render task to the global render queue and returns a promise.
- * The promise will be resolved when the added task is completed.
+ * The promise is resolved when the task is successfully completed.
  *
- * @param task - a task function to execute
+ * @param task - a function representing the render task to be executed
  * @param [opts] - additional options
  */
 export function addRenderTask(
@@ -66,8 +66,8 @@ export function addRenderTask(
 /**
  * Removes the given node from the DOM tree and destroys all tied components
  *
- * @param node - a node to remove
- * @param [childComponentEls] - root elements of the child components
+ * @param node - the node to be removed
+ * @param [childComponentEls] - an array of root elements from any child components within the node
  */
 export function destroyNode(this: Friend, node: Node, childComponentEls: Element[] = []): void {
 	childComponentEls.forEach((child) => {
