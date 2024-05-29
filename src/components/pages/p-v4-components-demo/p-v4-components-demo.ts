@@ -46,6 +46,10 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	@field()
 	someField: unknown = 'foo';
 
+	onClick(): void {
+		this.someField = this.someField === 'foo' ? 'bar' : 'foo';
+	}
+
 	protected beforeCreate(): void {
 		//#unless runtime has storybook
 		// eslint-disable-next-line no-console

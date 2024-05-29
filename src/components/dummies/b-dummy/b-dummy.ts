@@ -14,7 +14,7 @@
 import type { VNode } from 'core/component/engines';
 
 import type iBlock from 'components/super/i-block/i-block';
-import iData, { component, field } from 'components/super/i-data/i-data';
+import iData, { prop, component, computed, field, system } from 'components/super/i-data/i-data';
 
 export * from 'components/super/i-data/i-data';
 
@@ -25,6 +25,9 @@ export * from 'components/super/i-data/i-data';
 })
 
 class bDummy extends iData {
+	@prop({type: Object, required: false})
+	readonly itemProp!: any;
+
 	/**
 	 * Name of the test component
 	 */
@@ -45,7 +48,53 @@ class bDummy extends iData {
 
 	protected override readonly $refs!: iData['$refs'] & {
 		testComponent?: iBlock;
+		counter?: HTMLElement;
 	};
+
+	@computed({dependencies: ['getValue']})
+	protected get value(): string {
+		return String(this.getValue);
+	}
+
+	@computed({dependencies: ['itemStore']})
+	protected get getValue(): CanUndef<number> {
+		return this.item?.value;
+	}
+
+	protected get item(): any | undefined {
+		return this.field.get('itemStore', this, (fieldName: string, obj: Nullable<object>) => {
+			if (obj == null) {
+				return undefined;
+			}
+
+			const objFromPrimitive = Object(obj);
+
+			if (fieldName in objFromPrimitive) {
+				return obj[fieldName];
+			}
+
+			const underscoredFieldName = fieldName.underscore();
+
+			if (underscoredFieldName in objFromPrimitive) {
+				return obj[underscoredFieldName];
+			}
+
+			return undefined;
+		});
+	}
+
+	protected set item(value: any) {
+		this.field.set('itemStore', value);
+	}
+
+	@system((o) => o.sync.link())
+	protected itemStore: any;
+
+	mounted(): void {
+		this.console.log('mounted');
+		this.item = {value: Math.random()};
+		this.$refs.counter!.textContent = this.value;
+	}
 }
 
 export default bDummy;

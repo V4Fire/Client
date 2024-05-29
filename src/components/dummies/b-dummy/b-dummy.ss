@@ -22,3 +22,6 @@
 
 		< template v-else
 			+= self.slot()
+
+			< p ref = counter
+				{{ value }}
