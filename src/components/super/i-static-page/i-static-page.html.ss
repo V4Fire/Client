@@ -120,8 +120,9 @@
 							+= h.getFaviconsDecl(canInlineSourceCode, Boolean(config.webpack.dynamicPublicPath()))
 
 					- block title
-						< title
-							{title}
+						- if !config.webpack.hydration()
+							< title
+								{title}
 
 					- block assets
 						+= h.getAssetsDecl({inline: canInlineSourceCode && !assetsRequest, wrap: true})
