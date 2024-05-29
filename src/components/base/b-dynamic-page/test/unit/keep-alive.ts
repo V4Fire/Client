@@ -335,9 +335,13 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 				const initialRootInstances = await target.evaluate(({r}) => r.remoteRootInstances);
 				await target.evaluate(switcher);
 
+				const
+					PAGE_COUNT = 3,
+					KEEP_ALIVE_COUNT = 1;
+
 				await test.expect(
 					target.evaluate(({r}) => r.remoteRootInstances)
-				).resolves.not.toBeGreaterThan(initialRootInstances + (3 - 1) + 1);
+				).resolves.not.toBeGreaterThan(initialRootInstances + (PAGE_COUNT - KEEP_ALIVE_COUNT) + 1);
 			});
 
 			test('should `exclude` the components using an array of string names', async ({page}) => {
