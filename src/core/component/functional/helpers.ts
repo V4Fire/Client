@@ -7,6 +7,7 @@
  */
 
 import * as init from 'core/component/init';
+import { cacheStatus } from 'core/component/watch';
 import type { ComponentInterface, ComponentElement, ComponentDestructorOptions } from 'core/component/interface';
 
 /**
@@ -158,5 +159,9 @@ export function inheritContext(
 				}
 			}
 		});
+	});
+
+	Object.keys(ctx.meta.computedFields).forEach((name) => {
+		delete Object.getOwnPropertyDescriptor(ctx, name)?.get?.[cacheStatus];
 	});
 }
