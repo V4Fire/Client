@@ -9,21 +9,24 @@
 import type { TaskFilter } from 'components/friends/async-render/interface/task';
 
 /**
- * Additional options to render an iterable structure
+ * Additional options to control the rendering process of an iterable structure
  */
 export interface IterOptions {
 	/**
-	 * A start index to iterate
+	 * The index at which to start iteration for rendering.
+	 * This allows for partial rendering of iterable, starting at a specific point.
 	 */
 	start?: number;
 
 	/**
-	 * How many fragments can be rendered at the same time
+	 * The maximum number of fragments that are allowed to be rendered simultaneously.
+	 * This helps manage rendering workload and optimize performance, especially useful in large datasets.
 	 */
 	perChunk?: number;
 
 	/**
-	 * A function to filter elements to render
+	 * An optional filter function that determines which elements of the iterable should be rendered.
+	 * This can be used to apply conditional rendering or exclude certain elements based on custom logic.
 	 */
 	filter?: TaskFilter;
 }
@@ -38,22 +41,23 @@ export interface IterDescriptor {
 	isAsync: boolean;
 
 	/**
-	 * An index of the last synchronously read element for the first render
+	 * The index of the last element that was synchronously read during the initial rendering phase
 	 */
 	readI: number;
 
 	/**
-	 * Number of synchronously read elements for the first render
+	 * The total number of elements read synchronously for the initial render
 	 */
 	readTotal: number;
 
 	/**
-	 * An array of the synchronously read elements for the first render
+	 * Stores the elements synchronously read during the initial rendering phase
 	 */
 	readEls: unknown[];
 
 	/**
-	 * The original structure that we iterate
+	 * The original structure over which iteration occurs.
+	 * Can be a promise that resolves an iterable data structure.
 	 */
 	iterable: CanPromise<AnyIterable>;
 

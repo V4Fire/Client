@@ -10,7 +10,7 @@ you should not use this API directly, but prefer more convenient wrappers that a
 By default, any component that inherited from [[iBlock]] has the `block` property.
 Some methods, such as `getFullBlockName`, `getMod`, `setMod`, `removeMod` are always available, and the rest must be
 included explicitly to enable tree-shake code optimization.
-Simply place the required import declaration within your component file.
+Place the required import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';

@@ -7,7 +7,7 @@ This module provides a class for low-level operations with a component's DOM tre
 By default, any component that inherits from [[iBlock]] has the `dom` property.
 Some methods, such as `getId` and `unwrapId`, are always available,
 while the rest must be included explicitly to enable tree-shake code optimization.
-Simply place the required import declaration within your component file.
+Place the required import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';

@@ -2,7 +2,7 @@
 
 This module provides a bunch of `Stylus` custom functions to manage the plugged design system.
 
-## How does it work?
+## How Does It Work?
 
 ### Entry point
 

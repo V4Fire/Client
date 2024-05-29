@@ -9,20 +9,21 @@
 /**
  * Additional options for a render task
  *
- * @typeParam El - a data element to render
- * @typeParam D - a data collection to render
+ * @typeParam El - a data element that is being rendered
+ * @typeParam D - the entire collection of data elements that the render task processes
  */
 export interface TaskOptions<El = unknown, D = unknown> {
 	/**
-	 * The weight of one render chunk.
-	 * At the same tick can be rendered chunks with the accumulated weight no more than the `TASKS_PER_TICK` constant.
+	 * The weight of a single render chunk determines its processing cost.
+	 * During the same tick, only chunks with a combined weight that does not exceed
+	 * the `TASKS_PER_TICK` constant can be rendered.
 	 *
 	 * @see core/component/render/daemon
 	 */
 	weight?: number;
 
 	/**
-	 * If true, then all rendered fragments are inserted into the DOM by using a `requestAnimationFrame` callback.
+	 * If set to true, then all rendered fragments are inserted into the DOM by using a `requestAnimationFrame` callback.
 	 * This can optimize the browser rendering process.
 	 *
 	 * @default `false`
@@ -30,9 +31,9 @@ export interface TaskOptions<El = unknown, D = unknown> {
 	useRAF?: boolean;
 
 	/**
-	 * A group name to manual clearing of pending tasks via the [[Async]] module.
-	 * Providing this value disables automatically cleanup of render tasks on the `update` hook.
-	 * If this parameter is set as a function, the group name will be dynamically calculated on each iteration.
+	 * A group name for manually clearing pending tasks via the [[Async]] module.
+	 * Setting this value disables the automatic cleanup of render tasks during the update hook.
+	 * If this parameter is provided as a function, the group name will be dynamically calculated in each iteration.
 	 *
 	 * @example
 	 * ```
@@ -40,8 +41,8 @@ export interface TaskOptions<El = unknown, D = unknown> {
 	 *   < .&__item v-for = el in asyncRender.iterate(100, 10, {group: 'listRendering'})
 	 *     {{ el }}
 	 *
-	 * /// We should use a RegExp to clear tasks,
-	 * /// because each group has a group based on a template `asyncComponents:listRendering:${chunkIndex}`.
+	 * /// We should use a RegExp to clear tasks
+	 * /// because each group is named based on a template like `asyncComponents:listRendering:${chunkIndex}`
 	 * < button @click = async.clearAll({group: /:listRendering/})
 	 *   Cancel rendering
 	 * ```
@@ -49,10 +50,9 @@ export interface TaskOptions<El = unknown, D = unknown> {
 	group?: string | (() => string);
 
 	/**
-	 * A function to filter elements to render.
-	 *
-	 * If it returns a promise, the rendering process will wait for the promise to resolve.
-	 * If the promise is resolved with `undefined`, the value will be interpreted as `true`.
+	 * A function to filter elements for rendering.
+	 * If it returns a promise, the rendering process will pause until the promise resolves.
+	 * Should the promise resolve with `undefined`, the value will be interpreted as `true`.
 	 *
 	 * @example
 	 * ```
@@ -78,9 +78,9 @@ export interface TaskOptions<El = unknown, D = unknown> {
 	filter?: TaskFilter<El, D>;
 
 	/**
-	 * The destructor of a rendered fragment.
-	 * It will be called before each asynchronously rendered fragment is removed from the DOM.
-	 * If the function returns true, the internal destructor of the `asyncRender` module won’t be called.
+	 * The destructor for a rendered fragment is invoked before each asynchronously rendered fragment is
+	 * removed from the DOM.
+	 * If this function returns true, the internal destructor of the asyncRender module will not be executed.
 	 */
 	destructor?: NodeDestructor;
 }
@@ -89,29 +89,25 @@ export interface TaskParams extends TaskOptions {
 	renderGroup: string;
 }
 
-/**
- * An element of the render task
- */
 export interface TaskEl<D = unknown> {
 	/**
-	 * The original structure that we iterate
+	 * The original structure over which iteration occurs.
+	 * Can be a promise that resolves an iterable data structure.
 	 */
 	iterable: CanPromise<AnyIterable<D>>;
 
 	/**
-	 * Number of rendered tasks
+	 * The total number of tasks that have been rendered
 	 */
 	total: number;
 
 	/**
-	 * An index of the render chunk that own this operation
+	 * The index of the render chunk that owns this task.
+	 * This property is optional and used to identify specific chunks.
 	 */
 	chunk?: number;
 }
 
-/**
- * A filter function for render tasks
- */
 export interface TaskFilter<E = unknown, D = unknown> {
 	(): CanPromise<boolean>;
 
@@ -127,10 +123,10 @@ export interface TaskFilter<E = unknown, D = unknown> {
 
 export interface NodeDestructor {
 	/**
-	 * A function to destroy the unmounted node
+	 * A function for destroying the unmounted node
 	 *
-	 * @param node - a node to remove
-	 * @param childComponentEls - root elements of the child components
+	 * @param node - the node to be removed
+	 * @param childComponentEls - an array of root elements from any child components within the node
 	 */
 	(node: Node, childComponentEls: Element[]): AnyToBoolean;
 }
