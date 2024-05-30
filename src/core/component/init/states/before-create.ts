@@ -8,9 +8,9 @@
 
 import Async from 'core/async';
 
+import { destroyedHooks } from 'core/component/const';
 import { getComponentContext } from 'core/component/context';
 
-import { destroyedHooks } from 'core/component/const';
 import { forkMeta } from 'core/component/meta';
 import { getPropertyInfo, PropertyInfo } from 'core/component/reflect';
 import { getNormalParent } from 'core/component/traverse';
