@@ -62,7 +62,7 @@ export function createdState(component: ComponentInterface): void {
 				return;
 			}
 
-			parent.unsafe.$off('[[BEFORE_DESTROY]]', destroy)
+			parent.unsafe.$off('[[BEFORE_DESTROY]]', destroy);
 		});
 
 		if (isDynamicallyMountedComponent && isRegularComponent) {
