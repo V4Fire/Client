@@ -213,10 +213,22 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 				});
 
 				// Register a worker to clean up memory upon component destruction
-				parent.unsafe.async.worker(() => {
-					vue.unmount();
-					Array.concat([], vnode).forEach(destroy);
-					disposeLazy(vue);
+				registerDestructor();
+			}
+
+			function registerDestructor() {
+				parent?.unsafe.async.worker(() => {
+					setImmediate(() => {
+						if ('skipDestruction' in vnode) {
+							delete vnode.skipDestruction;
+							registerDestructor();
+
+						} else {
+							vue.unmount();
+							Array.concat([], vnode).forEach(destroy);
+							disposeLazy(vue);
+						}
+					});
 				}, {group});
 			}
 		},
