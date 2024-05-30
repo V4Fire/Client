@@ -8,6 +8,7 @@
 
 import { unmute } from 'core/object/watch';
 
+import { destroyedHooks } from 'core/component/const';
 import { callMethodFromComponent } from 'core/component/method';
 import { runHook } from 'core/component/hook';
 
@@ -44,7 +45,7 @@ export function createdState(component: ComponentInterface): void {
 
 		const destroy = (recursive: boolean) => {
 			// A component might have already been removed by explicitly calling $destroy
-			if (!Object.isFunction(unsafe.$destroy)) {
+			if (destroyedHooks[unsafe.hook] != null) {
 				return;
 			}
 
@@ -54,7 +55,15 @@ export function createdState(component: ComponentInterface): void {
 		};
 
 		parent.unsafe.$once('[[BEFORE_DESTROY]]', destroy);
-		unsafe.$async.worker(() => parent.unsafe.$off('[[BEFORE_DESTROY]]', destroy));
+
+		unsafe.$async.worker(() => {
+			// A component might have already been removed by explicitly calling $destroy
+			if (destroyedHooks[parent.hook] != null) {
+				return;
+			}
+
+			parent.unsafe.$off('[[BEFORE_DESTROY]]', destroy)
+		});
 
 		if (isDynamicallyMountedComponent && isRegularComponent) {
 			const activationHooks = Object.createDict({

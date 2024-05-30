@@ -8,7 +8,7 @@
 
 /* eslint-disable prefer-spread */
 
-import { app, isComponent, componentRenderFactories, ASYNC_RENDER_ID } from 'core/component/const';
+import { app, isComponent, componentRenderFactories, destroyedHooks, ASYNC_RENDER_ID } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 
 import { isSmartComponent } from 'core/component/reflect';
@@ -179,8 +179,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 
 				beforeUnmount: (n: Element) => {
 					// A component might have already been removed by explicitly calling $destroy
-					// eslint-disable-next-line @v4fire/unbound-method
-					if (!Object.isFunction(virtualCtx.$emit)) {
+					if (destroyedHooks[virtualCtx.hook] != null) {
 						return;
 					}
 
@@ -189,8 +188,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 
 				unmounted: (n: Element) => {
 					// A component might have already been removed by explicitly calling $destroy
-					// eslint-disable-next-line @v4fire/unbound-method
-					if (!Object.isFunction(virtualCtx.$emit)) {
+					if (destroyedHooks[virtualCtx.hook] != null) {
 						return;
 					}
 
