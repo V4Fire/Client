@@ -46,17 +46,34 @@ export function beforeDestroyState(component: ComponentInterface, recursive: boo
 			unsafe.$renderEngine.r.destroy($el);
 		}
 
-		const destroyedComponent = {
-			componentId: unsafe.componentId,
-			componentName: unsafe.componentName,
-			hook: unsafe.hook
-		};
+		const destroyedComponent = Object.freeze({
+			componentId: {
+				writable: false,
+				enumerable: true,
+				configurable: false,
+				value: unsafe.componentId
+			},
+
+			componentName: {
+				writable: false,
+				enumerable: true,
+				configurable: false,
+				value: unsafe.componentName
+			},
+
+			hook: {
+				writable: false,
+				enumerable: true,
+				configurable: false,
+				value: unsafe.hook
+			}
+		});
 
 		Object.getOwnPropertyNames(unsafe).forEach((key) => {
 			delete unsafe[key];
 		});
 
-		Object.assign(unsafe, destroyedComponent);
+		Object.defineProperties(unsafe, destroyedComponent);
 		Object.setPrototypeOf(unsafe, destroyedComponent);
 
 		dropRawComponentContext(unsafe);
