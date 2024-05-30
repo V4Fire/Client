@@ -11,9 +11,6 @@ import { queue } from 'core/component/render/daemon';
 
 import type Friend from 'components/friends/friend';
 
-import type iBlock from 'components/super/i-block/i-block';
-import type { ComponentElement } from 'components/super/i-block/i-block';
-
 import type { TaskOptions } from 'components/friends/async-render/interface';
 
 /**
@@ -61,19 +58,4 @@ export function addRenderTask(
 			return cb();
 		}
 	});
-}
-
-/**
- * Removes the given node from the DOM tree and destroys all tied components
- * @param node
- */
-export function destroyNode(this: Friend, node: Node): void {
-	try {
-		(<ComponentElement<iBlock>>node).component?.unsafe.$destroy();
-
-	} catch (err) {
-		stderr(err);
-	}
-
-	node.parentNode?.removeChild(node);
 }

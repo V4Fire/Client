@@ -14,7 +14,7 @@ import type { VNode } from 'core/component/engines';
 import type Friend from 'components/friends/friend';
 import { render } from 'components/friends/vdom';
 
-import { addRenderTask, destroyNode as nodeDestructor } from 'components/friends/async-render/helpers/render';
+import { addRenderTask } from 'components/friends/async-render/helpers/render';
 import { getIterDescriptor } from 'components/friends/async-render/helpers/iter';
 
 import type { TaskOptions, TaskParams, IterDescriptor } from 'components/friends/async-render/interface';
@@ -357,8 +357,6 @@ export function iterate(
 
 				lastTaskParams = {...opts, renderGroup: group};
 				localEmitter.emit('asyncRenderChunkComplete', lastTaskParams);
-
-				$a.worker(destructor, {group});
 			});
 
 			function renderVNode(vnode: VNode) {
@@ -379,30 +377,37 @@ export function iterate(
 				if (nodeToMount != null) {
 					if (Object.isArray(renderedVnode)) {
 						renderedVNodes.push(...renderedVnode);
-						renderedVnode.forEach((renderedVnode) => nodeToMount.appendChild(renderedVnode));
+
+						renderedVnode.forEach((renderedVnode) => {
+							nodeToMount.appendChild(renderedVnode);
+							$a.worker(destroyNode(renderedVnode), {group});
+						});
 
 					} else if (renderedVnode != null) {
 						renderedVNodes.push(renderedVnode);
 						nodeToMount.appendChild(renderedVnode);
+						$a.worker(destroyNode(renderedVnode), {group});
 					}
 				}
-			}
 
-			function destructor() {
-				renderedVNodes.forEach(destroyNode);
+				function destroyNode(el: Nullable<ComponentElement | Node>) {
+					return () => {
+						if (el == null) {
+							return;
+						}
 
-				function destroyNode(el: CanUndef<ComponentElement | Node>) {
-					if (el == null) {
-						return;
-					}
+						const getChildComponents = () => el instanceof Element ?
+							Array.from(el.querySelectorAll('.i-block-helper')) :
+							[];
 
-					if (el[isCached] != null) {
-						delete el[isCached];
-						$a.worker(() => destroyNode(el), {group});
+						if (el[isCached] != null) {
+							delete el[isCached];
+							$a.worker(destroyNode(el), {group});
 
-					} else if (opts.destructor?.(el) !== true) {
-						nodeDestructor.call(that, el);
-					}
+						} else if (opts.destructor?.(el, getChildComponents()) === true) {
+							vnode.skipDestruction = true;
+						}
+					};
 				}
 			}
 		}
