@@ -123,10 +123,10 @@ export interface TaskFilter<E = unknown, D = unknown> {
 
 export interface NodeDestructor {
 	/**
-	 * A function for destroying the unmounted node
+	 * A function for destroying an unmounted node.
+	 * If the function returns true, then the destruction was successful; otherwise, it returns false.
 	 *
 	 * @param node - the node to be removed
-	 * @param childComponentEls - an array of root elements from any child components within the node
 	 */
-	(node: Node, childComponentEls: Element[]): AnyToBoolean;
+	(node: Node): AnyToBoolean;
 }

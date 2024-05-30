@@ -65,20 +65,9 @@ export function addRenderTask(
 
 /**
  * Removes the given node from the DOM tree and destroys all tied components
- *
- * @param node - the node to be removed
- * @param [childComponentEls] - an array of root elements from any child components within the node
+ * @param node
  */
-export function destroyNode(this: Friend, node: Node, childComponentEls: Element[] = []): void {
-	childComponentEls.forEach((child) => {
-		try {
-			(<ComponentElement<iBlock>>child).component?.unsafe.$destroy();
-
-		} catch (err) {
-			stderr(err);
-		}
-	});
-
+export function destroyNode(this: Friend, node: Node): void {
 	try {
 		(<ComponentElement<iBlock>>node).component?.unsafe.$destroy();
 
