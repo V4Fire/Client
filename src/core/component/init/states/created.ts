@@ -43,6 +43,11 @@ export function createdState(component: ComponentInterface): void {
 			isDynamicallyMountedComponent = '$remoteParent' in r;
 
 		const destroy = (recursive: boolean) => {
+			// A component might have already been removed by explicitly calling $destroy
+			if (!Object.isFunction(unsafe.$destroy)) {
+				return;
+			}
+
 			if (recursive || isDynamicallyMountedComponent) {
 				unsafe.$destroy(recursive);
 			}

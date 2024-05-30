@@ -170,12 +170,32 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 
 			value: {
 				created: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'created', n),
+
 				beforeMount: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeMount', n),
 				mounted: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'mounted', n),
+
 				beforeUpdate: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeUpdate', n),
 				updated: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'updated', n),
-				beforeUnmount: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeDestroy', n),
-				unmounted: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'destroyed', n)
+
+				beforeUnmount: (n: Element) => {
+					// A component might have already been removed by explicitly calling $destroy
+					// eslint-disable-next-line @v4fire/unbound-method
+					if (!Object.isFunction(virtualCtx.$emit)) {
+						return;
+					}
+
+					virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeDestroy', n);
+				},
+
+				unmounted: (n: Element) => {
+					// A component might have already been removed by explicitly calling $destroy
+					// eslint-disable-next-line @v4fire/unbound-method
+					if (!Object.isFunction(virtualCtx.$emit)) {
+						return;
+					}
+
+					virtualCtx.$emit('[[COMPONENT_HOOK]]', 'destroyed', n);
+				}
 			},
 
 			oldValue: undefined,
