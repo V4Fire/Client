@@ -400,14 +400,8 @@ export function iterate(
 						delete el[isCached];
 						$a.worker(() => destroyNode(el), {group});
 
-					} else {
-						const children = el instanceof Element ?
-							Array.from(el.querySelectorAll('.i-block-helper')) :
-							[];
-
-						if (opts.destructor?.(el, children) !== true) {
-							nodeDestructor.call(that, el, children);
-						}
+					} else if (opts.destructor?.(el) !== true) {
+						nodeDestructor.call(that, el);
 					}
 				}
 			}
