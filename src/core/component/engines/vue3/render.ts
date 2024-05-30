@@ -180,12 +180,15 @@ export function render(
 ): Node[];
 
 export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, group?: string): CanArray<Node> {
+	// If there is nothing to render, there is no need to create a virtual Vue instance
 	if (Object.isArray(vnode)) {
-		if (vnode.length === 0 || vnode.every((vnode) => vnode.type === Comment)) {
+		// If only a comment needs to be rendered, consider such renderings as empty
+		if (vnode.length === 0 || vnode.every(isEmptyVNode)) {
 			return [];
 		}
 
-	} else if (vnode.type === Comment) {
+	// If only a comment needs to be rendered, consider such renderings as empty
+	} else if (isEmptyVNode(vnode)) {
 		return document.createDocumentFragment();
 	}
 
@@ -263,6 +266,10 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 
 	function isEmptyText(node?: Node) {
 		return node?.nodeType === 3 && node.textContent === '';
+	}
+
+	function isEmptyVNode(vnode: Nullable<VNode>) {
+		return vnode == null || vnode.type === Comment && vnode.children === 'v-if';
 	}
 }
 

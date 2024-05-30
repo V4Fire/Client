@@ -201,6 +201,7 @@ export function beforeCreateState(
 			const
 				{$el} = unsafe;
 
+			// If the component node is null or a node that cannot have children (such as a text or comment node)
 			if ($el?.querySelectorAll == null) {
 				return [];
 			}
