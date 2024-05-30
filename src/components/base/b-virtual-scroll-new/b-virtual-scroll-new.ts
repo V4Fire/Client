@@ -16,6 +16,7 @@ import type { AsyncOptions } from 'core/async';
 import SyncPromise from 'core/promise/sync';
 
 import type iItems from 'components/traits/i-items/i-items';
+import DOM, { watchForIntersection } from 'components/friends/dom';
 import VDOM, { create, render } from 'components/friends/vdom';
 import { iVirtualScrollHandlers } from 'components/base/b-virtual-scroll-new/handlers';
 import {
@@ -54,6 +55,7 @@ export * from 'components/super/i-data/i-data';
 
 const $$ = symbolGenerator();
 
+DOM.addToPrototype({watchForIntersection});
 VDOM.addToPrototype({create, render});
 
 @component()
