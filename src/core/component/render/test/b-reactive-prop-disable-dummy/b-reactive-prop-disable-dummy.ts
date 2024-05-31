@@ -19,7 +19,7 @@ export * from 'components/dummies/b-dummy/b-dummy';
 })
 
 export default class BReactivePropDisableDummy extends bDummy {
-	@prop({disableReactivity: true})
+	@prop({forceUpdate: false})
 	dataProp?: string;
 
 	@system((o) => o.sync.link())

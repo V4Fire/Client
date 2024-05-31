@@ -146,6 +146,10 @@ export function fillMeta(
 				});
 			}
 		}
+
+		if (prop.forceUpdate === false) {
+			meta.hasDisabledForceUpdateProp = true;
+		}
 	});
 
 	// Fields

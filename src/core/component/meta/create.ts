@@ -75,7 +75,9 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			render() {
 				throw new ReferenceError(`The render function for the component "${component.componentName}" is not specified`);
 			}
-		}
+		},
+
+		hasDisabledForceUpdateProp: false
 	};
 
 	const

@@ -201,9 +201,11 @@ export interface DecoratorProp<
 	meta?: Dictionary;
 
 	/**
-	 * If set to true, the prop will not trigger a rerender by being removed from the dynamic props list.
+	 * If set to false, the prop will not trigger a rerender by being removed from the dynamic props list.
+	 *
+	 * @default `true`
 	 */
-	disableReactivity?: boolean;
+	forceUpdate?: boolean;
 }
 
 export type Prop<T = unknown> =
