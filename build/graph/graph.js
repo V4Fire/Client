@@ -140,8 +140,8 @@ async function buildProjectGraph() {
 
 	// Add all other tasks as dependencies to the HTML task
 	processes[HTML].dependencies = processes
-		.map((proc) => proc.name)
-		.filter((name) => name !== 'html');
+		.filter((proc) => !Object.isEmpty(proc.entries) && proc.name !== 'html')
+		.map((proc) => proc.name);
 
 	const res = {
 		entry,
