@@ -55,6 +55,21 @@ module.exports = function optimization({buildId, plugins}) {
 	if (buildId === RUNTIME) {
 		params.splitChunks = inherit(optimize.splitChunks(), {
 			cacheGroups: {
+				std: {
+					name: 'std',
+					chunks: 'all',
+					enforce: true,
+					test: /(\/core\/(std.ts|shims))|(\/node_modules\/core-js\/)/
+				},
+
+				vue: {
+					name: 'vue',
+					chunks: 'all',
+					filename: 'lib/vue.js',
+					enforce: true,
+					test: /\/node_modules\/(vue|@vue)\//
+				},
+
 				async: {
 					chunks: 'async',
 					minChunks: 1,
