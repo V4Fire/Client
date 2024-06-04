@@ -113,8 +113,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 				// because until that moment, we cannot track changes to dependent entities
 				// and reset the cache when they change.
 				// This can lead to hard-to-detect errors.
-				// For functional components, we also should not use the cache until it is fully created.
-				const canUseCache = beforeHooks[hook] == null && (!isFunctional || hook !== 'created');
+				const canUseCache = beforeHooks[hook] == null;
 
 				if (canUseCache) {
 					// If a getter already has a cached result and is used inside a template,
@@ -140,6 +139,8 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 					return get[cacheStatus];
 				}
+
+				delete get[cacheStatus];
 			}
 
 			const
