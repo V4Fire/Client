@@ -22,6 +22,29 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Now SSR build is bundled into a single file
 * Use the forked `lib/server-renderer` everywhere in the SSR build
 
+## v4.0.0-beta.101 (2024-05-30)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with intersection-observer in `b-virtual-scroll-new`: added `watchForIntersection` method to `DOM` prototype
+
+## v4.0.0-beta.100 (2024-05-24)
+
+#### :bug: Bug Fix
+
+* Fixed an issue in `b-virtual-scroll-new` where nodes from the previous rendering cycle were not being hidden and remained displayed.
+Now, the container will always be hidden if it is empty or during the loading process until an initial render occurs.
+It is important to note that the nodes are hidden, not deleted, and will later be replaced by new nodes.
+This approach helps avoid unnecessary re-renders.
+Additionally, this fix can be considered a breaking change because the container
+node inside b-virtual-scroll will now be hidden (display: none) by default until the first successful render in the rendering cycle. `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.99 (2024-05-23)
+
+#### :rocket: New Feature
+
+* Added color param to `i` mixin `components/global/g-def/funcs/ds.styl`
+
 ## v4.0.0-beta.98 (2024-05-21)
 
 #### :bug: Bug Fix
