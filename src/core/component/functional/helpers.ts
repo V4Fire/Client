@@ -160,8 +160,4 @@ export function inheritContext(
 			}
 		});
 	});
-
-	Object.keys(ctx.meta.computedFields).forEach((name) => {
-		delete Object.getOwnPropertyDescriptor(ctx, name)?.get?.[cacheStatus];
-	});
 }

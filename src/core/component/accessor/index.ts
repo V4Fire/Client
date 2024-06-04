@@ -110,9 +110,13 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 				{hook} = this;
 
 			if (cacheStatus in get) {
-				// Need to explicitly touch all dependencies for Vue
-				if (beforeHooks[hook] == null) {
-					if (hook !== 'created') {
+				const canUseCache =
+					beforeHooks[hook] == null ||
+					isFunctional && hook !== 'created';
+
+				if (canUseCache) {
+					// It is necessary to explicitly touch all the dependencies of the getter to track the effect
+					if (!isFunctional && hook !== 'created') {
 						meta.watchDependencies.get(name)?.forEach((path) => {
 							Object.get(this, path);
 						});
