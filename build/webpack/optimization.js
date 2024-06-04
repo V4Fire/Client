@@ -67,7 +67,7 @@ module.exports = function optimization({buildId, plugins}) {
 					chunks: 'all',
 					filename: 'lib/vue.js',
 					enforce: true,
-					test: /\/node_modules\/(vue|@vue)\//
+					test: /\/node_modules\/@?vue\//
 				},
 
 				async: {

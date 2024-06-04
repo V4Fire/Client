@@ -51,6 +51,7 @@ module.exports = function jsRules() {
 				]
 			},
 			{
+				include: /\/node_modules\/(@?vue)\//,
 				use: [
 					{
 						loader: 'swc-loader',
