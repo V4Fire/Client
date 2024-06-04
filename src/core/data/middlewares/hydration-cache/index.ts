@@ -9,10 +9,10 @@
 import type Provider from 'core/data';
 import type { MiddlewareParams } from 'core/request';
 
-// @ts-ignore (vue/webstorm)
-import { addHydrationCache } from 'core/cache/decorators/hydration';
-import type { HydrationCacheParams } from 'core/data/middlewares/hydration-cache/interface';
 import { defaultParams } from 'core/data/middlewares/hydration-cache/const';
+import { addHydrationCache } from 'core/cache/decorators/hydration';
+
+import type { HydrationCacheOptions } from 'core/data/middlewares/hydration-cache/interface';
 
 //#if runtime has dummyComponents
 import('core/data/middlewares/hydration-cache/test/provider');
@@ -21,15 +21,14 @@ import('core/data/middlewares/hydration-cache/test/provider');
 export * from 'core/data/middlewares/hydration-cache/interface';
 
 /**
- * Attaches a hydration cache to the specified context
- *
- * @param params
+ * Returns middleware that facilitates the utilization of data from the hydration store as a cache object
+ * @param [opts] - additional options
  */
-export function attachHydrationCache(params: HydrationCacheParams = defaultParams) {
+export function attachHydrationCache(opts: HydrationCacheOptions = defaultParams) {
 	return function middlewareWrapper(this: Provider, middlewareParams: MiddlewareParams): void {
 		const
 			{ctx} = middlewareParams,
-			{cacheId} = params;
+			{cacheId} = opts;
 
 		ctx.isReady.then(() => {
 			if (this.params.remoteState?.hydrationStore == null) {

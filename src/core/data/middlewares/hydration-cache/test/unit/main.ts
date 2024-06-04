@@ -45,7 +45,7 @@ test.describe('core/data/middlewares/hydration-cache', () => {
 		test.expect(Object.values(response!)[0]).toEqual({message: 'ok'});
 	});
 
-	test('should save the response with custom cacheId', async ({page}) => {
+	test('should save the response using a custom `cacheId`', async ({page}) => {
 		const component = await Component.createComponent<bDummy>(page, 'b-dummy');
 
 		const testProviderAPI = await Utils.import<typeof TestProvider>(page, 'core/data/middlewares/hydration-cache/test/provider');

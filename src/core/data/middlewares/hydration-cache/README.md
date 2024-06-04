@@ -1,7 +1,8 @@
 # core/data/middlewares/hydration-cache
 
-This module provides middleware that enables the use of data from the hydration store in a cache.
-It uses the [core/cache/decorators/hydration](../../../cache/decorators/hydration/README.md) module to achieve this.
+This module provides middleware that facilitates the utilization of data from the hydration store as a cache object.
+It achieves this by leveraging
+the [core/cache/decorators/hydration](../../../cache/decorators/hydration/README.md) module.
 
 ## Usage
 
@@ -14,32 +15,22 @@ export * from '@v4fire/core/core/data';
 
 @provider
 class Provider extends Super {
-  static override readonly middlewares: Middlewares = [
+  static override readonly middlewares: Middlewares = {
     ...Super.middlewares,
     attachHydrationCache: attachHydrationCache()
-  ];
+  };
 }
 ```
 
 ## Options
 
-The middleware accepts the following options:
-
-```typescript
-export interface HydrationCacheParams {
-	/**
-	 * The unique identifier of the hydration store
-	 * @param provider
-	 */
-	cacheId(provider: Provider): string;
-}
-```
+Middleware can be additionally configured using special options.
 
 ### cacheId
 
-By default, the `cacheId` method returns the provider name. You can override this method to provide a custom identifier.
-
-#### Example
+A function that takes a provider object and returns the identifier by which the provider's data
+will be stored in the cache.
+By default, the name of the provider itself is used.
 
 ```typescript
 import { attachHydrationCache } from 'core/data/middlewares/hydration-cache';
@@ -50,13 +41,13 @@ export * from '@v4fire/core/core/data';
 
 @provider
 class Provider extends Super {
-  static override readonly middlewares: Middlewares = [
+  static override readonly middlewares: Middlewares = {
     ...Super.middlewares,
     attachHydrationCache: attachHydrationCache({
       cacheId(provider: Provider): string {
         return `custom-${provider.providerName}`;
       }
     })
-  ];
+  };
 }
 ```

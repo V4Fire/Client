@@ -8,9 +8,9 @@
 
 import type Provider from 'core/data';
 
-import type { HydrationCacheParams } from 'core/data/middlewares/hydration-cache/interface';
+import type { HydrationCacheOptions } from 'core/data/middlewares/hydration-cache/interface';
 
-export const defaultParams: HydrationCacheParams = {
+export const defaultParams: HydrationCacheOptions = {
 	cacheId(provider: Provider) {
 		return provider.providerName;
 	}
