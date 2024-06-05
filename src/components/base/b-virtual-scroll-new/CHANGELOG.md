@@ -16,6 +16,12 @@ Changelog
 * Removed unnecessary rerendering of container in case of `dbStore` change;
 rerendering of the container and all nodes inside occurs only when `firstChunkRender` is changed.
 
+## v4.0.0-beta.101 (2024-05-30)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with intersection-observer in `b-virtual-scroll-new`: added `watchForIntersection` method to `DOM` prototype
+
 ## v4.0.0-beta.100 (2024-05-24)
 
 #### :bug: Bug Fix
