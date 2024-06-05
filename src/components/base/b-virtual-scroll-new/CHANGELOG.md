@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :house: Internal
+
+* Removed unnecessary rerendering of container in case of `dbStore` change;
+rerendering of the container and all nodes inside occurs only when `firstChunkRender` is changed.
+
 ## v4.0.0-beta.100 (2024-05-24)
 
 #### :bug: Bug Fix
