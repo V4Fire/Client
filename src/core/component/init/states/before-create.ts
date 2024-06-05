@@ -161,8 +161,13 @@ export function beforeCreateState(
 		root = unsafe.$root,
 		parent = unsafe.$parent;
 
-	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-	if (parent != null && parent.componentName == null) {
+	const
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		isDetachedRoot = root.componentName == null,
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		isDetachedParent = parent != null && parent.componentName == null;
+
+	if (isDetachedRoot || isDetachedParent) {
 		Object.defineProperty(unsafe, '$root', {
 			configurable: true,
 			enumerable: true,
@@ -170,12 +175,14 @@ export function beforeCreateState(
 			value: root.unsafe
 		});
 
-		Object.defineProperty(unsafe, '$parent', {
-			configurable: true,
-			enumerable: true,
-			writable: true,
-			value: root.unsafe.$remoteParent ?? null
-		});
+		if (isDetachedParent) {
+			Object.defineProperty(unsafe, '$parent', {
+				configurable: true,
+				enumerable: true,
+				writable: true,
+				value: root.unsafe.$remoteParent ?? null
+			});
+		}
 	}
 
 	unsafe.$normalParent = getNormalParent(component);
