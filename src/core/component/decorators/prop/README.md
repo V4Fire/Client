@@ -9,19 +9,19 @@ import iBlock, { component, prop } from 'components/super/i-block/i-block';
 class bExample extends iBlock {
   // The decorator can be called either without parameters
   @prop()
-  foo: number = 0;
+  value1: number = 0;
 
   // Or by passing a constructor function of the prop
   @prop(Number)
-  bla: number = 0;
+  value2: number = 0;
 
   // Or a dictionary with additional options
   @prop({type: Number, default: Math.random})
-  bar!: number;
+  value3!: number;
 
   // If the prop can be of different types, then pass an array of constructors
   @prop({type: [Number, String], required: false})
-  baz?: number | string;
+  value4?: number | string;
 }
 ```
 
@@ -35,7 +35,7 @@ import iBlock, { component, prop } from 'components/super/i-block/i-block';
 @component()
 class bExample extends iBlock {
   @prop(Number)
-  readonly foo: number = 0;
+  readonly value: number = 0;
 }
 ```
 
@@ -167,10 +167,10 @@ import iBlock, { component, prop } from 'components/super/i-block/i-block';
 @component()
 class bExample extends iBlock {
   @prop({type: Number})
-  bla!: number;
+  value1!: number;
 
   @prop({type: [Number, String]})
-  baz!: number | string;
+  value2!: number | string;
 }
 ```
 
@@ -186,10 +186,10 @@ import iBlock, { component, prop } from 'components/super/i-block/i-block';
 @component()
 class bExample extends iBlock {
   @prop({required: false})
-  bla?: number;
+  value1?: number;
 
   @prop()
-  baz: number = 0;
+  value2: number = 0;
 }
 ```
 
@@ -257,7 +257,22 @@ import iBlock, { component, prop } from 'components/super/i-block/i-block';
 @component()
 class bExample extends iBlock {
   @prop({type: Number, validator: Number.isPositive})
-  bla!: number;
+  value!: number;
+}
+```
+
+### [forceUpdate = `true`]
+
+If set to false, changing the prop will never trigger a re-render of the component template.
+Use this mode for props that are not used in the template to reduce the number of unwanted re-renders.
+
+```typescript
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
+
+@component()
+class bExample extends iBlock {
+  @prop({type: Number, forceUpdate: false})
+  value!: number;
 }
 ```
 
