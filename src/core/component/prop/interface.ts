@@ -22,7 +22,7 @@ export interface InitPropsObjectOptions {
 	store?: Dictionary;
 
 	/**
-	 * If set to true, then the initialized prop values will be written in the provided store object
+	 * If set to true, the initialized property values will be written into the provided store object
 	 * @default `false`
 	 */
 	saveToStore?: boolean;

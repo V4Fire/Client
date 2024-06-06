@@ -30,54 +30,68 @@ export function initProps(
 	component: ComponentInterface,
 	opts: InitPropsObjectOptions = {}
 ): Dictionary {
-	opts.store = opts.store ?? {};
-
 	const unsafe = Object.cast<Writable<ComponentInterface['unsafe']>>(
 		component
 	);
 
-	const
-		{meta, meta: {component: {props}}} = unsafe,
-		{store, from} = opts;
+	const {
+		meta,
+		meta: {component: {props}}
+	} = unsafe;
 
-	const
-		isFunctional = meta.params.functional === true;
+	opts = {...opts};
+	opts.store = opts.store ?? {};
 
-	Object.entries(props).forEach(([name, prop]) => {
-		if (prop == null || !SSR && isFunctional && prop.functional === false) {
+	const {
+		store,
+		from
+	} = opts;
+
+	const isFunctional = meta.params.functional === true;
+
+	Object.keys(props).forEach((name) => {
+		const prop = props[name];
+
+		const canSkip =
+			prop == null ||
+			!SSR && isFunctional && prop.functional === false;
+
+		if (canSkip) {
 			return;
 		}
 
 		unsafe.$activeField = name;
 
-		let
-			val = (from ?? component)[name];
+		let propValue = (from ?? component)[name];
 
-		if (val === undefined) {
-			val = prop.default !== undefined ? prop.default : Object.fastClone(meta.instance[name]);
+		if (propValue === undefined) {
+			propValue = prop.default !== undefined ? prop.default : Object.fastClone(meta.instance[name]);
 		}
 
-		if (val === undefined) {
-			const
-				obj = props[name];
+		if (propValue === undefined) {
+			const propDesc = props[name];
 
-			if (obj?.required) {
+			if (propDesc?.required) {
 				throw new TypeError(`Missing the required property "${name}" of the "${component.componentName}" component`);
 			}
 		}
 
-		let
-			needSaveToStore = opts.saveToStore;
+		let needSaveToStore = opts.saveToStore;
 
-		if (Object.isFunction(val)) {
-			if (opts.saveToStore || val[DEFAULT_WRAPPER] !== true) {
-				val = isTypeCanBeFunc(prop.type) ? val.bind(component) : val.call(component);
+		if (Object.isFunction(propValue)) {
+			if (opts.saveToStore || propValue[DEFAULT_WRAPPER] !== true) {
+				propValue = isTypeCanBeFunc(prop.type) ? propValue.bind(component) : propValue.call(component);
 				needSaveToStore = true;
 			}
 		}
 
 		if (needSaveToStore) {
-			store[name] = val;
+			Object.defineProperty(store, name, {
+				configurable: true,
+				enumerable: true,
+				writable: false,
+				value: propValue
+			});
 		}
 	});
 
@@ -103,13 +117,7 @@ export function isTypeCanBeFunc(type: CanUndef<CanArray<Function | FunctionConst
 	}
 
 	if (Object.isArray(type)) {
-		for (let i = 0; i < type.length; i++) {
-			if (type[i] === Function) {
-				return true;
-			}
-		}
-
-		return false;
+		return type.some((type) => type === Function);
 	}
 
 	return type === Function;
