@@ -14,7 +14,7 @@ import type { ComponentConstructorInfo } from 'core/component/reflect/interface'
 
 /**
  * Returns a component's name based on the given constructor.
- * The name is returned in a dash-separated format.
+ * The name is returned in dash-separated format.
  *
  * @param constructor
  *
@@ -39,7 +39,7 @@ export function getComponentName(constructor: Function): string {
 }
 
 /**
- * Returns an object with information from the specified component constructor
+ * Returns an object containing information derived from the specified component constructor
  *
  * @param constructor
  * @param [declParams] - the component declaration parameters
@@ -96,7 +96,7 @@ export function getInfoFromConstructor(
 	// Mix the "functional" parameter from the parent @component declaration
 	if (parentParams) {
 		let
-			functional;
+			functional: typeof params.functional;
 
 		if (Object.isPlainObject(params.functional) && Object.isPlainObject(parentParams.functional)) {
 			functional = {...parentParams.functional, ...params.functional};

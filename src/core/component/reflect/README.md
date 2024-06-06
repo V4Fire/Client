@@ -39,7 +39,8 @@ This regular expression allows you to determine if a component is abstract based
 
 #### getComponentName
 
-Returns a component's name based on the given constructor. The name is returned in a dash-separated format.
+Returns a component's name based on the given constructor.
+The name is returned in dash-separated format.
 
 #### getInfoFromConstructor
 
