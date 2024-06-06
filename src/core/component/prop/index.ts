@@ -39,18 +39,22 @@ export function initProps(
 		meta: {component: {props, attrs}}
 	} = unsafe;
 
-	opts = {...opts};
-	opts.store ??= {};
-	opts.forceUpdate ??= true;
+	const p = {
+		forceUpdate: true,
+		store: {},
+		...opts
+	};
 
 	const {
 		store,
 		from
-	} = opts;
+	} = p;
 
-	const isFunctional = meta.params.functional === true;
+	const
+		isFunctional = meta.params.functional === true,
+		target = p.forceUpdate ? props : attrs;
 
-	Object.entries(opts.forceUpdate ? props : attrs).forEach(([name, prop]) => {
+	Object.entries(target).forEach(([name, prop]) => {
 		const canSkip =
 			prop == null ||
 			!SSR && isFunctional && prop.functional === false;
@@ -71,8 +75,12 @@ export function initProps(
 			const propDesc = props[name];
 
 			if (propDesc?.required) {
-				throw new TypeError(`Missing the required property "${name}" of the "${component.componentName}" component`);
+				throw new TypeError(`Missing required prop: "${name}"`);
 			}
+		}
+
+		if (prop.validator != null && !prop.validator(propValue)) {
+			throw new TypeError(`Invalid prop: custom validator check failed for prop "${name}`);
 		}
 
 		let needSaveToStore = opts.saveToStore;
