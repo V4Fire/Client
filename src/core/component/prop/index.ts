@@ -74,14 +74,11 @@ export function initProps(
 		const componentName = unsafe.componentName.camelize(false);
 
 		if (propValue === undefined) {
-			const propDesc = props[name];
-
-			if (propDesc?.required) {
+			if (prop.required) {
 				throw new TypeError(`Missing required prop: "${name}" at ${componentName}`);
 			}
-		}
 
-		if (propValue !== undefined && prop.validator != null && !prop.validator(propValue)) {
+		} else if (prop.validator != null && !prop.validator(propValue)) {
 			throw new TypeError(`Invalid prop: custom validator check failed for prop "${name}" at ${componentName}`);
 		}
 
