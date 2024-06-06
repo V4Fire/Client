@@ -1,5 +1,5 @@
 {
-  "hash": "5336c733257f6e18e1d6f8e54067f10e4f2318f48084649b7e14e0409cdc3c6f",
+  "hash": "c80f5e9a74a7fa076c5d7f6ee690194e2afeeede1f218f252313b45c02077f45",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -942,6 +942,102 @@
             "src/components/form/b-radio-button/b-radio-button.styl"
           ],
           "tpl": "src/components/form/b-radio-button/b-radio-button.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-reactive-prop-disable-dummy",
+        {
+          "index": "src/core/component/decorators/prop/test/b-reactive-prop-disable-dummy/index.js",
+          "declaration": {
+            "name": "b-reactive-prop-disable-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-reactive-prop-disable-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/decorators/prop/test/b-reactive-prop-disable-dummy/b-reactive-prop-disable-dummy.ts",
+          "styles": [
+            "src/core/component/decorators/prop/test/b-reactive-prop-disable-dummy/b-reactive-prop-disable-dummy.styl"
+          ],
+          "tpl": "src/core/component/decorators/prop/test/b-reactive-prop-disable-dummy/b-reactive-prop-disable-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-reactive-prop-dummy",
+        {
+          "index": "src/core/component/decorators/prop/test/b-reactive-prop-dummy/index.js",
+          "declaration": {
+            "name": "b-reactive-prop-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-reactive-prop-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/decorators/prop/test/b-reactive-prop-dummy/b-reactive-prop-dummy.ts",
+          "styles": [
+            "src/core/component/decorators/prop/test/b-reactive-prop-dummy/b-reactive-prop-dummy.styl"
+          ],
+          "tpl": "src/core/component/decorators/prop/test/b-reactive-prop-dummy/b-reactive-prop-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-reactive-wrapper-dummy",
+        {
+          "index": "src/core/component/decorators/prop/test/b-reactive-wrapper-dummy/index.js",
+          "declaration": {
+            "name": "b-reactive-wrapper-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-reactive-wrapper-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/decorators/prop/test/b-reactive-wrapper-dummy/b-reactive-wrapper-dummy.ts",
+          "styles": [
+            "src/core/component/decorators/prop/test/b-reactive-wrapper-dummy/b-reactive-wrapper-dummy.styl"
+          ],
+          "tpl": "src/core/component/decorators/prop/test/b-reactive-wrapper-dummy/b-reactive-wrapper-dummy.ss",
           "etpl": null
         }
       ],
