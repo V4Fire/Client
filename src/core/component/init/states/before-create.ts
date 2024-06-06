@@ -231,7 +231,7 @@ export function beforeCreateState(
 		meta.hooks['before:mounted'].push({
 			fn: () => {
 				Object.keys(unsafe.$attrs).forEach((name) => {
-					if (meta.props[name]?.forceUpdate) {
+					if (meta.props[name] == null || meta.props[name]!.forceUpdate) {
 						return;
 					}
 
