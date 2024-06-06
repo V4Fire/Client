@@ -71,16 +71,18 @@ export function initProps(
 			propValue = prop.default !== undefined ? prop.default : Object.fastClone(meta.instance[name]);
 		}
 
+		const componentName = unsafe.componentName.camelize(false);
+
 		if (propValue === undefined) {
 			const propDesc = props[name];
 
 			if (propDesc?.required) {
-				throw new TypeError(`Missing required prop: "${name}"`);
+				throw new TypeError(`Missing required prop: "${name}" at ${componentName}`);
 			}
 		}
 
-		if (prop.validator != null && !prop.validator(propValue)) {
-			throw new TypeError(`Invalid prop: custom validator check failed for prop "${name}`);
+		if (propValue !== undefined && prop.validator != null && !prop.validator(propValue)) {
+			throw new TypeError(`Invalid prop: custom validator check failed for prop "${name}" at ${componentName}`);
 		}
 
 		let needSaveToStore = opts.saveToStore;
