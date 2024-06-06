@@ -303,6 +303,21 @@ export function beforeCreateState(
 		}
 	});
 
+	meta.hooks['before:mounted'].push({
+		fn: () => {
+			Object.keys(unsafe.$attrs).forEach((name) => {
+				if (meta.props[name]?.forceUpdate === false) {
+					unsafe.$el?.removeAttribute(name);
+
+					unsafe.$watch(`$attrs.${name}`, async () => {
+						await unsafe.$nextTick();
+						unsafe.$el?.removeAttribute(name);
+					});
+				}
+			});
+		}
+	});
+
 	runHook('beforeCreate', component).catch(stderr);
 	callMethodFromComponent(component, 'beforeCreate');
 }

@@ -111,8 +111,15 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			isAccessor = Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor),
 			isMountedWatcher = info.type === 'mounted';
 
+		let
+			watchType = info.type;
+
+		if (info.type === 'prop' && meta?.props[info.name]?.forceUpdate === false) {
+			watchType = 'attr';
+		}
+
 		const watchInfo = !isAccessor ?
-			component.$renderEngine.proxyGetters[info.type]?.(info.ctx) :
+			component.$renderEngine.proxyGetters[watchType]?.(info.ctx) :
 			null;
 
 		const normalizedOpts: WatchOptions = {
@@ -383,7 +390,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						unwatch;
 
 					if ('watch' in watchInfo) {
-						unwatch = watchInfo.watch(prop, (value, oldValue) => {
+						unwatch = watchInfo.watch(watchType === 'attr' ? `$attrs.${prop}` : prop, (value, oldValue) => {
 							const info = {
 								obj: component,
 								root: component,

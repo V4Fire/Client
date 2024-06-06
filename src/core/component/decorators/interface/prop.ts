@@ -120,6 +120,14 @@ export interface DecoratorProp<
 	B = A
 > extends PropOptions {
 	/**
+	 * If set to false, changing the prop will never trigger a re-render of the component template.
+	 * Use this mode for props that are not used in the template to reduce the number of unwanted re-renders.
+	 *
+	 * @default `true`
+	 */
+	forceUpdate?: boolean;
+
+	/**
 	 * If set to true, the prop always uses its own default value when needed.
 	 * This option is actually used when the `defaultProps` property is set to false for the described component
 	 * (via the `@component` decorator), and we want to override this behavior for a particular prop.

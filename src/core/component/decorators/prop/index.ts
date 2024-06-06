@@ -42,8 +42,8 @@ export const prop = paramsFactory<
 	DecoratorProp
 >('props', (p) => {
 	if (Object.isFunction(p) || Object.isArray(p)) {
-		return {type: p};
+		return {type: p, forceUpdate: true};
 	}
 
-	return p;
+	return {forceUpdate: true, ...p};
 });
