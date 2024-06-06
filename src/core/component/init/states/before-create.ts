@@ -14,6 +14,7 @@ import { forkMeta } from 'core/component/meta';
 import { getPropertyInfo, PropertyInfo } from 'core/component/reflect';
 import { getNormalParent } from 'core/component/traverse';
 
+import { initProps } from 'core/component/prop';
 import { initFields } from 'core/component/field';
 import { attachAccessorsFromMeta } from 'core/component/accessor';
 import { attachMethodsFromMeta, callMethodFromComponent } from 'core/component/method';
@@ -219,6 +220,39 @@ export function beforeCreateState(
 		implementEventEmitterAPI(component);
 	}
 
+	if (meta.params.functional !== true) {
+		initProps(component, {
+			from: unsafe.$attrs,
+			store: unsafe,
+			saveToStore: true,
+			forceUpdate: false
+		});
+
+		meta.hooks['before:mounted'].push({
+			fn: () => {
+				Object.keys(unsafe.$attrs).forEach((name) => {
+					if (meta.props[name]?.forceUpdate) {
+						return;
+					}
+
+					unsafe.$el?.removeAttribute(name);
+
+					unsafe.$watch(`$attrs.${name}`, async (value: unknown) => {
+						Object.defineProperty(unsafe, name, {
+							configurable: true,
+							enumerable: true,
+							writable: false,
+							value
+						});
+
+						await unsafe.$nextTick();
+						unsafe.$el?.removeAttribute(name);
+					});
+				});
+			}
+		});
+	}
+
 	attachAccessorsFromMeta(component);
 	runHook('beforeRuntime', component).catch(stderr);
 
@@ -235,8 +269,7 @@ export function beforeCreateState(
 
 	initFields(systemFields, component, unsafe);
 
-	const
-		fakeHandler = () => undefined;
+	const fakeHandler = () => undefined;
 
 	if (watchDependencies.size > 0) {
 		const
@@ -300,21 +333,6 @@ export function beforeCreateState(
 					handler: fakeHandler
 				}
 			];
-		}
-	});
-
-	meta.hooks['before:mounted'].push({
-		fn: () => {
-			Object.keys(unsafe.$attrs).forEach((name) => {
-				if (meta.props[name]?.forceUpdate === false) {
-					unsafe.$el?.removeAttribute(name);
-
-					unsafe.$watch(`$attrs.${name}`, async () => {
-						await unsafe.$nextTick();
-						unsafe.$el?.removeAttribute(name);
-					});
-				}
-			});
 		}
 	});
 

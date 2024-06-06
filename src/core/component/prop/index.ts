@@ -36,11 +36,12 @@ export function initProps(
 
 	const {
 		meta,
-		meta: {component: {props}}
+		meta: {component: {props, attrs}}
 	} = unsafe;
 
 	opts = {...opts};
-	opts.store = opts.store ?? {};
+	opts.store ??= {};
+	opts.forceUpdate ??= true;
 
 	const {
 		store,
@@ -49,9 +50,7 @@ export function initProps(
 
 	const isFunctional = meta.params.functional === true;
 
-	Object.keys(props).forEach((name) => {
-		const prop = props[name];
-
+	Object.entries(opts.forceUpdate ? props : attrs).forEach(([name, prop]) => {
 		const canSkip =
 			prop == null ||
 			!SSR && isFunctional && prop.functional === false;
@@ -79,7 +78,7 @@ export function initProps(
 		let needSaveToStore = opts.saveToStore;
 
 		if (Object.isFunction(propValue)) {
-			if (opts.saveToStore || propValue[DEFAULT_WRAPPER] !== true) {
+			if (opts.saveToStore === true || propValue[DEFAULT_WRAPPER] !== true) {
 				propValue = isTypeCanBeFunc(prop.type) ? propValue.bind(component) : propValue.call(component);
 				needSaveToStore = true;
 			}

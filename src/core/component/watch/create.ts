@@ -26,7 +26,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 	const
 		watchCache = new Map();
 
-	// eslint-disable-next-line @typescript-eslint/typedef,max-lines-per-function
+	// eslint-disable-next-line @typescript-eslint/typedef,max-lines-per-function,complexity
 	return function watchFn(this: ComponentInterface, path, optsOrHandler, rawHandler?) {
 		let
 			info: PropertyInfo,
@@ -390,7 +390,9 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						unwatch;
 
 					if ('watch' in watchInfo) {
-						unwatch = watchInfo.watch(watchType === 'attr' ? `$attrs.${prop}` : prop, (value, oldValue) => {
+						const watchFor = watchType === 'attr' ? `$attrs.${prop}` : prop;
+
+						unwatch = watchInfo.watch(watchFor, (value, oldValue) => {
 							const info = {
 								obj: component,
 								root: component,
