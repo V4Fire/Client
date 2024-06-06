@@ -79,9 +79,7 @@ export type ComponentMethodHooks = {
 	};
 };
 
-export interface ComponentDirectiveOptions extends DirectiveBinding {
-
-}
+export interface ComponentDirectiveOptions extends DirectiveBinding {}
 
 export type ComponentWatchDependencies = Map<WatchPath, WatchPath[]>;
 export type ComponentWatchPropDependencies = Map<WatchPath, Set<string>>;

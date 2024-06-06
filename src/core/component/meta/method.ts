@@ -61,7 +61,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				storeKey = `${name}Store`;
 
 			let
-				metaKey;
+				metaKey: string;
 
 			// Computed fields are cached by default
 			if (
@@ -75,7 +75,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 			}
 
 			let
-				field;
+				field: Dictionary;
 
 			if (props[name] != null) {
 				field = props;
@@ -87,8 +87,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				field = systemFields;
 			}
 
-			const
-				obj = meta[metaKey];
+			const store = meta[metaKey];
 
 			// If we already have a property by this key, like a prop or field,
 			// we need to delete it to correct override
@@ -98,11 +97,11 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 			}
 
 			const
-				old = obj[name],
+				old = store[name],
 				set = desc.set ?? old?.set,
 				get = desc.get ?? old?.get;
 
-			// To use `super` within the setter we also create a new method with a name `${key}Setter`
+			// To use `super` within the setter, we also create a new method with a name `${key}Setter`
 			if (set != null) {
 				const nm = `${name}Setter`;
 				proto[nm] = set;
@@ -115,7 +114,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				};
 			}
 
-			// To using `super` within the getter we also create a new method with a name `${key}Getter`
+			// To using `super` within the getter, we also create a new method with a name `${key}Getter`
 			if (get != null) {
 				const nm = `${name}Getter`;
 				proto[nm] = get;
@@ -128,7 +127,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				};
 			}
 
-			obj[name] = Object.assign(obj[name] ?? {}, {
+			store[name] = Object.assign(store[name] ?? {}, {
 				src,
 				get: desc.get ?? old?.get,
 				set
