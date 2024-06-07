@@ -124,39 +124,61 @@ export function normalizeComponentAttrs(
 	}
 
 	const
+		dynamicPropsPatches = {},
 		normalizedAttrs = {...attrs};
 
 	if (Object.isDictionary(normalizedAttrs['v-attrs'])) {
 		normalizedAttrs['v-attrs'] = normalizeComponentAttrs(normalizedAttrs['v-attrs'], dynamicProps, component);
 	}
 
-	Object.keys(normalizedAttrs).forEach((name) => {
-		let
-			propName = `${name}Prop`.camelize(false);
+	Object.keys(normalizedAttrs).forEach((attrName) => {
+		let propName = `${attrName}Prop`.camelize(false);
 
-		if (name === 'ref' || name === 'ref_for') {
+		if (attrName === 'ref' || attrName === 'ref_for') {
 			return;
 		}
 
 		if (deprecatedProps != null) {
-			const
-				alternativeName = deprecatedProps[name] ?? deprecatedProps[propName];
+			const alternativeName =
+				deprecatedProps[attrName] ??
+				deprecatedProps[propName];
 
 			if (alternativeName != null) {
-				updateAttrName(name, alternativeName);
-				name = alternativeName;
+				changeAttrName(attrName, alternativeName);
+				attrName = alternativeName;
 				propName = `${alternativeName}Prop`;
 			}
 		}
 
 		if (propName in props) {
-			updateAttrName(name, propName);
+			changeAttrName(attrName, propName);
+
+		} else {
+			patchDynamicProps(attrName);
 		}
 	});
 
+	if (dynamicProps != null && Object.keys(dynamicPropsPatches).length > 0) {
+		for (let i = 0; i < dynamicProps.length; i++) {
+			const
+				prop = dynamicProps[i],
+				path = dynamicPropsPatches[prop];
+
+			if (path != null) {
+				if (path !== '') {
+					dynamicProps[i] = path;
+
+				} else {
+					dynamicProps.slice(i, 1);
+					i--;
+				}
+			}
+		}
+	}
+
 	return normalizedAttrs;
 
-	function updateAttrName(name: string, newName: string) {
+	function changeAttrName(name: string, newName: string) {
 		normalizedAttrs[newName] = normalizedAttrs[name];
 		delete normalizedAttrs[name];
 
@@ -164,11 +186,13 @@ export function normalizeComponentAttrs(
 			return;
 		}
 
-		const
-			dynamicAttrPos = dynamicProps.indexOf(name);
+		dynamicPropsPatches[name] = newName;
+		patchDynamicProps(newName);
+	}
 
-		if (dynamicAttrPos !== -1) {
-			dynamicProps[dynamicAttrPos] = newName;
+	function patchDynamicProps(propName: string) {
+		if (component.props[propName]?.forceUpdate === false) {
+			dynamicPropsPatches[propName] = '';
 		}
 	}
 }

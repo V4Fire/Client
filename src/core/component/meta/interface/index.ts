@@ -158,12 +158,6 @@ export interface ComponentMeta {
 		props: Dictionary<PropOptions>;
 
 		/**
-		 * A dictionary with registered component attributes.
-		 * Unlike props, changing attributes does not lead to re-rendering of the component template.
-		 */
-		attrs: Dictionary<PropOptions>;
-
-		/**
 		 * A dictionary that contains the default component modifiers
 		 */
 		mods: Dictionary<string>;

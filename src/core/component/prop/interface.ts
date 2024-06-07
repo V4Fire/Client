@@ -16,12 +16,6 @@ export interface InitPropsObjectOptions {
 	from?: Dictionary;
 
 	/**
-	 * If set to false, changing the specified props should not lead to the re-rendering of the template
-	 * @default `true`
-	 */
-	forceUpdate?: boolean;
-
-	/**
 	 * A store for the initialized props
 	 * @default `{}`
 	 */

@@ -68,7 +68,6 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 
 			mods: {},
 			props: {},
-			attrs: {},
 
 			computed: {},
 			methods: {},

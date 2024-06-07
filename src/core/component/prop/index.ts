@@ -36,7 +36,7 @@ export function initProps(
 
 	const {
 		meta,
-		meta: {component: {props, attrs}}
+		meta: {component: {props}}
 	} = unsafe;
 
 	const p = {
@@ -51,10 +51,9 @@ export function initProps(
 	} = p;
 
 	const
-		isFunctional = meta.params.functional === true,
-		target = p.forceUpdate ? props : attrs;
+		isFunctional = meta.params.functional === true;
 
-	Object.entries(target).forEach(([name, prop]) => {
+	Object.entries(props).forEach(([name, prop]) => {
 		const canSkip =
 			prop == null ||
 			!SSR && isFunctional && prop.functional === false;
