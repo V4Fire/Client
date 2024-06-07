@@ -220,6 +220,58 @@ export function beforeCreateState(
 		implementEventEmitterAPI(component);
 	}
 
+	if (meta.params.functional !== true) {
+		initProps(component, {
+			from: unsafe.$attrs,
+			store: unsafe,
+			saveToStore: true,
+			forceUpdate: false
+		});
+
+		meta.hooks['before:mounted'].push({
+			fn: () => {
+				const parent = unsafe.$normalParent?.unsafe;
+
+				if (parent == null) {
+					return;
+				}
+
+				const propValuesToUpdate: string[][] = [];
+
+				Object.keys(unsafe.$attrs).forEach((attrName) => {
+					const propPrefix = 'on:';
+
+					if (!attrName.startsWith(propPrefix)) {
+						return;
+					}
+
+					const propName = attrName.replace(propPrefix, '');
+
+					if (meta.props[propName] == null || meta.props[propName]!.forceUpdate) {
+						return;
+					}
+
+					propValuesToUpdate.push([propName, attrName]);
+				});
+
+				if (propValuesToUpdate.length > 0) {
+					parent.$on('hook:beforeUpdate', updatePropsValues);
+					unsafe.$async.worker(() => parent.$off('hook:beforeUpdate', updatePropsValues));
+				}
+
+				function updatePropsValues() {
+					propValuesToUpdate.forEach(([propName, getterName]) => {
+						const getter = unsafe.$attrs[getterName];
+
+						if (Object.isFunction(getter)) {
+							unsafe[`@${propName}`] = getter();
+						}
+					});
+				}
+			}
+		});
+	}
+
 	attachAccessorsFromMeta(component);
 	runHook('beforeRuntime', component).catch(stderr);
 
