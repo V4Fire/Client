@@ -13,7 +13,7 @@ Changelog
 
 #### :house: Internal
 
-* Removed unnecessary rerendering of container in case of `dbStore` change;
+* Removed unnecessary rerendering of container in case of `request` prop change;
 rerendering of the container and all nodes inside occurs only when `firstChunkRender` is changed.
 
 ## v4.0.0-beta.101 (2024-05-30)
