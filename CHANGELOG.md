@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-06-??)
+
+#### :bug: Bug Fix
+
+* Fix component deactivation order, children must be deactivated first `core/component/init`
+
 ## v4.0.0-beta.101 (2024-05-30)
 
 #### :bug: Bug Fix
