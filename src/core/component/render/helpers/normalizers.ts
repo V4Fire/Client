@@ -169,7 +169,7 @@ export function normalizeComponentAttrs(
 					dynamicProps[i] = path;
 
 				} else {
-					dynamicProps.slice(i, 1);
+					dynamicProps.splice(i, 1);
 					i--;
 				}
 			}
