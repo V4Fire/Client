@@ -94,7 +94,7 @@ export function fillMeta(
 		}
 
 		if (!isRoot || defaultValue !== undefined) {
-			component.props[name] = {
+			(prop.forceUpdate ? component.props : component.attrs)[name] = {
 				type: prop.type,
 				required: prop.required !== false && defaultProps && defaultValue === undefined,
 
