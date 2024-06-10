@@ -9,6 +9,10 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+#### :bug: Bug Fix
+
+* Fixed a route update prevention, caused by another transition method
+
 ## v4.0.0-beta.97 (2024-05-21)
 
 #### :bug: Bug Fix
