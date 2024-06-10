@@ -20,12 +20,8 @@ import type { TransitionContext } from 'components/base/b-router/modules/transit
 const
 	$$ = symbolGenerator();
 
-const transitionPerformLabel = {
-	label: $$.transitionPerform
-};
-
-const transitionExecuteLabel = {
-	label: $$.transitionExecute
+const transitionLabel = {
+	label: $$.transition
 };
 
 export default class Transition {
@@ -160,13 +156,13 @@ export default class Transition {
 		this.initNewRouteInfo();
 
 		this.scroll.createSnapshot();
-		await $a.promise(this.scroll.updateCurrentRouteScroll(), transitionExecuteLabel);
+		await this.scroll.updateCurrentRouteScroll();
 
 		// We didn't find any route matching the given ref
 		if (this.newRouteInfo == null) {
 			// The transition was user-generated, then we need to save the scroll
 			if (!SSR && this.method !== 'event' && this.ref != null) {
-				await $a.promise(engine[this.method](this.ref, this.scroll.getSnapshot()), transitionExecuteLabel);
+				await $a.promise(engine[this.method](this.ref, this.scroll.getSnapshot()), transitionLabel);
 			}
 
 			return;
@@ -272,7 +268,7 @@ export default class Transition {
 				return;
 			}
 
-			await $a.promise(engine[this.method](newRoute.url, plainInfo), transitionPerformLabel).then(() => {
+			await $a.promise(engine[this.method](newRoute.url, plainInfo), transitionLabel).then(() => {
 				const isSoftTransition = r.route != null && Object.fastCompare(
 					router.convertRouteToPlainObjectWithoutProto(currentRoute),
 					router.convertRouteToPlainObjectWithoutProto(newRoute)
