@@ -160,6 +160,13 @@ export abstract class ComponentInterface {
 	abstract hook: Hook;
 
 	/**
+	 * A link to the root component
+	 */
+	get r(): this['Root'] {
+		return Object.throw();
+	}
+
+	/**
 	 * An API for safely invoking some internal properties and methods of a component.
 	 * This parameter allows you to use protected properties and methods from outside the class without
 	 * causing TypeScript errors.
