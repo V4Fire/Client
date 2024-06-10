@@ -21,7 +21,7 @@ const
 	$$ = symbolGenerator();
 
 const transitionPerformLabel = {
-	label: $$.transition
+	label: $$.transitionPerform
 };
 
 const transitionExecuteLabel = {
