@@ -62,6 +62,20 @@ export function beforeCreateState(
 	unsafe.async = new Async(component);
 	unsafe.$async = new Async(component);
 
+	Object.defineProperty(unsafe, 'r', {
+		configurable: true,
+		enumerable: true,
+		get: () => {
+			const r = ('getRoot' in unsafe ? unsafe.getRoot?.() : null) ?? unsafe.$root;
+
+			if ('$remoteParent' in r.unsafe) {
+				return r.unsafe.$remoteParent!.$root;
+			}
+
+			return r;
+		}
+	});
+
 	Object.defineProperty(unsafe, '$destroy', {
 		configurable: true,
 		enumerable: false,
