@@ -25,10 +25,9 @@ module.exports = [
 			return;
 		}
 
-		const
-			src = attrs[':src'];
+		const src = attrs[':src'];
 
-		if (src && /require\(.*?\.svg[\\"']+\)/.test(src[0])) {
+		if (src && /require\(.*?\.svg["'\\]+\)/.test(src[0])) {
 			src[0] += '.replace(/^"|"$/g, \'\')';
 		}
 	},
@@ -45,8 +44,7 @@ module.exports = [
 
 		Object.forEach(attrs, (attr, key) => {
 			if (key === 'ref') {
-				const
-					ref = attrs[key][0];
+				const ref = attrs[key][0];
 
 				attrs[':ref'] = [`$resolveRef('${ref}')`];
 				attrs['v-ref'] = [`'${ref}'`];
@@ -56,8 +54,7 @@ module.exports = [
 			}
 
 			if (key === ':ref') {
-				const
-					ref = attrs[key];
+				const ref = attrs[key];
 
 				attrs[':ref'] = [`$resolveRef(${ref})`];
 				attrs['v-ref'] = ref;
@@ -78,8 +75,7 @@ module.exports = [
 				return;
 			}
 
-			const
-				dataAttrBind = ':-';
+			const dataAttrBind = ':-';
 
 			if (key.startsWith(dataAttrBind)) {
 				attrs[`:data-${key.slice(dataAttrBind.length)}`] = attr;
@@ -88,8 +84,7 @@ module.exports = [
 			}
 
 			if (isStaticV4Prop.test(key)) {
-				const
-					tmp = key.dasherize(key.startsWith(':'));
+				const tmp = key.dasherize(key.startsWith(':'));
 
 				if (tmp !== key) {
 					delete attrs[key];
