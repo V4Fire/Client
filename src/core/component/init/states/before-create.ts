@@ -260,15 +260,14 @@ export function beforeCreateState(
 
 	if (watchDependencies.size > 0) {
 		const
-			isFunctional = meta.params.functional === true;
-
-		const
+			isFunctional = meta.params.functional === true,
 			watchSet = new Set<PropertyInfo>();
 
 		watchDependencies.forEach((deps) => {
 			deps.forEach((dep) => {
 				const
-					info = getPropertyInfo(Object.isArray(dep) ? dep.join('.') : String(dep), component);
+					path = Object.isArray(dep) ? dep.join('.') : String(dep),
+					info = getPropertyInfo(path, component);
 
 				if (info.type === 'system' || isFunctional && info.type === 'field') {
 					watchSet.add(info);
