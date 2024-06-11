@@ -61,6 +61,12 @@ export function initProps(
 
 		let propValue = (from ?? component)[name];
 
+		const getAccessors = unsafe.$attrs[`on:${name}`];
+
+		if (propValue === undefined && Object.isFunction(getAccessors)) {
+			propValue = getAccessors()[0];
+		}
+
 		if (propValue === undefined) {
 			propValue = prop.default !== undefined ? prop.default : Object.fastClone(meta.instance[name]);
 		}

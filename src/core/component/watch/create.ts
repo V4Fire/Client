@@ -373,8 +373,14 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						forceUpdate = meta?.props[info.name]?.forceUpdate !== false,
 						destructors: Function[] = [];
 
-					const attachDeepProxy = (propVal = proxy[prop], fromSystem = false) => {
-						const parent = component.$parent;
+					const attachDeepProxy = (forceUpdate = true) => {
+						const getAccessors: CanUndef<ReturnType<ComponentInterface['createPropAccessors']>> = Object.cast(
+							this.$attrs[`on:${prop}`]
+						);
+
+						const
+							parent = component.$parent,
+							propVal = forceUpdate ? proxy[prop] : getAccessors?.()[0];
 
 						if (parent == null || getProxyType(propVal) == null) {
 							return;
@@ -435,19 +441,13 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 							}
 						};
 
-						if (fromSystem) {
-							const getAccessors: CanUndef<ReturnType<ComponentInterface['createPropAccessors']>> = Object.cast(
-								this.$attrs[`on:${prop}`]
-							);
-
-							if (Object.isFunction(getAccessors)) {
-								getAccessors()[1](info.path, normalizedOpts, watchHandler);
-							}
-
-						} else {
+						if (forceUpdate) {
 							// eslint-disable-next-line @v4fire/unbound-method
 							const {unwatch} = watch(<object>propVal, info.path, normalizedOpts, watchHandler);
 							destructors.push(unwatch);
+
+						} else {
+							getAccessors?.()[1](info.path, normalizedOpts, watchHandler);
 						}
 					};
 
@@ -459,7 +459,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 						if (fromSystem) {
 							i.path = [String(i.path[0]).slice(1), ...i.path.slice(1)];
-							attachDeepProxy(value, true);
+							attachDeepProxy(false);
 
 						} else {
 							attachDeepProxy();
@@ -533,7 +533,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 					}
 
 					destructors.push(unwatch);
-					attachDeepProxy();
+					attachDeepProxy(forceUpdate);
 
 					return wrapDestructor(() => {
 						destructors.forEach((destroy) => destroy());
