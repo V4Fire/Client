@@ -89,10 +89,6 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 	attrs[':getRoot'] = ['$getRoot(self)'];
 	attrs[':getParent'] = ["$getParent(self, typeof $restArgs !== 'undefined' ? $restArgs : undefined)"];
 
-	if (componentName === 'bButton') {
-		console.log(componentName, component.props['bla'], component.props[':bla']);
-	}
-
 	if (component.inheritMods !== false && !attrs[':modsProp']) {
 		attrs[':modsProp'] = ['sharedMods'];
 	}
