@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.102 (2024-06-11)
+
+#### :bug: Bug Fix
+
+* Removed the use of `$a.promise` in the `execute` method of the `Transition` class. This previously caused only
+the last `replace` method call to be executed when multiple calls were made.
+
 ## v4.0.0-beta.97 (2024-05-21)
 
 #### :bug: Bug Fix
