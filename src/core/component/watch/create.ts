@@ -373,94 +373,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						forceUpdate = meta?.props[info.name]?.forceUpdate !== false,
 						destructors: Function[] = [];
 
-					const externalWatchHandler = (value: unknown, oldValue: unknown, i: WatchHandlerParams) => {
-						const fromSystem = Object.isString(i.path[0]) && i.path[0].startsWith('@');
-
-						for (let i = destructors.length; --i > 1 - 1;) {
-							destructors[i]();
-							destructors.pop();
-						}
-
-						if (fromSystem) {
-							i.path = [String(i.path[0]).slice(1), ...i.path.slice(1)];
-
-							// eslint-disable-next-line @typescript-eslint/no-use-before-define
-							attachDeepProxy(value, true);
-
-						} else {
-							// eslint-disable-next-line @typescript-eslint/no-use-before-define
-							attachDeepProxy();
-						}
-
-						let valueByPath = Object.get(value, slicedPathChunks);
-						valueByPath = unwrap(valueByPath) ?? valueByPath;
-
-						let oldValueByPath = Object.get(oldValue, slicedPathChunks);
-						oldValueByPath = unwrap(oldValueByPath) ?? oldValueByPath;
-
-						if (valueByPath !== oldValueByPath) {
-							if (needCollapse) {
-								handler.call(this, value, oldValue, i);
-
-							} else {
-								handler.call(this, valueByPath, oldValueByPath, i);
-							}
-						}
-					};
-
-					let unwatch: Function;
-
-					if (forceUpdate && 'watch' in watchInfo) {
-						unwatch = watchInfo.watch(prop, (value: object, oldValue?: object) => {
-							const info: WatchHandlerParams = {
-								obj: component,
-								root: component,
-								path: [prop],
-								originalPath: [prop],
-								top: value,
-								fromProto: false
-							};
-
-							const tiedLinks = handler[tiedWatchers];
-
-							if (Object.isArray(tiedLinks)) {
-								tiedLinks.forEach((path) => {
-									if (!Object.isArray(path)) {
-										return;
-									}
-
-									const modifiedInfo: WatchHandlerParams = {
-										...info,
-										path,
-										parent: {value, oldValue, info}
-									};
-
-									externalWatchHandler(value, oldValue, modifiedInfo);
-								});
-
-							} else {
-								externalWatchHandler(value, oldValue, info);
-							}
-						});
-
-					} else {
-						const topOpts = {
-							...normalizedOpts,
-							deep: false,
-							collapse: true
-						};
-
-						if (forceUpdate) {
-							// eslint-disable-next-line @v4fire/unbound-method
-							unwatch = watch(proxy, prop, topOpts, Object.cast(externalWatchHandler)).unwatch;
-
-						} else {
-							unwatch = watchFn.call(this, `@${prop}`, topOpts, externalWatchHandler);
-						}
-					}
-
-					destructors.push(unwatch);
-
 					const attachDeepProxy = (propVal = proxy[prop], fromSystem = false) => {
 						const parent = component.$parent;
 
@@ -539,8 +451,94 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						}
 					};
 
+					const externalWatchHandler = (value: unknown, oldValue: unknown, i?: WatchHandlerParams) => {
+						const fromSystem = i != null && Object.isString(i.path[0]) && i.path[0].startsWith('@');
+
+						destructors.forEach((destroy) => destroy());
+						destructors.splice(1, destructors.length);
+
+						if (fromSystem) {
+							i.path = [String(i.path[0]).slice(1), ...i.path.slice(1)];
+							attachDeepProxy(value, true);
+
+						} else {
+							attachDeepProxy();
+						}
+
+						let valueByPath = Object.get(value, slicedPathChunks);
+						valueByPath = unwrap(valueByPath) ?? valueByPath;
+
+						let oldValueByPath = Object.get(oldValue, slicedPathChunks);
+						oldValueByPath = unwrap(oldValueByPath) ?? oldValueByPath;
+
+						if (valueByPath !== oldValueByPath) {
+							if (needCollapse) {
+								handler.call(this, value, oldValue, i);
+
+							} else {
+								handler.call(this, valueByPath, oldValueByPath, i);
+							}
+						}
+					};
+
+					let unwatch: Function;
+
+					if (forceUpdate && 'watch' in watchInfo) {
+						unwatch = watchInfo.watch(prop, (value: object, oldValue?: object) => {
+							const info: WatchHandlerParams = {
+								obj: component,
+								root: component,
+								path: [prop],
+								originalPath: [prop],
+								top: value,
+								fromProto: false
+							};
+
+							const tiedLinks = handler[tiedWatchers];
+
+							if (Object.isArray(tiedLinks)) {
+								tiedLinks.forEach((path) => {
+									if (!Object.isArray(path)) {
+										return;
+									}
+
+									const modifiedInfo: WatchHandlerParams = {
+										...info,
+										path,
+										parent: {value, oldValue, info}
+									};
+
+									externalWatchHandler(value, oldValue, modifiedInfo);
+								});
+
+							} else {
+								externalWatchHandler(value, oldValue, info);
+							}
+						});
+
+					} else {
+						const topOpts = {
+							...normalizedOpts,
+							deep: false,
+							collapse: true
+						};
+
+						if (forceUpdate) {
+							// eslint-disable-next-line @v4fire/unbound-method
+							unwatch = watch(proxy, prop, topOpts, Object.cast(externalWatchHandler)).unwatch;
+
+						} else {
+							unwatch = watchFn.call(this, `@${prop}`, topOpts, externalWatchHandler);
+						}
+					}
+
+					destructors.push(unwatch);
 					attachDeepProxy();
-					return wrapDestructor(() => destructors.forEach((destroy) => destroy()));
+
+					return wrapDestructor(() => {
+						destructors.forEach((destroy) => destroy());
+						destructors.splice(0, destructors.length);
+					});
 				}
 
 				default:
