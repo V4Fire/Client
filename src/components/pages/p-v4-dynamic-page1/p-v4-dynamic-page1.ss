@@ -21,3 +21,7 @@
 			Functional button
 
 		< b-scroll-element-dummy
+
+		< b-bottom-slide
+			< b-button
+				Click me
