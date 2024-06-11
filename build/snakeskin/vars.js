@@ -10,13 +10,16 @@
 
 const path = require('upath');
 
-/** @type {object} */
+/**
+ * Super-global variables
+ * @type {object}
+ */
 const {Vars} = require('snakeskin');
 
 module.exports = {
 	/**
-	 * Saves a basename of the specified dirname to the global namespace by the passed aliases.
-	 * The function should be used via the `eval` directive.
+	 * Saves the basename of the specified directory to the global namespace under the provided aliases.
+	 * It should be used through the `eval` directive.
 	 *
 	 * @param {string} dirname
 	 * @param {...Array<string>} aliases
@@ -34,8 +37,7 @@ module.exports = {
 	 * ```
 	 */
 	saveTplDir(dirname, ...aliases) {
-		const
-			dir = path.basename(dirname);
+		const dir = path.basename(dirname);
 
 		if (!Vars['globalTplDirs']) {
 			Vars['globalTplDirs'] = {};
@@ -46,7 +48,7 @@ module.exports = {
 				Vars['globalTplDirs'][name] = dir;
 
 			} else if (Vars['globalTplDirs'][name] !== dir) {
-				throw new Error(`The name "${name}" is already exist in the global namespace`);
+				throw new Error(`The name "${name}" already exists in the global namespace`);
 			}
 		});
 	}

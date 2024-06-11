@@ -39,6 +39,7 @@ Object.assign(componentParams, {
 	 *
 	 * @param {string} name - component name
 	 * @returns {object}
+	 * @throws {ReferenceError} if a component with the specified name does not exist
 	 *
 	 * @example
 	 * ```js
@@ -149,10 +150,7 @@ function getParentParameters(component) {
 		params = {},
 		parent = getParentParameters(componentParams[component.parent]);
 
-	for (let i = 0; i < fields.length; i++) {
-		const
-			[key, def] = fields[i];
-
+	fields.forEach(([key, def]) => {
 		const
 			val = component[key],
 			isObj = Object.isDictionary(val);
@@ -163,20 +161,20 @@ function getParentParameters(component) {
 
 			if (Object.isDictionary(parentVal)) {
 				params[key] = {...parentVal, ...val};
-				continue;
+				return;
 			}
 
 			if (isObj) {
 				params[key] = val;
-				continue;
+				return;
 			}
 
 			params[key] = parentVal !== undefined ? parentVal : def;
-			continue;
+			return;
 		}
 
 		params[key] = val;
-	}
+	});
 
 	return params;
 }

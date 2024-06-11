@@ -22,19 +22,19 @@ const
  * RegExp to extract parameters from a @component declaration
  * @type {RegExp}
  */
-exports.componentRgxp = /@component\(([^@]*?)\)[\s\S]+?class\s+/;
+exports.componentRgxp = /@component\(([^@]*?)\).+?class\s+/s;
 
 /**
  * RegExp to extract a name from a component and name of the parent component
  * @type {RegExp}
  */
-exports.componentClassRgxp = /^\s*(?:export\s+default\s+)?(?:abstract\s+)?class\s+(([\s\S]*?)\s+extends\s+[\s\S]*?)(?:\s+implements\s+[^{]*|\s*){/m;
+exports.componentClassRgxp = /^\s*(?:export\s+default\s+)?(?:abstract\s+)?class\s+((.*?)\s+extends\s+.*?)(?:\s+implements\s+[^{]*|\s*){/sm;
 
 /**
  * RegExp to extract component props
  * @type {RegExp}
  */
-exports.propRgxp = /^(\t+)@prop[^(]*\([^@]+?\)+\n+\1([ \w$]+)(?:[?!]?:\s*[ \w|&$?()[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm;
+exports.propRgxp = /^(\t+)@prop[^(]*\([^@]+?\)+\n+\1([\w $]+)(?:[!?]?:\s*[\w "$&'().:<>?[\]`{|}]+?)?\s*(?:=|;$)/gm;
 
 /**
  * RegExp to match the generic syntax
@@ -58,7 +58,7 @@ exports.resources = [resolve.blockSync(), ...resolve.dependencies];
  * Glob pattern to search component files
  * @type {string}
  */
-exports.componentQuery = `/**/@(${validators.blockTypeList.join('|')})-*.@(ts|js)`;
+exports.componentQuery = `/**/@(${validators.blockTypeList.join('|')})-*/**/*.@(ts|js)`;
 
 /**
  * List of component files
