@@ -13,7 +13,7 @@ Changelog
 
 #### :house: Internal
 
-* Removed getter `r` from the `iBlock`
+* The getter `r` has been moved from `iBlock` to `ComponentInterface`
 
 ## v4.0.0-beta.91 (2024-04-19)
 
