@@ -8,13 +8,14 @@
 
 import Async from 'core/async';
 
+import watch from 'core/object/watch';
 import { getComponentContext } from 'core/component/context';
 
 import { forkMeta } from 'core/component/meta';
 import { getPropertyInfo, PropertyInfo } from 'core/component/reflect';
 import { getNormalParent } from 'core/component/traverse';
 
-import { initProps } from 'core/component/prop';
+import { initProps, attachAttrPropsListeners } from 'core/component/prop';
 import { initFields } from 'core/component/field';
 import { attachAccessorsFromMeta } from 'core/component/accessor';
 import { attachMethodsFromMeta, callMethodFromComponent } from 'core/component/method';
@@ -230,59 +231,16 @@ export function beforeCreateState(
 		]
 	});
 
-	if (meta.params.functional !== true) {
-		initProps(component, {
-			from: unsafe.$attrs,
-			store: unsafe,
-			saveToStore: true,
-			forceUpdate: false
-		});
+	initProps(component, {
+		from: unsafe.$attrs,
+		store: unsafe,
+		saveToStore: true,
+		forceUpdate: false
+	});
 
-		meta.hooks['before:mounted'].push({
-			fn: () => {
-				const parent = unsafe.$normalParent?.unsafe;
-
-				if (parent == null) {
-					return;
-				}
-
-				const propValuesToUpdate: string[][] = [];
-
-				Object.keys(unsafe.$attrs).forEach((attrName) => {
-					const propPrefix = 'on:';
-
-					if (!attrName.startsWith(propPrefix)) {
-						return;
-					}
-
-					const propName = attrName.replace(propPrefix, '');
-
-					if (meta.props[propName] == null || meta.props[propName]!.forceUpdate) {
-						return;
-					}
-
-					propValuesToUpdate.push([propName, attrName]);
-				});
-
-				if (propValuesToUpdate.length > 0) {
-					parent.$on('hook:beforeUpdate', updatePropsValues);
-					unsafe.$async.worker(() => parent.$off('hook:beforeUpdate', updatePropsValues));
-				}
-
-				function updatePropsValues() {
-					propValuesToUpdate.forEach(([propName, getterName]) => {
-						const getter = unsafe.$attrs[getterName];
-
-						if (Object.isFunction(getter)) {
-							unsafe[`@${propName}`] = getter();
-						}
-					});
-				}
-			}
-		});
-	}
-
+	attachAttrPropsListeners(component);
 	attachAccessorsFromMeta(component);
+
 	runHook('beforeRuntime', component).catch(stderr);
 
 	const {
