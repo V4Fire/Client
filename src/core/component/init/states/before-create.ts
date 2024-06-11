@@ -227,7 +227,7 @@ export function beforeCreateState(
 		writable: true,
 		value: (getter: () => object) => [
 			getter(),
-			(...args: any[]) => watch(getter(), args)
+			(...args: any[]) => watch(getter(), ...args)
 		]
 	});
 

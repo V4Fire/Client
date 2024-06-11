@@ -7,7 +7,6 @@
  */
 
 import type { CreateAppFunction } from 'core/component/engines';
-
 import type { ComponentInterface } from 'core/component/interface';
 
 export interface App {

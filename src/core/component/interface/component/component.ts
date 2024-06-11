@@ -378,7 +378,7 @@ export abstract class ComponentInterface {
 	 */
 	protected createPropAccessors<T>(
 		_getter: () => T
-	): [T, Parameters<typeof watch> extends [any, ...infer A] ? A : never] {
+	): () => [T, (...args: Parameters<typeof watch> extends [any, ...infer A] ? A : never) => void] {
 		return Object.throw();
 	}
 
