@@ -62,20 +62,6 @@ export function beforeCreateState(
 	unsafe.async = new Async(component);
 	unsafe.$async = new Async(component);
 
-	Object.defineProperty(unsafe, 'r', {
-		configurable: true,
-		enumerable: true,
-		get: () => {
-			const r = ('getRoot' in unsafe ? unsafe.getRoot?.() : null) ?? unsafe.$root;
-
-			if ('$remoteParent' in r.unsafe) {
-				return r.unsafe.$remoteParent!.$root;
-			}
-
-			return r;
-		}
-	});
-
 	Object.defineProperty(unsafe, '$destroy', {
 		configurable: true,
 		enumerable: false,
@@ -132,6 +118,20 @@ export function beforeCreateState(
 		})
 	});
 
+	Object.defineProperty(unsafe, 'r', {
+		configurable: true,
+		enumerable: true,
+		get: () => {
+			const r = ('getRoot' in unsafe ? unsafe.getRoot?.() : null) ?? unsafe.$root;
+
+			if ('$remoteParent' in r.unsafe) {
+				return r.unsafe.$remoteParent!.$root;
+			}
+
+			return r;
+		}
+	});
+
 	const $getParent = Symbol('$getParent');
 
 	Object.defineProperty(unsafe, '$getParent', {
@@ -176,6 +176,10 @@ export function beforeCreateState(
 		root = unsafe.$root,
 		parent = unsafe.$parent;
 
+	// We are handling a situation where the component's $root refers to an external App.
+	// This occurs when the component is rendered asynchronously,
+	// as the rendering is done by a separate App instance.
+	// In such cases, we need to correct the reference to the parent and $root.
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (parent != null && parent.componentName == null) {
 		Object.defineProperty(unsafe, '$root', {
