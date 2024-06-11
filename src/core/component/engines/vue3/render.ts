@@ -197,7 +197,7 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 
 		beforeCreate() {
 			if (parent != null) {
-				const root = Object.create(parent.$root, {
+				const root = Object.create(parent.r, {
 					$remoteParent: {
 						configurable: true,
 						enumerable: true,
