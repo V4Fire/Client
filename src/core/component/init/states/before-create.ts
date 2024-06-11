@@ -220,6 +220,16 @@ export function beforeCreateState(
 		implementEventEmitterAPI(component);
 	}
 
+	Object.defineProperty(unsafe, 'createPropAccessors', {
+		configurable: true,
+		enumerable: false,
+		writable: true,
+		value: (getter: () => object) => [
+			getter(),
+			(...args: any[]) => watch(getter(), args)
+		]
+	});
+
 	if (meta.params.functional !== true) {
 		initProps(component, {
 			from: unsafe.$attrs,

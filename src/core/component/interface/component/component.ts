@@ -8,6 +8,8 @@
 
 /* eslint-disable @typescript-eslint/unified-signatures */
 
+import type watch from 'core/object/watch';
+
 import type Async from 'core/async';
 import type { BoundFn, ProxyCb, EventId } from 'core/async';
 
@@ -364,6 +366,21 @@ export abstract class ComponentInterface {
 	 * @param ctx
 	 */
 	protected abstract setup(props: Dictionary, ctx: SetupContext): CanPromise<CanUndef<Dictionary>>;
+
+	/**
+	 * Creates a tuple of accessors for a value defined by a getter function.
+	 * This function is used to pass the value as a prop
+	 * to a child component without creating a contract for reactive template updates.
+	 * This is necessary to optimize situations where a change in a component's prop triggers
+	 * a re-render of the entire component, even if this prop is not used in the template.
+	 *
+	 * @param _getter
+	 */
+	protected createPropAccessors<T>(
+		_getter: () => T
+	): [T, Parameters<typeof watch> extends [any, ...infer A] ? A : never] {
+		return Object.throw();
+	}
 
 	/**
 	 * Destroys the component
