@@ -56,8 +56,7 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 		return;
 	}
 
-	let
-		componentName;
+	let componentName;
 
 	if (attrs[TYPE_OF]) {
 		componentName = attrs[TYPE_OF];
@@ -66,8 +65,7 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 		componentName = name === 'component' ? 'iBlock' : name.camelize(false);
 	}
 
-	const
-		component = componentParams[componentName];
+	const component = componentParams[componentName];
 
 	if (!component) {
 		return;
@@ -129,8 +127,9 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 		});
 	}
 
-	const
-		isSmartFunctional = attrs[SMART_PROPS] && (isFunctional || funcDir);
+	const isSmartFunctional =
+		attrs[SMART_PROPS] &&
+		(isFunctional || funcDir);
 
 	if (isFunctional && webpack.ssr) {
 		attrs[':renderComponentId'] = [false];
