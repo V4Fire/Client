@@ -174,7 +174,7 @@ async function buildProjectGraph() {
 	 * The reducer for creating an entry point object
 	 *
 	 * @param {object} entry
-	 * @param {Array<string>} list
+	 * @param {Map<string, {name: string, isParent: boolean}>} list
 	 * @param {string} name
 	 * @returns {object}
 	 */

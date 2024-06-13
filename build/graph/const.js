@@ -49,7 +49,7 @@ exports.genericRgxp = /<.*|\s.*/g;
 exports.extendsRgxp = /\s+extends\s+/;
 
 /**
- * List of available resources to load
+ * List of available resources to load: paths to the source code of project layers
  * @type {Array<string>}
  */
 exports.resources = [resolve.blockSync(), ...resolve.dependencies];
