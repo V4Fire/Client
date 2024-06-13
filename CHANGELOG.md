@@ -20,7 +20,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Corrected the handling of the `onHookChange` event: previously, the event name was misspelled `core/component/init`
 * Fixed an error where a component could transition to a hook in which it was already located `core/component/hook`
 
 #### :house: Internal
