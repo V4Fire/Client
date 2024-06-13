@@ -36,7 +36,7 @@ exports.componentClassRgxp = /^\s*(?:export\s+default\s+)?(?:abstract\s+)?class\
  * A RegExp to extract the @prop-s of a component
  * @type {RegExp}
  */
-exports.propRgxp = /^(\t+)@prop[^(]*\([^@]+?\)+\n+\1([\w $]+)(?:[!?]?:\s*[\w "$&'().:<>?[\]`{|}]+?)?\s*(?:=|;$)/gm;
+exports.propRgxp = /^(?<p>\t+)@prop[^(]*\((?<params>[^@]+?)\)+\n+\k<p>(?<name>[\w $]+)(?:[!?]?:\s*[\w "$&'().:<>?[\]`{|}]+?)?\s*(?:=|;$)/gm;
 
 /**
  * A RegExp to match generic syntax

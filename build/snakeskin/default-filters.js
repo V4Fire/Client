@@ -9,7 +9,6 @@
 'use strict';
 
 const
-	$C = require('collection.js'),
 	Snakeskin = require('snakeskin'),
 	hasha = require('hasha');
 
@@ -73,8 +72,19 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 
 	if (attrs['v-tag']) {
 		delete attrs['v-tag'];
-		return;
 	}
+
+	Object.entries(attrs).forEach(([name, val]) => {
+		if (name.startsWith(':')) {
+			if (component.props[name.slice(1)]?.forceUpdate === false) {
+				const getterName = `@${name}`;
+
+				if (!attrs[getterName]) {
+					attrs[getterName] = [`createPropAccessors(() => ${val.join('')})`]
+				}
+			}
+		}
+	});
 
 	if (!attrs[':componentIdProp']) {
 		const id = hasha(JSON.stringify([
@@ -103,15 +113,15 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 		isFunctional = true;
 
 	} else if (!funcDir && attrs[SMART_PROPS] != null) {
-		isFunctional = $C(attrs[SMART_PROPS]).every((propVal, prop) => {
-			prop = prop.dasherize(true);
+		isFunctional = Object.entries(attrs[SMART_PROPS]).every(([propName, propVal]) => {
+			propName = propName.dasherize(true);
 
-			if (!isV4Prop.test(prop)) {
-				prop = `:${prop}`;
+			if (!isV4Prop.test(propName)) {
+				propName = `:${propName}`;
 			}
 
 			let
-				attr = attrs[prop]?.[0];
+				attr = attrs[propName]?.[0];
 
 			try {
 				// eslint-disable-next-line no-new-func
@@ -120,7 +130,7 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 			} catch {}
 
 			if (Object.isArray(propVal)) {
-				return $C(propVal).some((propVal) => Object.fastCompare(propVal, attr));
+				return propVal.some((propVal) => Object.fastCompare(propVal, attr));
 			}
 
 			return Object.fastCompare(propVal, attr);
@@ -158,10 +168,7 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 
 function tagNameFilter(tag, attrs, rootTag) {
 	attrs ??= {};
-
-	tag = $C(tagNameFilters)
-		.to(tag)
-		.reduce((tag, filter) => filter(tag, attrs, rootTag));
+	tag = tagNameFilters.reduce((tag, filter) => filter(tag, attrs, rootTag), tag);
 
 	const
 		componentName = tag.camelize(false),
@@ -185,8 +192,5 @@ function tagNameFilter(tag, attrs, rootTag) {
 
 function bemFilter(block, attrs, rootTag, value) {
 	attrs ??= {};
-
-	return $C(bemFilters)
-		.to('')
-		.reduce((res, filter) => res + filter(block, attrs, rootTag, value));
+	return bemFilters.reduce((res, filter) => res + filter(block, attrs, rootTag, value), '');
 }
