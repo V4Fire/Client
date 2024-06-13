@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch, { WatchOptions, MultipleWatchHandler } from 'core/object/watch';
+import watch, { Watcher, WatchOptions, MultipleWatchHandler } from 'core/object/watch';
 
 import type { PropertyInfo } from 'core/component/reflect';
 import { dynamicHandlers } from 'core/component/watch/const';
@@ -74,12 +74,11 @@ export function attachDynamicWatcher(
 		}
 	};
 
-	let
-		destructor;
+	let destructor: Function;
 
 	if (prop.type === 'mounted') {
 		let
-			watcher;
+			watcher: Watcher;
 
 		if (Object.size(prop.path) > 0) {
 			watcher = watch(prop.ctx, prop.path, watchOpts, wrapper);

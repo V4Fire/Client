@@ -82,8 +82,7 @@ export function inheritContext(
 		props = ctx.$props,
 		parentProps = parentCtx.$props;
 
-	const
-		linkedFields = {};
+	const linkedFields = {};
 
 	Object.keys(parentProps).forEach((prop) => {
 		const
@@ -135,8 +134,7 @@ export function inheritContext(
 			if (needMerge) {
 				if (Object.isTruly(field.merge)) {
 					if (field.merge === true) {
-						let
-							newVal = oldVal;
+						let newVal = oldVal;
 
 						if (Object.isPlainObject(val) || Object.isPlainObject(oldVal)) {
 							// eslint-disable-next-line prefer-object-spread

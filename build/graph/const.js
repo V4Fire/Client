@@ -15,53 +15,55 @@ const
 	path = require('upath'),
 	glob = require('fast-glob');
 
-const
-	{validators, resolve} = require('@pzlr/build-core');
+const {
+	validators,
+	resolve
+} = require('@pzlr/build-core');
 
 /**
- * RegExp to extract parameters from a @component declaration
+ * A RegExp to extract parameters from a @component declaration
  * @type {RegExp}
  */
 exports.componentRgxp = /@component\(([^@]*?)\).+?class\s+/s;
 
 /**
- * RegExp to extract a name from a component and name of the parent component
+ * A RegExp to extract the name of a component and the name of the parent component
  * @type {RegExp}
  */
 exports.componentClassRgxp = /^\s*(?:export\s+default\s+)?(?:abstract\s+)?class\s+((.*?)\s+extends\s+.*?)(?:\s+implements\s+[^{]*|\s*){/sm;
 
 /**
- * RegExp to extract component props
+ * A RegExp to extract the @prop-s of a component
  * @type {RegExp}
  */
 exports.propRgxp = /^(\t+)@prop[^(]*\([^@]+?\)+\n+\1([\w $]+)(?:[!?]?:\s*[\w "$&'().:<>?[\]`{|}]+?)?\s*(?:=|;$)/gm;
 
 /**
- * RegExp to match the generic syntax
+ * A RegExp to match generic syntax
  * @type {RegExp}
  */
 exports.genericRgxp = /<.*|\s.*/g;
 
 /**
- * RegExp to match the class extends syntax
+ * A RegExp to match the class extension syntax
  * @type {RegExp}
  */
 exports.extendsRgxp = /\s+extends\s+/;
 
 /**
- * List of available resources to load
+ * A list of resources available to load
  * @type {Array<string>}
  */
 exports.resources = [resolve.blockSync(), ...resolve.dependencies];
 
 /**
- * Glob pattern to search component files
+ * A glob pattern for searching component files
  * @type {string}
  */
 exports.componentQuery = `/**/@(${validators.blockTypeList.join('|')})-*/**/*.@(ts|js)`;
 
 /**
- * List of component files
+ * A list of component files
  */
 exports.componentFiles = $C(exports.resources)
 	.reduce((arr, el) => arr.concat(glob.sync(path.join(el, exports.componentQuery))), [])

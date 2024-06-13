@@ -141,8 +141,8 @@ Sends a signal to load the modules associated with the specified name.
 ```
 < . v-async-target
   += self.loadModules('base/b-settings', { &
-      renderKey: 'b-settings',
-      wait: "moduleLoader.waitSignal('b-settings')"
+    renderKey: 'b-settings',
+    wait: "moduleLoader.waitSignal('b-settings')"
   }) .
 ```
 
@@ -159,8 +159,8 @@ The resulting value is intended for use with [[AsyncRender]].
 ```
 < . v-async-target
   += self.loadModules('base/b-settings', { &
-      renderKey: 'b-settings',
-      wait: "moduleLoader.waitSignal('b-settings')"
+    renderKey: 'b-settings',
+    wait: "moduleLoader.waitSignal('b-settings')"
   }) .
 ```
 

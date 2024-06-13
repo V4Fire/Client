@@ -14,7 +14,7 @@ import type { ReadonlyEventEmitterWrapper } from 'core/async';
 import Friend, { fakeMethods } from 'components/friends/friend';
 import type { CreateRequestOptions } from 'components/traits/i-data-provider/i-data-provider';
 
-import type iBlock from 'components/super/i-block';
+import type iBlock from 'components/super/i-block/i-block';
 import type iDataProvider from 'components/traits/i-data-provider/i-data-provider';
 
 import type { DataProviderProp, DataProviderOptions, DefaultRequest } from 'components/friends/data-provider/interface';
@@ -70,7 +70,7 @@ class DataProvider extends Friend {
 		super(component);
 
 		const
-			dp = component.createDataProviderInstance(provider, opts);
+			dp = <Nullable<Provider>>component.createDataProviderInstance(provider, opts);
 
 		if (dp == null) {
 			return;
