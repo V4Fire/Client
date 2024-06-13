@@ -80,7 +80,7 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 				const getterName = `@${name}`;
 
 				if (!attrs[getterName]) {
-					attrs[getterName] = [`createPropAccessors(() => ${val.join('')})`]
+					attrs[getterName] = [`createPropAccessors(() => ${val.join('')})()`]
 				}
 			}
 		}

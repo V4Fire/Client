@@ -63,6 +63,10 @@ export function initProps(
 
 		const getAccessors = unsafe.$attrs[`on:${name}`];
 
+		if (!p.forceUpdate) {
+			console.log(1212, unsafe.$attrs, name);
+		}
+
 		if (propValue === undefined && Object.isFunction(getAccessors)) {
 			propValue = getAccessors()[0];
 		}

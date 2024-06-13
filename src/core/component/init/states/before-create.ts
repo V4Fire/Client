@@ -225,10 +225,15 @@ export function beforeCreateState(
 		configurable: true,
 		enumerable: false,
 		writable: true,
-		value: (getter: () => object) => [
-			getter(),
-			(...args: any[]) => watch(getter(), ...args)
-		]
+		value: (getter: () => object) => {
+			// Creating an "effect"
+			void getter();
+
+			return () => [
+				getter(),
+				(...args: any[]) => watch(getter(), ...args)
+			];
+		}
 	});
 
 	initProps(component, {

@@ -9,6 +9,7 @@
 /* eslint-disable @typescript-eslint/unified-signatures */
 
 import type watch from 'core/object/watch';
+import type { Watcher } from 'core/object/watch';
 
 import type Async from 'core/async';
 import type { BoundFn, ProxyCb, EventId } from 'core/async';
@@ -376,9 +377,9 @@ export abstract class ComponentInterface {
 	 *
 	 * @param _getter
 	 */
-	protected createPropAccessors<T>(
+	protected createPropAccessors<T extends object>(
 		_getter: () => T
-	): () => [T, (...args: Parameters<typeof watch> extends [any, ...infer A] ? A : never) => void] {
+	): () => [T, (...args: Parameters<typeof watch> extends [any, ...infer A] ? A : never) => Watcher<T>] {
 		return Object.throw();
 	}
 

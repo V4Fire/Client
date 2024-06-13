@@ -377,7 +377,12 @@ ComponentEngine.directive('attrs', {
 				}
 			}
 
+			props[event] = attrVal;
+
 			if (componentCtx != null && !isDOMEvent && Object.isFunction(attrVal)) {
+				componentCtx.unsafe.$attrs ??= {};
+				componentCtx.unsafe.$attrs[event] = attrVal;
+
 				if (isOnceEvent) {
 					componentCtx.$on(originalEvent, attrVal);
 

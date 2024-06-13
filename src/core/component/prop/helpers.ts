@@ -30,7 +30,9 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 			return;
 		}
 
-		const propValuesToUpdate: string[][] = [];
+		const
+			el = unsafe.$el,
+			propValuesToUpdate: string[][] = [];
 
 		Object.keys(unsafe.$attrs).forEach((attrName) => {
 			const propPrefix = 'on:';
@@ -46,6 +48,7 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 			}
 
 			propValuesToUpdate.push([propName, attrName]);
+			el?.removeAttribute(propName);
 		});
 
 		if (propValuesToUpdate.length > 0) {
@@ -53,12 +56,21 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 			unsafe.$async.worker(() => parent.$off('hook:beforeUpdate', updatePropsValues));
 		}
 
-		function updatePropsValues() {
+		async function updatePropsValues() {
+			const el = unsafe.$el;
+			await parent?.$nextTick();
+
+			const ctx = el?.component?.unsafe;
+
+			if (ctx == null) {
+				return;
+			}
+
 			propValuesToUpdate.forEach(([propName, getterName]) => {
-				const getter = unsafe.$attrs[getterName];
+				const getter = ctx.$attrs[getterName];
 
 				if (Object.isFunction(getter)) {
-					unsafe[`@${propName}`] = getter()[0];
+					ctx[`@${propName}`] = getter()[0];
 				}
 			});
 		}

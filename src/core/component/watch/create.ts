@@ -70,8 +70,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 		}
 
-		const isDefinedPath = Object.size(info.path) > 0;
-
 		let
 			isRoot = false,
 			isFunctional = false,
@@ -87,13 +85,16 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			isFunctional = !isRoot && ctxParams.functional === true;
 		}
 
+		const
+			isDefinedPath = Object.size(info.path) > 0,
+			forceUpdate = meta?.props[info.name]?.forceUpdate !== false;
+
 		let canSkipWatching =
 			(isRoot || isFunctional) &&
-			(info.type === 'prop' || info.type === 'attr');
+			(info.type === 'prop' && forceUpdate || info.type === 'attr');
 
 		if (!canSkipWatching && isFunctional) {
-			let
-				field: Nullable<ComponentField>;
+			let field: Nullable<ComponentField>;
 
 			switch (info.type) {
 				case 'system':
@@ -117,14 +118,8 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			isAccessor = Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor),
 			isMountedWatcher = info.type === 'mounted';
 
-		let watcherType = info.type;
-
-		if (info.type === 'prop' && meta?.props[info.name]?.forceUpdate === false) {
-			watcherType = 'attr';
-		}
-
 		const watchInfo = !isAccessor ?
-			component.$renderEngine.proxyGetters[watcherType]?.(info.ctx) :
+			component.$renderEngine.proxyGetters[info.type]?.(info.ctx) :
 			null;
 
 		const normalizedOpts: WatchOptions = {
@@ -146,8 +141,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		delete normalizedOpts.flush;
 		normalizedOpts.immediate = flush === 'sync';
 
-		let
-			oldVal: unknown;
+		let oldVal: unknown;
 
 		if (needCache) {
 			let cacheKey: unknown[];
@@ -370,7 +364,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						slicedPathChunks = pathChunks.slice(1);
 
 					const
-						forceUpdate = meta?.props[info.name]?.forceUpdate !== false,
 						destructors: Function[] = [];
 
 					const attachDeepProxy = (forceUpdate = true) => {
@@ -378,9 +371,15 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 							this.$attrs[`on:${prop}`]
 						);
 
+						let accessors: Nullable<ReturnType<NonNullable<typeof getAccessors>>>;
+
+						if (!forceUpdate) {
+							accessors = getAccessors?.();
+						}
+
 						const
 							parent = component.$parent,
-							propVal = forceUpdate ? proxy[prop] : getAccessors?.()[0];
+							propVal = forceUpdate ? proxy[prop] : accessors?.[0];
 
 						if (parent == null || getProxyType(propVal) == null) {
 							return;
@@ -441,13 +440,12 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 							}
 						};
 
-						if (forceUpdate) {
-							// eslint-disable-next-line @v4fire/unbound-method
-							const {unwatch} = watch(<object>propVal, info.path, normalizedOpts, watchHandler);
-							destructors.push(unwatch);
+						const watcher = forceUpdate ?
+							watch(<object>propVal, info.path, normalizedOpts, watchHandler) :
+							accessors?.[1](info.path, normalizedOpts, watchHandler);
 
-						} else {
-							getAccessors?.()[1](info.path, normalizedOpts, watchHandler);
+						if (watcher != null) {
+							destructors.push(watcher.unwatch.bind(watcher));
 						}
 					};
 
