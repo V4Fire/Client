@@ -11,7 +11,6 @@ import { bindRemoteWatchers, implementComponentWatchAPI } from 'core/component/w
 import { runHook } from 'core/component/hook';
 
 import type { ComponentInterface } from 'core/component/interface';
-import {attachAttrPropsListeners, initProps} from "core/component/prop";
 
 /**
  * Initializes the "beforeDataCreate" state to the specified component instance
