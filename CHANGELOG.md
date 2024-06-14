@@ -22,6 +22,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Now SSR build is bundled into a single file
 * Use the forked `lib/server-renderer` everywhere in the SSR build
 
+## v4.0.0-beta.102 (2024-06-11)
+
+#### :bug: Bug Fix
+
+* Removed the use of `$a.promise` in the `execute` method of the `Transition` class. This previously caused only
+the last `replace` method call to be executed when multiple calls were made `components/base/b-router`
+
 ## v4.0.0-beta.101 (2024-05-30)
 
 #### :bug: Bug Fix
