@@ -50,14 +50,16 @@ interface DataProvider {
 
 class DataProvider extends Friend {
 	override readonly C!: iBlock & iDataProvider;
+	override readonly CTX!: this['C']['unsafe'] & iDataProvider;
 
 	/**
 	 * The component data provider event emitter.
 	 * To avoid memory leaks, only this emitter is used to listen for provider events.
 	 *
-	 * Note that to detach a listener, you can specify not only a link to the listener, but also the name of
-	 * the group/label to which the listener is attached. By default, all listeners have a group name equal to
-	 * the event name being listened to. If nothing is specified, then all component event listeners will be detached.
+	 * Note that to detach a listener, you can specify not only a reference to the listener,
+	 * but also the name of the group or label to which the listener is attached.
+	 * By default, all listeners are assigned a group name that corresponds to the event name they are listening to.
+	 * If no specific group is mentioned when detaching, then all listeners associated with the component will be removed.
 	 */
 	readonly emitter!: ReadonlyEventEmitterWrapper<this['component']>;
 
@@ -94,7 +96,7 @@ class DataProvider extends Friend {
 	}
 
 	/**
-	 * Drops the data provider cache
+	 * Drops the data provider's cache
 	 */
 	dropCache(): void {
 		this.provider.dropCache();

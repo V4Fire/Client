@@ -5,12 +5,12 @@ This API includes all the necessary methods for working with block modifiers and
 methods to find elements in the DOM tree, as well as various auxiliary methods. However, to work with block modifiers,
 you should not use this API directly, but prefer more convenient wrappers that are in the context of the component.
 
-## How to include this module to your component?
+## How to Include This Module in Your Component?
 
 By default, any component that inherited from [[iBlock]] has the `block` property.
 Some methods, such as `getFullBlockName`, `getMod`, `setMod`, `removeMod` are always available, and the rest must be
 included explicitly to enable tree-shake code optimization.
-Simply place the required import declaration within your component file.
+Place the required import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';

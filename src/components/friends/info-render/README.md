@@ -15,7 +15,7 @@ rendering it in various ways.
 It is worth noting that the data collection and rendering methods are configurable through separate strategies,
 allowing for flexible customization.
 
-## How to include this module to your component?
+## How to Include This Module in Your Component?
 
 By default, any component that inherits from [[iBlock]] will have the `infoRender` property.
 Additionally, it will have the `initInfoRender` method that is automatically triggered when
