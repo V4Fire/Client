@@ -69,8 +69,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	}
 
 	{
-		const
-			key = 'v-attrs';
+		const key = 'v-attrs';
 
 		if (props[key] != null) {
 			const
@@ -94,8 +93,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	}
 
 	{
-		const
-			key = 'data-has-v-on-directives';
+		const key = 'data-has-v-on-directives';
 
 		if (props[key] != null) {
 			setVNodePatchFlags(vnode, 'props');
@@ -114,8 +112,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	}
 
 	{
-		const
-			key = 'data-cached-class-component-id';
+		const key = 'data-cached-class-component-id';
 
 		if (props[key] != null) {
 			if (props[key] === 'true' && params.functional !== true) {

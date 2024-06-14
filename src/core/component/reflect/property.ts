@@ -9,7 +9,7 @@
 import { deprecate } from 'core/functools/deprecation';
 import { ComponentInterface } from 'core/component/interface';
 
-import { propRgxp, attrRgxp, storeRgxp, hasSeparator } from 'core/component/reflect/const';
+import { propRgxp, attrRgxp, privateFieldRgxp, storeRgxp, hasSeparator } from 'core/component/reflect/const';
 import type { PropertyInfo, AccessorType } from 'core/component/reflect/interface';
 
 /**
@@ -128,7 +128,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		originalTopPath
 	};
 
-	if (name.startsWith('[[')) {
+	if (privateFieldRgxp.test(name)) {
 		info.type = 'system';
 		return info;
 	}

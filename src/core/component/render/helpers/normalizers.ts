@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { propGetterRgxp } from 'core/component/reflect';
 import type { ComponentMeta } from 'core/component/meta';
 
 /**
@@ -13,11 +14,10 @@ import type { ComponentMeta } from 'core/component/meta';
  * @param classes
  */
 export function normalizeClass(classes: CanArray<string | Dictionary>): string {
-	let
-		res = '';
+	let classesStr = '';
 
 	if (Object.isString(classes)) {
-		res = classes;
+		classesStr = classes;
 
 	} else if (Object.isArray(classes)) {
 		classes.forEach((className) => {
@@ -25,19 +25,19 @@ export function normalizeClass(classes: CanArray<string | Dictionary>): string {
 				normalizedClass = normalizeClass(className);
 
 			if (normalizedClass !== '') {
-				res += `${normalizedClass} `;
+				classesStr += `${normalizedClass} `;
 			}
 		});
 
 	} else if (Object.isDictionary(classes)) {
 		Object.entries(classes).forEach(([className, has]) => {
 			if (Object.isTruly(has)) {
-				res += `${className} `;
+				classesStr += `${className} `;
 			}
 		});
 	}
 
-	return res.trim();
+	return classesStr.trim();
 }
 
 /**
@@ -46,8 +46,7 @@ export function normalizeClass(classes: CanArray<string | Dictionary>): string {
  */
 export function normalizeStyle(styles: CanArray<string | Dictionary<string>>): string | Dictionary<string> {
 	if (Object.isArray(styles)) {
-		const
-			normalizedStyles = {};
+		const normalizedStyles = {};
 
 		styles.forEach((style) => {
 			const normalizedStyle = Object.isString(style) ?
@@ -74,23 +73,22 @@ export function normalizeStyle(styles: CanArray<string | Dictionary<string>>): s
 }
 
 const
-	listDelimiterRE = /;(?![^(]*\))/g,
-	propertyDelimiterRE = /:(.+)/;
+	listDelimiterRgxp = /;(?![^(]*\))/g,
+	propertyDelimiterRgxp = /:(.+)/;
 
 /**
  * Analyzes the given CSS style string and returns a dictionary containing the parsed rules
  * @param style
  */
 export function parseStringStyle(style: string): Dictionary<string> {
-	const
-		styles = {};
+	const styles = {};
 
-	style.split(listDelimiterRE).forEach((singleStyle) => {
+	style.split(listDelimiterRgxp).forEach((singleStyle) => {
 		singleStyle = singleStyle.trim();
 
 		if (singleStyle !== '') {
 			const
-				chunks = singleStyle.split(propertyDelimiterRE);
+				chunks = singleStyle.split(propertyDelimiterRgxp);
 
 			if (chunks.length > 1) {
 				styles[chunks[0].trim()] = chunks[1].trim();
@@ -150,7 +148,7 @@ export function normalizeComponentAttrs(
 			}
 		}
 
-		if (propName in props) {
+		if (propName in props || propName.replace(propGetterRgxp, '') in props) {
 			changeAttrName(attrName, propName);
 
 		} else {
@@ -165,7 +163,7 @@ export function normalizeComponentAttrs(
 				path = dynamicPropsPatches[prop];
 
 			if (path != null) {
-				if (path !== '') {
+				if (path !== '' && dynamicPropsPatches[path] !== '') {
 					dynamicProps[i] = path;
 
 				} else {

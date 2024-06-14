@@ -12,6 +12,7 @@
  */
 
 import { components } from 'core/component/const';
+import { propGetterRgxp } from 'core/component/reflect';
 import { ComponentEngine, DirectiveBinding, VNode } from 'core/component/engines';
 
 import {
@@ -377,7 +378,8 @@ ComponentEngine.directive('attrs', {
 				}
 			}
 
-			const isSystemGetter = event.startsWith('on:');
+			const isSystemGetter = propGetterRgxp.test(event);
+			props[event] = attrVal;
 
 			if (componentCtx != null && !isDOMEvent && Object.isFunction(attrVal)) {
 				componentCtx.unsafe.$attrs ??= {};
@@ -393,7 +395,6 @@ ComponentEngine.directive('attrs', {
 				}
 
 			} else if (!isSystemGetter) {
-				props[event] = attrVal;
 				setVNodePatchFlags(vnode, 'events');
 
 				const dynamicProps = vnode.dynamicProps ?? [];

@@ -9,7 +9,7 @@
 /* eslint-disable max-lines-per-function, complexity */
 
 import watch, { mute, unmute, unwrap, getProxyType, isProxy, WatchHandlerParams } from 'core/object/watch';
-import { getPropertyInfo, PropertyInfo } from 'core/component/reflect';
+import { getPropertyInfo, privateFieldRgxp, PropertyInfo } from 'core/component/reflect';
 
 import { tiedWatchers, watcherInitializer } from 'core/component/watch/const';
 import { cloneWatchValue } from 'core/component/watch/clone';
@@ -456,7 +456,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						destructors.splice(1, destructors.length);
 
 						if (fromSystem) {
-							i.path = [String(i.path[0]).slice(1), ...i.path.slice(1)];
+							i.path = [String(i.path[0]).replace(privateFieldRgxp, '$1'), ...i.path.slice(1)];
 							attachDeepProxy(false);
 
 						} else {

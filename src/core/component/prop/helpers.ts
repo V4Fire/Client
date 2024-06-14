@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { propGetterRgxp } from 'core/component/reflect';
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
@@ -34,13 +35,13 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 			el = unsafe.$el,
 			propValuesToUpdate: string[][] = [];
 
-		Object.keys(unsafe.$attrs).forEach((attrName, _, attrs) => {
+		Object.keys(unsafe.$attrs).forEach((attrName) => {
 			const propPrefix = 'on:';
 
 			if (meta.props[attrName]?.forceUpdate === false) {
 				const getterName = propPrefix + attrName;
 
-				if (!Object.isFunction(attrs[getterName])) {
+				if (!Object.isFunction(unsafe.$attrs[getterName])) {
 					throw new Error(`No accessors are defined for the prop "${attrName}". To set the accessors, pass them as "${getterName} = createComponentAccessors(() => propValue)".`);
 				}
 			}
@@ -49,7 +50,7 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 				return;
 			}
 
-			const propName = attrName.replace(propPrefix, '');
+			const propName = attrName.replace(propGetterRgxp, '');
 
 			if (meta.props[propName]?.forceUpdate === false) {
 				propValuesToUpdate.push([propName, attrName]);
