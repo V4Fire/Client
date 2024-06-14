@@ -262,17 +262,11 @@ export default abstract class iBlockFriends extends iBlockProps {
 
 	protected readonly h: typeof helpers = helpers;
 
-	/**
-	 * A link to the native `location` API
-	 */
+	/** {@link State.location} */
 	@system({
 		atom: true,
 		unique: true,
-		init: () => {
-			try {
-				return location;
-			} catch {}
-		}
+		init: (ctx) => ctx.remoteState.location
 	})
 
 	protected readonly location!: Location;
