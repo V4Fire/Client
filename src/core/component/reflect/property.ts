@@ -94,8 +94,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		params: {deprecatedProps}
 	} = component.unsafe.meta;
 
-	const
-		alternative = deprecatedProps?.[name];
+	const alternative = deprecatedProps?.[name];
 
 	if (alternative != null) {
 		deprecate({type: 'property', name, renamedTo: alternative});
@@ -128,6 +127,11 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		topPath,
 		originalTopPath
 	};
+
+	if (name.startsWith('@')) {
+		info.type = 'system';
+		return info;
+	}
 
 	if (RegExp.test(propRgxp, name)) {
 		info.type = 'prop';
