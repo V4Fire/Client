@@ -76,8 +76,14 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 
 	Object.entries(attrs).forEach(([name, val]) => {
 		if (name.startsWith(':')) {
-			if (component.props[name.slice(1)]?.forceUpdate === false) {
-				const getterName = `@${name}`;
+			let propName = name.slice(1);
+
+			if (component.props[`${propName}Prop`]) {
+				propName = `${propName}Prop`;
+			}
+
+			if (component.props[propName]?.forceUpdate === false) {
+				const getterName = `@:${propName}`;
 
 				if (!attrs[getterName]) {
 					attrs[getterName] = [`createPropAccessors(() => ${val.join('')})()`];
