@@ -128,7 +128,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		originalTopPath
 	};
 
-	if (name.startsWith('@')) {
+	if (name.startsWith('[[')) {
 		info.type = 'system';
 		return info;
 	}

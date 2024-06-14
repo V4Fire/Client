@@ -51,8 +51,7 @@ export function paramsFactory<T = object>(
 		function decorate({meta}: {meta: ComponentMeta}): void {
 			delete meta.tiedFields[key];
 
-			let
-				p = params;
+			let p = params;
 
 			if (desc != null) {
 				decorateMethodOrAccessor();
@@ -121,7 +120,7 @@ export function paramsFactory<T = object>(
 								watchers[path] = wrapOpts({...p.watchParams, ...watcher, path});
 
 							} else {
-								watchers[watcher] = wrapOpts({...p.watchParams, path: watcher});
+								watchers[<string>watcher] = wrapOpts({...p.watchParams, path: watcher});
 							}
 						});
 					}
@@ -143,7 +142,7 @@ export function paramsFactory<T = object>(
 								});
 
 							} else {
-								hooks[hook] = wrapOpts({name, hook});
+								hooks[<string>hook] = wrapOpts({name, hook});
 							}
 						});
 					}
@@ -242,7 +241,7 @@ export function paramsFactory<T = object>(
 
 				if (metaKey === 'props' && desc.forceUpdate === false) {
 					// A special system property used to observe props with the option `forceUpdate: false`
-					meta.systemFields[`@${key}`] = {
+					meta.systemFields[`[[${key}]]`] = {
 						...info,
 						watchers,
 

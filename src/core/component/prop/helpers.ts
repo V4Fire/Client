@@ -70,7 +70,7 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 				const getter = ctx.$attrs[getterName];
 
 				if (Object.isFunction(getter)) {
-					ctx[`@${propName}`] = getter()[0];
+					ctx[`[[${propName}]]`] = getter()[0];
 				}
 			});
 		}

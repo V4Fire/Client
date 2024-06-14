@@ -450,7 +450,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 					};
 
 					const externalWatchHandler = (value: unknown, oldValue: unknown, i?: WatchHandlerParams) => {
-						const fromSystem = i != null && Object.isString(i.path[0]) && i.path[0].startsWith('@');
+						const fromSystem = i != null && Object.isString(i.path[0]) && i.path[0].startsWith('[[');
 
 						destructors.forEach((destroy) => destroy());
 						destructors.splice(1, destructors.length);
@@ -526,7 +526,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 							unwatch = watch(proxy, prop, topOpts, Object.cast(externalWatchHandler)).unwatch;
 
 						} else {
-							unwatch = watchFn.call(this, `@${prop}`, topOpts, externalWatchHandler);
+							unwatch = watchFn.call(this, `[[${prop}]]`, topOpts, externalWatchHandler);
 						}
 					}
 

@@ -96,8 +96,10 @@ export function initProps(
 		}
 
 		if (needSaveToStore) {
+			const privateField = `[[${name}]]`;
+
 			if (!opts.forceUpdate) {
-				Object.defineProperty(store, `@${name}`, {
+				Object.defineProperty(store, privateField, {
 					configurable: true,
 					enumerable: true,
 					writable: true,
@@ -108,7 +110,7 @@ export function initProps(
 			Object.defineProperty(store, name, {
 				configurable: true,
 				enumerable: true,
-				get: () => opts.forceUpdate ? propValue : store[`@${name}`]
+				get: () => opts.forceUpdate ? propValue : store[privateField]
 			});
 		}
 	});
