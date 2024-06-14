@@ -377,20 +377,22 @@ ComponentEngine.directive('attrs', {
 				}
 			}
 
-			props[event] = attrVal;
+			const isSystemGetter = event.startsWith('on:');
 
 			if (componentCtx != null && !isDOMEvent && Object.isFunction(attrVal)) {
 				componentCtx.unsafe.$attrs ??= {};
 				componentCtx.unsafe.$attrs[event] = attrVal;
 
-				if (isOnceEvent) {
-					componentCtx.$on(originalEvent, attrVal);
+				if (!isSystemGetter) {
+					if (isOnceEvent) {
+						componentCtx.$on(originalEvent, attrVal);
 
-				} else {
-					componentCtx.$once(originalEvent, attrVal);
+					} else {
+						componentCtx.$once(originalEvent, attrVal);
+					}
 				}
 
-			} else {
+			} else if (!isSystemGetter) {
 				props[event] = attrVal;
 				setVNodePatchFlags(vnode, 'events');
 

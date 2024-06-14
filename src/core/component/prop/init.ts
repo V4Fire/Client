@@ -63,10 +63,6 @@ export function initProps(
 
 		const getAccessors = unsafe.$attrs[`on:${name}`];
 
-		if (!p.forceUpdate && !Object.isFunction(getAccessors)) {
-			throw new Error(`No accessors are defined for the prop "${name}". To set the accessors, pass them as "@:${name} = createComponentAccessors(() => propValue)".`);
-		}
-
 		if (propValue === undefined && Object.isFunction(getAccessors)) {
 			propValue = getAccessors()[0];
 		}

@@ -34,8 +34,16 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 			el = unsafe.$el,
 			propValuesToUpdate: string[][] = [];
 
-		Object.keys(unsafe.$attrs).forEach((attrName) => {
+		Object.keys(unsafe.$attrs).forEach((attrName, _, attrs) => {
 			const propPrefix = 'on:';
+
+			if (meta.props[attrName]?.forceUpdate === false) {
+				const getterName = propPrefix + attrName;
+
+				if (!Object.isFunction(attrs[getterName])) {
+					throw new Error(`No accessors are defined for the prop "${attrName}". To set the accessors, pass them as "${getterName} = createComponentAccessors(() => propValue)".`);
+				}
+			}
 
 			if (!attrName.startsWith(propPrefix)) {
 				return;
@@ -43,12 +51,10 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 
 			const propName = attrName.replace(propPrefix, '');
 
-			if (meta.props[propName] == null || meta.props[propName]?.forceUpdate === true) {
-				return;
+			if (meta.props[propName]?.forceUpdate === false) {
+				propValuesToUpdate.push([propName, attrName]);
+				el?.removeAttribute(propName);
 			}
-
-			propValuesToUpdate.push([propName, attrName]);
-			el?.removeAttribute(propName);
 		});
 
 		if (propValuesToUpdate.length > 0) {

@@ -40,6 +40,12 @@ module.exports = [
 		if (webpack.ssr) {
 			delete attrs['v-once'];
 			delete attrs['v-memo'];
+
+		// To ensure correct functioning on the client side with functional components,
+		// we normalize all calls to the v-attrs directive as props
+		} else if (attrs['v-attrs']) {
+			attrs[':v-attrs'] = attrs['v-attrs'].slice();
+			delete attrs['v-attrs'];
 		}
 
 		Object.forEach(attrs, (attr, key) => {
