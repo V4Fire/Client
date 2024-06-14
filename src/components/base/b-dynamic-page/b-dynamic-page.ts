@@ -302,7 +302,7 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	override canSelfDispatchEvent(event: string): boolean {
-		return !/^(?:hook)(?::\w+(-\w+)*|-change)$/.test(event.dasherize());
+		return !/^hook(?::\w+(-\w+)*|-change)$/.test(event.dasherize());
 	}
 
 	/**
