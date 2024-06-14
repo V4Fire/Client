@@ -76,7 +76,7 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 
 	Object.entries(attrs).forEach(([name, val]) => {
 		if (name.startsWith(':')) {
-			let propName = name.slice(1);
+			let propName = name.slice(1).camelize(false);
 
 			if (component.props[`${propName}Prop`]) {
 				propName = `${propName}Prop`;
