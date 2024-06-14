@@ -301,8 +301,8 @@ export default class bDynamicPage extends iDynamicPage {
 		return component.reload(params);
 	}
 
-	override canSelfDispatchEvent(_: string): boolean {
-		return true;
+	override canSelfDispatchEvent(event: string): boolean {
+		return !/^(?:hook)(?::\w+(-\w+)*|-change)$/.test(event.dasherize());
 	}
 
 	/**
