@@ -22,6 +22,10 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 		unsafe: {meta}
 	} = component;
 
+	if (unsafe.meta.params.functional === true) {
+		return;
+	}
+
 	meta.hooks['before:mounted'].push({fn: init});
 
 	function init() {

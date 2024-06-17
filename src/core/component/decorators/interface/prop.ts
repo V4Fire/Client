@@ -123,6 +123,9 @@ export interface DecoratorProp<
 	 * If set to false, changing the prop will never trigger a re-render of the component template.
 	 * Use this mode for props that are not used in the template to reduce the number of unwanted re-renders.
 	 *
+	 * Note that this logic only applies to non-functional components,
+	 * as a functional component updates with any change in the parent state.
+	 *
 	 * @default `true`
 	 */
 	forceUpdate?: boolean;

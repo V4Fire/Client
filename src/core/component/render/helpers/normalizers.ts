@@ -114,7 +114,7 @@ export function normalizeComponentAttrs(
 	const {
 		props,
 		// eslint-disable-next-line deprecation/deprecation
-		params: {deprecatedProps}
+		params: {deprecatedProps, functional}
 	} = component;
 
 	if (attrs == null) {
@@ -129,7 +129,12 @@ export function normalizeComponentAttrs(
 		normalizedAttrs['v-attrs'] = normalizeComponentAttrs(normalizedAttrs['v-attrs'], dynamicProps, component);
 	}
 
-	Object.keys(normalizedAttrs).forEach((attrName) => {
+	Object.entries(normalizedAttrs).forEach(normalizeAttr);
+	modifyDynamicPath();
+
+	return normalizedAttrs;
+
+	function normalizeAttr([attrName, value]: [string, unknown]) {
 		let propName = `${attrName}Prop`.camelize(false);
 
 		if (attrName === 'ref' || attrName === 'ref_for') {
@@ -148,33 +153,28 @@ export function normalizeComponentAttrs(
 			}
 		}
 
+		const needSetAdditionalProp =
+			functional === true && dynamicProps != null &&
+			propGetterRgxp.test(attrName) && Object.isFunction(value);
+
+		// For correct operation in functional components, we need to additionally duplicate such props
+		if (needSetAdditionalProp) {
+			const
+				tiedPropName = attrName.replace(propGetterRgxp, ''),
+				tiedPropValue = value()[0];
+
+			normalizedAttrs[tiedPropName] = tiedPropValue;
+			normalizeAttr([tiedPropName, tiedPropValue]);
+			dynamicProps.push(tiedPropName);
+		}
+
 		if (propName in props || propName.replace(propGetterRgxp, '') in props) {
 			changeAttrName(attrName, propName);
 
 		} else {
 			patchDynamicProps(attrName);
 		}
-	});
-
-	if (dynamicProps != null && Object.keys(dynamicPropsPatches).length > 0) {
-		for (let i = 0; i < dynamicProps.length; i++) {
-			const
-				prop = dynamicProps[i],
-				path = dynamicPropsPatches[prop];
-
-			if (path != null) {
-				if (path !== '' && dynamicPropsPatches[path] !== '') {
-					dynamicProps[i] = path;
-
-				} else {
-					dynamicProps.splice(i, 1);
-					i--;
-				}
-			}
-		}
 	}
-
-	return normalizedAttrs;
 
 	function changeAttrName(name: string, newName: string) {
 		normalizedAttrs[newName] = normalizedAttrs[name];
@@ -189,8 +189,32 @@ export function normalizeComponentAttrs(
 	}
 
 	function patchDynamicProps(propName: string) {
-		if (component.props[propName]?.forceUpdate === false) {
+		if (functional !== true && component.props[propName]?.forceUpdate === false) {
 			dynamicPropsPatches[propName] = '';
+		}
+	}
+
+	function modifyDynamicPath() {
+		if (dynamicProps == null || Object.keys(dynamicPropsPatches).length === 0) {
+			return;
+		}
+
+		for (let i = 0; i < dynamicProps.length; i++) {
+			const
+				prop = dynamicProps[i],
+				path = dynamicPropsPatches[prop];
+
+			if (path == null) {
+				continue;
+			}
+
+			if (path !== '' && dynamicPropsPatches[path] !== '') {
+				dynamicProps[i] = path;
+
+			} else {
+				dynamicProps.splice(i, 1);
+				i--;
+			}
 		}
 	}
 }

@@ -85,13 +85,11 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			isFunctional = !isRoot && ctxParams.functional === true;
 		}
 
-		const
-			isDefinedPath = Object.size(info.path) > 0,
-			forceUpdate = meta?.props[info.name]?.forceUpdate !== false;
+		const isDefinedPath = Object.size(info.path) > 0;
 
 		let canSkipWatching =
 			(isRoot || isFunctional) &&
-			(info.type === 'prop' && forceUpdate || info.type === 'attr');
+			(info.type === 'prop' || info.type === 'attr');
 
 		if (!canSkipWatching && isFunctional) {
 			let field: Nullable<ComponentField>;
@@ -364,6 +362,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						slicedPathChunks = pathChunks.slice(1);
 
 					const
+						forceUpdate = meta?.props[info.name]?.forceUpdate !== false,
 						destructors: Function[] = [];
 
 					const attachDeepProxy = (forceUpdate = true) => {
