@@ -262,7 +262,9 @@ export default abstract class iBlockFriends extends iBlockProps {
 
 	protected readonly h: typeof helpers = helpers;
 
-	/** {@link State.location} */
+	/**
+	 * An API for working with the target document's URL
+	 */
 	@system({
 		atom: true,
 		unique: true,
