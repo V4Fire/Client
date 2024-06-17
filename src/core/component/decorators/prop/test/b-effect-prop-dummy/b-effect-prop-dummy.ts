@@ -8,7 +8,7 @@
 
 /* eslint-disable @v4fire/require-jsdoc */
 
-import bDummy, { component, field } from 'components/dummies/b-dummy/b-dummy';
+import bDummy, { component, prop, system } from 'components/dummies/b-dummy/b-dummy';
 
 export * from 'components/dummies/b-dummy/b-dummy';
 
@@ -18,7 +18,10 @@ export * from 'components/dummies/b-dummy/b-dummy';
 	}
 })
 
-export default class bReactiveWrapperDummy extends bDummy {
-	@field()
-	someField?: string = 'foo';
+export default class bEffectPropDummy extends bDummy {
+	@prop()
+	dataProp?: string;
+
+	@system((o) => o.sync.link())
+	data?: string;
 }

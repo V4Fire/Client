@@ -6,5 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-reactive-wrapper-dummy')
+package('b-effect-prop-dummy')
 	.extends('b-dummy');

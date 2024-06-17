@@ -6,5 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-reactive-prop-dummy')
+package('b-non-effect-prop-dummy')
 	.extends('b-dummy');

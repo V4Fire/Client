@@ -15,12 +15,9 @@ import { paramsFactory } from 'core/component/decorators/factory';
 import type { DecoratorProp } from 'core/component/decorators/interface';
 
 //#if runtime has dummyComponents
-// @ts-ignore (vue/webstorm)
-import('core/component/decorators/prop/test/b-reactive-wrapper-dummy');
-// @ts-ignore (vue/webstorm)
-import('core/component/decorators/prop/test/b-reactive-prop-dummy');
-// @ts-ignore (vue/webstorm)
-import('core/component/decorators/prop/test/b-reactive-prop-disable-dummy');
+import('core/component/decorators/prop/test/b-effect-prop-wrapper-dummy');
+import('core/component/decorators/prop/test/b-effect-prop-dummy');
+import('core/component/decorators/prop/test/b-non-effect-prop-dummy');
 //#endif
 
 /**

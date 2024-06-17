@@ -18,8 +18,8 @@ export * from 'components/dummies/b-dummy/b-dummy';
 	}
 })
 
-export default class bReactivePropDummy extends bDummy {
-	@prop()
+export default class bNonEffectPropDummy extends bDummy {
+	@prop({forceUpdate: false})
 	dataProp?: string;
 
 	@system((o) => o.sync.link())

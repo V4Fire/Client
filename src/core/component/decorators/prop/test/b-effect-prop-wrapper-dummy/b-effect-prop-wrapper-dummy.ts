@@ -8,7 +8,7 @@
 
 /* eslint-disable @v4fire/require-jsdoc */
 
-import bDummy, { component, prop, system } from 'components/dummies/b-dummy/b-dummy';
+import bDummy, { component, field } from 'components/dummies/b-dummy/b-dummy';
 
 export * from 'components/dummies/b-dummy/b-dummy';
 
@@ -18,10 +18,7 @@ export * from 'components/dummies/b-dummy/b-dummy';
 	}
 })
 
-export default class bReactivePropDisableDummy extends bDummy {
-	@prop({forceUpdate: false})
-	dataProp?: string;
-
-	@system((o) => o.sync.link())
-	data?: string;
+export default class bEffectPropWrapperDummy extends bDummy {
+	@field()
+	someField?: string = 'foo';
 }

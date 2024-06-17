@@ -13,8 +13,8 @@
 - template index() extends ['b-dummy'].index
 	- block body
 		< .
-			< template v-if = stage === 'reactive enabled'
-				< b-reactive-prop-dummy :data = someField
+			< template v-if = stage === 'with effect'
+				< b-effect-prop-dummy :data = someField
 
-			< template v-if = stage === 'reactive disabled'
-				< b-reactive-prop-disable-dummy :data = someField
+			< template v-if = stage === 'without effect'
+				< b-non-effect-prop-dummy :data = someField

@@ -6,10 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "components/dummies/b-dummy/b-dummy.styl"
-
-$p = {
-
-}
-
-b-reactive-prop-disable-dummy extends b-dummy
+package('b-effect-prop-wrapper-dummy')
+	.extends('b-dummy')
+	.dependencies('b-effect-prop-dummy', 'b-non-effect-prop-dummy');
