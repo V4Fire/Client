@@ -300,7 +300,7 @@ class bExample extends iBlock {
 
     // Also, see core/object/watch
     {
-      // If set to false, then a handler that is invoked on the watcher event does not take any arguments from the event
+      // If set to false, then a handler invoked on the watcher event does not take any arguments from the event
       provideArgs: false,
 
       // How the event handler should be called:
