@@ -74,24 +74,6 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 		delete attrs['v-tag'];
 	}
 
-	Object.entries(attrs).forEach(([name, val]) => {
-		if (name.startsWith(':')) {
-			let propName = name.slice(1).camelize(false);
-
-			if (component.props[`${propName}Prop`]) {
-				propName = `${propName}Prop`;
-			}
-
-			if (component.props[propName]?.forceUpdate === false) {
-				const getterName = `@:${propName}`;
-
-				if (!attrs[getterName]) {
-					attrs[getterName] = [`createPropAccessors(() => ${val.join('')})()`];
-				}
-			}
-		}
-	});
-
 	if (!attrs[':componentIdProp']) {
 		const id = hasha(JSON.stringify([
 			cursor,
@@ -101,6 +83,22 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 
 		attrs[':componentIdProp'] = [`componentId + ${JSON.stringify(id)}`];
 	}
+
+	Object.entries(attrs).forEach(([name, val]) => {
+		if (!name.startsWith(':')) {
+			return;
+		}
+
+		let propName = name.slice(1).camelize(false);
+
+		if (component.props[`${propName}Prop`]) {
+			propName = `${propName}Prop`;
+		}
+
+		if (component.props[propName]?.forceUpdate === false) {
+			attrs[`@:${propName}`] = [`createPropAccessors(() => ${val.join('')})()`];
+		}
+	});
 
 	attrs[':getRoot'] = ['$getRoot(self)'];
 	attrs[':getParent'] = ["$getParent(self, typeof $restArgs !== 'undefined' ? $restArgs : undefined)"];
