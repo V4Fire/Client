@@ -25,10 +25,9 @@ module.exports = [
 			return;
 		}
 
-		const
-			src = attrs[':src'];
+		const src = attrs[':src'];
 
-		if (src && /require\(.*?\.svg[\\"']+\)/.test(src[0])) {
+		if (src && /require\(.*?\.svg["'\\]+\)/.test(src[0])) {
 			src[0] += '.replace(/^"|"$/g, \'\')';
 		}
 	},
@@ -41,12 +40,17 @@ module.exports = [
 		if (webpack.ssr) {
 			delete attrs['v-once'];
 			delete attrs['v-memo'];
+
+		// To ensure correct functioning on the client side with functional components,
+		// we normalize all calls to the v-attrs directive as props
+		} else if (attrs['v-attrs']) {
+			attrs[':v-attrs'] = attrs['v-attrs'].slice();
+			delete attrs['v-attrs'];
 		}
 
 		Object.forEach(attrs, (attr, key) => {
 			if (key === 'ref') {
-				const
-					ref = attrs[key][0];
+				const ref = attrs[key][0];
 
 				attrs[':ref'] = [`$resolveRef('${ref}')`];
 				attrs['v-ref'] = [`'${ref}'`];
@@ -56,8 +60,7 @@ module.exports = [
 			}
 
 			if (key === ':ref') {
-				const
-					ref = attrs[key];
+				const ref = attrs[key];
 
 				attrs[':ref'] = [`$resolveRef(${ref})`];
 				attrs['v-ref'] = ref;
@@ -78,18 +81,17 @@ module.exports = [
 				return;
 			}
 
-			const
-				dataAttrBind = ':-';
+			const dataAttrBind = ':-';
 
 			if (key.startsWith(dataAttrBind)) {
 				attrs[`:data-${key.slice(dataAttrBind.length)}`] = attr;
+				attrs['data-kozel'] = ['123'];
 				delete attrs[key];
 				return;
 			}
 
 			if (isStaticV4Prop.test(key)) {
-				const
-					tmp = key.dasherize(key.startsWith(':'));
+				const tmp = key.dasherize(key.startsWith(':'));
 
 				if (tmp !== key) {
 					delete attrs[key];

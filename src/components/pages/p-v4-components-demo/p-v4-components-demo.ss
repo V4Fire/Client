@@ -11,3 +11,7 @@
 - include 'components/super/i-static-page/i-static-page.component.ss'|b as placeholder
 
 - template index() extends ['i-static-page.component'].index
+	- block body
+		аа11111
+		? console.log('~~~~')
+		< b-button :-data = 432423 | :a = 343434
