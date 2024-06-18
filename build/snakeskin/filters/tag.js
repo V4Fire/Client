@@ -53,7 +53,7 @@ module.exports = [
 				const ref = attrs[key][0];
 
 				attrs[':ref'] = [`$resolveRef('${ref}')`];
-				attrs['v-ref'] = [`'${ref}'`];
+				attrs[':v-ref'] = [`'${ref}'`];
 
 				delete attrs['ref'];
 				return;
@@ -63,7 +63,7 @@ module.exports = [
 				const ref = attrs[key];
 
 				attrs[':ref'] = [`$resolveRef(${ref})`];
-				attrs['v-ref'] = ref;
+				attrs[':v-ref'] = ref;
 
 				return;
 			}

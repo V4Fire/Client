@@ -72,8 +72,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 		const key = 'v-attrs';
 
 		if (props[key] != null) {
-			const
-				dir = r.resolveDirective.call(this, 'attrs');
+			const dir = r.resolveDirective.call(this, 'attrs');
 
 			dir.beforeCreate({
 				dir,
@@ -88,6 +87,32 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 			}, vnode);
 
 			props = vnode.props!;
+			delete props[key];
+		}
+	}
+
+	{
+		const key = 'v-ref';
+
+		if (props[key] != null) {
+			const
+				value = props[key],
+				dir = r.resolveDirective.call(this, 'ref');
+
+			this.$nextTick(() => {
+				dir.mounted(vnode.el, {
+					dir,
+
+					modifiers: {},
+					arg: undefined,
+
+					value,
+					oldValue: undefined,
+
+					instance: this
+				}, vnode);
+			});
+
 			delete props[key];
 		}
 	}
