@@ -27,6 +27,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * The getter `r` has been moved from `iBlock` to `ComponentInterface`
 
+## v4.0.0-beta.103 (2024-06-14)
+
+#### :house: Internal
+
+* Updated `terser` to version `5.31.0` to include [bug fix](https://github.com/terser/terser/issues/1432)
+
 ## v4.0.0-beta.102 (2024-06-11)
 
 #### :bug: Bug Fix
