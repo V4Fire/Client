@@ -149,7 +149,7 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 		}
 
 		if (component.props[propName]?.forceUpdate === false) {
-			attrs[`@:${propName}`] = [`createPropAccessors(() => ${val.join('')})()`];
+			attrs[`@:${propName}`] = [`createPropAccessors(() => (${val.join('')}))()`];
 		}
 	});
 
