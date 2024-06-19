@@ -525,6 +525,11 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 							unwatch = watch(proxy, prop, topOpts, Object.cast(externalWatchHandler)).unwatch;
 
 						} else {
+							if (topOpts.immediate) {
+								topOpts.flush = 'sync';
+								delete topOpts.immediate;
+							}
+
 							unwatch = watchFn.call(this, `[[${prop}]]`, topOpts, externalWatchHandler);
 						}
 					}
