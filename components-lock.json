@@ -1,5 +1,5 @@
 {
-  "hash": "a591e06a6488dad7f995145e2c6b0983db9ccd253ecfec310c90c62b8fa2863c",
+  "hash": "1dc8c4ddcfdd8c521df3b146700b1a7b6417e32443b5289e48a6ee43284f4da6",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1356,6 +1356,38 @@
             "src/components/super/i-block/decorators/test/b-super-i-block-decorators-dummy/b-super-i-block-decorators-dummy.styl"
           ],
           "tpl": "src/components/super/i-block/decorators/test/b-super-i-block-decorators-dummy/b-super-i-block-decorators-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-super-i-block-destructor-dummy",
+        {
+          "index": "src/components/super/i-block/test/b-super-i-block-destructor-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-destructor-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-super-i-block-destructor-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/test/b-super-i-block-destructor-dummy/b-super-i-block-destructor-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/test/b-super-i-block-destructor-dummy/b-super-i-block-destructor-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/test/b-super-i-block-destructor-dummy/b-super-i-block-destructor-dummy.ss",
           "etpl": null
         }
       ],

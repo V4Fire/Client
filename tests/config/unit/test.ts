@@ -9,9 +9,11 @@
 import base from 'tests/config/super/test';
 
 import DemoPage from 'components/pages/p-v4-components-demo/test/api/page';
+import ConsoleTracker from 'tests/fixtures/console-tracker';
 
 export interface Fixtures {
 	demoPage: DemoPage;
+	consoleTracker: ConsoleTracker;
 }
 
 const test = base.extend<Fixtures>({
@@ -23,7 +25,23 @@ const test = base.extend<Fixtures>({
 	 * @param opts.baseURL
 	 * @param fixture
 	 */
-	demoPage: ({page, baseURL}, fixture) => fixture(new DemoPage(page, <string>baseURL))
+	demoPage: ({page, baseURL}, fixture) => fixture(new DemoPage(page, <string>baseURL)),
+
+	/**
+	 * Returns an instance of the ConsolerTracker
+	 *
+	 * @param opts
+	 * @param opts.page
+	 * @param opts.baseURL
+	 * @param fixture
+	 */
+	consoleTracker: async ({page}, fixture) => {
+		const tracker = new ConsoleTracker(page);
+
+		await fixture(tracker);
+
+		tracker.clear();
+	}
 });
 
 export default test;

@@ -28,7 +28,9 @@ import {
 	resolveDirective as superResolveDirective,
 
 	VNodeChild,
-	VNodeArrayChildren
+	VNodeArrayChildren,
+
+	Comment
 
 } from 'vue';
 
@@ -178,12 +180,28 @@ export function render(
 ): Node[];
 
 export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, group?: string): CanArray<Node> {
+	// If there is nothing to render, there is no need to create a virtual Vue instance
+	if (Object.isArray(vnode)) {
+		// If only a comment needs to be rendered, consider such renderings as empty
+		if (vnode.length === 0 || vnode.every(isEmptyVNode)) {
+			return [];
+		}
+
+	// If only a comment needs to be rendered, consider such renderings as empty
+	} else if (isEmptyVNode(vnode)) {
+		return document.createDocumentFragment();
+	}
+
 	const vue = new Vue({
 		render: () => vnode,
 
 		beforeCreate() {
 			if (parent != null) {
-				const root = Object.create(parent.$root, {
+				// To safely extend the $root object with the properties we need,
+				// we create a new object with a prototype
+				const root = Object.create(parent.r, {
+					// This property is needed because the actual $parent
+					// of this component refers to an App that is created higher up.
 					$remoteParent: {
 						configurable: true,
 						enumerable: true,
@@ -191,6 +209,8 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 						value: parent
 					}
 				});
+
+				Object.set(root, 'remoteRootInstances', root.remoteRootInstances + 1);
 
 				Object.defineProperty(this, 'unsafe', {
 					configurable: true,
@@ -200,12 +220,29 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 				});
 
 				// Register a worker to clean up memory upon component destruction
-				parent.unsafe.async.worker(() => {
-					vue.unmount();
-					Array.concat([], vnode).forEach(destroy);
-					disposeLazy(vue);
+				registerDestructor();
+			}
+
+			function registerDestructor() {
+				parent?.unsafe.async.worker(() => {
+					setImmediate(() => {
+						if ('skipDestruction' in vnode) {
+							delete vnode.skipDestruction;
+							registerDestructor();
+
+						} else {
+							vue.unmount();
+							Array.concat([], vnode).forEach(destroy);
+							disposeLazy(vue);
+						}
+					});
 				}, {group});
 			}
+		},
+
+		beforeUnmount() {
+			const root = this.unsafe.r;
+			Object.set(root, 'remoteRootInstances', root.remoteRootInstances - 1);
 		}
 	});
 
@@ -233,6 +270,10 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 
 	function isEmptyText(node?: Node) {
 		return node?.nodeType === 3 && node.textContent === '';
+	}
+
+	function isEmptyVNode(vnode: Nullable<VNode>) {
+		return vnode == null || vnode.type === Comment && vnode.children === 'v-if';
 	}
 }
 
