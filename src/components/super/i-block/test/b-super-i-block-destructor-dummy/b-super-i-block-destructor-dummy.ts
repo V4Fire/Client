@@ -15,6 +15,10 @@ export * from 'components/dummies/b-dummy/b-dummy';
 
 @component()
 export default class bSuperIBlockDestructorDummy extends bDummy {
+	override $refs!: bDummy['$refs'] & {
+		child?: CanArray<iBlock>;
+	};
+
 	@field()
 	content: boolean = true;
 

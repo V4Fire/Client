@@ -17,6 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * The `$destroy` method now accepts a recursive parameter for targeted removal
   of the component without deleting its children and vice versa `core/component/interface`
+* Added the `consoleTracker` fixture to enable access to console messages in unit tests `tests/fixtures`
 
 #### :bug: Bug Fix
 

@@ -9,6 +9,7 @@
 import { dropRawComponentContext } from 'core/component/context';
 import { callMethodFromComponent } from 'core/component/method';
 import { runHook } from 'core/component/hook';
+import { destroyedHooks } from 'core/component/const';
 
 import type { ComponentInterface } from 'core/component/interface';
 
@@ -20,7 +21,7 @@ import type { ComponentInterface } from 'core/component/interface';
  *   but not for its descendants
  */
 export function beforeDestroyState(component: ComponentInterface, recursive: boolean = true): void {
-	if (component.hook === 'beforeDestroy' || component.hook === 'destroyed') {
+	if (destroyedHooks[component.hook] != null) {
 		return;
 	}
 
@@ -46,26 +47,28 @@ export function beforeDestroyState(component: ComponentInterface, recursive: boo
 			unsafe.$renderEngine.r.destroy($el);
 		}
 
+		const {componentName, componentId, hook} = unsafe;
+
 		const destroyedDescriptors = {
 			componentId: {
 				writable: false,
 				enumerable: true,
 				configurable: false,
-				value: unsafe.componentId
+				value: componentId
 			},
 
 			componentName: {
 				writable: false,
 				enumerable: true,
 				configurable: false,
-				value: unsafe.componentName
+				value: componentName
 			},
 
 			hook: {
 				writable: false,
 				enumerable: true,
 				configurable: false,
-				value: unsafe.hook
+				value: hook
 			}
 		};
 
@@ -73,7 +76,7 @@ export function beforeDestroyState(component: ComponentInterface, recursive: boo
 			delete unsafe[key];
 		});
 
-		Object.defineProperties(unsafe, destroyedDescriptors);
+		Object.assign(unsafe, {componentId, componentName, hook});
 		Object.setPrototypeOf(unsafe, Object.create({}, destroyedDescriptors));
 
 		dropRawComponentContext(unsafe);

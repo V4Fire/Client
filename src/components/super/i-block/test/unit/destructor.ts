@@ -7,6 +7,9 @@
  */
 
 import test from 'tests/config/unit/test';
+import { BOM } from 'tests/helpers';
+
+import type iBlock from 'components/super/i-block/i-block';
 
 import { renderDestructorDummy } from 'components/super/i-block/test/helpers';
 
@@ -72,4 +75,54 @@ test.describe('<i-block> calling a component\'s destructor', () => {
 			await test.expect(target.evaluate(({r}) => r.remoteRootInstances)).resolves.toBe(1);
 		}
 	);
+
+	test.describe('the destructor should be idempotent', () => {
+		test.beforeEach(({consoleTracker}) => {
+			consoleTracker.setMessageFilters({
+				TypeError: (msg) => msg.args()[3].evaluate((value) => value?.message ?? null)
+			});
+		});
+
+		test('when it is called directly more than once', async ({page, consoleTracker}) => {
+			const
+				target = await renderDestructorDummy(page),
+				dynamicChild = await target.evaluateHandle<iBlock>((ctx) => ctx.$refs.child?.[1]),
+				destructor = await dynamicChild.evaluateHandle((ctx) => ctx.unsafe.$destroy.bind(ctx));
+
+			await destructor.evaluate((destroy) => destroy(false));
+
+			// Wait until memory is cleaned up
+			await page.waitForFunction((ctx) => ctx.r === undefined, dynamicChild);
+
+			await destructor.evaluate((destroy) => destroy(false));
+
+			await test.expect(consoleTracker.getMessages()).resolves.toHaveLength(0);
+		});
+
+		test(
+			'when it is called via beforeUnmount hook during async chunk unmount',
+
+			async ({page, consoleTracker}) => {
+				const
+					target = await renderDestructorDummy(page),
+					dynamicChild = await target.evaluateHandle<iBlock>((ctx) => ctx.$refs.child?.[1]);
+
+				await dynamicChild.evaluate((ctx) => {
+					ctx.unsafe.$destroy(false);
+				});
+
+				// Wait until memory is cleaned up
+				await page.waitForFunction((ctx) => ctx.r === undefined, dynamicChild);
+
+				// Clear async chunks which should call child's destructor on vue unmount
+				await target.evaluate((ctx) => {
+					ctx.unsafe.async.clearAll({group: /asyncComponents/});
+				});
+
+				await BOM.waitForIdleCallback(page);
+
+				await test.expect(consoleTracker.getMessages()).resolves.toHaveLength(0);
+			}
+		);
+	});
 });

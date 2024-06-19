@@ -8,7 +8,6 @@
 
 import Async from 'core/async';
 
-import { destroyedHooks } from 'core/component/const';
 import { getComponentContext } from 'core/component/context';
 
 import { forkMeta } from 'core/component/meta';
@@ -67,13 +66,8 @@ export function beforeCreateState(
 		enumerable: false,
 		writable: true,
 		value: (recursive: boolean = true) => {
-			if (destroyedHooks[component.hook] == null) {
-				beforeDestroyState(component, recursive);
-			}
-
-			if (component.hook !== 'destroyed') {
-				destroyedState(component);
-			}
+			beforeDestroyState(component, recursive);
+			destroyedState(component);
 		}
 	});
 

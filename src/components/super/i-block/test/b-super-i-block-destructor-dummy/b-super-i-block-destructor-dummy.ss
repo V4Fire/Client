@@ -15,7 +15,7 @@
 		< template v-if = content
 			< . v-async-target
 				< template v-for = el in asyncRender.iterate(2, 1)
-					< b-button v-func = false | @hook:mounted = pushToStore
+					< b-button v-func = false | @hook:mounted = pushToStore | ref = child
 						Button
 
 					< b-button @hook:mounted = pushToStore
