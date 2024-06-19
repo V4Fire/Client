@@ -92,6 +92,7 @@ test.describe('<i-block> calling a component\'s destructor', () => {
 			await destructor.evaluate((destroy) => destroy(false));
 
 			// Wait until memory is cleaned up
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			await page.waitForFunction((ctx) => ctx.r === undefined, dynamicChild);
 
 			await destructor.evaluate((destroy) => destroy(false));
@@ -112,6 +113,7 @@ test.describe('<i-block> calling a component\'s destructor', () => {
 				});
 
 				// Wait until memory is cleaned up
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				await page.waitForFunction((ctx) => ctx.r === undefined, dynamicChild);
 
 				// Clear async chunks which should call child's destructor on vue unmount
