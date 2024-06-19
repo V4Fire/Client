@@ -15,7 +15,7 @@ const
 const
 	{webpack} = require('@config/config'),
 	{validators} = require('@pzlr/build-core'),
-	{isV4Prop} = include('build/snakeskin/filters/const');
+	{isV4Prop, isStaticV4Prop} = include('build/snakeskin/filters/const');
 
 const
 	componentParams = include('build/graph/component-params');
@@ -44,17 +44,6 @@ Snakeskin.importFilters({
 });
 
 function tagFilter({name, attrs = {}}, tplName, cursor) {
-	Object.forEach(tagFilters, (filter) => filter({name, attrs}));
-
-	const isSimpleTag =
-		name !== 'component' &&
-		!attrs[TYPE_OF] &&
-		!validators.blockName(name);
-
-	if (isSimpleTag) {
-		return;
-	}
-
 	let componentName;
 
 	if (attrs[TYPE_OF]) {
@@ -66,7 +55,71 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 
 	const component = componentParams[componentName];
 
-	if (!component) {
+	const isSimpleTag =
+		name !== 'component' &&
+		!attrs[TYPE_OF] &&
+		!validators.blockName(name);
+
+	const vFuncDir = attrs['v-func']?.[0];
+	delete attrs['v-func'];
+
+	Object.entries(attrs).forEach(([key, attr]) => {
+		if (isStaticV4Prop.test(key)) {
+			const tmp = key.dasherize(key.startsWith(':'));
+
+			if (tmp !== key) {
+				delete attrs[key];
+				attrs[tmp] = attr;
+			}
+		}
+	});
+
+	let isFunctional = false;
+
+	if (component) {
+		if (component && component.functional === true) {
+			isFunctional = true;
+
+		} else if (!vFuncDir && attrs[SMART_PROPS] != null) {
+			isFunctional = Object.entries(attrs[SMART_PROPS]).every(([propName, propVal]) => {
+				propName = propName.dasherize(true);
+
+				if (!isV4Prop.test(propName)) {
+					propName = `:${propName}`;
+				}
+
+				let attr = attrs[propName]?.[0];
+
+				try {
+					// eslint-disable-next-line no-new-func
+					attr = Function(`return ${attr}`)();
+
+				} catch {}
+
+				if (Object.isArray(propVal)) {
+					return propVal.some((propVal) => Object.fastCompare(propVal, attr));
+				}
+
+				return Object.fastCompare(propVal, attr);
+			});
+		}
+	}
+
+	const isSmartFunctional =
+		attrs[SMART_PROPS] &&
+		(isFunctional || vFuncDir);
+
+	Object.forEach(tagFilters, (filter) => filter({
+		name,
+		attrs,
+		component,
+		isSimpleTag,
+		isFunctional,
+		isSmartFunctional,
+		vFuncDir
+	}));
+
+	if (isSimpleTag || !component) {
 		return;
 	}
 
@@ -107,50 +160,12 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 		attrs[':modsProp'] = ['sharedMods'];
 	}
 
-	const funcDir = attrs['v-func']?.[0];
-	delete attrs['v-func'];
-
-	let
-		isFunctional = false;
-
-	if (component && component.functional === true) {
-		isFunctional = true;
-
-	} else if (!funcDir && attrs[SMART_PROPS] != null) {
-		isFunctional = Object.entries(attrs[SMART_PROPS]).every(([propName, propVal]) => {
-			propName = propName.dasherize(true);
-
-			if (!isV4Prop.test(propName)) {
-				propName = `:${propName}`;
-			}
-
-			let
-				attr = attrs[propName]?.[0];
-
-			try {
-				// eslint-disable-next-line no-new-func
-				attr = Function(`return ${attr}`)();
-
-			} catch {}
-
-			if (Object.isArray(propVal)) {
-				return propVal.some((propVal) => Object.fastCompare(propVal, attr));
-			}
-
-			return Object.fastCompare(propVal, attr);
-		});
-	}
-
-	const isSmartFunctional =
-		attrs[SMART_PROPS] &&
-		(isFunctional || funcDir);
-
 	if (isFunctional && webpack.ssr) {
 		attrs[':renderComponentId'] = [false];
 	}
 
 	if (isSmartFunctional) {
-		if (funcDir == null || funcDir === 'true') {
+		if (vFuncDir == null || vFuncDir === 'true') {
 			if (webpack.ssr) {
 				attrs[':renderComponentId'] = [false];
 
@@ -158,12 +173,12 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 				attrs['is'] = [`${attrs['is'][0]}-functional`];
 			}
 
-		} else if (funcDir !== 'false') {
+		} else if (vFuncDir !== 'false') {
 			if (webpack.ssr) {
-				attrs[':renderComponentId'] = [!funcDir];
+				attrs[':renderComponentId'] = [!vFuncDir];
 
 			} else {
-				attrs[':is'] = [`'${attrs['is'][0]}' + (${funcDir} ? '-functional' : '')`];
+				attrs[':is'] = [`'${attrs['is'][0]}' + (${vFuncDir} ? '-functional' : '')`];
 				delete attrs['is'];
 			}
 		}

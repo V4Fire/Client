@@ -10,7 +10,7 @@
 
 const
 	{webpack} = require('@v4fire/config'),
-	{isV4Prop, isStaticV4Prop} = include('build/snakeskin/filters/const');
+	{isV4Prop} = include('build/snakeskin/filters/const');
 
 module.exports = [
 	/**
@@ -34,9 +34,14 @@ module.exports = [
 
 	/**
 	 * Normalizes V4Fire tag attributes
-	 * @param {object} attrs
+	 *
+	 * @param {object} opts
+	 * @param {string} opts.isSimpleTag
+	 * @param {string} opts.isFunctional
+	 * @param {string} opts.vFuncDir
+	 * @param {object} opts.attrs
 	 */
-	function normalizeV4Attrs({attrs}) {
+	function normalizeV4Attrs({isSimpleTag, isFunctional, vFuncDir, attrs}) {
 		if (webpack.ssr) {
 			delete attrs['v-once'];
 			delete attrs['v-memo'];
@@ -48,12 +53,20 @@ module.exports = [
 			delete attrs['v-attrs'];
 		}
 
-		Object.forEach(attrs, (attr, key) => {
+		let vRef = 'v-ref';
+
+		// Adding the v-ref directive to a non-functional component can lead to excessive re-renders
+		// with any change in the parent state, so we add it as a prop
+		if (!isSimpleTag && !isFunctional && !vFuncDir) {
+			vRef = `:${vRef}`;
+		}
+
+		Object.entries(attrs).forEach(([key, attr]) => {
 			if (key === 'ref') {
 				const ref = attrs[key][0];
 
 				attrs[':ref'] = [`$resolveRef('${ref}')`];
-				attrs[':v-ref'] = [`'${ref}'`];
+				attrs[vRef] = [`'${ref}'`];
 
 				delete attrs['ref'];
 				return;
@@ -63,7 +76,7 @@ module.exports = [
 				const ref = attrs[key];
 
 				attrs[':ref'] = [`$resolveRef(${ref})`];
-				attrs[':v-ref'] = ref;
+				attrs[vRef] = ref;
 
 				return;
 			}
@@ -86,16 +99,6 @@ module.exports = [
 			if (key.startsWith(dataAttrBind)) {
 				attrs[`:data-${key.slice(dataAttrBind.length)}`] = attr;
 				delete attrs[key];
-				return;
-			}
-
-			if (isStaticV4Prop.test(key)) {
-				const tmp = key.dasherize(key.startsWith(':'));
-
-				if (tmp !== key) {
-					delete attrs[key];
-					attrs[tmp] = attr;
-				}
 			}
 		});
 	}
