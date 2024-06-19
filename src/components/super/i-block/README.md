@@ -523,7 +523,6 @@ Generates a slot declaration by the specified parameters.
     += self.slot('preIcon', {':item': 'el', ':icon': 'el.preIcon'})
       < component &
         v-if = el.preIconComponent |
-        :instanceOf = bIcon |
         :is = el.preIconComponent |
         :value = el.preIcon
       .
