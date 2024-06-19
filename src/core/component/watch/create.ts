@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable max-lines-per-function, complexity */
+/* eslint-disable max-lines-per-function */
 
 import watch, { mute, unmute, unwrap, getProxyType, isProxy, WatchHandlerParams } from 'core/object/watch';
 import { getPropertyInfo, privateFieldRgxp, PropertyInfo } from 'core/component/reflect';
@@ -26,6 +26,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 	const
 		watchCache = new Map();
 
+	/* eslint-disable-next-line complexity */
 	return function watchFn(
 		this: ComponentInterface,
 		path: WatchPath | object,
