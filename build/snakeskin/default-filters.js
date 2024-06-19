@@ -86,6 +86,10 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 			isFunctional = Object.entries(attrs[SMART_PROPS]).every(([propName, propVal]) => {
 				propName = propName.dasherize(true);
 
+				// In the component descriptor @component for smart components,
+				// props can be specified that make the component functional when set to certain values.
+				// However, since the contract requires all component props to start with ":",
+				// we explicitly add this prefix to the name and check for its presence in the attributes.
 				if (!isV4Prop.test(propName)) {
 					propName = `:${propName}`;
 				}
