@@ -378,7 +378,7 @@ ComponentEngine.directive('attrs', {
 				}
 			}
 
-			// For the transmission of accessors, forceUpdate: false props use events.
+			// For the transmission of accessors, `forceUpdate: false` props use events.
 			// For example, `@:value = createPropAccessors(() => someValue)`.
 			// A distinctive feature of such events is the prefix `@:` or `on:`.
 			// Such events are processed in a special way.
