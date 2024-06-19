@@ -9,6 +9,17 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* The `$destroy` method now accepts a recursive parameter for targeted removal
+  of the component without deleting its children and vice versa
+
+#### :house: Internal
+
+* The getter `r` has been moved from `iBlock` to `ComponentInterface`
+
 ## v4.0.0-beta.91 (2024-04-19)
 
 #### :rocket: New Feature

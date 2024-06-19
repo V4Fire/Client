@@ -11,6 +11,22 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* The `$destroy` method now accepts a recursive parameter for targeted removal
+  of the component without deleting its children and vice versa `core/component/interface`
+* Added the `consoleTracker` fixture to enable access to console messages in unit tests `tests/fixtures`
+
+#### :bug: Bug Fix
+
+* Fixed an error where a component could transition to a hook in which it was already located `core/component/hook`
+
+#### :house: Internal
+
+* The getter `r` has been moved from `iBlock` to `ComponentInterface`
+
 ## v4.0.0-beta.103 (2024-06-14)
 
 #### :house: Internal
