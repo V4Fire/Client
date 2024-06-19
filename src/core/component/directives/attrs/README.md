@@ -4,7 +4,7 @@ This module provides a directive for setting any input parameters/attributes/dir
 the provided dictionary.
 
 ```
-< .example :v-attrs = {'@click': console.log, class: classes, 'v-show': condition}
+< .example v-attrs = {'@click': console.log, class: classes, 'v-show': condition}
 ```
 
 ## Why is This Directive Needed?
@@ -27,30 +27,12 @@ parameters for an element or component, except for the `v-if` directive.
 < .example v-attrs = {'@click': console.log, class: classes, 'v-show': condition}
 ```
 
-## Using the directive as an attribute
-
-The `v-attr` directive can be used as a regular directive, or as an element or component attribute.
-
-```
-< .example :v-attrs = {'@click': console.log, class: classes, 'v-show': condition}
-```
-
-This approach of creating a directive is more versatile because it works correctly with functional components.
-
-```
-/// Due to technical limitations, we cannot pass any props to a functional component
-< my-functional-component v-attrs = {myProp: '...'}
-
-/// Everything works as expected
-< my-functional-component :v-attrs = {myProp: '...'}
-```
-
 ## Usage
 
 ### Providing directives, events, attributes, and props
 
 ```
-< div :v-attrs = { &
+< div v-attrs = { &
   /// We can pass any available directive except `v-if`
   'v-show': showCondition,
 
@@ -68,10 +50,42 @@ This approach of creating a directive is more versatile because it works correct
 } .
 ```
 
+### Providing `forceUpdate: false` props to components
+
+When working with component properties in frameworks like Vue or React,
+optimizing re-render behavior is crucial for performance.
+By default, any change to a component's props results in the component's template being re-rendered.
+However, there are scenarios where you might want to prevent unnecessary re-renders
+when the prop value changes do not affect the visual output or component behavior.
+
+To address this issue in V4Fire, it is necessary to add a special flag `forceUpdate: false` to any prop.
+
+```typescript
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
+
+@component()
+class bExample extends iBlock {
+  @prop({type: Number, forceUpdate: false})
+  value!: number;
+}
+```
+
+Additionally, when passing such props using the `v-attrs` directive,
+they should be transmitted as demonstrated in the example below:
+
+```
+< b-example v-attrs = {'@:value': createPropAccessors(() => someValue)}
+```
+
+The `createPropAccessors` function generates accessor functions for `someValue`,
+effectively allowing you to manage how prop changes affect component re-rendering.
+By doing this, you can ensure that updates to `someValue` do not automatically
+trigger a re-render unless explicitly required, enhancing the performance and efficiency of the application.
+
 ### Providing the `v-model` directive
 
 To use the `v-model` directive, provide the model store as a string.
 
 ```
-< input :v-attrs = {'v-model': 'textStore'}
+< input v-attrs = {'v-model': 'textStore'}
 ```

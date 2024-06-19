@@ -265,6 +265,8 @@ class bExample extends iBlock {
 
 If set to false, changing the prop will never trigger a re-render of the component template.
 Use this mode for props that are not used in the template to reduce the number of unwanted re-renders.
+The need for this property arose after upgrading to Vue3,
+where any change to a component's prop always triggers a re-render of its template.
 
 __Note that this logic only applies to non-functional components,
 as a functional component updates with any change in the parent state.__
@@ -278,6 +280,19 @@ class bExample extends iBlock {
   value!: number;
 }
 ```
+
+Please note that when setting such props using the `v-attrs` directive,
+you need to define them differently from other props.
+See the example below.
+
+```
+< b-example v-attrs = {'@:value': createPropAccessors(() => someValue)}
+```
+
+The `createPropAccessors` function generates accessor functions for `someValue`,
+effectively allowing you to manage how prop changes affect component re-rendering.
+By doing this, you can ensure that updates to `someValue` do not automatically
+trigger a re-render unless explicitly required, enhancing the performance and efficiency of the application.
 
 ### [watch]
 

@@ -2,6 +2,10 @@
 
 This module provides a bunch of built-in directives for working with components and nodes.
 
+_Please note that adding a directive to a component can negatively impact performance.
+This is because having a directive on a component causes it to re-render every time the parent template
+that uses this component is re-rendered._
+
 ## Built-in directives
 
 * `core/component/directives/tag` - this directive allows you to dynamically specify the tag name to create.
