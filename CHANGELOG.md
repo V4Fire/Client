@@ -11,6 +11,21 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added the `createPropAccessors` method for creating accessors
+  for props marked as `forceUpdate: false` `core/component/interface`
+
+* Added the `forceUpdate: false` property to designate props whose changes
+  should not lead to a template re-render `core/component/decorators/prop`
+
+#### :bug: Bug Fix
+
+* Fixed a bug where adding refs to components could cause them to re-render `core/component/directives/ref`
+* Fixed a bug where adding `v-attrs` to components could cause them to re-render `core/component/directives/attrs`
+
 ## v4.0.0-beta.104 (2024-06-19)
 
 #### :rocket: New Feature

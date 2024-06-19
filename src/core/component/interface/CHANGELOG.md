@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added the `createPropAccessors` method for creating accessors for props marked as `forceUpdate: false`
+
 ## v4.0.0-beta.104 (2024-06-19)
 
 #### :rocket: New Feature
