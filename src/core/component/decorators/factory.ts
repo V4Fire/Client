@@ -240,7 +240,13 @@ export function paramsFactory<T = object>(
 				metaCluster[key] = desc;
 
 				if (metaKey === 'props' && desc.forceUpdate === false) {
-					// A special system property used to observe props with the option `forceUpdate: false`
+					// A special system property used to observe props with the option `forceUpdate: false`.
+					// This is because `forceUpdate: false` props are passed as attributes,
+					// i.e., they are accessible via `$attrs`.
+					// Moreover, all such attributes are readonly for the component.
+					// However, we need a system property that will be synchronized with this attribute
+					// and will update whenever this attribute is updated from the outside.
+					// Therefore, we introduce a special private system field formatted as `[[${fieldName}]]`.
 					meta.systemFields[`[[${key}]]`] = {
 						...info,
 						watchers,
