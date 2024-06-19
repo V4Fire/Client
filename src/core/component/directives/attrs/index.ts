@@ -378,7 +378,10 @@ ComponentEngine.directive('attrs', {
 				}
 			}
 
-			// Through the event bus, accessories can be pushed for `forceUpdate: false` props
+			// For the transmission of accessors, forceUpdate: false props use events.
+			// For example, `@:value = createPropAccessors(() => someValue)`.
+			// A distinctive feature of such events is the prefix `@:` or `on:`.
+			// Such events are processed in a special way.
 			const isSystemGetter = propGetterRgxp.test(event);
 			props[event] = attrVal;
 
