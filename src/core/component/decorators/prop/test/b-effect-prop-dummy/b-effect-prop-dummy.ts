@@ -8,20 +8,20 @@
 
 /* eslint-disable @v4fire/require-jsdoc */
 
-import bDummy, { component, prop, system } from 'components/dummies/b-dummy/b-dummy';
+import bDummy, { component, prop, field, computed } from 'components/dummies/b-dummy/b-dummy';
 
 export * from 'components/dummies/b-dummy/b-dummy';
 
-@component({
-	functional: {
-		functional: true
-	}
-})
-
+@component()
 export default class bEffectPropDummy extends bDummy {
-	@prop()
-	dataProp?: string;
+	@prop(Object)
+	readonly dataProp?: object;
 
-	@system((o) => o.sync.link())
-	data?: string;
+	@field((o) => o.sync.link<Dictionary>((v) => ({...v})))
+	data?: object;
+
+	@computed({dependencies: ['data']})
+	get dataGetter(): CanUndef<object> {
+		return this.data;
+	}
 }

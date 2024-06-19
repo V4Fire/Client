@@ -11,6 +11,9 @@
 - include 'components/super/i-data'|b as placeholder
 
 - template index() extends ['i-data'].index
+	- block helpers
+		{{ void(incRenderCounter()) }}
+
 	- block body
 		< template v-if = testComponent
 			< component &

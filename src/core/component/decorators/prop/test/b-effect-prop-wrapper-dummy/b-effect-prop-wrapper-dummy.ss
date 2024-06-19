@@ -12,9 +12,17 @@
 
 - template index() extends ['b-dummy'].index
 	- block body
-		< .
-			< template v-if = stage === 'with effect'
-				< b-effect-prop-dummy :data = someField
+		< template v-if = stage === 'with effect'
+			< b-effect-prop-dummy ref = child | :data = someField
 
-			< template v-if = stage === 'without effect'
-				< b-non-effect-prop-dummy :data = someField
+		< template v-else-if = stage === 'v-attrs with effect'
+			< b-effect-prop-dummy ref = child | v-attrs = {data: someField}
+
+		< template v-else-if = stage === 'without effect'
+			< b-non-effect-prop-dummy ref = child | :data = someField
+
+		< template v-else-if = stage === 'v-attrs without effect'
+			< b-non-effect-prop-dummy ref = child | v-attrs = {'@:data': createPropAccessors(() => someField)}
+
+		< template v-else-if = stage === 'functional without effect'
+			< b-non-effect-prop-dummy ref = child | :data = someField | v-func = true

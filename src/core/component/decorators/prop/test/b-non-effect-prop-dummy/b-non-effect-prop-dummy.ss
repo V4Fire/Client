@@ -13,4 +13,4 @@
 - template index() extends ['b-dummy'].index
 	- block body
 		< .
-			Content: {{ data }}
+			Content: {{ JSON.stringify(data) }}

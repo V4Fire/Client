@@ -9,16 +9,16 @@
 /* eslint-disable @v4fire/require-jsdoc */
 
 import bDummy, { component, field } from 'components/dummies/b-dummy/b-dummy';
+import type bNonEffectPropDummy from 'core/component/decorators/prop/test/b-non-effect-prop-dummy/b-non-effect-prop-dummy';
 
 export * from 'components/dummies/b-dummy/b-dummy';
 
-@component({
-	functional: {
-		functional: true
-	}
-})
-
+@component()
 export default class bEffectPropWrapperDummy extends bDummy {
 	@field()
-	someField?: string = 'foo';
+	someField: {a?: number; b?: {c: number}} = {};
+
+	protected override readonly $refs!: bDummy['$refs'] & {
+		child?: bNonEffectPropDummy;
+	};
 }

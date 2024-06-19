@@ -14,7 +14,7 @@
 import type { VNode } from 'core/component/engines';
 
 import type iBlock from 'components/super/i-block/i-block';
-import iData, { component, field } from 'components/super/i-data/i-data';
+import iData, { component, field, system } from 'components/super/i-data/i-data';
 
 export * from 'components/super/i-data/i-data';
 
@@ -24,28 +24,39 @@ export * from 'components/super/i-data/i-data';
 	}
 })
 
-class bDummy extends iData {
+export default class bDummy extends iData {
 	/**
-	 * Name of the test component
+	 * The name of the test component
 	 */
 	@field()
 	testComponent?: string;
 
 	/**
-	 * Attributes for the test component
+	 * Attributes of the test component
 	 */
 	@field()
 	testComponentAttrs: Dictionary = {};
 
 	/**
-	 * Slots for the test component
+	 * Slots of the test component
 	 */
 	@field()
 	testComponentSlots?: CanArray<VNode>;
 
+	/**
+	 * The number that shows how many times the component's render function was called
+	 */
+	@system()
+	renderCounter: number = 0;
+
 	protected override readonly $refs!: iData['$refs'] & {
 		testComponent?: iBlock;
 	};
-}
 
-export default bDummy;
+	/**
+	 * Increases the value of `renderCounter` by 1
+	 */
+	protected incRenderCounter(): void {
+		this.renderCounter++;
+	}
+}
