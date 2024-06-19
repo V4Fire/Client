@@ -63,12 +63,12 @@ test.describe('contracts for props effects', () => {
 
 		test.describe('for a functional component', () => {
 			test.describe('passing data as a regular prop', () => {
-				test('it should trigger the re-rendering of its template', ({page}) =>
+				test('should trigger the re-rendering of its template', ({page}) =>
 					shouldReRender('functional without effect', true, page));
 			});
 
 			test.describe('passing data using v-attrs', () => {
-				test('it should trigger the re-rendering of its template', ({page}) =>
+				test('should trigger the re-rendering of its template', ({page}) =>
 					shouldReRender('functional v-attrs without effect', true, page));
 			});
 		});
@@ -77,7 +77,7 @@ test.describe('contracts for props effects', () => {
 	test.describe('changing the value of the prop without `forceUpdate: false`', () => {
 		test.describe('for a non-functional component', () => {
 			test.describe('passing data as a regular prop', () => {
-				test('it should trigger the re-rendering of its template', ({page}) =>
+				test('should trigger the re-rendering of its template', ({page}) =>
 					shouldReRender('with effect', false, page));
 
 				test('prop monitoring should work correctly', ({page}) =>
@@ -85,7 +85,7 @@ test.describe('contracts for props effects', () => {
 			});
 
 			test.describe('passing data using v-attrs', () => {
-				test('it should trigger the re-rendering of its template', ({page}) =>
+				test('should trigger the re-rendering of its template', ({page}) =>
 					shouldReRender('v-attrs with effect', false, page));
 
 				test('prop monitoring should work correctly', ({page}) =>
