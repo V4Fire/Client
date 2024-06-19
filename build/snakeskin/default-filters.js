@@ -65,6 +65,8 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 
 	Object.entries(attrs).forEach(([key, attr]) => {
 		if (isStaticV4Prop.test(key)) {
+			// Since HTML is not case-sensitive, the name can be written differently.
+			// We will explicitly normalize the name to the most popular format for HTML notation.
 			const tmp = key.dasherize(key.startsWith(':'));
 
 			if (tmp !== key) {
