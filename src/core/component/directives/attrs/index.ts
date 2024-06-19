@@ -378,10 +378,12 @@ ComponentEngine.directive('attrs', {
 				}
 			}
 
+			// Through the event bus, accessories can be pushed for `forceUpdate: false` props
 			const isSystemGetter = propGetterRgxp.test(event);
 			props[event] = attrVal;
 
 			if (componentCtx != null && !isDOMEvent && Object.isFunction(attrVal)) {
+				// Under the contract, all handlers must be in `$attrs`
 				componentCtx.unsafe.$attrs ??= {};
 				componentCtx.unsafe.$attrs[event] = attrVal;
 
