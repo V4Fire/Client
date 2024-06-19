@@ -26,3 +26,6 @@
 
 		< template v-else-if = stage === 'functional without effect'
 			< b-non-effect-prop-dummy ref = child | :data = someField | v-func = true
+
+		< template v-else-if = stage === 'functional v-attrs without effect'
+			< b-non-effect-prop-dummy ref = child | v-func = true | v-attrs = {'@:data': createPropAccessors(() => someField)}
