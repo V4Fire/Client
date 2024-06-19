@@ -8,7 +8,8 @@ and custom serialization functions.
 
 ## Usage
 
-The fixture is integrated by default. Below is a detailed guide on using the ConsoleTracker:
+The fixture is integrated by default.
+Below is a detailed guide on using the ConsoleTracker:
 
 ```ts
 import { ConsoleMessage } from '@playwright/test';
@@ -20,13 +21,13 @@ test.describe('Example Module', () => {
 
     // Define your message filters
     consoleTracker.setMessageFilters({
-        // Capture all messages containing "error" and save them as they are.
-        error: null,
+      // Capture all messages containing "error" and save them as they are.
+      error: null,
 
-        // For messages containing "stderr:error", use a custom serializer to process and store them.
-        'stderr:error': (msg: ConsoleMessage) => msg.args()[2].evaluate(
-            (value) => value?.message ?? null
-        ),
+      // For messages containing "stderr:error", use a custom serializer to process and store them.
+      'stderr:error': (msg: ConsoleMessage) => msg.args()[2].evaluate(
+        (value) => value?.message ?? null
+      ),
     });
   });
 
@@ -50,7 +51,7 @@ console messages based on specified conditions.
 await consoleTracker.setMessageFilters({/* filter and serialization logic */});
 ```
 
-#### Parameters:
+#### Parameters
 
 - `filters` (Object): A dictionary where the key is a substring to look for in console messages,
 and the value is a serialization function or `null` if the message should be saved as-is.
@@ -61,8 +62,8 @@ This method serves as a wrapper for configuring the pattern used by `core/log`
 to determine which messages should be emitted to the console.
 By default, the logger is set to only log error messages.
 
-Using `setLogPattern` allows you to specify a new pattern,
-enabling the capture of additional types of console messages based on your testing needs.
+Using `setLogPattern` allows you to choose a new pattern to capture more types
+of console messages based on your testing needs.
 
 ```ts
 await consoleTracker.setLogPattern(/.*/); // Logs all messages
@@ -72,7 +73,7 @@ await consoleTracker.setLogPattern(/.*/); // Logs all messages
 
 - `pattern` (RegExp or string): A regular expression defining which messages should be logged to the console.
 
-#### Example:
+#### Example
 
 If your tests require tracking of more specific messages, such as debug information alongside warnings and errors,
 you could set a more inclusive pattern as follows:
@@ -91,5 +92,6 @@ consoleTracker.setMessageFilters({
 
 ## Tech Notes
 
-1. Message filtering is case insensitive.
-2. Serialization functions should handle possible exceptions when evaluating message content to prevent test interruptions.
+1. Message filtering is case-insensitive.
+2. Serialization functions should handle possible exceptions when evaluating message content
+   to prevent test interruptions.
