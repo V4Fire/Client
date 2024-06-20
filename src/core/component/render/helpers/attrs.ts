@@ -48,7 +48,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	} = vnode;
 
 	const {
-		meta: {params},
+		meta: {params: {functional}},
 		$renderEngine: {r}
 	} = this;
 
@@ -99,19 +99,31 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 				value = props[key],
 				dir = r.resolveDirective.call(this, 'ref');
 
-			this.$nextTick(() => {
-				dir.mounted(vnode.el, {
-					dir,
+			const descriptor = {
+				once: true,
+				fn: () => {
+					dir.mounted(vnode.el, {
+						dir,
 
-					modifiers: {},
-					arg: undefined,
+						modifiers: {},
+						arg: undefined,
 
-					value,
-					oldValue: undefined,
+						value,
+						oldValue: undefined,
 
-					instance: this
-				}, vnode);
-			});
+						instance: this
+					}, vnode);
+				}
+			};
+
+			this.meta.hooks['before:mounted'].unshift(descriptor);
+
+			// The parent component's state has changed.
+			// $nextTick ensures that the template will already be updated and all references are current.
+			// The updated hook will also reliably be called afterward.
+			if (functional !== true && this.hook !== 'beforeMount') {
+				this.$nextTick(descriptor.fn);
+			}
 
 			delete props[key];
 		}
@@ -140,7 +152,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 		const key = 'data-cached-class-component-id';
 
 		if (props[key] != null) {
-			if (props[key] === 'true' && params.functional !== true) {
+			if (props[key] === 'true' && functional !== true) {
 				Object.assign(props, mergeProps({class: props.class}, {class: this.componentId}));
 			}
 
