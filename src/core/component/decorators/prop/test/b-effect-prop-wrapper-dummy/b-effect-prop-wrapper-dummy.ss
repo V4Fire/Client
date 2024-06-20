@@ -21,6 +21,14 @@
 		< template v-else-if = stage === 'without effect'
 			< b-non-effect-prop-dummy ref = child | :data = someField
 
+		< template v-else-if = stage === 'component :is without effect'
+			< component &
+				ref = child |
+				:is = 'b-non-effect-prop-dummy' |
+				:instanceOf = b-non-effect-prop-dummy |
+				:data = someField
+			.
+
 		< template v-else-if = stage === 'v-attrs without effect'
 			< b-non-effect-prop-dummy ref = child | v-attrs = {'@:data': createPropAccessors(() => someField)}
 

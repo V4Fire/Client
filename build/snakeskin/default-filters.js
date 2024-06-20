@@ -44,25 +44,6 @@ Snakeskin.importFilters({
 });
 
 function tagFilter({name, attrs = {}}, tplName, cursor) {
-	let componentName;
-
-	if (attrs[TYPE_OF]) {
-		componentName = attrs[TYPE_OF];
-
-	} else {
-		componentName = name === 'component' ? 'iBlock' : name.camelize(false);
-	}
-
-	const component = componentParams[componentName];
-
-	const isSimpleTag =
-		name !== 'component' &&
-		!attrs[TYPE_OF] &&
-		!validators.blockName(name);
-
-	const vFuncDir = attrs['v-func']?.[0];
-	delete attrs['v-func'];
-
 	Object.entries(attrs).forEach(([key, attr]) => {
 		if (isStaticV4Prop.test(key)) {
 			// Since HTML is not case-sensitive, the name can be written differently.
@@ -75,6 +56,34 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 			}
 		}
 	});
+
+	let componentName;
+
+	if (attrs[TYPE_OF]) {
+		componentName = attrs[TYPE_OF];
+
+	} else if (name === 'component') {
+		if (attrs[':instance-of']) {
+			componentName = attrs[':instance-of'][0].camelize(false);
+			delete attrs[':instance-of'];
+
+		} else {
+			componentName = 'iBlock';
+		}
+
+	} else {
+		componentName = name.camelize(false);
+	}
+
+	const component = componentParams[componentName];
+
+	const isSimpleTag =
+		name !== 'component' &&
+		!attrs[TYPE_OF] &&
+		!validators.blockName(name);
+
+	const vFuncDir = attrs['v-func']?.[0];
+	delete attrs['v-func'];
 
 	let isFunctional = false;
 

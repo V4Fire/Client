@@ -29,12 +29,20 @@ test.describe('contracts for props effects', () => {
 					testWatchers('without effect', page));
 			});
 
-			test.describe('passing data using v-attrs', () => {
+			test.describe('passing data using `v-attrs`', () => {
 				test('should not cause the re-rendering of its template', ({page}) =>
 					shouldNotReRender('v-attrs without effect', page));
 
 				test('prop monitoring should work correctly', ({page}) =>
 					testWatchers('v-attrs without effect', page));
+			});
+
+			test.describe('using `component :is`', () => {
+				test('should not cause the re-rendering of its template', ({page}) =>
+					shouldNotReRender('component :is without effect', page));
+
+				test('prop monitoring should work correctly', ({page}) =>
+					testWatchers('component :is without effect', page));
 			});
 
 			async function shouldNotReRender(stage: string, page: Page) {
@@ -67,7 +75,7 @@ test.describe('contracts for props effects', () => {
 					shouldReRender('functional without effect', true, page));
 			});
 
-			test.describe('passing data using v-attrs', () => {
+			test.describe('passing data using `v-attrs`', () => {
 				test('should trigger the re-rendering of its template', ({page}) =>
 					shouldReRender('functional v-attrs without effect', true, page));
 			});
@@ -84,7 +92,7 @@ test.describe('contracts for props effects', () => {
 					testWatchers('with effect', page));
 			});
 
-			test.describe('passing data using v-attrs', () => {
+			test.describe('passing data using `v-attrs`', () => {
 				test('should trigger the re-rendering of its template', ({page}) =>
 					shouldReRender('v-attrs with effect', false, page));
 

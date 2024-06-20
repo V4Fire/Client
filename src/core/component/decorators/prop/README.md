@@ -281,6 +281,28 @@ class bExample extends iBlock {
 }
 ```
 
+As a rule, adding the property `forceUpdate: false` is the only thing needed to activate this mode for the prop.
+However, if you are creating a component using `component :is`,
+you may be required to explicitly set accessors for this prop.
+
+```
+< component :is = 'b-example' | :value = someValue | @:value = createPropAccessors(() => someValue)
+```
+
+The `createPropAccessors` function generates accessor functions for `someValue`,
+effectively allowing you to manage how prop changes affect component re-rendering.
+By doing this, you can ensure that updates to `someValue` do not automatically
+trigger a re-render unless explicitly required, enhancing the performance and efficiency of the application.
+
+Alternatively, you can specify the supertype of your component using the prop `:instanceOf`,
+and then the necessary accessors will be passed automatically.
+
+```
+< component :is = 'b-example' | :instanceOf = bExample | :value = someValue
+```
+
+#### Passing Through v-attrs
+
 Please note that when setting such props using the `v-attrs` directive,
 you need to define them differently from other props.
 See the example below.
@@ -288,11 +310,6 @@ See the example below.
 ```
 < b-example v-attrs = {'@:value': createPropAccessors(() => someValue)}
 ```
-
-The `createPropAccessors` function generates accessor functions for `someValue`,
-effectively allowing you to manage how prop changes affect component re-rendering.
-By doing this, you can ensure that updates to `someValue` do not automatically
-trigger a re-render unless explicitly required, enhancing the performance and efficiency of the application.
 
 ### [watch]
 
