@@ -11,7 +11,7 @@ import test from 'tests/config/unit/test';
 
 import { Component } from 'tests/helpers';
 
-import type { WatchHandlerParams } from 'components/super/i-block';
+import type { WatchHandlerParams } from 'components/super/i-block/i-block';
 import type bEffectPropWrapperDummy from 'core/component/decorators/prop/test/b-effect-prop-wrapper-dummy/b-effect-prop-wrapper-dummy';
 
 test.describe('contracts for props effects', () => {
@@ -134,7 +134,7 @@ test.describe('contracts for props effects', () => {
 		await target.evaluate((ctx) => {
 			const child = ctx.unsafe.$refs.child!.unsafe;
 
-			type Log = Array<[unknown, unknown, unknown[]]>;
+			type Log = Array<[unknown, unknown, CanUndef<unknown[]>]>;
 
 			const
 				data: Log = [],
@@ -145,12 +145,12 @@ test.describe('contracts for props effects', () => {
 			ctx.unsafe.tmp.dataProp = dataProp;
 			ctx.unsafe.tmp.dataGetter = dataGetter;
 
-			child.watch('data', {deep: true, flush: 'sync'}, (val: unknown, old: unknown, i: WatchHandlerParams) => {
-				data.push([val, old, i.path]);
+			child.watch('data', {deep: true, flush: 'sync'}, (val: unknown, old: unknown, i?: WatchHandlerParams) => {
+				data.push([val, old, i!.path]);
 			});
 
-			child.watch('dataProp', {deep: true, flush: 'sync'}, (val: unknown, old: unknown, i: WatchHandlerParams) => {
-				dataProp.push([Object.fastClone(val), old, i.path]);
+			child.watch('dataProp', {deep: true, flush: 'sync'}, (val: unknown, old: unknown, i?: WatchHandlerParams) => {
+				dataProp.push([Object.fastClone(val), old, i!.path]);
 			});
 
 			child.watch('dataGetter', {deep: true, flush: 'sync'}, (val: unknown, old: unknown, i?: WatchHandlerParams) => {
