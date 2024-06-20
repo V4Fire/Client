@@ -121,10 +121,10 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 			const beforeMount = beforeMountHooks[this.hook] != null;
 
 			if (beforeMount || functional === true) {
-				meta.hooks['before:mounted'].unshift(descriptor);
+				meta.hooks['before:mounted'].push(descriptor);
 
 			} else {
-				meta.hooks['before:updated'].unshift(descriptor);
+				this.$nextTick(descriptor.fn);
 			}
 		}
 
