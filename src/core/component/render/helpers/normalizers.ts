@@ -122,7 +122,7 @@ export function normalizeComponentAttrs(
 	}
 
 	const
-		dynamicPropsPatches = {},
+		dynamicPropsPatches = new Map<string, string>(),
 		normalizedAttrs = {...attrs};
 
 	if (Object.isDictionary(normalizedAttrs['v-attrs'])) {
@@ -184,36 +184,35 @@ export function normalizeComponentAttrs(
 			return;
 		}
 
-		dynamicPropsPatches[name] = newName;
+		dynamicPropsPatches.set(name, newName);
 		patchDynamicProps(newName);
 	}
 
 	function patchDynamicProps(propName: string) {
 		if (functional !== true && component.props[propName]?.forceUpdate === false) {
-			dynamicPropsPatches[propName] = '';
+			dynamicPropsPatches.set(propName, '');
 		}
 	}
 
 	function modifyDynamicPath() {
-		if (dynamicProps == null || Object.keys(dynamicPropsPatches).length === 0) {
+		if (dynamicProps == null || dynamicPropsPatches.size === 0) {
 			return;
 		}
 
-		for (let i = 0; i < dynamicProps.length; i++) {
+		for (let i = dynamicProps.length - 1; i >= 0; i--) {
 			const
 				prop = dynamicProps[i],
-				path = dynamicPropsPatches[prop];
+				path = dynamicPropsPatches.get(prop);
 
 			if (path == null) {
 				continue;
 			}
 
-			if (path !== '' && dynamicPropsPatches[path] !== '') {
+			if (path !== '' && dynamicPropsPatches.get(path) !== '') {
 				dynamicProps[i] = path;
 
 			} else {
 				dynamicProps.splice(i, 1);
-				i--;
 			}
 		}
 	}
