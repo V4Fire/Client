@@ -97,40 +97,38 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 		const key = 'v-ref';
 
 		if (props[key] != null) {
-			if (typeof vnode.type === 'object') {
-				const
-					value = props[key],
-					dir = r.resolveDirective.call(this, 'ref');
+			const
+				value = props[key],
+				dir = r.resolveDirective.call(this, 'ref');
 
-				const descriptor = {
-					once: true,
-					fn: () => {
-						dir.mounted(vnode.el, {
-							dir,
+			const descriptor = {
+				once: true,
+				fn: () => {
+					dir.mounted(vnode.el, {
+						dir,
 
-							modifiers: {},
-							arg: undefined,
+						modifiers: {},
+						arg: undefined,
 
-							value,
-							oldValue: undefined,
+						value,
+						oldValue: undefined,
 
-							instance: this
-						}, vnode);
-					}
-				};
-
-				const beforeMount = beforeMountHooks[this.hook] != null;
-
-				if (beforeMount || functional === true) {
-					meta.hooks['before:mounted'].unshift(descriptor);
-
-				} else {
-					meta.hooks['before:updated'].unshift(descriptor);
+						instance: this
+					}, vnode);
 				}
-			}
+			};
 
-			delete props[key];
+			const beforeMount = beforeMountHooks[this.hook] != null;
+
+			if (beforeMount || functional === true) {
+				meta.hooks['before:mounted'].unshift(descriptor);
+
+			} else {
+				meta.hooks['before:updated'].unshift(descriptor);
+			}
 		}
+
+		delete props[key];
 	}
 
 	{
