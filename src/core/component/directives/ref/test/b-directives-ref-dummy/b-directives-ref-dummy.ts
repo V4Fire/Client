@@ -6,12 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable @v4fire/require-jsdoc */
+
 import bDummy, { component, prop } from 'components/dummies/b-dummy/b-dummy';
 
 export * from 'components/dummies/b-dummy/b-dummy';
 
 @component()
-class bDirectivesRefDummy extends bDummy {
+export default class bDirectivesRefDummy extends bDummy {
 	@prop(Boolean)
 	useAsyncRender: boolean = false;
 
@@ -21,5 +23,3 @@ class bDirectivesRefDummy extends bDummy {
 		nestedSlotComponent?: CanArray<bDummy>;
 	};
 }
-
-export default bDirectivesRefDummy;
