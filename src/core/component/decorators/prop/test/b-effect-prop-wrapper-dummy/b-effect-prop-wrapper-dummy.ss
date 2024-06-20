@@ -25,7 +25,7 @@
 			< component &
 				ref = child |
 				:is = 'b-non-effect-prop-dummy' |
-				:instanceOf = b-non-effect-prop-dummy |
+				:instanceOf = bNonEffectPropDummy |
 				:data = someField
 			.
 
