@@ -452,8 +452,9 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 					const externalWatchHandler = (value: unknown, oldValue: unknown, i?: WatchHandlerParams) => {
 						const fromSystem = i != null && Object.isString(i.path[0]) && i.path[0].startsWith('[[');
 
-						destructors.forEach((destroy) => destroy());
-						destructors.splice(1, destructors.length);
+						// This situation occurs when the root observable object has changed,
+						// and we need to remove the watchers of all its "nested parts", but leave the root watcher intact
+						destructors.splice(1, destructors.length).forEach((destroy) => destroy());
 
 						if (fromSystem) {
 							i.path = [String(i.path[0]).replace(privateFieldRgxp, '$1'), ...i.path.slice(1)];

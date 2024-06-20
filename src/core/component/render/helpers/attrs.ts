@@ -8,6 +8,7 @@
 
 import { evalWith } from 'core/json';
 
+import { beforeMountHooks } from 'core/component/const';
 import type { VNode } from 'core/component/engines';
 
 import { isHandler, mergeProps } from 'core/component/render/helpers/props';
@@ -48,6 +49,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	} = vnode;
 
 	const {
+		meta,
 		meta: {params: {functional}},
 		$renderEngine: {r}
 	} = this;
@@ -95,34 +97,36 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 		const key = 'v-ref';
 
 		if (props[key] != null) {
-			const
-				value = props[key],
-				dir = r.resolveDirective.call(this, 'ref');
+			if (typeof vnode.type === 'object') {
+				const
+					value = props[key],
+					dir = r.resolveDirective.call(this, 'ref');
 
-			const descriptor = {
-				once: true,
-				fn: () => {
-					dir.mounted(vnode.el, {
-						dir,
+				const descriptor = {
+					once: true,
+					fn: () => {
+						dir.mounted(vnode.el, {
+							dir,
 
-						modifiers: {},
-						arg: undefined,
+							modifiers: {},
+							arg: undefined,
 
-						value,
-						oldValue: undefined,
+							value,
+							oldValue: undefined,
 
-						instance: this
-					}, vnode);
+							instance: this
+						}, vnode);
+					}
+				};
+
+				const beforeMount = beforeMountHooks[this.hook] != null;
+
+				if (beforeMount || functional === true) {
+					meta.hooks['before:mounted'].unshift(descriptor);
+
+				} else {
+					meta.hooks['before:updated'].unshift(descriptor);
 				}
-			};
-
-			this.meta.hooks['before:mounted'].unshift(descriptor);
-
-			// The parent component's state has changed.
-			// $nextTick ensures that the template will already be updated and all references are current.
-			// The updated hook will also reliably be called afterward.
-			if (functional !== true && this.hook !== 'beforeMount') {
-				this.$nextTick(descriptor.fn);
 			}
 
 			delete props[key];

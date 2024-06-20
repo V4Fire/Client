@@ -54,6 +54,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			'before:mounted': [],
 			mounted: [],
 			beforeUpdate: [],
+			'before:updated': [],
 			updated: [],
 			activated: [],
 			deactivated: [],
