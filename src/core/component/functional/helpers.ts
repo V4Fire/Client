@@ -7,7 +7,7 @@
  */
 
 import * as init from 'core/component/init';
-import type { ComponentInterface, ComponentElement } from 'core/component/interface';
+import type { ComponentInterface, ComponentElement, ComponentDestructorOptions } from 'core/component/interface';
 
 /**
  * Initializes the default dynamic lifecycle handlers for the given functional component.
@@ -76,7 +76,8 @@ export function inheritContext(
 
 	// Here, the functional component is recreated during re-rendering.
 	// Therefore, the destructor call should not recursively propagate to child components.
-	parentCtx.unsafe.$destroy(false);
+	// Also, we should not call the unmount in the directives used within the component.
+	parentCtx.unsafe.$destroy(<ComponentDestructorOptions>{recursive: false, callUnmount: false});
 
 	const
 		props = ctx.$props,

@@ -21,7 +21,7 @@ import type { ModsProp, ModsDict } from 'core/component/interface/mod';
 import type { SyncLinkCache } from 'core/component/interface/link';
 import type { RenderEngine } from 'core/component/interface/engine';
 
-import type { ComponentElement, ComponentEmitterOptions } from 'core/component/interface/component/types';
+import type { ComponentDestructorOptions, ComponentElement, ComponentEmitterOptions } from 'core/component/interface/component/types';
 import type { WatchPath, WatchOptions, RawWatchHandler } from 'core/component/interface/watch';
 import type { UnsafeGetter, UnsafeComponentInterface } from 'core/component/interface/component/unsafe';
 
@@ -374,10 +374,9 @@ export abstract class ComponentInterface {
 
 	/**
 	 * Destroys the component
-	 * @param [_recursive] - if set to false, the destructor will be executed for the component itself,
-	 *   but not for its descendants
+	 * @param [_opts]
 	 */
-	protected $destroy(_recursive: boolean = true): void {
+	protected $destroy(_opts?: ComponentDestructorOptions): void {
 		return Object.throw();
 	}
 

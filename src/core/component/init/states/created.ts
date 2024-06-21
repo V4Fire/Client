@@ -12,7 +12,7 @@ import { destroyedHooks } from 'core/component/const';
 import { callMethodFromComponent } from 'core/component/method';
 import { runHook } from 'core/component/hook';
 
-import type { ComponentInterface, Hook } from 'core/component/interface';
+import type { ComponentDestructorOptions, ComponentInterface, Hook } from 'core/component/interface';
 
 const
 	remoteActivationLabel = Symbol('The remote activation label');
@@ -43,14 +43,14 @@ export function createdState(component: ComponentInterface): void {
 			isRegularComponent = unsafe.meta.params.functional !== true,
 			isDynamicallyMountedComponent = '$remoteParent' in r;
 
-		const destroy = (recursive: boolean) => {
+		const destroy = (opts: Required<ComponentDestructorOptions>) => {
 			// A component might have already been removed by explicitly calling $destroy
 			if (destroyedHooks[unsafe.hook] != null) {
 				return;
 			}
 
-			if (recursive || isDynamicallyMountedComponent) {
-				unsafe.$destroy(recursive);
+			if (opts.recursive || isDynamicallyMountedComponent) {
+				unsafe.$destroy(opts);
 			}
 		};
 
