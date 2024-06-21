@@ -65,7 +65,7 @@ ComponentEngine.directive = function directive(name: string, directive?: Directi
 
 			if (vnode.virtualContext != null) {
 				vnode.virtualContext.unsafe.$once('[[BEFORE_DESTROY]]', (opts: Required<ComponentDestructorOptions>) => {
-					if (opts.callUnmount) {
+					if (opts.shouldUnmountVNodes) {
 						originalUnmounted.apply(this, args);
 					}
 				});

@@ -34,7 +34,7 @@ export function beforeDestroyState(component: ComponentInterface, opts: Componen
 
 	unsafe.$emit('[[BEFORE_DESTROY]]', <Required<ComponentDestructorOptions>>{
 		recursive: opts.recursive ?? true,
-		callUnmount: opts.callUnmount ?? true
+		shouldUnmountVNodes: opts.shouldUnmountVNodes ?? true
 	});
 
 	unsafe.async.clearAll().locked = true;

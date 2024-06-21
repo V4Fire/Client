@@ -50,7 +50,7 @@ export interface ComponentDestructorOptions {
 	recursive?: boolean;
 
 	/**
-	 * If set to false, the unmount handlers in the directives used within the component won't be executed
+	 * If set to false, the vnodes won't be unmounted within the component
 	 */
-	callUnmount?: boolean;
+	shouldUnmountVNodes?: boolean;
 }

@@ -16,8 +16,9 @@ Changelog
 * Fixed unwanted execution of unmount handlers in the directives used
   within the functional component during its re-creation.
   The `$destroy` method now accepts an object with options, which enables control over
-  both the recursion of the destructor and the execution of unmount handlers in the
-  directives used within the component `core/component/interface`
+  both the recursion of the destructor and the unmounting of vnodes
+  within the component
+
 
 ## v4.0.0-beta.104 (2024-06-19)
 
