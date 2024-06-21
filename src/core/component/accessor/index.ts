@@ -70,8 +70,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		meta: {params: {deprecatedProps}}
 	} = component.unsafe;
 
-	const
-		isFunctional = meta.params.functional === true;
+	const isFunctional = meta.params.functional === true;
 
 	Object.entries(meta.accessors).forEach(([name, accessor]) => {
 		const canSkip =
@@ -91,8 +90,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		});
 	});
 
-	const
-		computedFields = Object.entries(meta.computedFields);
+	const computedFields = Object.entries(meta.computedFields);
 
 	computedFields.forEach(([name, computed]) => {
 		const canSkip =
