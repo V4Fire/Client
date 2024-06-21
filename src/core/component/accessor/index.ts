@@ -108,18 +108,14 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		const get = function get(this: typeof component): unknown {
 			const {hook} = this;
 
-			const getValue = () => computed.get!.call(this);
-
-			if (
-				!SSR &&
-
+			if (cacheStatus in get) {
 				// We should not use the getter's cache until the component is fully created,
 				// because until that moment, we cannot track changes to dependent entities
 				// and reset the cache when they change.
 				// This can lead to hard-to-detect errors.
-				beforeHooks[hook] == null
-			) {
-				if (cacheStatus in get) {
+				const canUseCache = beforeHooks[hook] == null;
+
+				if (canUseCache) {
 					// If a getter already has a cached result and is used inside a template,
 					// it is not possible to track its effect, as the value is not recalculated.
 					// This can lead to a problem where one of the entities on which the getter depends is updated,
@@ -141,14 +137,19 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 						});
 					}
 
-				} else {
-					get[cacheStatus] = getValue();
+					return get[cacheStatus];
 				}
 
-				return get[cacheStatus];
+				delete get[cacheStatus];
 			}
 
-			return getValue();
+			const value = computed.get!.call(this);
+
+			if (!SSR) {
+				get[cacheStatus] = value;
+			}
+
+			return value;
 		};
 
 		Object.defineProperty(component, name, {
