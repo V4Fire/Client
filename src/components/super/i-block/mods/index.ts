@@ -28,11 +28,9 @@ export default abstract class iBlockMods extends iBlockEvent {
 
 	@computed({dependencies: ['mods']})
 	override get sharedMods(): CanNull<Readonly<ModsDict>> {
-		const
-			m = this.mods;
+		const m = this.mods;
 
-		let
-			res: CanUndef<ModsDict>;
+		let res: CanUndef<ModsDict>;
 
 		if (m.theme != null) {
 			res = {theme: m.theme};
