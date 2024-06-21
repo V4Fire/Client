@@ -43,29 +43,44 @@ test.describe('functional component', () => {
 			await clickAndWaitForEvent();
 			await test.expect(text).toHaveText('Click count: 0');
 
-			await target.evaluate((ctx) => ctx.updateClickCount());
+			await target.evaluate((ctx) => ctx.updateClickCountField());
 			await test.expect(text).toHaveText('Click count: 1');
 
 			await clickAndWaitForEvent();
+		});
+
+		test('should reset counters on vnode unmount', async () => {
+			await test.expect(clickAndGetCounts()).resolves.toEqual([1, 1]);
+
+			const clicks = await target.evaluate((ctx) => {
+				const {button} = ctx.unsafe.$refs;
+				button.unsafe.$destroy();
+
+				const {clickCount, uniqueClickCount} = button;
+				return [clickCount, uniqueClickCount];
+			});
+
+			test.expect(clicks).toEqual([0, 0]);
 		});
 
 		test([
 			'should handle system properties correctly:',
 			'reset the unique ones and keep the regular ones'
 		].join(' '), async () => {
-			const clickAndGetCounts = async () => {
-				await button.click();
-				return target.evaluate((ctx) => {
-					const {clickCount, uniqueClickCount} = ctx.unsafe.$refs.button;
-					return [clickCount, uniqueClickCount];
-				});
-			};
-
 			await test.expect(clickAndGetCounts()).resolves.toEqual([1, 1]);
 			await test.expect(clickAndGetCounts()).resolves.toEqual([2, 2]);
 
-			await target.evaluate((ctx) => ctx.updateClickCount());
+			await target.evaluate((ctx) => ctx.updateClickCountField());
 			await test.expect(clickAndGetCounts()).resolves.toEqual([3, 1]);
 		});
+
+		async function clickAndGetCounts() {
+			await button.click();
+			return target.evaluate((ctx) => {
+				const {clickCount, uniqueClickCount} = ctx.unsafe.$refs.button;
+				return [clickCount, uniqueClickCount];
+			});
+		}
+
 	});
 });
