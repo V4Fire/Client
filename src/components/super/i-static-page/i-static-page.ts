@@ -196,8 +196,7 @@ export default abstract class iStaticPage extends iPage {
 	 * @param [component] - an instance of the component that wants to set the modifier
 	 */
 	override setRootMod(name: string, value: unknown, component: iBlock = this): boolean {
-		let
-			root: HTMLElement;
+		let root: HTMLElement;
 
 		try {
 			root = document.documentElement;
@@ -249,8 +248,7 @@ export default abstract class iStaticPage extends iPage {
 	 * @param [component] - an instance of the component that wants to remove the modifier
 	 */
 	override removeRootMod(name: string, value?: unknown, component: iBlock = this): boolean {
-		let
-			root: HTMLElement;
+		let root: HTMLElement;
 
 		try {
 			root = document.documentElement;
