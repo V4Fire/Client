@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-06-??)
+
+#### :bug: Bug Fix
+
+* Fixed unwanted execution of unmount handlers in the directives used
+  within the functional component during its re-creation.
+  The `$destroy` method now accepts an object with options, which enables control over
+  both the recursion of the destructor and the execution of unmount handlers in the
+  directives used within the component `core/component/interface`
+
 ## v4.0.0-beta.104 (2024-06-19)
 
 #### :rocket: New Feature
