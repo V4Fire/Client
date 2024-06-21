@@ -101,6 +101,13 @@ export default abstract class iStaticPage extends iPage {
 	initialRoute?: InitialRoute | this['CurrentPage'];
 
 	/**
+	 * Number of external root instances of the application.
+	 * This parameter allows you to detect memory leaks when using asyncRender.
+	 */
+	@system()
+	readonly remoteRootInstances: number = 0;
+
+	/**
 	 * The name of the active route page
 	 */
 	@computed({cache: true, dependencies: ['route.meta.name']})
@@ -318,8 +325,7 @@ export default abstract class iStaticPage extends iPage {
 		super.beforeDestroy();
 		this.remoteState.hydrationStore.clear();
 
-		const
-			isThisApp = new RegExp(RegExp.escape(`:${RegExp.escape(this.remoteState.appProcessId)}:`));
+		const isThisApp = new RegExp(RegExp.escape(`:${RegExp.escape(this.remoteState.appProcessId)}:`));
 
 		Object.forEach(instanceCache, (provider, key) => {
 			if (isThisApp.test(key)) {
