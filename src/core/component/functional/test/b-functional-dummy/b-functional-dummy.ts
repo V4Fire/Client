@@ -13,12 +13,7 @@ import type bFunctionalButtonDummy from 'core/component/functional/test/b-functi
 
 export * from 'components/dummies/b-dummy/b-dummy';
 
-@component({
-	functional: {
-		functional: true
-	}
-})
-
+@component()
 export default class bFunctionalDummy extends bDummy {
 	@field()
 	clickCount: number = 0;

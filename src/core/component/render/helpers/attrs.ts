@@ -8,6 +8,7 @@
 
 import { evalWith } from 'core/json';
 
+import { beforeMountHooks } from 'core/component/const';
 import type { VNode } from 'core/component/engines';
 
 import { isHandler, mergeProps } from 'core/component/render/helpers/props';
@@ -48,7 +49,8 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	} = vnode;
 
 	const {
-		meta: {params},
+		meta,
+		meta: {params: {functional}},
 		$renderEngine: {r}
 	} = this;
 
@@ -69,12 +71,10 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	}
 
 	{
-		const
-			key = 'v-attrs';
+		const key = 'v-attrs';
 
 		if (props[key] != null) {
-			const
-				dir = r.resolveDirective.call(this, 'attrs');
+			const dir = r.resolveDirective.call(this, 'attrs');
 
 			dir.beforeCreate({
 				dir,
@@ -94,8 +94,45 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	}
 
 	{
-		const
-			key = 'data-has-v-on-directives';
+		const key = 'v-ref';
+
+		if (props[key] != null) {
+			const
+				value = props[key],
+				dir = r.resolveDirective.call(this, 'ref');
+
+			const descriptor = {
+				once: true,
+				fn: () => {
+					dir.mounted(vnode.el, {
+						dir,
+
+						modifiers: {},
+						arg: undefined,
+
+						value,
+						oldValue: undefined,
+
+						instance: this
+					}, vnode);
+				}
+			};
+
+			const beforeMount = beforeMountHooks[this.hook] != null;
+
+			if (beforeMount || functional === true) {
+				meta.hooks['before:mounted'].push(descriptor);
+
+			} else {
+				this.$nextTick(descriptor.fn);
+			}
+		}
+
+		delete props[key];
+	}
+
+	{
+		const key = 'data-has-v-on-directives';
 
 		if (props[key] != null) {
 			setVNodePatchFlags(vnode, 'props');
@@ -119,11 +156,10 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	}
 
 	{
-		const
-			key = 'data-cached-class-component-id';
+		const key = 'data-cached-class-component-id';
 
 		if (props[key] != null) {
-			if (props[key] === 'true' && params.functional !== true) {
+			if (props[key] === 'true' && functional !== true) {
 				Object.assign(props, mergeProps({class: props.class}, {class: this.componentId}));
 			}
 

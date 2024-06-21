@@ -8,12 +8,14 @@
 
 import Async from 'core/async';
 
+import watch from 'core/object/watch';
 import { getComponentContext } from 'core/component/context';
 
 import { forkMeta } from 'core/component/meta';
 import { getPropertyInfo, PropertyInfo } from 'core/component/reflect';
 import { getNormalParent } from 'core/component/traverse';
 
+import { initProps, attachAttrPropsListeners } from 'core/component/prop';
 import { initFields } from 'core/component/field';
 import { attachAccessorsFromMeta } from 'core/component/accessor';
 import { attachMethodsFromMeta, callMethodFromComponent } from 'core/component/method';
@@ -65,14 +67,9 @@ export function beforeCreateState(
 		configurable: true,
 		enumerable: false,
 		writable: true,
-		value() {
-			if (component.hook !== 'beforeDestroy' && component.hook !== 'destroyed') {
-				beforeDestroyState(component);
-			}
-
-			if (component.hook !== 'destroyed') {
-				destroyedState(component);
-			}
+		value(recursive: boolean = true) {
+			beforeDestroyState(component, recursive);
+			destroyedState(component);
 		}
 	});
 
@@ -115,6 +112,20 @@ export function beforeCreateState(
 
 			return fn;
 		})
+	});
+
+	Object.defineProperty(unsafe, 'r', {
+		configurable: true,
+		enumerable: true,
+		get: () => {
+			const r = ('getRoot' in unsafe ? unsafe.getRoot?.() : null) ?? unsafe.$root;
+
+			if ('$remoteParent' in r.unsafe) {
+				return r.unsafe.$remoteParent!.$root;
+			}
+
+			return r;
+		}
 	});
 
 	const $getParent = Symbol('$getParent');
@@ -161,6 +172,10 @@ export function beforeCreateState(
 		root = unsafe.$root,
 		parent = unsafe.$parent;
 
+	// We are handling a situation where the component's $root refers to an external App.
+	// This occurs when the component is rendered asynchronously,
+	// as the rendering is done by a separate App instance.
+	// In such cases, we need to correct the reference to the parent and $root.
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (parent != null && parent.componentName == null) {
 		Object.defineProperty(unsafe, '$root', {
@@ -201,7 +216,8 @@ export function beforeCreateState(
 			const
 				{$el} = unsafe;
 
-			if ($el == null) {
+			// If the component node is null or a node that cannot have children (such as a text or comment node)
+			if ($el?.querySelectorAll == null) {
 				return [];
 			}
 
@@ -233,7 +249,31 @@ export function beforeCreateState(
 		implementEventEmitterAPI(component);
 	}
 
+	Object.defineProperty(unsafe, 'createPropAccessors', {
+		configurable: true,
+		enumerable: false,
+		writable: true,
+		value: (getter: () => object) => {
+			// Explicit invocation of the effect
+			void getter();
+
+			return () => [
+				getter(),
+				(...args: any[]) => watch(getter(), ...args)
+			];
+		}
+	});
+
+	initProps(component, {
+		from: unsafe.$attrs,
+		store: unsafe,
+		saveToStore: true,
+		forceUpdate: false
+	});
+
+	attachAttrPropsListeners(component);
 	attachAccessorsFromMeta(component);
+
 	runHook('beforeRuntime', component).catch(stderr);
 
 	const {
@@ -249,20 +289,18 @@ export function beforeCreateState(
 
 	initFields(systemFields, component, unsafe);
 
-	const
-		fakeHandler = () => undefined;
+	const fakeHandler = () => undefined;
 
 	if (watchDependencies.size > 0) {
 		const
-			isFunctional = meta.params.functional === true;
-
-		const
+			isFunctional = meta.params.functional === true,
 			watchSet = new Set<PropertyInfo>();
 
 		watchDependencies.forEach((deps) => {
 			deps.forEach((dep) => {
 				const
-					info = getPropertyInfo(Object.isArray(dep) ? dep.join('.') : String(dep), component);
+					path = Object.isArray(dep) ? dep.join('.') : String(dep),
+					info = getPropertyInfo(path, component);
 
 				if (info.type === 'system' || isFunctional && info.type === 'field') {
 					watchSet.add(info);
@@ -272,7 +310,7 @@ export function beforeCreateState(
 
 		// If a computed property has a field or system field as a dependency
 		// and the host component does not have any watchers to this field,
-		// we need to register the "fake" watcher to force watching
+		// we need to register a "fake" watcher to enforce watching
 		watchSet.forEach((info) => {
 			const needToForceWatching =
 				watchers[info.name] == null &&
@@ -294,7 +332,7 @@ export function beforeCreateState(
 
 	// If a computed property is tied with a field or system field
 	// and the host component does not have any watchers to this field,
-	// we need to register the "fake" watcher to force watching
+	// we need to register a "fake" watcher to enforce watching
 	Object.entries(tiedFields).forEach(([name, normalizedName]) => {
 		if (normalizedName == null) {
 			return;

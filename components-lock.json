@@ -1,5 +1,5 @@
 {
-  "hash": "29d19bd4410053374beb5c0946db53de4e450cf6e919db6691b3827e05e41b8d",
+  "hash": "54aa38c145e3a5076e89e4d32b6f0c19cd5fc4b5f2c74e4ce8286c8c826e8586",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -274,6 +274,76 @@
             "src/components/base/b-dynamic-page/b-dynamic-page.styl"
           ],
           "tpl": "src/components/base/b-dynamic-page/b-dynamic-page.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-effect-prop-dummy",
+        {
+          "index": "src/core/component/decorators/prop/test/b-effect-prop-dummy/index.js",
+          "declaration": {
+            "name": "b-effect-prop-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-effect-prop-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/decorators/prop/test/b-effect-prop-dummy/b-effect-prop-dummy.ts",
+          "styles": [
+            "src/core/component/decorators/prop/test/b-effect-prop-dummy/b-effect-prop-dummy.styl"
+          ],
+          "tpl": "src/core/component/decorators/prop/test/b-effect-prop-dummy/b-effect-prop-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-effect-prop-wrapper-dummy",
+        {
+          "index": "src/core/component/decorators/prop/test/b-effect-prop-wrapper-dummy/index.js",
+          "declaration": {
+            "name": "b-effect-prop-wrapper-dummy",
+            "parent": "b-dummy",
+            "dependencies": [
+              "b-effect-prop-dummy",
+              "b-non-effect-prop-dummy"
+            ],
+            "libs": []
+          },
+          "name": "b-effect-prop-wrapper-dummy",
+          "parent": "b-dummy",
+          "dependencies": [
+            "b-effect-prop-dummy",
+            "b-non-effect-prop-dummy"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/decorators/prop/test/b-effect-prop-wrapper-dummy/b-effect-prop-wrapper-dummy.ts",
+          "styles": [
+            "src/core/component/decorators/prop/test/b-effect-prop-wrapper-dummy/b-effect-prop-wrapper-dummy.styl"
+          ],
+          "tpl": "src/core/component/decorators/prop/test/b-effect-prop-wrapper-dummy/b-effect-prop-wrapper-dummy.ss",
           "etpl": null
         }
       ],
@@ -912,6 +982,38 @@
         }
       ],
       [
+        "b-non-effect-prop-dummy",
+        {
+          "index": "src/core/component/decorators/prop/test/b-non-effect-prop-dummy/index.js",
+          "declaration": {
+            "name": "b-non-effect-prop-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-non-effect-prop-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/decorators/prop/test/b-non-effect-prop-dummy/b-non-effect-prop-dummy.ts",
+          "styles": [
+            "src/core/component/decorators/prop/test/b-non-effect-prop-dummy/b-non-effect-prop-dummy.styl"
+          ],
+          "tpl": "src/core/component/decorators/prop/test/b-non-effect-prop-dummy/b-non-effect-prop-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-prevent-ssr",
         {
           "index": "src/components/base/b-prevent-ssr/index.js",
@@ -1314,6 +1416,38 @@
             "src/components/super/i-block/decorators/test/b-super-i-block-decorators-dummy/b-super-i-block-decorators-dummy.styl"
           ],
           "tpl": "src/components/super/i-block/decorators/test/b-super-i-block-decorators-dummy/b-super-i-block-decorators-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-super-i-block-destructor-dummy",
+        {
+          "index": "src/components/super/i-block/test/b-super-i-block-destructor-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-destructor-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-super-i-block-destructor-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/test/b-super-i-block-destructor-dummy/b-super-i-block-destructor-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/test/b-super-i-block-destructor-dummy/b-super-i-block-destructor-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/test/b-super-i-block-destructor-dummy/b-super-i-block-destructor-dummy.ss",
           "etpl": null
         }
       ],

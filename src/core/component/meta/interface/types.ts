@@ -14,6 +14,7 @@ import type { ComponentInterface, FieldWatcher, MethodWatcher, Hook } from 'core
 
 export interface ComponentProp extends PropOptions {
 	watchers: Map<string | Function, FieldWatcher>;
+	forceUpdate: boolean;
 	forceDefault?: boolean;
 	default?: unknown;
 	meta: Dictionary;
@@ -78,9 +79,7 @@ export type ComponentMethodHooks = {
 	};
 };
 
-export interface ComponentDirectiveOptions extends DirectiveBinding {
-
-}
+export interface ComponentDirectiveOptions extends DirectiveBinding {}
 
 export type ComponentWatchDependencies = Map<WatchPath, WatchPath[]>;
 export type ComponentWatchPropDependencies = Map<WatchPath, Set<string>>;

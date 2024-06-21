@@ -35,10 +35,11 @@ Object.assign(componentParams, {
 	getParentParameters,
 
 	/**
-	 * Returns a map of component prop attributes
+	 * Return a dictionary containing the prop attributes for a component by the specified name
 	 *
-	 * @param {string} name - component name
+	 * @param {string} name - the component name
 	 * @returns {object}
+	 * @throws {ReferenceError} if no component with the specified name exists
 	 *
 	 * @example
 	 * ```js
@@ -65,7 +66,7 @@ Object.assign(componentParams, {
 /**
  * Load component runtime parameters to a map
  */
-$C(componentFiles).forEach((el) => {
+componentFiles.forEach((el) => {
 	const
 		escapedFragments = [];
 
@@ -108,29 +109,39 @@ $C(componentFiles).forEach((el) => {
 
 	let s;
 
+	const forceUpdateRgxp = /\bforceUpdate\s*:\s*(true|false)/;
+
 	// eslint-disable-next-line no-cond-assign
 	while (s = propRgxp.exec(file)) {
-		obj.props[s[2].split(' ').slice(-1)[0]] = true;
+		const
+			name = s.groups.name.split(' ').slice(-1)[0],
+			forceUpdate = forceUpdateRgxp.exec(s.groups.params);
+
+		obj.props[name] = {
+			...forceUpdate ? {forceUpdate: forceUpdate[1] !== 'false'} : {}
+		};
 	}
 });
 
 /**
  * Inherit parameters from parent components
  */
-$C(componentParams).forEach((el, key, data) => {
-	Object.assign(el, getParentParameters(el));
+Object.values(componentParams).forEach((component) => {
+	Object.assign(component, getParentParameters(component));
 
-	const
-		parent = el.parent && data[el.parent];
+	const parent = component.parent && componentParams[component.parent];
 
 	if (parent) {
-		Object.setPrototypeOf(el, parent);
-		Object.setPrototypeOf(el.props, parent.props);
+		Object.setPrototypeOf(component, parent);
+
+		Object.entries(parent.props).forEach(([name, params]) => {
+			component.props[name] = {...params, ...component.props[name]};
+		});
 	}
 });
 
 /**
- * Returns runtime parameters of the specified component
+ * Return the runtime parameters of the specified component
  *
  * @param {object} component - component object
  * @returns {object}
@@ -149,10 +160,7 @@ function getParentParameters(component) {
 		params = {},
 		parent = getParentParameters(componentParams[component.parent]);
 
-	for (let i = 0; i < fields.length; i++) {
-		const
-			[key, def] = fields[i];
-
+	fields.forEach(([key, def]) => {
 		const
 			val = component[key],
 			isObj = Object.isDictionary(val);
@@ -163,20 +171,20 @@ function getParentParameters(component) {
 
 			if (Object.isDictionary(parentVal)) {
 				params[key] = {...parentVal, ...val};
-				continue;
+				return;
 			}
 
 			if (isObj) {
 				params[key] = val;
-				continue;
+				return;
 			}
 
 			params[key] = parentVal !== undefined ? parentVal : def;
-			continue;
+			return;
 		}
 
 		params[key] = val;
-	}
+	});
 
 	return params;
 }

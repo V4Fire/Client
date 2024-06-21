@@ -9,25 +9,25 @@
 'use strict';
 
 /**
- * The RegExp to detect V4Fire specific attributes
+ * A RegExp to detect V4Fire-specific attributes
  * @type {RegExp}
  */
 exports.isV4Prop = /^(:|@|v-)/;
 
 /**
- * The RegExp to detect V4Fire specific static attributes
+ * A RegExp to detect V4Fire-specific static attributes
  * @type {RegExp}
  */
 exports.isStaticV4Prop = /^[^[]+$/;
 
 /**
- * The RegExp to detect commas
+ * A RegExp to detect commas
  * @type {RegExp}
  */
 exports.commaRgxp = /\s*,\s*/;
 
 /**
- * The RegExp to detect Snakeskin file extensions
+ * A RegExp to detect Snakeskin file extensions
  * @type {RegExp}
  */
 exports.ssExtRgxp = /\.e?ss$/;

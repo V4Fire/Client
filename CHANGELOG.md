@@ -22,6 +22,43 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Now SSR build is bundled into a single file
 * Use the forked `lib/server-renderer` everywhere in the SSR build
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added the `createPropAccessors` method for creating accessors
+  for props marked as `forceUpdate: false` `core/component/interface`
+
+* Added the `forceUpdate: false` property to designate props whose changes
+  should not lead to a template re-render `core/component/decorators/prop`
+
+#### :bug: Bug Fix
+
+* Fixed a bug where adding refs to components could cause them to re-render `core/component/directives/ref`
+* Fixed a bug where adding `v-attrs` to components could cause them to re-render `core/component/directives/attrs`
+
+## v4.0.0-beta.104 (2024-06-19)
+
+#### :rocket: New Feature
+
+* The `$destroy` method now accepts a recursive parameter for targeted removal
+  of the component without deleting its children and vice versa `core/component/interface`
+* Added the `consoleTracker` fixture to enable access to console messages in unit tests `tests/fixtures`
+
+#### :bug: Bug Fix
+
+* Fixed an error where a component could transition to a hook in which it was already located `core/component/hook`
+
+#### :house: Internal
+
+* The getter `r` has been moved from `iBlock` to `ComponentInterface`
+
+## v4.0.0-beta.103 (2024-06-14)
+
+#### :house: Internal
+
+* Updated `terser` to version `5.31.0` to include [bug fix](https://github.com/terser/terser/issues/1432)
+
 ## v4.0.0-beta.102 (2024-06-11)
 
 #### :bug: Bug Fix

@@ -8,7 +8,7 @@
 
 /* eslint-disable prefer-spread */
 
-import { app, isComponent, componentRenderFactories, ASYNC_RENDER_ID } from 'core/component/const';
+import { app, isComponent, componentRenderFactories, destroyedHooks, ASYNC_RENDER_ID } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 
 import { isSmartComponent } from 'core/component/reflect';
@@ -170,12 +170,30 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 
 			value: {
 				created: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'created', n),
+
 				beforeMount: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeMount', n),
 				mounted: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'mounted', n),
+
 				beforeUpdate: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeUpdate', n),
 				updated: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'updated', n),
-				beforeUnmount: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeDestroy', n),
-				unmounted: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'destroyed', n)
+
+				beforeUnmount: (n: Element) => {
+					// A component might have already been removed by explicitly calling $destroy
+					if (destroyedHooks[virtualCtx.hook] != null) {
+						return;
+					}
+
+					virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeDestroy', n);
+				},
+
+				unmounted: (n: Element) => {
+					// A component might have already been removed by explicitly calling $destroy
+					if (destroyedHooks[virtualCtx.hook] != null) {
+						return;
+					}
+
+					virtualCtx.$emit('[[COMPONENT_HOOK]]', 'destroyed', n);
+				}
 			},
 
 			oldValue: undefined,

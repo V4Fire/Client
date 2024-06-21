@@ -23,6 +23,7 @@ import iBlockProviders from 'components/super/i-block/providers';
 import('components/super/i-block/test/b-super-i-block-dummy');
 import('components/super/i-block/test/b-super-i-block-watch-dummy');
 import('components/super/i-block/test/b-super-i-block-lfc-dummy');
+import('components/super/i-block/test/b-super-i-block-destructor-dummy');
 //#endif
 
 export * from 'core/component';

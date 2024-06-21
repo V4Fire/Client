@@ -6,11 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable @v4fire/require-jsdoc */
+
 'use strict';
 
 exports.attachVIf = function attachVIf(arr, op) {
-	const
-		arrJoin = arr.join.bind(arr);
+	const arrJoin = arr.join.bind(arr);
 
 	arr.join = function join() {
 		return arrJoin(op);
@@ -20,8 +21,7 @@ exports.attachVIf = function attachVIf(arr, op) {
 };
 
 exports.wrapAttrArray = function wrapAttrArray(arr) {
-	const
-		arrJoin = arr.join.bind(arr);
+	const arrJoin = arr.join.bind(arr);
 
 	arr.join = function join() {
 		if (this.length < 2) {

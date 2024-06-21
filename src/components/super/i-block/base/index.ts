@@ -150,20 +150,6 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
-	 * A link to the root component
-	 */
-	get r(): this['Root'] {
-		const
-			r = ('getRoot' in this ? this.getRoot?.() : null) ?? this.$root;
-
-		if ('$remoteParent' in r.unsafe) {
-			return r.unsafe.$remoteParent!.$root;
-		}
-
-		return r;
-	}
-
-	/**
 	 * A dictionary with additional attributes for the component's root element
 	 */
 	get rootAttrs(): Dictionary {

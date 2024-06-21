@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { propGetterRgxp } from 'core/component/reflect';
 import type { ComponentMeta } from 'core/component/meta';
 
 /**
@@ -13,11 +14,10 @@ import type { ComponentMeta } from 'core/component/meta';
  * @param classes
  */
 export function normalizeClass(classes: CanArray<string | Dictionary>): string {
-	let
-		res = '';
+	let classesStr = '';
 
 	if (Object.isString(classes)) {
-		res = classes;
+		classesStr = classes;
 
 	} else if (Object.isArray(classes)) {
 		classes.forEach((className) => {
@@ -25,19 +25,19 @@ export function normalizeClass(classes: CanArray<string | Dictionary>): string {
 				normalizedClass = normalizeClass(className);
 
 			if (normalizedClass !== '') {
-				res += `${normalizedClass} `;
+				classesStr += `${normalizedClass} `;
 			}
 		});
 
 	} else if (Object.isDictionary(classes)) {
 		Object.entries(classes).forEach(([className, has]) => {
 			if (Object.isTruly(has)) {
-				res += `${className} `;
+				classesStr += `${className} `;
 			}
 		});
 	}
 
-	return res.trim();
+	return classesStr.trim();
 }
 
 /**
@@ -46,8 +46,7 @@ export function normalizeClass(classes: CanArray<string | Dictionary>): string {
  */
 export function normalizeStyle(styles: CanArray<string | Dictionary<string>>): string | Dictionary<string> {
 	if (Object.isArray(styles)) {
-		const
-			normalizedStyles = {};
+		const normalizedStyles = {};
 
 		styles.forEach((style) => {
 			const normalizedStyle = Object.isString(style) ?
@@ -74,23 +73,22 @@ export function normalizeStyle(styles: CanArray<string | Dictionary<string>>): s
 }
 
 const
-	listDelimiterRE = /;(?![^(]*\))/g,
-	propertyDelimiterRE = /:(.+)/;
+	listDelimiterRgxp = /;(?![^(]*\))/g,
+	propertyDelimiterRgxp = /:(.+)/;
 
 /**
  * Analyzes the given CSS style string and returns a dictionary containing the parsed rules
  * @param style
  */
 export function parseStringStyle(style: string): Dictionary<string> {
-	const
-		styles = {};
+	const styles = {};
 
-	style.split(listDelimiterRE).forEach((singleStyle) => {
+	style.split(listDelimiterRgxp).forEach((singleStyle) => {
 		singleStyle = singleStyle.trim();
 
 		if (singleStyle !== '') {
 			const
-				chunks = singleStyle.split(propertyDelimiterRE);
+				chunks = singleStyle.split(propertyDelimiterRgxp);
 
 			if (chunks.length > 1) {
 				styles[chunks[0].trim()] = chunks[1].trim();
@@ -116,7 +114,7 @@ export function normalizeComponentAttrs(
 	const {
 		props,
 		// eslint-disable-next-line deprecation/deprecation
-		params: {deprecatedProps}
+		params: {deprecatedProps, functional}
 	} = component;
 
 	if (attrs == null) {
@@ -124,39 +122,61 @@ export function normalizeComponentAttrs(
 	}
 
 	const
+		dynamicPropsPatches = new Map<string, string>(),
 		normalizedAttrs = {...attrs};
 
 	if (Object.isDictionary(normalizedAttrs['v-attrs'])) {
 		normalizedAttrs['v-attrs'] = normalizeComponentAttrs(normalizedAttrs['v-attrs'], dynamicProps, component);
 	}
 
-	Object.keys(normalizedAttrs).forEach((name) => {
-		let
-			propName = `${name}Prop`.camelize(false);
+	Object.entries(normalizedAttrs).forEach(normalizeAttr);
+	modifyDynamicPath();
 
-		if (name === 'ref' || name === 'ref_for') {
+	return normalizedAttrs;
+
+	function normalizeAttr([attrName, value]: [string, unknown]) {
+		let propName = `${attrName}Prop`.camelize(false);
+
+		if (attrName === 'ref' || attrName === 'ref_for') {
 			return;
 		}
 
 		if (deprecatedProps != null) {
-			const
-				alternativeName = deprecatedProps[name] ?? deprecatedProps[propName];
+			const alternativeName =
+				deprecatedProps[attrName] ??
+				deprecatedProps[propName];
 
 			if (alternativeName != null) {
-				updateAttrName(name, alternativeName);
-				name = alternativeName;
+				changeAttrName(attrName, alternativeName);
+				attrName = alternativeName;
 				propName = `${alternativeName}Prop`;
 			}
 		}
 
-		if (propName in props) {
-			updateAttrName(name, propName);
+		const needSetAdditionalProp =
+			functional === true && dynamicProps != null &&
+			propGetterRgxp.test(attrName) && Object.isFunction(value);
+
+		// For correct operation in functional components, we need to additionally duplicate such props
+		if (needSetAdditionalProp) {
+			const
+				tiedPropName = attrName.replace(propGetterRgxp, ''),
+				tiedPropValue = value()[0];
+
+			normalizedAttrs[tiedPropName] = tiedPropValue;
+			normalizeAttr([tiedPropName, tiedPropValue]);
+			dynamicProps.push(tiedPropName);
 		}
-	});
 
-	return normalizedAttrs;
+		if (propName in props || propName.replace(propGetterRgxp, '') in props) {
+			changeAttrName(attrName, propName);
 
-	function updateAttrName(name: string, newName: string) {
+		} else {
+			patchDynamicProps(attrName);
+		}
+	}
+
+	function changeAttrName(name: string, newName: string) {
 		normalizedAttrs[newName] = normalizedAttrs[name];
 		delete normalizedAttrs[name];
 
@@ -164,11 +184,36 @@ export function normalizeComponentAttrs(
 			return;
 		}
 
-		const
-			dynamicAttrPos = dynamicProps.indexOf(name);
+		dynamicPropsPatches.set(name, newName);
+		patchDynamicProps(newName);
+	}
 
-		if (dynamicAttrPos !== -1) {
-			dynamicProps[dynamicAttrPos] = newName;
+	function patchDynamicProps(propName: string) {
+		if (functional !== true && component.props[propName]?.forceUpdate === false) {
+			dynamicPropsPatches.set(propName, '');
+		}
+	}
+
+	function modifyDynamicPath() {
+		if (dynamicProps == null || dynamicPropsPatches.size === 0) {
+			return;
+		}
+
+		for (let i = dynamicProps.length - 1; i >= 0; i--) {
+			const
+				prop = dynamicProps[i],
+				path = dynamicPropsPatches.get(prop);
+
+			if (path == null) {
+				continue;
+			}
+
+			if (path !== '' && dynamicPropsPatches.get(path) !== '') {
+				dynamicProps[i] = path;
+
+			} else {
+				dynamicProps.splice(i, 1);
+			}
 		}
 	}
 }

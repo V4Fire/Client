@@ -9,8 +9,8 @@
 import { deprecate } from 'core/functools/deprecation';
 import { ComponentInterface } from 'core/component/interface';
 
-import { propRgxp, attrRgxp, storeRgxp, hasSeparator } from 'core/component/reflect/const';
-import type { PropertyInfo } from 'core/component/reflect/interface';
+import { propRgxp, attrRgxp, privateFieldRgxp, storeRgxp, hasSeparator } from 'core/component/reflect/const';
+import type { PropertyInfo, AccessorType } from 'core/component/reflect/interface';
 
 /**
  * Returns an object containing information of the component property by the specified path
@@ -47,8 +47,7 @@ import type { PropertyInfo } from 'core/component/reflect/interface';
  * ```
  */
 export function getPropertyInfo(path: string, component: ComponentInterface): PropertyInfo {
-	const
-		originalPath = path;
+	const originalPath = path;
 
 	let
 		name = path,
@@ -57,7 +56,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		originalTopPath = path;
 
 	let
-		chunks,
+		chunks: Nullable<string[]>,
 		rootI = 0;
 
 	if (hasSeparator.test(path)) {
@@ -95,8 +94,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		params: {deprecatedProps}
 	} = component.unsafe.meta;
 
-	const
-		alternative = deprecatedProps?.[name];
+	const alternative = deprecatedProps?.[name];
 
 	if (alternative != null) {
 		deprecate({type: 'property', name, renamedTo: alternative});
@@ -129,6 +127,11 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		topPath,
 		originalTopPath
 	};
+
+	if (privateFieldRgxp.test(name)) {
+		info.type = 'system';
+		return info;
+	}
 
 	if (RegExp.test(propRgxp, name)) {
 		info.type = 'prop';
@@ -169,8 +172,8 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		propName = hasStoreField ? null : `${name}Prop`;
 
 	let
-		accessorType,
-		accessor;
+		accessorType: CanUndef<AccessorType>,
+		accessor: CanUndef<string>;
 
 	if (computedFields[name] != null) {
 		accessorType = 'computed';
@@ -196,8 +199,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 			topPath = name;
 		}
 
-		let
-			type: PropertyInfo['type'] = 'field';
+		let type: PropertyInfo['type'] = 'field';
 
 		if (propName != null) {
 			type = 'prop';
@@ -224,7 +226,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 	if (accessorType != null) {
 		if ((computedFields[name] ?? accessors[name])!.watchable) {
 			let
-				ctxPath;
+				ctxPath: ObjectPropertyPath;
 
 			if (chunks != null) {
 				ctxPath = chunks.slice(0, rootI + 1);

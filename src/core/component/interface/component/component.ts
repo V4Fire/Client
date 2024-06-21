@@ -8,6 +8,9 @@
 
 /* eslint-disable @typescript-eslint/unified-signatures */
 
+import type watch from 'core/object/watch';
+import type { Watcher } from 'core/object/watch';
+
 import type Async from 'core/async';
 import type { BoundFn, ProxyCb, EventId } from 'core/async';
 import type { AbstractCache } from 'core/cache';
@@ -164,6 +167,13 @@ export abstract class ComponentInterface {
 	 * @see https://vuejs.org/guide/essentials/lifecycle.html
 	 */
 	abstract hook: Hook;
+
+	/**
+	 * A link to the root component
+	 */
+	get r(): this['Root'] {
+		return Object.throw();
+	}
 
 	/**
 	 * An API for safely invoking some internal properties and methods of a component.
@@ -365,9 +375,26 @@ export abstract class ComponentInterface {
 	protected abstract setup(props: Dictionary, ctx: SetupContext): CanPromise<CanUndef<Dictionary>>;
 
 	/**
-	 * Destroys the component
+	 * Creates a tuple of accessors for a value defined by a getter function.
+	 * This function is used to pass the value as a prop
+	 * to a child component without creating a contract for reactive template updates.
+	 * This is necessary to optimize situations where a change in a component's prop triggers
+	 * a re-render of the entire component, even if this prop is not used in the template.
+	 *
+	 * @param _getter
 	 */
-	protected $destroy(): void {
+	protected createPropAccessors<T extends object>(
+		_getter: () => T
+	): () => [T, (...args: Parameters<typeof watch> extends [any, ...infer A] ? A : never) => Watcher<T>] {
+		return Object.throw();
+	}
+
+	/**
+	 * Destroys the component
+	 * @param [_recursive] - if set to false, the destructor will be executed for the component itself,
+	 *   but not for its descendants
+	 */
+	protected $destroy(_recursive: boolean = true): void {
 		return Object.throw();
 	}
 

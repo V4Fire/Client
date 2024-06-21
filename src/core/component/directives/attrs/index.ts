@@ -12,6 +12,7 @@
  */
 
 import { components } from 'core/component/const';
+import { propGetterRgxp } from 'core/component/reflect';
 import { ComponentEngine, DirectiveBinding, VNode } from 'core/component/engines';
 
 import { setVNodePatchFlags, normalizeComponentAttrs } from 'core/component/render';
@@ -314,16 +315,28 @@ ComponentEngine.directive('attrs', {
 				}
 			}
 
-			if (componentCtx != null && !isDOMEvent && Object.isFunction(attrVal)) {
-				if (isOnceEvent) {
-					componentCtx.$on(originalEvent, attrVal);
+			// For the transmission of accessors, `forceUpdate: false` props use events.
+			// For example, `@:value = createPropAccessors(() => someValue)`.
+			// A distinctive feature of such events is the prefix `@:` or `on:`.
+			// Such events are processed in a special way.
+			const isSystemGetter = propGetterRgxp.test(event);
+			props[event] = attrVal;
 
-				} else {
-					componentCtx.$once(originalEvent, attrVal);
+			if (componentCtx != null && !isDOMEvent && Object.isFunction(attrVal)) {
+				// Under the contract, all handlers must be in `$attrs`
+				componentCtx.unsafe.$attrs ??= {};
+				componentCtx.unsafe.$attrs[event] = attrVal;
+
+				if (!isSystemGetter) {
+					if (isOnceEvent) {
+						componentCtx.$on(originalEvent, attrVal);
+
+					} else {
+						componentCtx.$once(originalEvent, attrVal);
+					}
 				}
 
-			} else {
-				props[event] = attrVal;
+			} else if (!isSystemGetter) {
 				setVNodePatchFlags(vnode, 'events');
 
 				const dynamicProps = vnode.dynamicProps ?? [];

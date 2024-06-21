@@ -6,7 +6,7 @@ This module provides a class to manage dynamically loaded modules.
 
 By default, any component that inherits from [[iBlock]] has the `moduleLoader` property.
 However, to use the module methods, attach them explicitly to enable tree-shake code optimizations.
-Simply place the required import declaration within your component file.
+Place the required import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -141,8 +141,8 @@ Sends a signal to load the modules associated with the specified name.
 ```
 < . v-async-target
   += self.loadModules('base/b-settings', { &
-      renderKey: 'b-settings',
-      wait: "moduleLoader.waitSignal('b-settings')"
+    renderKey: 'b-settings',
+    wait: "moduleLoader.waitSignal('b-settings')"
   }) .
 ```
 
@@ -159,8 +159,8 @@ The resulting value is intended for use with [[AsyncRender]].
 ```
 < . v-async-target
   += self.loadModules('base/b-settings', { &
-      renderKey: 'b-settings',
-      wait: "moduleLoader.waitSignal('b-settings')"
+    renderKey: 'b-settings',
+    wait: "moduleLoader.waitSignal('b-settings')"
   }) .
 ```
 

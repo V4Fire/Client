@@ -13,6 +13,9 @@
 - template index() extends ['i-data'].index
 	- forceRenderAsVNode = true
 
+	- block helpers
+		{{ void(incRenderCounter()) }}
+
 	- block body
 		< template v-if = testComponent
 			< component &
