@@ -19,4 +19,5 @@
 		}, attrs) .
 
 	- block body
-		Click!
+		< . v-hook = {unmounted: reset}
+			Click!

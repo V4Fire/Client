@@ -11,16 +11,15 @@ import { callMethodFromComponent } from 'core/component/method';
 import { runHook } from 'core/component/hook';
 import { destroyedHooks } from 'core/component/const';
 
-import type { ComponentInterface } from 'core/component/interface';
+import type { ComponentInterface, ComponentDestructorOptions } from 'core/component/interface';
 
 /**
  * Initializes the "beforeDestroy" state to the specified component instance
  *
  * @param component
- * @param [recursive] - if set to false, the destructor will be executed for the component itself,
- *   but not for its descendants
+ * @param [opts]
  */
-export function beforeDestroyState(component: ComponentInterface, recursive: boolean = true): void {
+export function beforeDestroyState(component: ComponentInterface, opts: ComponentDestructorOptions = {}): void {
 	if (destroyedHooks[component.hook] != null) {
 		return;
 	}
@@ -33,7 +32,10 @@ export function beforeDestroyState(component: ComponentInterface, recursive: boo
 		unsafe: {$el}
 	} = component;
 
-	unsafe.$emit('[[BEFORE_DESTROY]]', recursive);
+	unsafe.$emit('[[BEFORE_DESTROY]]', <Required<ComponentDestructorOptions>>{
+		recursive: opts.recursive ?? true,
+		shouldUnmountVNodes: opts.shouldUnmountVNodes ?? true
+	});
 
 	unsafe.async.clearAll().locked = true;
 	unsafe.$async.clearAll().locked = true;

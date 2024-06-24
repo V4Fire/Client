@@ -30,7 +30,7 @@ export default class bFunctionalDummy extends bDummy {
 		button: bFunctionalButtonDummy;
 	};
 
-	updateClickCount(): void {
+	updateClickCountField(): void {
 		this.clickCount = this.clickCountStore;
 	}
 

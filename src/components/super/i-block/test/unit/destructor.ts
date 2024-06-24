@@ -109,7 +109,7 @@ test.describe('<i-block> calling a component\'s destructor', () => {
 					dynamicChild = await target.evaluateHandle<iBlock>((ctx) => ctx.$refs.child?.[1]);
 
 				await dynamicChild.evaluate((ctx) => {
-					ctx.unsafe.$destroy(false);
+					ctx.unsafe.$destroy({recursive: false});
 				});
 
 				// Wait until memory is cleaned up
