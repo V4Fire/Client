@@ -178,7 +178,7 @@
     "ts-jest": "29.1.0"
   },
   "peerDependencies": {
-    "@v4fire/core": "^4.0.0-alpha.34",
+    "@v4fire/core": "^4.0.0-alpha.37",
     "webpack": "^5.82.1"
   },
   "resolutions": {
