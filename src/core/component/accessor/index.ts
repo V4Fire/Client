@@ -106,44 +106,43 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		const get = function get(this: typeof component): unknown {
 			const {hook} = this;
 
-			if (cacheStatus in get) {
-				// We should not use the getter's cache until the component is fully created,
-				// because until that moment, we cannot track changes to dependent entities
-				// and reset the cache when they change.
-				// This can lead to hard-to-detect errors.
-				const canUseCache = beforeHooks[hook] == null;
+			// We should not use the getter's cache until the component is fully created,
+			// because until that moment, we cannot track changes to dependent entities
+			// and reset the cache when they change.
+			// This can lead to hard-to-detect errors.
+			const canUseCache = beforeHooks[hook] == null;
 
-				if (canUseCache) {
-					// If a getter already has a cached result and is used inside a template,
-					// it is not possible to track its effect, as the value is not recalculated.
-					// This can lead to a problem where one of the entities on which the getter depends is updated,
-					// but the template is not.
-					// To avoid this problem, we explicitly touch all dependent entities.
-					// For functional components, this problem does not exist, as no change in state can trigger their re-render.
-					if (!isFunctional && hook !== 'created') {
-						meta.watchDependencies.get(name)?.forEach((path) => {
+			if (canUseCache && cacheStatus in get) {
+				// If a getter already has a cached result and is used inside a template,
+				// it is not possible to track its effect, as the value is not recalculated.
+				// This can lead to a problem where one of the entities on which the getter depends is updated,
+				// but the template is not.
+				// To avoid this problem, we explicitly touch all dependent entities.
+				// For functional components, this problem does not exist, as no change in state can trigger their re-render.
+				if (!isFunctional && hook !== 'created') {
+					meta.watchDependencies.get(name)?.forEach((path) => {
+						Object.get(this, path);
+					});
+
+					['Store', 'Prop'].forEach((postfix) => {
+						const
+							path = name + postfix;
+
+						if (path in this) {
 							Object.get(this, path);
-						});
-
-						['Store', 'Prop'].forEach((postfix) => {
-							const
-								path = name + postfix;
-
-							if (path in this) {
-								Object.get(this, path);
-							}
-						});
-					}
-
-					return get[cacheStatus];
+						}
+					});
 				}
 
-				delete get[cacheStatus];
+				return get[cacheStatus];
 			}
 
 			const value = computed.get!.call(this);
 
-			if (!SSR) {
+			// Due to context inheritance in the functional components
+			// we should not cache the computed value until the component is created
+			// @see https://github.com/V4Fire/Client/issues/1292
+			if (!SSR && (canUseCache || !isFunctional)) {
 				get[cacheStatus] = value;
 			}
 
