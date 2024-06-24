@@ -35,10 +35,10 @@ test.describe('functional component', () => {
 	test.describe('on parent re-render', () => {
 		test('should have valid event handlers', async () => {
 			await clickAndWaitForEvent();
-			await test.expect(text).toHaveText('Click count: 0');
+			await test.expect(text).toHaveText('Counter: 0');
 
 			await target.evaluate((ctx) => ctx.syncStoreWithState());
-			await test.expect(text).toHaveText('Click count: 1');
+			await test.expect(text).toHaveText('Counter: 1');
 
 			await clickAndWaitForEvent();
 		});
