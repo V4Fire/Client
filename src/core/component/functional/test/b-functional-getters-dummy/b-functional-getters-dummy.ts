@@ -34,7 +34,7 @@ export default class bFunctionalGettersDummy extends bDummy {
 		return this.field.get('itemStore');
 	}
 
-	set item(value: Item) {
+	set item(value: CanUndef<Item>) {
 		this.field.set('itemStore', value);
 	}
 
