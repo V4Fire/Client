@@ -18,6 +18,8 @@ import iData, { prop, component, computed, field, system } from 'components/supe
 
 export * from 'components/super/i-data/i-data';
 
+const item = {value: Math.random()};
+
 @component({
 	functional: {
 		functional: true
@@ -92,7 +94,7 @@ class bDummy extends iData {
 
 	mounted(): void {
 		this.console.log('mounted');
-		this.item = {value: Math.random()};
+		this.item = item;
 		this.$refs.counter!.textContent = this.value;
 	}
 }
