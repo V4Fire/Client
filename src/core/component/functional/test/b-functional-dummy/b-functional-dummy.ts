@@ -9,7 +9,9 @@
 /* eslint-disable @v4fire/require-jsdoc */
 
 import bDummy, { component, field, system } from 'components/dummies/b-dummy/b-dummy';
+
 import type bFunctionalButtonDummy from 'core/component/functional/test/b-functional-button-dummy/b-functional-button-dummy';
+import type bFunctionalGettersDummy from 'core/component/functional/test/b-functional-getters-dummy/b-functional-getters-dummy';
 
 export * from 'components/dummies/b-dummy/b-dummy';
 
@@ -28,6 +30,7 @@ export default class bFunctionalDummy extends bDummy {
 
 	protected override $refs!: bDummy['$refs'] & {
 		button?: bFunctionalButtonDummy;
+		gettersDummy?: bFunctionalGettersDummy;
 	};
 
 	syncStoreWithState(): void {

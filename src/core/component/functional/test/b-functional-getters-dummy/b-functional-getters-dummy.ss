@@ -12,11 +12,8 @@
 
 - template index() extends ['b-dummy'].index
 	- block body
-		< p
-			Counter: {{counter}}
+		< .
+			Value:
 
-		< template v-if = stage === 'main'
-			< b-functional-button-dummy ref = button | @click:component = onClick
-
-		< template v-if = stage === 'getters'
-			< b-functional-getters-dummy ref = gettersDummy
+			< span ref = container
+				{{ value }}
