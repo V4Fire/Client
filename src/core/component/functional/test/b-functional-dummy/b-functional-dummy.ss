@@ -13,6 +13,8 @@
 - template index() extends ['b-dummy'].index
 	- block body
 		< p
-			Click count: {{clickCount}}
+			Counter: {{counter}}
 
-		< b-functional-button-dummy ref = button | @click:component = onClick
+		< template v-if = stage === 'main'
+			< b-functional-button-dummy ref = button | @click:component = onClick
+
