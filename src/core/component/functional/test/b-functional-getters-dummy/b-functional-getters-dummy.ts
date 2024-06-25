@@ -8,7 +8,9 @@
 
 /* eslint-disable @v4fire/require-jsdoc */
 
-import bDummy, { component, system, computed } from 'components/dummies/b-dummy/b-dummy';
+import { cacheStatus } from 'core/component/watch';
+
+import bDummy, { component, system, computed, hook } from 'components/dummies/b-dummy/b-dummy';
 import type { Item } from 'core/component/functional/test/b-functional-getters-dummy/interface';
 
 import { item } from 'core/component/functional/test/b-functional-getters-dummy/const';
@@ -19,6 +21,9 @@ export * from 'components/dummies/b-dummy/b-dummy';
 export default class bFunctionalGettersDummy extends bDummy {
 	@system()
 	itemStore?: CanUndef<Item>;
+
+	@system({merge: true})
+	logStore: string[] = [];
 
 	protected override $refs!: bDummy['$refs'] & {
 		container: HTMLElement;
@@ -38,8 +43,18 @@ export default class bFunctionalGettersDummy extends bDummy {
 		this.field.set('itemStore', value);
 	}
 
+	@computed({cache: false})
+	get isValueCached(): boolean {
+		// eslint-disable-next-line @v4fire/unbound-method
+		return cacheStatus in (Object.getOwnPropertyDescriptor(this, 'value')?.get ?? {});
+	}
+
+	@hook(['beforeDestroy', 'mounted'])
+	logValueIsCached(): void {
+		this.logStore.push(`Hook: ${this.hook}. Value is cached: ${this.isValueCached}`);
+	}
+
 	mounted(): void {
-		this.console.log('mounted');
 		this.item = item;
 		this.$refs.container.textContent = this.value;
 	}
