@@ -182,7 +182,7 @@ to its inner page component.
 
 ## Catching Events of the Inner Page Component
 
-By default, `bDynamicPage` dispatches all events from the inner page component.
+By default, `bDynamicPage` dispatches all events from the inner page component, except `hookChange` and `hook:*` events.
 
 ```
 /// `initLoad` is caught from the inner page component

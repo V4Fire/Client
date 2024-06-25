@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import { component, UnsafeGetter } from 'core/component';
+import { component, UnsafeGetter, watch } from 'core/component';
 import type { Classes } from 'components/friends/provide';
 
 import type { ModVal, ModsDecl, ModsProp, ModsDict } from 'components/super/i-block/modules/mods';
@@ -81,5 +81,25 @@ export default abstract class iBlock extends iBlockProviders {
 	 */
 	isComponent<T extends iBlock>(obj: unknown, constructor?: {new(): T} | Function): obj is T {
 		return Object.isTruly(obj) && (<Dictionary>obj).instance instanceof (constructor ?? iBlock);
+	}
+
+	/**
+	 * Fixes the teleported component and its DOM nodes that were rendered before the teleport container became ready
+	 */
+	@watch('r.shouldMountTeleports')
+	async shouldMountTeleportsChange(): Promise<void> {
+		await this.async.nextTick();
+
+		if (this.$el && this.$el.component !== this) {
+			this.$el.component = this;
+
+			Object.defineProperty(this.unsafe, '$el', {
+				configurable: true,
+				get: () => this.$refs[this.$resolveRef('$el')] ?? this.$el
+			});
+
+			this.$el.component = this;
+		}
+
 	}
 }

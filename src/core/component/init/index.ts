@@ -14,3 +14,7 @@
 export * from 'core/component/init/states';
 export * from 'core/component/init/component';
 export * from 'core/component/init/interface';
+
+//#if runtime has dummyComponents
+import('core/component/init/test/b-test-component');
+//#endif

@@ -130,20 +130,21 @@ export function deactivate(component: iBlock): void {
 		return;
 	}
 
-	if (unsafe.isActivated) {
-		// It's important to deactivate the component ASAP to prevent any unexpected rerenders
-		// because state of the component might change during the deactivation process
-		onDeactivated(component);
-		runHook('deactivated', component).then(() => {
-			callMethodFromComponent(component, 'deactivated');
-		}).catch(stderr);
-	}
-
 	unsafe.$children.forEach((component) => {
 		if (!component.isFunctional) {
 			component.unsafe.deactivate();
 		}
 	});
+
+	if (unsafe.isActivated) {
+		// It's important to deactivate the component ASAP to prevent any unexpected rerenders
+		// because state of the component might change during the deactivation process
+		runHook('deactivated', component).then(() => {
+			callMethodFromComponent(component, 'deactivated');
+		}).catch(stderr);
+
+		onDeactivated(component);
+	}
 }
 
 /**
