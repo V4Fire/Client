@@ -46,7 +46,13 @@ export default class bFunctionalGettersDummy extends bDummy {
 	@computed({cache: false})
 	get isValueCached(): boolean {
 		// eslint-disable-next-line @v4fire/unbound-method
-		return cacheStatus in (Object.getOwnPropertyDescriptor(this, 'value')?.get ?? {});
+		const {get} = Object.getOwnPropertyDescriptor(this, 'value')!;
+
+		if (get == null) {
+			throw new TypeError('"value" getter is missing');
+		}
+
+		return cacheStatus in get;
 	}
 
 	@hook(['beforeDestroy', 'mounted'])
