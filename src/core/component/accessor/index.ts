@@ -70,8 +70,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		meta: {params: {deprecatedProps}}
 	} = component.unsafe;
 
-	const
-		isFunctional = meta.params.functional === true;
+	const isFunctional = meta.params.functional === true;
 
 	Object.entries(meta.accessors).forEach(([name, accessor]) => {
 		const canSkip =
@@ -91,8 +90,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		});
 	});
 
-	const
-		computedFields = Object.entries(meta.computedFields);
+	const computedFields = Object.entries(meta.computedFields);
 
 	computedFields.forEach(([name, computed]) => {
 		const canSkip =
@@ -106,35 +104,45 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 		// eslint-disable-next-line func-style
 		const get = function get(this: typeof component): unknown {
-			const
-				{hook} = this;
+			const {hook} = this;
 
-			if (cacheStatus in get) {
-				// Need to explicitly touch all dependencies for Vue
-				if (beforeHooks[hook] == null) {
-					if (hook !== 'created') {
-						meta.watchDependencies.get(name)?.forEach((path) => {
+			// We should not use the getter's cache until the component is fully created,
+			// because until that moment, we cannot track changes to dependent entities
+			// and reset the cache when they change.
+			// This can lead to hard-to-detect errors.
+			const canUseCache = beforeHooks[hook] == null;
+
+			if (canUseCache && cacheStatus in get) {
+				// If a getter already has a cached result and is used inside a template,
+				// it is not possible to track its effect, as the value is not recalculated.
+				// This can lead to a problem where one of the entities on which the getter depends is updated,
+				// but the template is not.
+				// To avoid this problem, we explicitly touch all dependent entities.
+				// For functional components, this problem does not exist, as no change in state can trigger their re-render.
+				if (!isFunctional && hook !== 'created') {
+					meta.watchDependencies.get(name)?.forEach((path) => {
+						Object.get(this, path);
+					});
+
+					['Store', 'Prop'].forEach((postfix) => {
+						const
+							path = name + postfix;
+
+						if (path in this) {
 							Object.get(this, path);
-						});
-
-						['Store', 'Prop'].forEach((postfix) => {
-							const
-								path = name + postfix;
-
-							if (path in this) {
-								Object.get(this, path);
-							}
-						});
-					}
-
-					return get[cacheStatus];
+						}
+					});
 				}
+
+				return get[cacheStatus];
 			}
 
-			const
-				value = computed.get!.call(this);
+			const value = computed.get!.call(this);
 
-			if (!SSR) {
+			// Due to context inheritance in the functional components
+			// we should not cache the computed value until the component is created
+			// @see https://github.com/V4Fire/Client/issues/1292
+			if (!SSR && (canUseCache || !isFunctional)) {
 				get[cacheStatus] = value;
 			}
 

@@ -6,9 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-functional-dummy')
-	.extends('b-dummy')
-	.dependencies(
-		'b-functional-button-dummy',
-		'b-functional-getters-dummy'
-	);
+export interface Item {
+	value: number;
+}
