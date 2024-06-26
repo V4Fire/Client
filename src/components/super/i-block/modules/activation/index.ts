@@ -137,12 +137,14 @@ export function deactivate(component: iBlock): void {
 	});
 
 	if (unsafe.isActivated) {
-		// It's important to deactivate the component ASAP to prevent any unexpected rerenders
-		// because state of the component might change during the deactivation process
 		runHook('deactivated', component).then(() => {
 			callMethodFromComponent(component, 'deactivated');
 		}).catch(stderr);
 
+		// It's important to deactivate the component ASAP to prevent any unexpected rerenders
+		// because state of the component might change during the deactivation process
+		// but not before calling runHook because otherwise the onHookChange event listeners will be muted
+		// and child dynamic components won't receive the deactivation signal
 		onDeactivated(component);
 	}
 }

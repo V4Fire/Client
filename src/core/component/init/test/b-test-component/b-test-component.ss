@@ -12,7 +12,7 @@
 
 - template index() extends ['i-block'].index
 	- block body
-		< b-button.target v-func = false | id = button1
+		< b-button.target v-func = false | ref = button1
 
 		< b-bottom-slide
-			< b-button.target v-func = false | id = button2
+			< b-button.target v-func = false | ref = button2

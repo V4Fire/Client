@@ -13,8 +13,8 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed a typo in the hookChange event name for processing activate/deactivate component
-* Fix component deactivation order, children must be deactivated first
+* Fixed a typo in the hookChange event name for processing activate/deactivate in component
+* Fixed the component deactivation order: children must be deactivated first
 
 ## v4.0.0-beta.91 (2024-04-19)
 

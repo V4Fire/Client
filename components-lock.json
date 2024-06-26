@@ -1,5 +1,5 @@
 {
-  "hash": "56c4940e4f7a7e13a5d557ef79d87d4abeb6dee36e79e043ee1919a9a53e38b5",
+  "hash": "5932acb027dd65f684be0f066299e43f4aa175232283a9f0317642baef0a5745",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1456,6 +1456,42 @@
             "src/components/super/i-input-text/test/b-super-i-input-text-dummy/b-super-i-input-text-dummy.styl"
           ],
           "tpl": "src/components/super/i-input-text/test/b-super-i-input-text-dummy/b-super-i-input-text-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-test-component",
+        {
+          "index": "src/core/component/init/test/b-test-component/index.js",
+          "declaration": {
+            "name": "b-test-component",
+            "parent": "i-block",
+            "dependencies": [
+              "b-button"
+            ],
+            "libs": []
+          },
+          "name": "b-test-component",
+          "parent": "i-block",
+          "dependencies": [
+            "b-button"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/init/test/b-test-component/b-test-component.ts",
+          "styles": [
+            "src/core/component/init/test/b-test-component/b-test-component.styl"
+          ],
+          "tpl": "src/core/component/init/test/b-test-component/b-test-component.ss",
           "etpl": null
         }
       ],

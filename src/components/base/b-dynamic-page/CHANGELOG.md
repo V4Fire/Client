@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fix hookChange event should not bubble
+* Fixed an issue where the hookChange event should not bubble
 
 ## v4.0.0-beta.98 (2024-05-21)
 
