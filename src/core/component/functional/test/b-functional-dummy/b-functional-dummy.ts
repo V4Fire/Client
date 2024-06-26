@@ -9,7 +9,9 @@
 /* eslint-disable @v4fire/require-jsdoc */
 
 import bDummy, { component, field, system } from 'components/dummies/b-dummy/b-dummy';
+
 import type bFunctionalButtonDummy from 'core/component/functional/test/b-functional-button-dummy/b-functional-button-dummy';
+import type bFunctionalGettersDummy from 'core/component/functional/test/b-functional-getters-dummy/b-functional-getters-dummy';
 
 export * from 'components/dummies/b-dummy/b-dummy';
 
@@ -21,20 +23,21 @@ export * from 'components/dummies/b-dummy/b-dummy';
 
 export default class bFunctionalDummy extends bDummy {
 	@field()
-	clickCount: number = 0;
+	counter: number = 0;
 
 	@system()
-	clickCountStore: number = 0;
+	counterStore: number = 0;
 
 	protected override $refs!: bDummy['$refs'] & {
-		button: bFunctionalButtonDummy;
+		button?: bFunctionalButtonDummy;
+		gettersDummy?: bFunctionalGettersDummy;
 	};
 
-	updateClickCount(): void {
-		this.clickCount = this.clickCountStore;
+	syncStoreWithState(): void {
+		this.counter = this.counterStore;
 	}
 
 	onClick(): void {
-		this.clickCountStore += 1;
+		this.counterStore += 1;
 	}
 }

@@ -34,7 +34,7 @@ export default class bUser extends iBlock {
 }
 ```
 
-### How does it work?
+### How Does It Work?
 
 The `@component` decorator gathers information from other nested decorators within the class.
 Through the use of reflection, this decorator then constructs a unique structure of the [[ComponentMeta]] type.
