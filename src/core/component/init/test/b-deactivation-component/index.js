@@ -6,6 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-test-component')
+package('b-deactivation-component')
 	.extends('i-block')
 	.dependencies('b-button');

@@ -11,16 +11,16 @@ import type { JSHandle } from 'playwright';
 import test from 'tests/config/unit/test';
 import { Component } from 'tests/helpers';
 
-import type bTestComponent from 'core/component/init/test/b-test-component/b-test-component';
+import type BDeactivationComponent from 'core/component/init/test/b-deactivation-component/b-deactivation-component';
 import type { ComponentElement } from 'core/component';
 
 test.describe('core init component deactivation', () => {
 	let
-		target: JSHandle<bTestComponent>;
+		target: JSHandle<BDeactivationComponent>;
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
-		target = await Component.createComponent<bTestComponent>(page, 'b-test-component');
+		target = await Component.createComponent<BDeactivationComponent>(page, 'b-deactivation-component');
 	});
 
 	test('children button should be deactivated', async () => {

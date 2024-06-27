@@ -10,6 +10,6 @@ import { component } from 'core/component';
 import iBlock from 'components/super/i-block/i-block';
 
 @component()
-export default class bTestComponent extends iBlock {
+export default class BDeactivationComponent extends iBlock {
 
 }
