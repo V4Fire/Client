@@ -24,6 +24,7 @@ import('components/super/i-block/test/b-super-i-block-dummy');
 import('components/super/i-block/test/b-super-i-block-watch-dummy');
 import('components/super/i-block/test/b-super-i-block-lfc-dummy');
 import('components/super/i-block/test/b-super-i-block-destructor-dummy');
+import('components/super/i-block/test/b-super-i-block-deactivation-dummy');
 //#endif
 
 export * from 'core/component';
@@ -91,6 +92,7 @@ export default abstract class iBlock extends iBlockProviders {
 		await this.async.nextTick();
 
 		if (this.$el && this.$el.component !== this) {
+			// Fix the DOM element link to the component
 			this.$el.component = this;
 
 			Object.defineProperty(this.unsafe, '$el', {
@@ -98,6 +100,7 @@ export default abstract class iBlock extends iBlockProviders {
 				get: () => this.$refs[this.$resolveRef('$el')] ?? this.$el
 			});
 
+			// Fix the teleported DOM element link to the component
 			this.$el.component = this;
 		}
 

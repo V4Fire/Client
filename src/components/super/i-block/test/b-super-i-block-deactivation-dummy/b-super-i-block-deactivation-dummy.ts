@@ -8,8 +8,12 @@
 
 import { component } from 'core/component';
 import iBlock from 'components/super/i-block/i-block';
+import type bButton from 'components/form/b-button/b-button';
 
 @component()
-export default class BDeactivationComponent extends iBlock {
-
+export default class bSuperIBlockDeactivationDummy extends iBlock {
+	protected override $refs!: iBlock['$refs'] & {
+		button1: bButton;
+		button2: bButton;
+	};
 }

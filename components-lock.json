@@ -1,5 +1,5 @@
 {
-  "hash": "de1852ecc14031306c3594d8a6c35b0d094e0a59c5c1d99b60b8bd7b4b08beda",
+  "hash": "f78d5f7a7955dba7c3d1cda30591ca5147448ac4b90118ade1afefb137a62528",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -148,42 +148,6 @@
             "src/core/component/interface/component/test/b-component-interface-dummy/b-component-interface-dummy.styl"
           ],
           "tpl": "src/core/component/interface/component/test/b-component-interface-dummy/b-component-interface-dummy.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-deactivation-component",
-        {
-          "index": "src/core/component/init/test/b-deactivation-component/index.js",
-          "declaration": {
-            "name": "b-deactivation-component",
-            "parent": "i-block",
-            "dependencies": [
-              "b-button"
-            ],
-            "libs": []
-          },
-          "name": "b-deactivation-component",
-          "parent": "i-block",
-          "dependencies": [
-            "b-button"
-          ],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/core/component/init/test/b-deactivation-component/b-deactivation-component.ts",
-          "styles": [
-            "src/core/component/init/test/b-deactivation-component/b-deactivation-component.styl"
-          ],
-          "tpl": "src/core/component/init/test/b-deactivation-component/b-deactivation-component.ss",
           "etpl": null
         }
       ],
@@ -1296,6 +1260,42 @@
             "src/components/base/b-slider/b-slider.styl"
           ],
           "tpl": "src/components/base/b-slider/b-slider.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-super-i-block-deactivation-dummy",
+        {
+          "index": "src/components/super/i-block/test/b-super-i-block-deactivation-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-deactivation-dummy",
+            "parent": "i-block",
+            "dependencies": [
+              "b-button"
+            ],
+            "libs": []
+          },
+          "name": "b-super-i-block-deactivation-dummy",
+          "parent": "i-block",
+          "dependencies": [
+            "b-button"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/test/b-super-i-block-deactivation-dummy/b-super-i-block-deactivation-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/test/b-super-i-block-deactivation-dummy/b-super-i-block-deactivation-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/test/b-super-i-block-deactivation-dummy/b-super-i-block-deactivation-dummy.ss",
           "etpl": null
         }
       ],

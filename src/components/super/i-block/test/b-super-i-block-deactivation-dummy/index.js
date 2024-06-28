@@ -6,6 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-deactivation-component')
+package('b-super-i-block-deactivation-dummy')
 	.extends('i-block')
-	.dependencies('b-button');
+	.dependencies(
+		'b-button',
+		'b-bottom-slide'
+		);
