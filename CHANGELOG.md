@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-07-??)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect setting name for the `maxAge` parameter
+
 ## v4.0.0-beta.105 (2024-06-24)
 
 #### :bug: Bug Fix
