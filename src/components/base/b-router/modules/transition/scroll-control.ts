@@ -7,6 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import type { AsyncOptions } from 'core/async';
 
 import type Transition from 'components/base/b-router/modules/transition/class';
 import type { ScrollSnapshot } from 'components/base/b-router/modules/transition/interface';
@@ -86,16 +87,17 @@ export default class ScrollControl {
 			{component} = this.transition;
 
 		(async () => {
-			const label = {
-				label: $$.autoScroll
+			const asyncOpts: AsyncOptions = {
+				label: $$.autoScroll,
+				join: 'replace'
 			};
 
 			try {
-				await component.nextTick(label);
+				await component.nextTick(asyncOpts);
 				setScroll();
 
 				// Restoring the scroll for dynamic height components
-				await component.async.sleep(10, label);
+				await component.async.sleep(10, asyncOpts);
 				setScroll();
 			} catch {}
 		})().catch(stderr);

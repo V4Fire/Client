@@ -7,6 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import type { AsyncOptions } from 'core/async';
 
 import * as router from 'core/router';
 import type { Router } from 'core/router/interface';
@@ -20,8 +21,9 @@ import type { TransitionContext } from 'components/base/b-router/modules/transit
 const
 	$$ = symbolGenerator();
 
-const transitionLabel = {
-	label: $$.transition
+const transitionAsyncOpts: AsyncOptions = {
+	label: $$.transition,
+	join: 'replace'
 };
 
 export default class Transition {
@@ -157,13 +159,13 @@ export default class Transition {
 
 		this.scroll.createSnapshot();
 		// FIXME: removing of $a.promise is a temporaty fix of https://github.com/V4Fire/Client/issues/1301
-		await this.scroll.updateCurrentRouteScroll();
+		await $a.promise(this.scroll.updateCurrentRouteScroll(), transitionAsyncOpts);
 
 		// We didn't find any route matching the given ref
 		if (this.newRouteInfo == null) {
 			// The transition was user-generated, then we need to save the scroll
 			if (!SSR && this.method !== 'event' && this.ref != null) {
-				await $a.promise(engine[this.method](this.ref, this.scroll.getSnapshot()), transitionLabel);
+				await $a.promise(engine[this.method](this.ref, this.scroll.getSnapshot()), transitionAsyncOpts);
 			}
 
 			return;
@@ -269,7 +271,7 @@ export default class Transition {
 				return;
 			}
 
-			await $a.promise(engine[this.method](newRoute.url, plainInfo), transitionLabel).then(() => {
+			await $a.promise(engine[this.method](newRoute.url, plainInfo), transitionAsyncOpts).then(() => {
 				const isSoftTransition = r.route != null && Object.fastCompare(
 					router.convertRouteToPlainObjectWithoutProto(currentRoute),
 					router.convertRouteToPlainObjectWithoutProto(newRoute)
