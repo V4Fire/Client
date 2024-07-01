@@ -11,6 +11,45 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.105 (2024-06-24)
+
+#### :bug: Bug Fix
+
+* Fixed unwanted execution of unmount handlers in the directives used
+  within the functional component during its re-creation.
+  The `$destroy` method now accepts an object with options, which enables control over
+  both the recursion of the destructor and the unmounting of vnodes
+  within the component `core/component/interface`
+
+## v4.0.0-beta.104 (2024-06-19)
+
+#### :rocket: New Feature
+
+* The `$destroy` method now accepts a recursive parameter for targeted removal
+  of the component without deleting its children and vice versa `core/component/interface`
+* Added the `consoleTracker` fixture to enable access to console messages in unit tests `tests/fixtures`
+
+#### :bug: Bug Fix
+
+* Fixed an error where a component could transition to a hook in which it was already located `core/component/hook`
+
+#### :house: Internal
+
+* The getter `r` has been moved from `iBlock` to `ComponentInterface`
+
+## v4.0.0-beta.103 (2024-06-14)
+
+#### :house: Internal
+
+* Updated `terser` to version `5.31.0` to include [bug fix](https://github.com/terser/terser/issues/1432)
+
+## v4.0.0-beta.102 (2024-06-11)
+
+#### :bug: Bug Fix
+
+* Removed the use of `$a.promise` in the `execute` method of the `Transition` class. This previously caused only
+the last `replace` method call to be executed when multiple calls were made `components/base/b-router`
+
 ## v4.0.0-beta.101 (2024-05-30)
 
 #### :bug: Bug Fix

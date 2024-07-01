@@ -7,7 +7,7 @@
  */
 
 import * as init from 'core/component/init';
-import type { ComponentInterface, ComponentElement } from 'core/component/interface';
+import type { ComponentInterface, ComponentElement, ComponentDestructorOptions } from 'core/component/interface';
 
 /**
  * Initializes the default dynamic lifecycle handlers for the given functional component.
@@ -16,9 +16,7 @@ import type { ComponentInterface, ComponentElement } from 'core/component/interf
  * @param component
  */
 export function initDynamicComponentLifeCycle(component: ComponentInterface): ComponentInterface {
-	const
-		{unsafe} = component;
-
+	const {unsafe} = component;
 	unsafe.$on('[[COMPONENT_HOOK]]', hookHandler);
 	return component;
 
@@ -51,9 +49,9 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 			unsafe.unsafe.$el = node;
 			node.component = unsafe;
 
-			unsafe.$async.nextTick()
-				.then(() => init.mountedState(unsafe))
-				.catch(stderr);
+			// Performs a mount on the next tick to ensure that the component is rendered
+			// and all adjacent re-renders have collapsed
+			unsafe.$async.nextTick().then(() => init.mountedState(unsafe)).catch(stderr);
 		}
 	}
 }
@@ -76,7 +74,10 @@ export function inheritContext(
 		return;
 	}
 
-	parentCtx.unsafe.$destroy();
+	// Here, the functional component is recreated during re-rendering.
+	// Therefore, the destructor call should not recursively propagate to child components.
+	// Also, we should not unmount the vnodes created within the component.
+	parentCtx.unsafe.$destroy(<ComponentDestructorOptions>{recursive: false, shouldUnmountVNodes: false});
 
 	const
 		props = ctx.$props,

@@ -34,6 +34,10 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 		component
 	);
 
+	if (unsafe.hook === hook) {
+		return SyncPromise.resolve();
+	}
+
 	unsafe.hook = hook;
 
 	const

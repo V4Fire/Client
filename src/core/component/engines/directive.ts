@@ -8,6 +8,7 @@
 
 import { ComponentEngine } from 'core/component/engines/engine';
 import type { Directive, DirectiveBinding, VNode } from 'core/component/engines/interface';
+import type { ComponentDestructorOptions } from 'core/component/interface';
 
 // eslint-disable-next-line @v4fire/unbound-method
 const staticDirective = ComponentEngine.directive.length > 0 ? ComponentEngine.directive : null;
@@ -63,8 +64,10 @@ ComponentEngine.directive = function directive(name: string, directive?: Directi
 			}
 
 			if (vnode.virtualContext != null) {
-				vnode.virtualContext.unsafe.$on('hook:before-destroy', () => {
-					originalUnmounted.apply(this, args);
+				vnode.virtualContext.unsafe.$once('[[BEFORE_DESTROY]]', (opts: Required<ComponentDestructorOptions>) => {
+					if (opts.shouldUnmountVNodes) {
+						originalUnmounted.apply(this, args);
+					}
 				});
 			}
 		}

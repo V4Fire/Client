@@ -155,6 +155,13 @@ export default abstract class iStaticPage extends iPage {
 	globalEnv!: GlobalEnvironment;
 
 	/**
+	 * Number of external root instances of the application.
+	 * This parameter allows you to detect memory leaks when using asyncRender.
+	 */
+	@system()
+	readonly remoteRootInstances: number = 0;
+
+	/**
 	 * The name of the active route page
 	 */
 	@computed({cache: true, dependencies: ['route.meta.name']})
