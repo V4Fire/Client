@@ -65,7 +65,7 @@ module.exports = function optimization({buildId, plugins}) {
 				vue: {
 					name: 'vue',
 					chunks: 'all',
-					filename: 'lib/vue.js',
+					filename: `${config.webpack.output({name: 'lib'})}/vue.js`,
 					enforce: true,
 					test: /\/node_modules\/@?vue\//
 				},
