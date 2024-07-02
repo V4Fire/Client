@@ -81,6 +81,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
+		 * Enable legacy target build for old browsers/environments
+		 * Target for this environment can be configured in .browserslistrc
+		 *
+		 * @cli legacy-build
+		 * @env LEGACY_BUILD
+		 */
+		legacy: o('legacy-build', {
+			env: true,
+			default: false,
+			type: 'boolean'
+		}),
+
+		/**
 		 * Project build mode
 		 *
 		 * @cli build-mode
@@ -832,15 +845,24 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			});
 		},
 
-		swc() {
-			let
-				env = 'development';
+		swc(env) {
+			if (env == null) {
+				const configEnv = this.config.environment;
 
-			if (this.ssr) {
-				env = 'ssr';
+				if (this.ssr) {
+					env = 'ssr';
 
-			} else if (this.config.environment != null) {
-				env = this.config.environment;
+				} else if (configEnv != null) {
+					if (configEnv === 'production') {
+						env = this.config.build.legacy ? 'production-legacy' : 'production-modern';
+
+					} else {
+						env = 'development';
+					}
+
+				} else {
+					env = 'development';
+				}
 			}
 
 			const
