@@ -46,6 +46,19 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	@field()
 	someField: unknown = 'foo';
 
+	protected async onClick(): Promise<void> {
+		this.console.log(Date.now(), 'reading ref, parent hook:', this.hook);
+
+		queueMicrotask(() => {
+			this.console.log(Date.now(), 'destroying parent');
+			this.$destroy();
+		});
+
+		const control = await this.waitRef('control');
+
+		this.console.log(Date.now(), 'ref resolved', 'parent hook:', this.hook, 'ref:', control);
+	}
+
 	protected beforeCreate(): void {
 		//#unless runtime has storybook
 		// eslint-disable-next-line no-console

@@ -555,6 +555,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 				refVal = this.$refs[ref];
 
 			if (refVal != null && (!Object.isArray(refVal) || refVal.length > 0)) {
+				console.log(Date.now(), '[waitRef] ref resolved');
 				resolve(<T>refVal);
 
 			} else {
