@@ -451,6 +451,82 @@ test.describe('<b-router> route handling', () => {
 			}
 		);
 
+		test(
+			'the router should change the route according to last `push()` call during a series of subsequent calls',
+
+			async ({page}) => {
+				const root = await createInitRouter(engineName, {
+					main: {
+						path: '/'
+					},
+
+					second: {
+						path: '/second'
+					},
+
+					third: {
+						path: '/third'
+					},
+
+					forth: {
+						path: '/forth'
+					}
+				})(page, {
+					initialRoute: 'main'
+				});
+
+				const transition = root.evaluate(async (ctx) => {
+					await ctx.router!.push('second');
+					await ctx.router!.push('third');
+					await ctx.router!.push('forth');
+
+					return ctx.route?.name;
+				});
+
+				await test.expect(transition).resolves.toEqual('forth');
+			}
+		);
+
+		test(
+			'the router should mix params from all `.replace()` calls in a series of subsequent calls',
+
+			async ({page}) => {
+				const root = await createInitRouter(engineName, {
+					main: {
+						path: '/'
+					},
+
+					second: {
+						path: '/second',
+						params: {
+							secondParam: 1
+						}
+					},
+
+					third: {
+						path: '/third',
+						params: {
+							thirdParam: 1
+						}
+					}
+				})(page, {
+					initialRoute: 'main'
+				});
+
+				const transition = root.evaluate(async (ctx) => {
+					await ctx.router!.replace('second');
+					await ctx.router!.replace('third');
+
+					return ctx.route?.params;
+				});
+
+				await test.expect(transition).resolves.toEqual({
+					secondParam: 1,
+					thirdParam: 1
+				});
+			}
+		);
+
 		/**
 		 * Checks whether the name of the active route page matches the assertion.
 		 * The function returns a Promise.
