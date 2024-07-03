@@ -487,45 +487,68 @@ test.describe('<b-router> route handling', () => {
 			}
 		);
 
-		test(
-			'the router should mix params from all `.replace()` calls in a series of subsequent calls',
+		for (const paramKind of ['params', 'query']) {
 
-			async ({page}) => {
-				const root = await createInitRouter(engineName, {
-					main: {
-						path: '/'
-					},
+			test.describe(
+				[
+					`the router should only update keys listed in "${paramKind}" dictionary`,
+					'in a series of subsequent `.replace(null, ...)` calls'
+				].join(' '),
 
-					second: {
-						path: '/second',
-						params: {
-							secondParam: 1
-						}
-					},
+				() => {
 
-					third: {
-						path: '/third',
-						params: {
-							thirdParam: 1
-						}
-					}
-				})(page, {
-					initialRoute: 'main'
-				});
+					let root: JSHandle<iStaticPage>;
 
-				const transition = root.evaluate(async (ctx) => {
-					await ctx.router!.replace('second');
-					await ctx.router!.replace('third');
+					test.beforeEach(async ({page}) => {
+						root = await createInitRouter(engineName, {
+							main: {
+								path: '/',
+								[paramKind]: {
+									doNotTouch: 1,
+									mayChange: 1,
+									mayChangeToo: 1
+								}
+							}
+						})(page, {
+							initialRoute: 'main'
+						});
+					});
 
-					return ctx.route?.params;
-				});
+					test('if an existing parameter is changed', async () => {
+						const transition = root.evaluate(async (ctx, paramKind) => {
+							await ctx.router!.replace(null, {[paramKind]: {mayChange: 2}});
+							await ctx.router!.replace(null, {[paramKind]: {mayChangeToo: 2}});
 
-				await test.expect(transition).resolves.toEqual({
-					secondParam: 1,
-					thirdParam: 1
-				});
-			}
-		);
+							return ctx.route?.[paramKind];
+						}, paramKind);
+
+						await test.expect(transition).resolves.toEqual({
+							doNotTouch: 1,
+							mayChange: 2,
+							mayChangeToo: 2
+						});
+					});
+
+					test('if a new parameter is added', async () => {
+						const transition = root.evaluate(async (ctx, paramKind) => {
+							await ctx.router!.replace(null, {[paramKind]: {firstNewParam: 1}});
+							await ctx.router!.replace(null, {[paramKind]: {secondNewParam: 1}});
+
+							return ctx.route?.[paramKind];
+						}, paramKind);
+
+						await test.expect(transition).resolves.toEqual({
+							doNotTouch: 1,
+							mayChange: 1,
+							mayChangeToo: 1,
+							firstNewParam: 1,
+							secondNewParam: 1
+						});
+					});
+				}
+			);
+
+		}
 
 		/**
 		 * Checks whether the name of the active route page matches the assertion.
