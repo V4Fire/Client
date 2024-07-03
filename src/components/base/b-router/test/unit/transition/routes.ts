@@ -478,18 +478,28 @@ test.describe('<b-router> route handling', () => {
 				});
 
 				const transition = root.evaluate((ctx) => {
+					const promise = new Promise((resolve) => {
+						ctx.router!.on('transition', () => {
+							if (ctx.route?.name == null) {
+								return;
+							}
+
+							resolve(ctx.route.name);
+						});
+					});
+
 					void ctx.router!.push('second');
 					void ctx.router!.push('third');
 					void ctx.router!.push('forth');
 
-					return ctx.route?.name;
+					return promise;
 				});
 
 				await test.expect(transition).resolves.toEqual('forth');
 			}
 		);
 
-		for (const paramKind of <Array<keyof TransitionOptions>>['param', 'query']) {
+		for (const paramKind of <Array<keyof TransitionOptions>>['params', 'query']) {
 
 			test.describe(
 				[
@@ -566,7 +576,7 @@ test.describe('<b-router> route handling', () => {
 					): Promise<void> {
 						const transition = root.evaluate((ctx, [paramKind, optsForCalls]) => {
 							const promise = new Promise((resolve) => {
-								ctx.router!.on('change', () => {
+								ctx.router!.on('transition', () => {
 									if (ctx.route?.[paramKind] == null) {
 										return;
 									}
