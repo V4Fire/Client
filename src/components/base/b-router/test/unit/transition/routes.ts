@@ -15,6 +15,8 @@ import type { EngineName } from 'components/base/b-router/test/interface';
 
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
+import type { TransitionOptions } from 'core/router';
+
 // eslint-disable-next-line max-lines-per-function
 test.describe('<b-router> route handling', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -475,10 +477,10 @@ test.describe('<b-router> route handling', () => {
 					initialRoute: 'main'
 				});
 
-				const transition = root.evaluate(async (ctx) => {
-					await ctx.router!.push('second');
-					await ctx.router!.push('third');
-					await ctx.router!.push('forth');
+				const transition = root.evaluate((ctx) => {
+					void ctx.router!.push('second');
+					void ctx.router!.push('third');
+					void ctx.router!.push('forth');
 
 					return ctx.route?.name;
 				});
@@ -487,7 +489,7 @@ test.describe('<b-router> route handling', () => {
 			}
 		);
 
-		for (const paramKind of ['params', 'query']) {
+		for (const paramKind of <Array<keyof TransitionOptions>>['param', 'query']) {
 
 			test.describe(
 				[
@@ -515,36 +517,73 @@ test.describe('<b-router> route handling', () => {
 					});
 
 					test('if an existing parameter is changed', async () => {
-						const transition = root.evaluate(async (ctx, paramKind) => {
-							await ctx.router!.replace(null, {[paramKind]: {mayChange: 2}});
-							await ctx.router!.replace(null, {[paramKind]: {mayChangeToo: 2}});
+						await testReplaceSequenceTransition(
+							paramKind,
+							[
+								{mayChange: 2},
+								{mayChangeToo: 2}
+							],
 
-							return ctx.route?.[paramKind];
-						}, paramKind);
-
-						await test.expect(transition).resolves.toEqual({
-							doNotTouch: 1,
-							mayChange: 2,
-							mayChangeToo: 2
-						});
+							{
+								doNotTouch: 1,
+								mayChange: 2,
+								mayChangeToo: 2
+							}
+						);
 					});
 
 					test('if a new parameter is added', async () => {
-						const transition = root.evaluate(async (ctx, paramKind) => {
-							await ctx.router!.replace(null, {[paramKind]: {firstNewParam: 1}});
-							await ctx.router!.replace(null, {[paramKind]: {secondNewParam: 1}});
+						await testReplaceSequenceTransition(
+							paramKind,
+							[
+								{firstNewParam: 1},
+								{secondNewParam: 1}
+							],
 
-							return ctx.route?.[paramKind];
-						}, paramKind);
-
-						await test.expect(transition).resolves.toEqual({
-							doNotTouch: 1,
-							mayChange: 1,
-							mayChangeToo: 1,
-							firstNewParam: 1,
-							secondNewParam: 1
-						});
+							{
+								doNotTouch: 1,
+								mayChange: 1,
+								mayChangeToo: 1,
+								firstNewParam: 1,
+								secondNewParam: 1
+							}
+						);
 					});
+
+					/**
+					 * Performs a test of a transition caused by a sequence of not-awaited `replace()` calls.
+					 * Returns a Promise.
+					 *
+					 * @param paramKind - the kind of param to test, must be one of 'query' or 'params'
+					 * @param optsForCalls - an array of options, each element corresponds to one `replace()` call
+					 * @param expectedResult - a dictionary representing the expected value of ctx.route.[paramKind]
+					 * after the transition
+					 */
+					async function testReplaceSequenceTransition(
+						paramKind: keyof TransitionOptions,
+						optsForCalls: Dictionary[],
+						expectedResult: Dictionary
+					): Promise<void> {
+						const transition = root.evaluate((ctx, [paramKind, optsForCalls]) => {
+							const promise = new Promise((resolve) => {
+								ctx.router!.on('change', () => {
+									if (ctx.route?.[paramKind] == null) {
+										return;
+									}
+
+									resolve(ctx.route[paramKind]);
+								});
+							});
+
+							for (const opts of optsForCalls) {
+								void ctx.router!.replace(null, {[paramKind]: opts});
+							}
+
+							return promise;
+						}, <[string, Dictionary[]]>[paramKind, optsForCalls]);
+
+						await test.expect(transition).resolves.toEqual(expectedResult);
+					}
 				}
 			);
 
