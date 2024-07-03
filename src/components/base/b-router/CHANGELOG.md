@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.? (????-??-??)
+
+#### :house: Internal
+
+* Restored the use of `$a.promise` in the `execute` method of the `Transition` class and used `join: 'replace'`
+  async option as a fix for the multiple `replace` calls case described below in `v4.0.0-beta.102`.
+
 ## v4.0.0-beta.102 (2024-06-11)
 
 #### :bug: Bug Fix
