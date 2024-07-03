@@ -25,4 +25,9 @@ export default class bFunctionalButtonDummy extends bDummy {
 		this.clickCount += 1;
 		this.uniqueClickCount += 1;
 	}
+
+	reset(): void {
+		this.clickCount = 0;
+		this.uniqueClickCount = 0;
+	}
 }

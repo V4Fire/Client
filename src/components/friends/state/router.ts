@@ -141,7 +141,7 @@ export async function saveToRouter(this: State, data?: Dictionary): Promise<bool
 	data = ctx.syncRouterState(data, 'remote');
 	set.call(this, ctx.syncRouterState(data));
 
-	if (!ctx.isActivated || !router) {
+	if (!ctx.isActivated || router == null) {
 		return false;
 	}
 

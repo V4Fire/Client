@@ -19,4 +19,5 @@
 		}, attrs) .
 
 	- block body
-		Click!
+		< span v-hook = {unmounted: reset}
+			Click!

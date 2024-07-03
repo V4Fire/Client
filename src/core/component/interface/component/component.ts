@@ -20,7 +20,7 @@ import type { ModsProp, ModsDict } from 'core/component/interface/mod';
 import type { SyncLinkCache } from 'core/component/interface/link';
 import type { RenderEngine } from 'core/component/interface/engine';
 
-import type { ComponentApp, ComponentElement, ComponentEmitterOptions } from 'core/component/interface/component/types';
+import type { ComponentApp, ComponentDestructorOptions, ComponentElement, ComponentEmitterOptions } from 'core/component/interface/component/types';
 import type { WatchPath, WatchOptions, RawWatchHandler } from 'core/component/interface/watch';
 import type { UnsafeGetter, UnsafeComponentInterface } from 'core/component/interface/component/unsafe';
 
@@ -164,6 +164,13 @@ export abstract class ComponentInterface {
 	 * @see https://vuejs.org/guide/essentials/lifecycle.html
 	 */
 	abstract hook: Hook;
+
+	/**
+	 * A link to the root component
+	 */
+	get r(): this['Root'] {
+		return Object.throw();
+	}
 
 	/**
 	 * An API for safely invoking some internal properties and methods of a component.
@@ -366,8 +373,9 @@ export abstract class ComponentInterface {
 
 	/**
 	 * Destroys the component
+	 * @param [_opts]
 	 */
-	protected $destroy(): void {
+	protected $destroy(_opts?: ComponentDestructorOptions): void {
 		return Object.throw();
 	}
 

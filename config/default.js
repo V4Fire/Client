@@ -546,10 +546,17 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @returns {object}
 		 */
 		aliases() {
-			return {
+			const aliases = {
 				dompurify: this.config.es().toLowerCase() === 'es5' ? 'dompurify-v2' : 'dompurify-v3',
 				'vue/server-renderer': 'assets/lib/server-renderer.js'
 			};
+
+			if (!this.config.webpack.ssr) {
+				aliases['assets/lib/server-renderer'] = false;
+				aliases['vue/server-renderer'] = false;
+			}
+
+			return aliases;
 		},
 
 		/**

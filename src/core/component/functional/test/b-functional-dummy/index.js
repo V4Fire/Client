@@ -7,4 +7,8 @@
  */
 
 package('b-functional-dummy')
-	.extends('b-dummy');
+	.extends('b-dummy')
+	.dependencies(
+		'b-functional-button-dummy',
+		'b-functional-getters-dummy'
+	);

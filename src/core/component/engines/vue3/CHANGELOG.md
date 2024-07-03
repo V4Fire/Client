@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.104 (2024-06-19)
+
+#### :house: Internal
+
+* Use `r` instead of `$root` as the prototype of the root with the `$remoteParent`
+
 ## v4.0.0-beta.83 (2024-04-08)
 
 #### :house: Internal

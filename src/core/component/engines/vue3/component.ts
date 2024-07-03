@@ -140,7 +140,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 		},
 
 		beforeUnmount(): void {
-			init.beforeDestroyState(getComponentContext(this));
+			init.beforeDestroyState(getComponentContext(this), {recursive: false});
 		},
 
 		unmounted(): void {
