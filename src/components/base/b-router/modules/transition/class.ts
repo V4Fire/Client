@@ -158,7 +158,7 @@ export default class Transition {
 		this.initNewRouteInfo();
 
 		this.scroll.createSnapshot();
-		// FIXME: removing of $a.promise is a temporaty fix of https://github.com/V4Fire/Client/issues/1301
+
 		await $a.promise(this.scroll.updateCurrentRouteScroll(), transitionAsyncOpts);
 
 		// We didn't find any route matching the given ref
