@@ -313,14 +313,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @param {string} [def] - default value
 		 * @returns {?string}
 		 */
-		target(
-			def = /ES[35]$/.test(this.config.es()) && !this.storybook() ?
-				'browserslist:ie 11' :
-				'web'
-		) {
+		target() {
 			return o('target', {
 				env: true,
-				default: this.ssr ? 'node' : def
+				default: this.ssr ? 'node' : 'web'
 			});
 		},
 
@@ -559,7 +555,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		aliases() {
 			return {
-				dompurify: this.config.es().toLowerCase() === 'es5' ? 'dompurify-v2' : 'dompurify-v3'
+				dompurify: this.config.build.legacy ? 'dompurify-v2' : 'dompurify-v3'
 			};
 		},
 
@@ -1424,7 +1420,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			// eslint-disable-next-line camelcase
 			node_js: this.webpack.target() === 'node',
-			es: this.es()
+			legacyBuild: this.build.legacy
 		};
 
 		return {
