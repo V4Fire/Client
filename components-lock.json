@@ -1,5 +1,5 @@
 {
-  "hash": "4f860c4c341ae3b773f6d53acff95bc7db5406bddf59f629c4aa523c5af1df94",
+  "hash": "56c4940e4f7a7e13a5d557ef79d87d4abeb6dee36e79e043ee1919a9a53e38b5",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -702,12 +702,18 @@
           "declaration": {
             "name": "b-functional-dummy",
             "parent": "b-dummy",
-            "dependencies": [],
+            "dependencies": [
+              "b-functional-button-dummy",
+              "b-functional-getters-dummy"
+            ],
             "libs": []
           },
           "name": "b-functional-dummy",
           "parent": "b-dummy",
-          "dependencies": [],
+          "dependencies": [
+            "b-functional-button-dummy",
+            "b-functional-getters-dummy"
+          ],
           "libs": [],
           "resolvedLibs": {
             "%data": "%data:Set",
@@ -724,6 +730,38 @@
             "src/core/component/functional/test/b-functional-dummy/b-functional-dummy.styl"
           ],
           "tpl": "src/core/component/functional/test/b-functional-dummy/b-functional-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-functional-getters-dummy",
+        {
+          "index": "src/core/component/functional/test/b-functional-getters-dummy/index.js",
+          "declaration": {
+            "name": "b-functional-getters-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-functional-getters-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/functional/test/b-functional-getters-dummy/b-functional-getters-dummy.ts",
+          "styles": [
+            "src/core/component/functional/test/b-functional-getters-dummy/b-functional-getters-dummy.styl"
+          ],
+          "tpl": "src/core/component/functional/test/b-functional-getters-dummy/b-functional-getters-dummy.ss",
           "etpl": null
         }
       ],

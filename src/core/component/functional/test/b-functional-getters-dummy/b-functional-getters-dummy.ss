@@ -11,13 +11,9 @@
 - include 'components/dummies/b-dummy'|b as placeholder
 
 - template index() extends ['b-dummy'].index
-	- rootTag = 'button'
-
-	- block rootAttrs
-		? Object.assign(rootAttrs, { &
-			'@click': 'onClick'
-		}, attrs) .
-
 	- block body
-		< span v-hook = {unmounted: reset}
-			Click!
+		< .
+			Value:
+
+			< span ref = container
+				{{ value }}
