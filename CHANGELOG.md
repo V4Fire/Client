@@ -18,6 +18,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Restored the use of `$a.promise` in the `execute` method of the `Transition` class and used `join: 'replace'`
   async option as a fix for the multiple `replace` calls case described below in `v4.0.0-beta.102`.
 
+## v4.0.0-beta.106 (2024-06-25)
+
+#### :bug: Bug Fix
+
+* Do not store computed values in the cache before the functional component is fully created.
+  This fixes hard-to-detect bugs that can occur due to context inheritance.
+  See: https://github.com/V4Fire/Client/issues/1292 `core/component/accessor`
+
 ## v4.0.0-beta.105 (2024-06-24)
 
 #### :bug: Bug Fix
