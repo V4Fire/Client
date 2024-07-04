@@ -15,7 +15,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed incorrect setting name for the `maxAge` parameter
+* Fixed incorrect setting name for the `maxAge` parameter `core/cookies`.
+  Added `.dasherize` to all cookie options
 
 ## v4.0.0-beta.105 (2024-06-24)
 

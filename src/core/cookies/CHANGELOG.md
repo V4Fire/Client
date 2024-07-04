@@ -13,7 +13,8 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed incorrect setting name for the `maxAge` parameter
+* Fixed incorrect setting name for the `maxAge` parameter.
+  Added `.dasherize` to all cookie options
 
 ## v4.0.0-beta.62 (2024-02-19)
 

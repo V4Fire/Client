@@ -117,6 +117,28 @@ test.describe('core/cookies', () => {
 			const cookies = await context.cookies(page.url());
 			test.expect(cookies.filter((el) => el.name === 'testCookie')).toEqual([resolveCookieParams({expires})]);
 		});
+
+		test('with the `maxAge` option provided', async ({page, context}) => {
+			await cookiesAPI.evaluate(
+				(cookies) => cookies.set('testCookie', 'testCookieVal', {maxAge: 10})
+			);
+
+			const res1 = await cookiesAPI.evaluate(
+				(cookies) => cookies.store.cookie
+			);
+
+			test.expect(res1.includes('testCookie=testCookieVal')).toBe(true);
+
+			await cookiesAPI.evaluate(
+				(cookies) => cookies.set('testCookie', 'testCookieVal', {maxAge: 0})
+			);
+
+			const res2 = await cookiesAPI.evaluate(
+				(cookies) => cookies.store.cookie
+			);
+
+			test.expect(res2.includes('testCookie=testCookieVal')).toBe(false);
+		});
 	});
 
 	test.describe('`remove`', () => {
