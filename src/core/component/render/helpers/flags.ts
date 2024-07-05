@@ -8,7 +8,7 @@
 
 import type { VNode, VNodeProps } from 'core/component/engines';
 
-const flagValues = {
+export const flagValues = {
 	classes: 2,
 	styles: 4,
 	props: 8,
