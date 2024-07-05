@@ -1,5 +1,5 @@
 {
-  "hash": "56c4940e4f7a7e13a5d557ef79d87d4abeb6dee36e79e043ee1919a9a53e38b5",
+  "hash": "410c0b21f66077394343e6d7f20906dcbc8cfa9c493d1774f765acd4553cbc03",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -148,6 +148,38 @@
             "src/core/component/interface/component/test/b-component-interface-dummy/b-component-interface-dummy.styl"
           ],
           "tpl": "src/core/component/interface/component/test/b-component-interface-dummy/b-component-interface-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-component-render-flags-dummy",
+        {
+          "index": "src/core/component/render/helpers/test/b-component-render-flags-dummy/index.js",
+          "declaration": {
+            "name": "b-component-render-flags-dummy",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-component-render-flags-dummy",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/render/helpers/test/b-component-render-flags-dummy/b-component-render-flags-dummy.ts",
+          "styles": [
+            "src/core/component/render/helpers/test/b-component-render-flags-dummy/b-component-render-flags-dummy.styl"
+          ],
+          "tpl": "src/core/component/render/helpers/test/b-component-render-flags-dummy/b-component-render-flags-dummy.ss",
           "etpl": null
         }
       ],
