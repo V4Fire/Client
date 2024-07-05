@@ -31,7 +31,7 @@
     "build:file": "gulp build:tsconfig && webpack --env public-path",
     "build:ssr": "npx webpack --env ssr=true --env client-output=ssr",
     "build:hydration": "npx webpack --env hydration=true",
-    "dev": "gulp build:tsconfig && webpack --watch",
+    "dev": "gulp build:tsconfig && webpack --cache-type=filesystem --watch",
     "dev:file": "gulp build:tsconfig && webpack --watch --env public-path",
     "test": "yarn test:typescript && yarn test:eslint && yarn test:unit && yarn test:jest",
     "test:server": "cross-env NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" node tests/server",
@@ -179,6 +179,7 @@
     "playwright": "1.32.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "simple-git": "^3.25.0",
     "storybook": "7.0.23",
     "ts-jest": "29.1.0",
     "ts-node": "10.7.0"
