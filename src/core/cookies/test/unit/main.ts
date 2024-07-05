@@ -118,7 +118,7 @@ test.describe('core/cookies', () => {
 			test.expect(cookies.filter((el) => el.name === 'testCookie')).toEqual([resolveCookieParams({expires})]);
 		});
 
-		test('with the `maxAge` option provided', async ({page, context}) => {
+		test('with the `maxAge` option provided', async () => {
 			await cookiesAPI.evaluate(
 				(cookies) => cookies.set('testCookie', 'testCookieVal', {maxAge: 10})
 			);
