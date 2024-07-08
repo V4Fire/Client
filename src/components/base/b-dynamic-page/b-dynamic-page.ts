@@ -614,12 +614,10 @@ export default class bDynamicPage extends iDynamicPage {
 			};
 
 			this.watch('onPageChange', {...label, immediate: true}, () => {
-				if (!this.hydrated) {
-					return;
+				if (this.hydrated) {
+					this.onPageHydrated(page);
+					this.async.terminateWorker(label);
 				}
-
-				this.onPageHydrated(page);
-				this.async.terminateWorker(label);
 			});
 
 			return;
