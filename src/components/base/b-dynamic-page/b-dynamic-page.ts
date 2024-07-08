@@ -308,8 +308,7 @@ export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * Handler: the page has been hydrated
 	 */
-	@system()
-	protected onPageHydrated?(page: CanUndef<string>): void {
+	protected onPageHydrated(page: CanUndef<string>): void {
 		const
 			pageEl = this.unsafe.block?.element<iDynamicPageEl>('component'),
 			pageComponent = pageEl?.component?.unsafe,
@@ -615,7 +614,7 @@ export default class bDynamicPage extends iDynamicPage {
 			};
 
 			this.watch('onPageChange', {...label, immediate: true}, () => {
-				if (this.onPageHydrated == null || !this.hydrated) {
+				if (!this.hydrated) {
 					return;
 				}
 
