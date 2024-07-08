@@ -232,21 +232,6 @@ export default class bDynamicPage extends iDynamicPage {
 	protected onPageChange?: Function;
 
 	/**
-	 * Handler: the page has been hydrated
-	 */
-	@system()
-	protected onPageHydrated(page: CanUndef<string>): void {
-		const
-			pageEl = this.unsafe.block?.element<iDynamicPageEl>('component'),
-			pageComponent = pageEl?.component?.unsafe,
-			pageStrategy = this.unsafe.getKeepAliveStrategy(page, this.route);
-
-		if (pageComponent != null && !pageStrategy.isLoopback) {
-			pageComponent.activate(true);
-		}
-	};;
-
-	/**
 	 * The page rendering counter.
 	 * Updated every time the component template is updated.
 	 */
@@ -318,6 +303,21 @@ export default class bDynamicPage extends iDynamicPage {
 
 	override canSelfDispatchEvent(_: string): boolean {
 		return true;
+	}
+
+	/**
+	 * Handler: the page has been hydrated
+	 */
+	@system()
+	protected onPageHydrated?(page: CanUndef<string>): void {
+		const
+			pageEl = this.unsafe.block?.element<iDynamicPageEl>('component'),
+			pageComponent = pageEl?.component?.unsafe,
+			pageStrategy = this.unsafe.getKeepAliveStrategy(page, this.route);
+
+		if (pageComponent != null && !pageStrategy.isLoopback) {
+			pageComponent.activate(true);
+		}
 	}
 
 	/**
