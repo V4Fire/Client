@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-07-??)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect patchFlag when creating vnode with event handler
+
 ## v4.0.0-beta.82 (2024-04-02)
 
 #### :bug: Bug Fix
