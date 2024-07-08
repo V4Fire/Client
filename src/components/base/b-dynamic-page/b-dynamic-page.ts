@@ -306,6 +306,20 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	/**
+	 * Handler: the page has been hydrated
+	 */
+	protected onPageHydrated(page: CanUndef<string>): void {
+		const
+			pageEl = this.unsafe.block?.element<iDynamicPageEl>('component'),
+			pageComponent = pageEl?.component?.unsafe,
+			pageStrategy = this.unsafe.getKeepAliveStrategy(page, this.route);
+
+		if (pageComponent != null && !pageStrategy.isLoopback) {
+			pageComponent.activate(true);
+		}
+	}
+
+	/**
 	 * Registers a new group for asynchronous rendering and returns it
 	 */
 	protected registerRenderGroup(): string {
@@ -595,6 +609,17 @@ export default class bDynamicPage extends iDynamicPage {
 	@watch({path: 'page', immediate: true})
 	protected syncPageWatcher(page: CanUndef<string>, oldPage: CanUndef<string>): void {
 		if (HYDRATION && !this.hydrated) {
+			const label = {
+				label: $$.hydratePageWatcher
+			};
+
+			this.watch('onPageChange', {...label, immediate: true}, () => {
+				if (this.hydrated) {
+					this.onPageHydrated(page);
+					this.async.terminateWorker(label);
+				}
+			});
+
 			return;
 		}
 
