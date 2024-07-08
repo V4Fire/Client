@@ -9,11 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.107 (2024-07-08)
+## v4.0.0-beta.?? (2024-??-??)
 
 #### :bug: Bug Fix
 
-* Attached a handler that call the `activated` hook on the component after hydration
+* Attached a handler to ensure the correct lifecycle for pages with keep-alive strategy
 
 ## v4.0.0-beta.98 (2024-05-21)
 
