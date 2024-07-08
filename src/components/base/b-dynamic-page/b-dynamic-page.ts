@@ -232,6 +232,12 @@ export default class bDynamicPage extends iDynamicPage {
 	protected onPageChange?: Function;
 
 	/**
+	 * Handler: the page has been hydrated
+	 */
+	@system()
+	protected onPageHydrated?: Function;
+
+	/**
 	 * The page rendering counter.
 	 * Updated every time the component template is updated.
 	 */
@@ -348,6 +354,16 @@ export default class bDynamicPage extends iDynamicPage {
 			route,
 			r
 		} = this;
+
+		this.onPageHydrated = () => {
+			const
+				pageEl = unsafe.block?.element<iDynamicPageEl>('component'),
+				pageComponent = pageEl?.component?.unsafe;
+
+			if (this.hydrated && pageComponent != null) {
+				pageComponent.activate(true);
+			}
+		};
 
 		return new SyncPromise((resolve) => {
 			this.onPageChange = onPageChange(resolve, this.route);
@@ -595,6 +611,19 @@ export default class bDynamicPage extends iDynamicPage {
 	@watch({path: 'page', immediate: true})
 	protected syncPageWatcher(page: CanUndef<string>, oldPage: CanUndef<string>): void {
 		if (HYDRATION && !this.hydrated) {
+			const label = {
+				label: $$.hydratePageWatcher
+			};
+
+			this.watch('onPageChange', {...label, immediate: true}, () => {
+				if (this.onPageHydrated == null) {
+					return;
+				}
+
+				this.onPageHydrated();
+				this.async.terminateWorker(label);
+			});
+
 			return;
 		}
 
