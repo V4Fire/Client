@@ -6,9 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-functional-dummy')
-	.extends('b-dummy')
-	.dependencies(
-		'b-functional-button-dummy',
-		'b-functional-getters-dummy'
-	);
+@import "components/dummies/b-dummy/b-dummy.styl"
+
+$p = {
+
+}
+
+b-functional-getters-dummy extends b-dummy

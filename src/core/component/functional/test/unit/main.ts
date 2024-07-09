@@ -27,24 +27,18 @@ test.describe('functional component', () => {
 			Component.waitForComponentTemplate(page, 'b-functional-button-dummy')
 		]);
 
-		target = await Component.createComponent<bFunctionalDummy>(page, 'b-functional-dummy');
-		text = page.getByText(/Click count/);
+		target = await Component.createComponent<bFunctionalDummy>(page, 'b-functional-dummy', {stage: 'main'});
+		text = page.getByText(/Counter/);
 		button = page.getByRole('button');
 	});
 
 	test.describe('on parent re-render', () => {
 		test('should have valid event handlers', async () => {
-			const clickAndWaitForEvent = async () => {
-				const promise = target.evaluate((ctx) => ctx.unsafe.$refs.button.promisifyOnce('click:component'));
-				await button.click();
-				await test.expect(promise).toBeResolved();
-			};
-
 			await clickAndWaitForEvent();
-			await test.expect(text).toHaveText('Click count: 0');
+			await test.expect(text).toHaveText('Counter: 0');
 
-			await target.evaluate((ctx) => ctx.updateClickCountField());
-			await test.expect(text).toHaveText('Click count: 1');
+			await target.evaluate((ctx) => ctx.syncStoreWithState());
+			await test.expect(text).toHaveText('Counter: 1');
 
 			await clickAndWaitForEvent();
 		});
@@ -53,7 +47,7 @@ test.describe('functional component', () => {
 			await test.expect(clickAndGetCounts()).resolves.toEqual([1, 1]);
 
 			const clicks = await target.evaluate((ctx) => {
-				const {button} = ctx.unsafe.$refs;
+				const button = ctx.unsafe.$refs.button!;
 				button.unsafe.$destroy();
 
 				const {clickCount, uniqueClickCount} = button;
@@ -70,14 +64,20 @@ test.describe('functional component', () => {
 			await test.expect(clickAndGetCounts()).resolves.toEqual([1, 1]);
 			await test.expect(clickAndGetCounts()).resolves.toEqual([2, 2]);
 
-			await target.evaluate((ctx) => ctx.updateClickCountField());
+			await target.evaluate((ctx) => ctx.syncStoreWithState());
 			await test.expect(clickAndGetCounts()).resolves.toEqual([3, 1]);
 		});
+
+		async function clickAndWaitForEvent() {
+			const promise = target.evaluate((ctx) => ctx.unsafe.$refs.button!.promisifyOnce('click:component'));
+			await button.click();
+			await test.expect(promise).toBeResolved();
+		}
 
 		async function clickAndGetCounts() {
 			await button.click();
 			return target.evaluate((ctx) => {
-				const {clickCount, uniqueClickCount} = ctx.unsafe.$refs.button;
+				const {clickCount, uniqueClickCount} = ctx.unsafe.$refs.button!;
 				return [clickCount, uniqueClickCount];
 			});
 		}
