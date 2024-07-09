@@ -27,7 +27,7 @@ test.describe('core/component/render/helpers/flags', () => {
 
 	test('should add `props` to `patchFlag` if a node has an event handler', async ({page}) => {
 		await renderDummy(page);
-		const vnode = await page.getByTestId('vnode');
+		const vnode = page.getByTestId('vnode');
 		const patchFlag = await vnode.evaluate(
 			(ctx) => (<{__vnode?: VNode}>ctx).__vnode?.patchFlag ?? 0
 		);
