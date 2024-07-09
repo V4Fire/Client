@@ -57,26 +57,23 @@ export function setVNodePatchFlags(vnode: VNode, ...flags: Flags): void {
 }
 
 /**
- * Creates patch flag using the initial value
+ * Returns the value of the `patchFlag` property based on the initial value and a set of individual flags
  *
- * @param initial - initial flag value
+ * @param initial - the initial value
  * @param flags - the flags to set
  */
-export function buildPatchFlag(
-	initial: number = 0,
-	...flags: PatchFlags
-): number {
+export function buildPatchFlag(initial: number = 0, ...flags: PatchFlags): number {
 	// eslint-disable-next-line no-bitwise
 	return flags.reduce((result, flag) => result | flagValues[flag], initial);
 }
 
 /**
- * Modifies the initial patchFlag if a vnode has special props
+ * Normalizes the initial `patchFlag` if a vnode has special props
  *
- * @param patchFlag - initial patchFlag
- * @param props - initial props
+ * @param patchFlag - the initial `patchFlag` value
+ * @param props - the initial vnode props
  */
-export function mutatePatchFlagUsingProps(
+export function normalizePatchFlagUsingProps(
 	patchFlag: number | undefined,
 	props: Nullable<Record<string, unknown> & VNodeProps>
 ): number {
