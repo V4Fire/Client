@@ -306,20 +306,6 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	/**
-	 * Handler: the page has been hydrated
-	 */
-	protected onPageHydrated(page: CanUndef<string>): void {
-		const
-			pageEl = this.unsafe.block?.element<iDynamicPageEl>('component'),
-			pageComponent = pageEl?.component?.unsafe,
-			pageStrategy = this.unsafe.getKeepAliveStrategy(page, this.route);
-
-		if (pageComponent != null && !pageStrategy.isLoopback) {
-			pageComponent.activate(true);
-		}
-	}
-
-	/**
 	 * Registers a new group for asynchronous rendering and returns it
 	 */
 	protected registerRenderGroup(): string {
@@ -649,6 +635,21 @@ export default class bDynamicPage extends iDynamicPage {
 			this.async.setImmediate(() => {
 				this.sync.mod('hidden', 'page', (v) => !Object.isTruly(v));
 			});
+		}
+	}
+
+	/**
+	 * Handler: the page has been hydrated
+	 * @param page
+	 */
+	protected onPageHydrated(page: CanUndef<string>): void {
+		const
+			pageEl = this.unsafe.block?.element<iDynamicPageEl>('component'),
+			pageComponent = pageEl?.component?.unsafe,
+			pageStrategy = this.unsafe.getKeepAliveStrategy(page, this.route);
+
+		if (pageComponent != null && !pageStrategy.isLoopback) {
+			pageComponent.activate(true);
 		}
 	}
 }
