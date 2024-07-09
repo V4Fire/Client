@@ -7,6 +7,7 @@
  */
 
 /* eslint-disable no-bitwise */
+
 import type { Page } from 'playwright';
 
 import test from 'tests/config/unit/test';
@@ -24,7 +25,7 @@ test.describe('core/component/render/helpers/flags', () => {
 		await Component.waitForComponentTemplate(page, 'b-component-render-flags-dummy');
 	});
 
-	test('should add "props" to patchFlag if a node has an event handler', async ({page}) => {
+	test('should add `props` to `patchFlag` if a node has an event handler', async ({page}) => {
 		await renderDummy(page);
 		const vnode = await page.getByTestId('vnode');
 		const patchFlag = await vnode.evaluate(
@@ -45,7 +46,7 @@ test.describe('core/component/render/helpers/flags', () => {
 		await target.update({});
 		await button.click();
 
-		// Get current context of the functional component from the DOM
+		// Get the current context of the functional component from the DOM
 		const clickCount = await page.locator('.b-component-render-flags-dummy')
 			.evaluate((ctx) => (<{component: bComponentRenderFlagsDummy} & HTMLElement>ctx).component.clickCount);
 

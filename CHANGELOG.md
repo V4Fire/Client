@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed incorrect patchFlag when creating vnode with event handler `core/component/render`
+* Fixed incorrect `patchFlag` when creating vnode with event handler `core/component/render`
 
 ## v4.0.0-beta.106 (2024-06-25)
 

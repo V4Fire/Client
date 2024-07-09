@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed incorrect patchFlag when creating vnode with event handler
+* Fixed incorrect `patchFlag` when creating vnode with event handler
 
 ## v4.0.0-beta.82 (2024-04-02)
 
