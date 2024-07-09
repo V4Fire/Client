@@ -259,7 +259,8 @@ export function createRequest<D = unknown>(
 					} catch {}
 
 					return then();
-				})
+				}
+			)
 
 			.catch(stderr);
 	}

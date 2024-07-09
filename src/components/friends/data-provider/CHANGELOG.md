@@ -13,7 +13,7 @@ Changelog
 
 #### :house: Internal
 
-* Added 'response' event emitting
+* Added a new `response` event upon successful data retrieval
 
 ## v4.0.0-beta.22 (2023-09-15)
 
