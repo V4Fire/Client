@@ -13,8 +13,8 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed incorrect setting name for the `maxAge` parameter.
-  Added `.dasherize` to all cookie options
+* Corrected the improper conversion of cookie attributes that are passed in camelCase format:
+  now all are forcibly converted to dash-style
 
 ## v4.0.0-beta.62 (2024-02-19)
 
