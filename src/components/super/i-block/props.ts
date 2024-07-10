@@ -55,7 +55,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 	@prop({type: [String, Number], required: false})
 	readonly stageProp?: Stage;
 
-	@prop({type: Object, required: false})
+	@prop({type: Object, required: false, forceUpdate: false})
 	override readonly modsProp?: ModsProp;
 
 	/**
