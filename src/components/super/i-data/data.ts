@@ -60,11 +60,11 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	dataProvider?: DataProvider;
 
 	/** {@link iDataProvider.dataProviderOptions} */
-	@prop({type: Object, required: false})
+	@prop({type: Object, required: false, forceUpdate: false})
 	readonly dataProviderOptions?: DataProviderOptions;
 
 	/** {@link iDataProvider.request} */
-	@prop({type: [Object, Array], required: false})
+	@prop({type: [Object, Array], required: false, forceUpdate: false})
 	readonly request?: RequestParams;
 
 	/**
