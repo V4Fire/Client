@@ -15,6 +15,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
+* Corrected the improper conversion of cookie attributes that are passed in camelCase format:
+  now all are forcibly converted to dash-style `core/cookies`
 * Fixed incorrect `patchFlag` when creating vnode with event handler `core/component/render`
 
 ## v4.0.0-beta.106 (2024-06-25)
