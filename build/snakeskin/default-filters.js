@@ -194,7 +194,7 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 
 	if (component.inheritMods !== false && !attrs[':modsProp']) {
 		attrs[':modsProp'] = ['sharedMods'];
-		attrs['@:modsProp'] = ['createPropAccessors(() => sharedMods)'];
+		attrs['@:modsProp'] = ['createPropAccessors(() => sharedMods)()'];
 	}
 
 	if (isFunctional && webpack.ssr) {
