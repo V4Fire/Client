@@ -139,7 +139,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 			const value = computed.get!.call(this);
 
-			// Due to context inheritance in the functional components
+			// Due-to-context inheritance in functional components,
 			// we should not cache the computed value until the component is created
 			// @see https://github.com/V4Fire/Client/issues/1292
 			if (!SSR && (canUseCache || !isFunctional)) {
