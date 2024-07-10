@@ -30,6 +30,7 @@
 				ref = component |
 
 				:is = page |
+				:instanceOf = iDynamicPage |
 				:dispatching = true |
 				:renderComponentId = true |
 

@@ -123,20 +123,32 @@ componentFiles.forEach((el) => {
 	}
 });
 
+const inherited = new Set();
+
 /**
  * Inherit parameters from parent components
  */
 Object.values(componentParams).forEach((component) => {
-	Object.assign(component, getParentParameters(component));
+	inherit(component);
 
-	const parent = component.parent && componentParams[component.parent];
+	function inherit(component) {
+		if (inherited.has(component)) {
+			return;
+		}
 
-	if (parent) {
-		Object.setPrototypeOf(component, parent);
+		inherited.add(component);
+		Object.assign(component, getParentParameters(component));
 
-		Object.entries(parent.props).forEach(([name, params]) => {
-			component.props[name] = {...params, ...component.props[name]};
-		});
+		const parent = component.parent && componentParams[component.parent];
+
+		if (parent) {
+			inherit(parent);
+			Object.setPrototypeOf(component, parent);
+
+			Object.entries(parent.props).forEach(([name, params]) => {
+				component.props[name] = {...params, ...component.props[name]};
+			});
+		}
 	}
 });
 
