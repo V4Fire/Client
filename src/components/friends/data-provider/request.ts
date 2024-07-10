@@ -267,7 +267,7 @@ export function getDefaultRequestParams<T = unknown>(
 	);
 
 	const
-		p = ctx.requestParams[method],
+		p = Object.isDictionary(ctx.requestParams) ? ctx.requestParams[method] : undefined,
 		isGet = /^get(:|$)/.test(method);
 
 	let requestParams: [Nullable<DefaultRequest<T>[0]>, DefaultRequest<T>[1]];
