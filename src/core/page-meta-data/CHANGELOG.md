@@ -14,7 +14,7 @@ Changelog
 #### :boom: Breaking Change
 
 * Review API
-* Module moved to `core/theme-manager`
+* Module moved to `core/page-meta-data`
 
 #### :rocket: New Feature
 
