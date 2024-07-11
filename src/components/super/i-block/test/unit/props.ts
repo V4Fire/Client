@@ -22,6 +22,14 @@ test.describe('<i-block> props', () => {
 		await demoPage.goto();
 	});
 
+	test('`rootTag` should set a tag in which the component is rendered', async ({page}) => {
+		const target = await renderDummy(page, {
+			rootTag: 'main'
+		});
+
+		await test.expect(target.evaluate((ctx) => ctx.$el!.tagName)).toBeResolvedTo('MAIN');
+	});
+
 	test('`mods` should set default values for the component modifiers', async ({page}) => {
 		const target = await renderDummy(page, {
 			mods: {
