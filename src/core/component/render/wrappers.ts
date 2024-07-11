@@ -39,6 +39,8 @@ import type {
 
 } from 'core/component/engines';
 
+import type { ssrRenderSlot as ISSRRenderSlot } from '@vue/server-renderer';
+
 import { registerComponent } from 'core/component/init';
 
 import {
@@ -486,6 +488,8 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
  * @param api
  */
 export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: string, api: T): T {
+	type BufItems = Array<Parameters<Parameters<typeof ISSRRenderSlot>[4]>[0]>;
+
 	if (path === 'vue/server-renderer') {
 		api = {...api};
 
@@ -511,9 +515,7 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 		if (Object.isFunction(api.ssrRenderSlot)) {
 			const {ssrRenderSlot} = api;
 
-			type RenderSlotArgs = [unknown, string, unknown, unknown, Function, unknown];
-
-			Object.set(api, 'ssrRenderSlot', (...args: RenderSlotArgs) => {
+			Object.set(api, 'ssrRenderSlot', (...args: Parameters<typeof ISSRRenderSlot>) => {
 				const
 					slotName = args[1],
 					cacheKey = `${this.globalName}-${slotName}`,
@@ -525,9 +527,9 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 					Object.isFunction(push);
 
 				if (canCache) {
-					const buf: Array<CanPromise<CanArray<string>>> = [];
+					const buf: BufItems = [];
 
-					args[args.length - 2] = (str: CanPromise<CanArray<string>>) => {
+					args[args.length - 2] = (str) => {
 						buf.push(str);
 						push(str);
 					};
@@ -548,7 +550,7 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 
 	return api;
 
-	async function unrollBuffer(buf: Array<CanPromise<CanArray<string>>>): Promise<string> {
+	async function unrollBuffer(buf: BufItems): Promise<string> {
 		let res = '';
 
 		for (let val of buf) {
