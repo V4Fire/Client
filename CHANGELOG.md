@@ -16,11 +16,21 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 * Added a wrapper for middleware with additional parameters `core/data/middlewares/hydration-cache`
+* The modules `core/init` and `core/component/state` have been completely redesigned for the new API
+* The field `locale` has been removed `iStaticPage`
 
 #### :house: Internal
 
 * Now SSR build is bundled into a single file
 * Use the forked `lib/server-renderer` everywhere in the SSR build
+
+## v4.0.0-beta.107 (2024-07-10)
+
+#### :bug: Bug Fix
+
+* Corrected the improper conversion of cookie attributes that are passed in camelCase format:
+  now all are forcibly converted to dash-style `core/cookies`
+* Fixed incorrect `patchFlag` when creating vnode with event handler `core/component/render`
 
 ## v4.0.0-beta.106 (2024-06-25)
 
@@ -118,12 +128,10 @@ node inside b-virtual-scroll will now be hidden (display: none) by default until
 * Add `REGION` to webpack globals `build`
 * Listen for i18n `setRegion` event `core/component/event`
 
-## v4.0.0-beta.95 (2024-05-06)
+#### :bug: Bug Fix
 
-#### :house: Internal
-
-* Add `REGION` to webpack globals `build`
-* Listen for i18n `setRegion` event `core/component/event`
+* Renamed `bRouterProps` to `iRouterProps`. The incorrect name had caused infinite
+retries to load a non-existent template.
 
 ## v4.0.0-beta.94 (2024-04-24)
 
@@ -330,13 +338,6 @@ node inside b-virtual-scroll will now be hidden (display: none) by default until
 * Fixed getting a component in `getComponent` when an additional root selector is passed `components/friends/dom`
 
 ## 4.0.0-beta.71 (2024-03-12)
-
-#### :boom: Breaking Change
-
-* The modules `core/init` and `core/component/state` have been completely redesigned for the new API
-* The field `locale` has been removed `iStaticPage`
-
-## v4.0.0-beta.?? (2024-??-??)
 
 #### :rocket: New Feature
 

@@ -11,7 +11,6 @@ import { evalWith } from 'core/json';
 import type { VNode } from 'core/component/engines';
 
 import { isHandler, mergeProps } from 'core/component/render/helpers/props';
-import { setVNodePatchFlags } from 'core/component/render/helpers/flags';
 
 import type { ComponentInterface } from 'core/component/interface';
 
@@ -98,8 +97,6 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 			key = 'data-has-v-on-directives';
 
 		if (props[key] != null) {
-			setVNodePatchFlags(vnode, 'props');
-
 			const dynamicProps = vnode.dynamicProps ?? [];
 			vnode.dynamicProps = dynamicProps;
 

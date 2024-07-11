@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :house: Internal
+
+* Added a new `response` event upon successful data retrieval
+
 ## v4.0.0-beta.22 (2023-09-15)
 
 #### :rocket: New Feature
