@@ -489,15 +489,23 @@ __components/pages/p-v4-components-demo/p-v4-components-demo.ess__
 
 #### isAuth
 
-True if the current user is authorized. See `core/session` for more information.
+True if the current user is authorized.
+This field is based on the one with the same name from `remoteState`.
+It is used for convenience and reactive connection with the template.
+That is, if it changes, the component's template will be updated (if it is used there).
 
 #### isOnline
 
 True if there is a connection to the Internet.
+This field is based on the one with the same name from `remoteState`.
+It is used for convenience and reactive connection with the template.
+That is, if it changes, the component's template will be updated (if it is used there).
 
 #### lastOnlineDate
 
 Last date when the application was online.
+This field is based on the one with the same name from `remoteState`.
+It is used for convenience.
 
 #### activePage
 

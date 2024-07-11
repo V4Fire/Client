@@ -76,19 +76,27 @@ export default abstract class iStaticPage extends iPage {
 	readonly providerDataStore?: ProviderDataStore;
 
 	/**
-	 * True if the current user is authorized
+	 * True if the current user is authorized.
+	 * This field is based on the one with the same name from `remoteState`.
+	 * It is used for convenience and reactive connection with the template.
+	 * That is, if it changes, the component's template will be updated (if it is used there).
 	 */
 	@field((o) => o.sync.link('remoteState.isAuth'))
 	isAuth!: boolean;
 
 	/**
-	 * True if there is a connection to the Internet
+	 * True if there is a connection to the Internet.
+	 * This field is based on the one with the same name from `remoteState`.
+	 * It is used for convenience and reactive connection with the template.
+	 * That is, if it changes, the component's template will be updated (if it is used there).
 	 */
 	@field((o) => o.sync.link('remoteState.isOnline'))
 	isOnline!: boolean;
 
 	/**
-	 * Last date when the application was online
+	 * Last date when the application was online.
+	 * This field is based on the one with the same name from `remoteState`.
+	 * It is used for convenience.
 	 */
 	@system((o) => o.sync.link('remoteState.lastOnlineDate'))
 	lastOnlineDate?: Date;
