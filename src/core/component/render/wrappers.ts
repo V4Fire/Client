@@ -382,6 +382,8 @@ export function wrapWithCtx<T extends typeof withCtx>(original: T): T {
 				return fn(args[0], args[0]);
 			}
 
+			// If the original function expects more arguments than provided, we explicitly set them to `undefined`,
+			// to then add another, "unregistered" argument
 			if (fn.length - args.length > 0) {
 				args = args.concat(new Array(fn.length - args.length).fill(undefined));
 			}
