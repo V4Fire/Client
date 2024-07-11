@@ -14,6 +14,7 @@ Changelog
 #### :boom: Breaking Change
 
 * The field `locale` has been removed
+* The field `globalEnv` has been removed
 
 ## v4.0.0-beta.62 (2024-02-19)
 
