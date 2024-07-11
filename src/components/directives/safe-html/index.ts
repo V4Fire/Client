@@ -32,6 +32,8 @@ ComponentEngine.directive('safe-html', {
 	},
 
 	getSSRProps({value, oldValue}: SafeHtmlDirectiveParams) {
+		//#if node_js
+
 		if (value === oldValue) {
 			return;
 		}
@@ -41,6 +43,8 @@ ComponentEngine.directive('safe-html', {
 		const jsdom = new JSDOM();
 
 		return {innerHTML: sanitize(value, jsdom.window)};
+
+		//#endif
 	}
 });
 
