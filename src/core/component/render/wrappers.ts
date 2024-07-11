@@ -516,9 +516,7 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 			Object.set(api, 'ssrRenderSlot', (...args: RenderSlotArgs) => {
 				const
 					slotName = args[1],
-					cacheKey = `${this.globalName}-${slotName}`;
-
-				const
+					cacheKey = `${this.globalName}-${slotName}`,
 					push = args[args.length - 2];
 
 				const canCache =
@@ -534,8 +532,7 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 						push(str);
 					};
 
-					const
-						res = ssrRenderSlot(...args);
+					const res = ssrRenderSlot(...args);
 
 					unrollBuffer(buf)
 						.then((res) => this.$ssrCache!.set(cacheKey, res))
