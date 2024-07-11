@@ -519,8 +519,7 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 					cacheKey = `${this.globalName}-${slotName}`;
 
 				const
-					pushI = args.length - 2,
-					push = args[pushI];
+					push = args[args.length - 2];
 
 				const canCache =
 					'$ssrCache' in this && this.$ssrCache != null && !this.$ssrCache.has(cacheKey) &&
