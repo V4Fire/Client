@@ -211,7 +211,7 @@ import iBlock, { component, prop, field } from 'components/super/i-block/i-block
 @component()
 export default class bExample extends iBlock {
   created() {
-    this.r.pageMetaData.addLink({rel: 'canonical', href: 'https://example.com'});
+    this.r.pageMetaData.addLink({rel: 'preload', href: 'https://example.com'});
   }
 }
 ```
@@ -226,7 +226,7 @@ import iBlock, { component, prop, field } from 'components/super/i-block/i-block
 @component()
 export default class bExample extends iBlock {
   updated() {
-    this.r.pageMetaData.removeLinks({rel: 'canonical', href: 'https://example.com'});
+    this.r.pageMetaData.removeLinks({rel: 'preload', href: 'https://example.com'});
   }
 }
 ```
@@ -241,8 +241,8 @@ import iBlock, { component, prop, field } from 'components/super/i-block/i-block
 @component()
 export default class bExample extends iBlock {
   created() {
-    this.r.pageMetaData.addLink({rel: 'canonical', href: 'https://example.com'});
-    console.log(this.r.findLinks({rel: 'canonical'}).length);
+    this.r.pageMetaData.addLink({rel: 'preload', href: 'https://example.com'});
+    console.log(this.r.findLinks({rel: 'preload'}).length);
   }
 }
 ```
