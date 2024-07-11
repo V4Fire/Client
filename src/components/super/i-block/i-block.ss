@@ -39,10 +39,10 @@
 	*/
 	- forceRenderAsVNode = false
 
-	/** True if the application needs to be built for SSR */
+	/** True if the application is built for SSR */
 	- SSR = require('@config/config').webpack.ssr
 
-	/** True if the application needs to be built for hydration */
+	/** True if the application is built for hydration */
 	: HYDRATION = require('@config/config').webpack.hydration()
 
 	/**

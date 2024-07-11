@@ -502,7 +502,7 @@ However, this mode is necessary for using some directives.
 
 #### SSR
 
-True if the application needs to be built for SSR.
+True if the application is built for SSR.
 
 ```
 - namespace [%fileName%]
@@ -515,7 +515,7 @@ True if the application needs to be built for SSR.
 
 #### HYDRATION
 
-True if the application needs to be built for hydration.
+True if the application is built for hydration.
 
 ```
 - namespace [%fileName%]
