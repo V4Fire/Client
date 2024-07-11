@@ -70,7 +70,24 @@ export default abstract class iStaticPage extends iPage {
 	readonly CurrentPage!: AppliedRoute<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
 	/**
-	 * A module to work with data of data providers globally
+	 * A module to work with data of data providers globally.
+	 *
+	 * ```
+	 * < b-select :dataProvider = 'users.List'
+	 * < b-select :dataProvider = 'cities.List' | :globalName = 'foo'
+	 * ```
+	 *
+	 * ```js
+	 * /// Somewhere in your app code
+	 * if (this.r.providerDataStore.has('users.List')) {
+	 *   /// See `core/object/select`
+	 *   console.log(this.r.providerDataStore.get('users.List').select({where: {id: 1}}));
+	 * }
+	 *
+	 * console.log(this.r.providerDataStore.get('foo')?.data);
+	 * ```
+	 *
+	 * See `components/super/i-static-page/modules/provider-data-store` for more information.
 	 */
 	@system(() => SSR ? null : createProviderDataStore(new RestrictedCache(10)))
 	readonly providerDataStore?: ProviderDataStore;
