@@ -113,6 +113,17 @@ Used to synchronize component data with various external storages.
 ### [rootTag]
 
 The component root tag type.
+This prop is similar to the SS constant *rootTag* but has a higher priority.
+It is convenient to use for various wrapper components.
+
+```
+< b-my-wrapper :rootTag = 'p'
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+  sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+  < b-button
+    Press on me!
+```
 
 ### [verbose = `false`]
 
