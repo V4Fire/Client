@@ -70,7 +70,8 @@
     "snakeskin": "github:SnakeskinTpl/Snakeskin#new-var",
     "tslib": "2.4.1",
     "vinyl": "2.2.1",
-    "vue": "3.2.47"
+    "vue": "3.2.47",
+    "xss": "^1.0.15"
   },
   "optionalDependencies": {
     "@pzlr/build-core": "2.13.0",

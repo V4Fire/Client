@@ -6,17 +6,21 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import xss from 'xss';
+
 import type { Engine } from 'core/page-meta-data/elements/abstract/engines/interface';
 import type { AbstractElement } from 'core/page-meta-data/elements';
 
 export class SSREngine implements Engine {
 	/** {@link Engine.render} */
 	render(_element: AbstractElement, tag: string, attrs: Dictionary<string>): string {
-		const attrsString = Object.keys(attrs)
+		const keys = Object.keys(attrs);
+
+		const attrsString = keys
 			.map((key) => `${key}="${attrs[key]}"`)
 			.join(' ');
 
-		return `<${tag} ${attrsString} />`;
+		return xss(`<${tag} ${attrsString} />`, {whiteList: {[tag]: keys}});
 	}
 
 	/** {@link Engine.remove} */

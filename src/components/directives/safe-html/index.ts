@@ -49,7 +49,6 @@ function sanitize(value: SafeHtmlDirectiveParams['value'], windowObject: typeof 
 
 	if (Object.isPrimitive(value)) {
 		return domPurify.sanitize(toString(value), config.safeHtml);
-
 	}
 
 	return domPurify.sanitize(
