@@ -527,16 +527,19 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 					Object.isFunction(push);
 
 				if (canCache) {
-					const buf: BufItems = [];
+					// A special buffer for caching the result during SSR.
+					// This is necessary to reduce substring concatenations during SSR and speed up the output.
+					// It is used in the bCacheSSR component.
+					const cacheBuffer: BufItems = [];
 
 					args[args.length - 2] = (str) => {
-						buf.push(str);
+						cacheBuffer.push(str);
 						push(str);
 					};
 
 					const res = ssrRenderSlot(...args);
 
-					unrollBuffer(buf)
+					unrollBuffer(cacheBuffer)
 						.then((res) => this.$ssrCache!.set(cacheKey, res))
 						.catch(stderr);
 
