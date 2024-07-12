@@ -97,10 +97,15 @@
 			wait = opts.wait
 		.
 
+		/// Dynamically loaded modules imply asynchronous behavior, meaning they
+		/// should not be rendered server-side (SSR) a priori.
+		/// Therefore, we create a special promise that will only resolve after the rendering has completed.
+		/// This will enable us to exclude such fragments from the SSR rendering.
 		- if SSR
 			- if paths.length > 0
 				? wait = '() => waitComponentStatus("destroyed")'
 
+			/// If the wait function is explicitly set to null, it means that rendering on the server needs to be forced
 			- else if wait
 				? wait = '((f) => f == null ? f : () => waitComponentStatus("destroyed"))(' + wait + ')'
 
