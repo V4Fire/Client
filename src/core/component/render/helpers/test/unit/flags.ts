@@ -35,25 +35,29 @@ test.describe('core/component/render/helpers/flags', () => {
 		test.expect(patchFlag & flagValues.props).toEqual(flagValues.props);
 	});
 
-	test('the event handler should be patched during the rerender', async ({page}) => {
-		const target = await Component.createComponentInDummy<bComponentRenderFlagsDummy>(
-			page, 'b-component-render-flags-dummy-functional', {}
-		);
+	['default', 'v-attrs'].forEach((stage) => {
+		test.describe(`attrs mode: ${stage}`, () => {
+			test('the event handler should be patched during the rerender', async ({page}) => {
+				const target = await Component.createComponentInDummy<bComponentRenderFlagsDummy>(
+					page, 'b-component-render-flags-dummy-functional', {attrs: {stage}}
+				);
 
-		const button = page.getByRole('button');
+				const button = page.getByRole('button');
 
-		await button.click();
-		await target.update({});
-		await button.click();
+				await button.click();
+				await target.update({attrs: {stage}});
+				await button.click();
 
-		// Get the current context of the functional component from the DOM
-		const clickCount = await page.locator('.b-component-render-flags-dummy')
-			.evaluate((ctx) => (<{component: bComponentRenderFlagsDummy} & HTMLElement>ctx).component.clickCount);
+				// Get the current context of the functional component from the DOM
+				const clickCount = await page.locator('.b-component-render-flags-dummy')
+					.evaluate((ctx) => (<{component: bComponentRenderFlagsDummy} & HTMLElement>ctx).component.clickCount);
 
-		test.expect(clickCount).toEqual(2);
+				test.expect(clickCount).toEqual(2);
+			});
+		});
 	});
 
-	async function renderDummy(page: Page) {
-		await Component.createComponent(page, 'b-component-render-flags-dummy');
+	async function renderDummy(page: Page, stage: string = 'default') {
+		await Component.createComponent(page, 'b-component-render-flags-dummy', {stage});
 	}
 });
