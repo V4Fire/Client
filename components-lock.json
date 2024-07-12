@@ -1,5 +1,5 @@
 {
-  "hash": "a956f20ab0bcc61267e6728668e0813fd1956aeb881f68498fab5e5424a1cff9",
+  "hash": "14435c6c581db36881693b80ab93007b18751e4cade2ee3bedbdb44f21b39c28",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2625,6 +2625,7 @@
               "core/browser",
               "core/cookies",
               "core/html",
+              "core/html/xss",
               "models/modules/session"
             ]
           },
@@ -2671,6 +2672,7 @@
             "core/browser",
             "core/cookies",
             "core/html",
+            "core/html/xss",
             "models/modules/session"
           ],
           "resolvedLibs": {
@@ -2685,6 +2687,7 @@
               "core/browser",
               "core/cookies",
               "core/html",
+              "core/html/xss",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
               "models/modules/session"
@@ -2702,6 +2705,7 @@
               "core/browser",
               "core/cookies",
               "core/html",
+              "core/html/xss",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
               "models/modules/session"
