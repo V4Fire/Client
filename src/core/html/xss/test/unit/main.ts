@@ -23,17 +23,15 @@ test.describe('core/html/xss', () => {
 
 	test.describe('`sanitize`', () => {
 		test('should automatically remove unsafe attributes', async () => {
-			const res = (await xssAPI.evaluate((xss) =>
-				xss.sanitize('<button onclick="javascript:void(console.log(document.cookie))">Press on me!</button>'))
-			);
+			const res = await xssAPI.evaluate((xss) =>
+				xss.sanitize('<button onclick="javascript:void(console.log(document.cookie))">Press on me!</button>'));
 
 			test.expect(res).toBe('<button>Press on me!</button>');
 		});
 
 		test('should support passing additional options to DOMPurify', async () => {
-			const res = (await xssAPI.evaluate((xss) =>
-				xss.sanitize('<button example="custom">Press on me!</button>', {ADD_ATTR: ['example']}))
-			);
+			const res = await xssAPI.evaluate((xss) =>
+				xss.sanitize('<button example="custom">Press on me!</button>', {ADD_ATTR: ['example']}));
 
 			test.expect(res).toBe('<button example="custom">Press on me!</button>');
 		});
