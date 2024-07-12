@@ -166,7 +166,7 @@
 						+= content
 
 			- else
-				< template v-for = _ in asyncRender.iterate(moduleLoader.loadBucket(${SSR} ? 1 : ${bucket}), 1, {useRaf: true, filter: ${filter}})
+				< template v-for = _ in asyncRender.iterate(${SSR} ? 1 : moduleLoader.loadBucket(${bucket}), 1, {useRaf: true, filter: ${filter}})
 					+= content
 
 	/**
