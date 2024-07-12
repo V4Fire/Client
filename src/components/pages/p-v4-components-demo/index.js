@@ -59,6 +59,7 @@ package('p-v4-components-demo')
 		'core/cookies',
 		'core/html',
 		'core/html/xss',
+		'core/page-meta-data',
 
 		'models/modules/session'
 	);

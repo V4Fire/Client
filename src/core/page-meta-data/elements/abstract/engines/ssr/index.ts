@@ -20,7 +20,12 @@ export class SSREngine implements Engine {
 			.map((key) => `${key}="${attrs[key]}"`)
 			.join(' ');
 
-		return sanitize(`<${tag} ${attrsString} />`, {ALLOWED_TAGS: [tag], ALLOWED_ATTR: keys});
+		return sanitize(`<${tag} ${attrsString} />`, {
+			RETURN_DOM: true,
+			WHOLE_DOCUMENT: true,
+			ADD_TAGS: [tag],
+			ALLOWED_ATTR: keys
+		}).querySelector(tag)!.outerHTML;
 	}
 
 	/** {@link Engine.remove} */

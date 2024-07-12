@@ -8,7 +8,7 @@
 
 import type { Config as SuperConfig } from '@v4fire/core/config/interface';
 import type { ImagePlaceholderOptions } from 'components/directives/image';
-import type { SanitizedOptions } from 'core/html/xss';
+import type { SanitizedOptions } from 'components/directives/safe-html';
 
 export interface Config extends SuperConfig {
 	/**

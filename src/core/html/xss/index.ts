@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import DOMPurify from 'dompurify';
+import DOMPurify, { DOMPurifyI } from 'dompurify';
 
 import type { SanitizedOptions } from 'core/html/xss/interface';
 
@@ -23,8 +23,8 @@ export * from 'core/html/xss/interface';
  * @param value
  * @param [opts] - sanitizing options
  */
-export function sanitize(value: string, opts?: SanitizedOptions): string {
-	let domPurify: ReturnType<typeof DOMPurify>;
+export const sanitize: typeof DOMPurify['sanitize'] = (value: string | Node, opts?: SanitizedOptions) => {
+	let domPurify: DOMPurifyI;
 
 	if (SSR) {
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -37,9 +37,5 @@ export function sanitize(value: string, opts?: SanitizedOptions): string {
 		domPurify = DOMPurify(globalThis);
 	}
 
-	return domPurify.sanitize(value, {
-		...opts,
-		RETURN_DOM_FRAGMENT: false,
-		RETURN_DOM: false
-	});
-}
+	return Object.cast<any>(domPurify.sanitize(value, opts ?? {}));
+};

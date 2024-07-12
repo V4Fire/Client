@@ -45,7 +45,13 @@ function sanitize(value: SafeHtmlDirectiveParams['value']): string {
 		return xss.sanitize(toString(value), config.safeHtml);
 	}
 
-	return xss.sanitize(toString(value.value), {...config.safeHtml, ...value.options});
+	return xss.sanitize(toString(value.value), {
+		...config.safeHtml,
+		...value.options,
+
+		RETURN_DOM_FRAGMENT: false,
+		RETURN_DOM: false
+	});
 
 	function toString(value: SafeHtmlDirectiveParams['value']): string {
 		return value == null ? '' : String(value);

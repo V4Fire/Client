@@ -13,7 +13,12 @@ import { SSREngine } from 'core/page-meta-data/elements/abstract/engines';
 
 export class SSRTitleEngine extends SSREngine {
 	override render(_element: AbstractElement, tag: string, attrs: Dictionary<string>): string {
-		return sanitize(`<${tag}>${attrs.text ?? ''}</${tag}>`, {ALLOWED_TAGS: [tag], ALLOWED_ATTR: []});
+		return sanitize(`<${tag}>${attrs.text ?? ''}</${tag}>`, {
+			RETURN_DOM: true,
+			WHOLE_DOCUMENT: true,
+			ADD_TAGS: [tag],
+			ALLOWED_ATTR: []
+		}).querySelector(tag)!.outerHTML;
 	}
 }
 
