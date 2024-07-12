@@ -14,7 +14,11 @@
 import iStaticPage, { component, prop, field, system } from 'components/super/i-static-page/i-static-page';
 import VDOM, * as VDOMAPI from 'components/friends/vdom';
 
+import { sanitize } from 'core/html/xss';
+
 export * from 'components/super/i-static-page/i-static-page';
+
+console.log(sanitize('<button onclick="javascript:void(console.log(document.cookie))">Press on me!</button>'));
 
 VDOM.addToPrototype(VDOMAPI);
 

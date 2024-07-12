@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import xss from 'xss';
+import { sanitize } from 'core/html/xss';
 
 import type { Engine } from 'core/page-meta-data/elements/abstract/engines/interface';
 import type { AbstractElement } from 'core/page-meta-data/elements';
@@ -20,7 +20,7 @@ export class SSREngine implements Engine {
 			.map((key) => `${key}="${attrs[key]}"`)
 			.join(' ');
 
-		return xss(`<${tag} ${attrsString} />`, {whiteList: {[tag]: keys}});
+		return sanitize(`<${tag} ${attrsString} />`, {ALLOWED_TAGS: [tag], ALLOWED_ATTR: keys});
 	}
 
 	/** {@link Engine.remove} */
