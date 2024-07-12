@@ -13,7 +13,6 @@
 
 import DOMPurify from 'dompurify';
 
-import { IS_NODE } from 'core/env';
 import type { SanitizedOptions } from 'core/html/xss/interface';
 
 export * from 'core/html/xss/interface';
@@ -27,16 +26,12 @@ export * from 'core/html/xss/interface';
 export function sanitize(value: string, opts?: SanitizedOptions): string {
 	let domPurify: ReturnType<typeof DOMPurify>;
 
-	if (IS_NODE) {
-		//#if node_js
-
+	if (SSR) {
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const {JSDOM} = require('jsdom');
 		const jsdom = new JSDOM();
 
 		domPurify = DOMPurify(jsdom.window);
-
-		//#endif
 
 	} else {
 		domPurify = DOMPurify(globalThis);
