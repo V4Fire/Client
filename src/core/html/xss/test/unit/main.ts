@@ -18,7 +18,7 @@ test.describe('core/html/xss', () => {
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
-		xssAPI = await Utils.import(page, 'core/html');
+		xssAPI = await Utils.import(page, 'core/html/xss');
 	});
 
 	test.describe('`sanitize`', () => {
