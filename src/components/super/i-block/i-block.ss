@@ -105,8 +105,9 @@
 			- if paths.length > 0
 				? wait = '() => waitComponentStatus("destroyed")'
 
-			/// If the wait function is explicitly set to null, it means that rendering on the server needs to be forced
 			- else if wait
+				/// If the wait function is explicitly set to null,
+				/// it means that rendering on the server needs to be forced
 				? wait = '((f) => f == null ? f : () => waitComponentStatus("destroyed"))(' + wait + ')'
 
 		: &
@@ -166,7 +167,10 @@
 						+= content
 
 			- else
-				< template v-for = _ in asyncRender.iterate(moduleLoader.loadBucket(${SSR} ? 1 : ${bucket}), 1, {useRaf: true, filter: ${filter}})
+				< template v-for = _ in asyncRender.iterate(${SSR} ? 1 : moduleLoader.loadBucket(${bucket}), 1, { &
+					useRaf: true,
+					filter: ${filter}
+				}) .
 					+= content
 
 	/**
