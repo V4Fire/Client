@@ -5677,7 +5677,7 @@ __metadata:
     webpack: "npm:5.91.0"
     webpack-cli: "npm:5.1.4"
   peerDependencies:
-    "@v4fire/core": ^4.0.0-alpha.34
+    "@v4fire/core": ^4.0.0-alpha.37
     webpack: ^5.82.1
   dependenciesMeta:
     "@pzlr/build-core":

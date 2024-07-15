@@ -11,6 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.106 (2024-06-25)
+
+#### :bug: Bug Fix
+
+* Do not store computed values in the cache before the functional component is fully created.
+  This fixes hard-to-detect bugs that can occur due to context inheritance.
+  See: https://github.com/V4Fire/Client/issues/1292 `core/component/accessor`
+
 ## v4.0.0-beta.105 (2024-06-24)
 
 #### :bug: Bug Fix
