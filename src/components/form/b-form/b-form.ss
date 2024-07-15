@@ -11,6 +11,8 @@
 - include 'components/super/i-data'|b as placeholder
 
 - template index() extends ['i-data'].index
+	- rootTag = 'form'
+
 	- block rootAttrs
 		? Object.assign(rootAttrs, { &
 			novalidate: TRUE,

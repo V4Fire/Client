@@ -18,7 +18,7 @@
 					v-for = {item, key, props} in firstChunkItems |
 					:key = key |
 					:is = item |
-					:v-attrs = props
+					v-attrs = props
 				.
 
 			< .&__tombstones &

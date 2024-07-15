@@ -141,7 +141,7 @@ export function setField<T = unknown>(
 						sync = () => Object.set(ctx.$systemFields, [name], ref[name]);
 					}
 
-				} else if (ctx.isFunctional) {
+				} else if (ctx.isFunctionalWatchers) {
 					ref = ctx.$fields;
 
 					// If the component has not yet initialized field watchers,

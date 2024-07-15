@@ -22,7 +22,6 @@ import type iBlock from 'components/super/i-block/i-block';
 import {
 
 	component,
-	hydrationStore,
 
 	InitLoadCb,
 	InitLoadOptions,
@@ -70,7 +69,8 @@ export default abstract class iData extends iDataHandlers {
 		}
 
 		const {
-			async: $a
+			async: $a,
+			remoteState: {hydrationStore}
 		} = this;
 
 		const label = <AsyncOptions>{
@@ -78,8 +78,7 @@ export default abstract class iData extends iDataHandlers {
 			join: 'replace'
 		};
 
-		const
-			callSuper = () => super.initLoad(() => this.db, opts);
+		const callSuper = () => super.initLoad(() => this.db, opts);
 
 		try {
 			if (opts.emitStartEvent !== false) {
@@ -95,7 +94,14 @@ export default abstract class iData extends iDataHandlers {
 
 			const setDBData = (data: CanUndef<this['DB']>) => {
 				this.saveDataToRootStore(data);
-				this.hydrationStore?.set(this.componentId, providerHydrationKey, Object.cast(data));
+
+				if (data !== undefined) {
+					hydrationStore.set(this.componentId, providerHydrationKey, Object.cast(data));
+
+				} else {
+					hydrationStore.setEmpty(this.componentId, providerHydrationKey);
+				}
+
 				this.db = this.convertDataToDB<this['DB']>(data);
 
 				// During hydration, there may be a situation where the cache on the DB getter is set before rendering occurs,
@@ -103,7 +109,10 @@ export default abstract class iData extends iDataHandlers {
 				void this.db;
 			};
 
-			if (this.canUseHydratedData) {
+			const
+				hydrationMode = this.canUseHydratedData && Boolean(this.field.get('ssrRendering'));
+
+			if (hydrationMode) {
 				const
 					store = hydrationStore.get(this.componentId),
 					data = Object.cast<CanUndef<this['DB']>>(store?.[providerHydrationKey]);
@@ -257,12 +266,10 @@ export default abstract class iData extends iDataHandlers {
 		return super.initLoad(data, opts);
 	}
 
-	override reload(opts?: InitLoadOptions): Promise<void> {
-		if (!this.r.isOnline && !this.offlineReload) {
-			return Promise.resolve();
+	override async reload(opts?: InitLoadOptions): Promise<void> {
+		if ((await this.remoteState.net.isOnline()).status || this.offlineReload) {
+			return super.reload(opts);
 		}
-
-		return super.reload(opts);
 	}
 
 	/**
@@ -280,7 +287,7 @@ export default abstract class iData extends iDataHandlers {
 			return;
 		}
 
-		this.r.providerDataStore.set(key, data);
+		this.r.providerDataStore?.set(key, data);
 
 		function getKey(val: string | CanUndef<iData['dataProviderProp']>): CanUndef<string> {
 			if (val == null || Object.isString(val)) {

@@ -10,7 +10,7 @@ import SyncPromise from 'core/promise/sync';
 import type iBlock from 'components/super/i-block';
 
 import { idsCache, iconsStore } from 'components/directives/icon/const';
-import { getElementId } from 'core/component/directives/helpers';
+import { getElementId } from 'core/component/directives';
 import { getIcon } from 'components/directives/icon/icons';
 
 /**

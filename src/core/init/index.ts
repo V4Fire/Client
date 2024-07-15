@@ -11,34 +11,47 @@
  * @packageDocumentation
  */
 
-import { initGlobalEnv } from 'core/env';
+import dependencies from 'core/init/dependencies';
+import type { Dependency, DependencyFn } from 'core/init/dependencies';
+import { createDependencyIterator } from 'core/init/dependencies/helpers';
 
-import initDom from 'core/init/dom';
-import initState from 'core/init/state';
-import initABT from 'core/init/abt';
-import prefetchInit from 'core/init/prefetch';
-import hydratedRouteInit from 'core/init/hydrated-route';
+import { createApp } from 'core/init/create-app';
+import { getAppParams } from 'core/init/helpers';
 
 import type { InitAppOptions, App } from 'core/init/interface';
+import type { State } from 'core/component/state';
+
+export * from 'core/init/dependencies/helpers';
+export * from 'core/init/helpers';
+export * from 'core/init/interface';
 
 /**
  * Initializes the application
  *
- * @param rootComponent - the root component name for initialization
- * @param [opts] - additional options
+ * @param rootComponent - the name of the created root component
+ * @param opts - additional options
  */
 export default async function initApp(
 	rootComponent: Nullable<string>,
 	opts: InitAppOptions
 ): Promise<App> {
-	initGlobalEnv(opts);
+	const {state, createAppOpts} = getAppParams(opts);
 
-	void initDom(opts);
-	void initState(opts);
-	void initABT(opts);
-	void prefetchInit(opts);
-	void hydratedRouteInit(opts);
+	await initDependencies(dependencies, state);
 
-	const createApp = await opts.ready('');
-	return createApp(rootComponent, opts);
+	return createApp(rootComponent, createAppOpts, state);
+}
+
+/**
+ * Initializes dependencies of the application
+ *
+ * @param dependencies
+ * @param state
+ */
+export async function initDependencies(
+	dependencies: Dictionary<Dependency | DependencyFn>,
+	state: State
+): Promise<void> {
+	const tasks = [...createDependencyIterator(dependencies)].map(([_, {fn}]) => fn(state));
+	await Promise.all(tasks);
 }

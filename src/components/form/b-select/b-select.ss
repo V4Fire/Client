@@ -11,6 +11,7 @@
 - include 'components/super/i-input-text'|b as placeholder
 
 - template index() extends ['i-input-text'].index
+	- rootTag = 'span'
 	- rootWrapper = true
 
 	- block headHelpers
@@ -51,7 +52,7 @@
 						< template v-if = item
 							< component &
 								:is = Object.isFunction(item) ? item(el, i) : item |
-								:v-attrs = getItemProps(el, i)
+								v-attrs = getItemProps(el, i)
 							.
 
 						< template v-else

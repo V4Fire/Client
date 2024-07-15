@@ -233,75 +233,8 @@ const fullThemed = {
 	}
 };
 
-const prefersColorSchemeThemes = {
-	both: {
-		meta: {
-			themes: ['dark', 'light']
-		},
-		text: {
-			theme: {
-				light: fullThemed.text.theme.day,
-				dark: fullThemed.text.theme.night
-			}
-		},
-		rounding: {
-			theme: {
-				light: fullThemed.rounding.theme.day,
-				dark: fullThemed.rounding.theme.night
-			}
-		},
-		colors: {
-			theme: {
-				light: fullThemed.colors.theme.day,
-				dark: fullThemed.colors.theme.night
-			}
-		}
-	},
-	onlyDark: {
-		meta: {
-			themes: ['dark']
-		},
-		text: {
-			theme: {
-				dark: fullThemed.text.theme.night
-			}
-		},
-		rounding: {
-			theme: {
-				dark: fullThemed.rounding.theme.night
-			}
-		},
-		colors: {
-			theme: {
-				dark: fullThemed.colors.theme.night
-			}
-		}
-	},
-	onlyLight: {
-		meta: {
-			themes: ['light']
-		},
-		text: {
-			theme: {
-				light: fullThemed.text.theme.day
-			}
-		},
-		rounding: {
-			theme: {
-				light: fullThemed.rounding.theme.day
-			}
-		},
-		colors: {
-			theme: {
-				light: fullThemed.colors.theme.day
-			}
-		}
-	}
-};
-
 module.exports = {
 	fullThemed,
 	unThemeText,
-	themedOnlyColors,
-	prefersColorSchemeThemes
+	themedOnlyColors
 };
