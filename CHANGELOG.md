@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2024-??-??)
+## 4.0.0-beta.108.a-new-hope (2024-07-15)
 
 #### :boom: Breaking Change
 
@@ -26,8 +26,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
+* Added a new component `bPreventSSR`
+* Added a new component `bCacheSSR`
 * Added a new module `core/html/xss`
 * Added a new module `core/cache/decorators/hydration`
+* Added style registration in the `getRenderFactory` method for templates in SSR `components/friends/vdom`
 
 * `iBlock`:
   * Added Snakeskin constant `SSR` to determine that the template is being assembled for SSR
