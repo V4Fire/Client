@@ -13,8 +13,8 @@ Changelog
 
 #### :boom: Breaking Change
 
-* The field `locale` has been removed
-* The field `globalEnv` has been removed
+* Removed the `locale` field
+* Removed the `globalEnv` field
 
 ## v4.0.0-beta.62 (2024-02-19)
 

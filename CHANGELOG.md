@@ -15,14 +15,43 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Added a wrapper for middleware with additional parameters `core/data/middlewares/hydration-cache`
+* `iStaticPage`:
+  * Removed the `locale` field
+  * Removed the `globalEnv` field
+
 * The modules `core/init` and `core/component/state` have been completely redesigned for the new API
-* The field `locale` has been removed `iStaticPage`
+* The module `core/component/state` has been completely redesigned for the new API
+* Moved the hydration store to a separate module from `core/component/hydration` -> `core/hydration-store`
+* Added a wrapper for middleware with additional parameters `core/data/middlewares/hydration-cache`
+
+#### :rocket: New Feature
+
+* Added a new module `core/html/xss`
+* Added a new module `core/cache/decorators/hydration`
+
+* `iBlock`:
+  * Added Snakeskin constant `SSR` to determine that the template is being assembled for SSR
+  * Added Snakeskin constant `renderSSRAsString` for optimizing component assembly under SSR
+  * Added an optional `componentName` parameter to the `hydrateStyles` method.
+    This parameter allows for specifying the name of the component for which styles should be hydrated.
+  * Added registration of styles for templates in SSR
+
+* `core/hydration-store`:
+  * Added the ability to set the current environment in the hydration store
+  * Added getting and removing the hydration store value by path
+
+#### :bug: Bug Fix
+
+* Attached a handler to ensure the correct lifecycle for pages with keep-alive strategy `bDynamicPage`
 
 #### :house: Internal
 
-* Now SSR build is bundled into a single file
-* Use the forked `lib/server-renderer` everywhere in the SSR build
+* The `hydrateStyles` method has been made public `iBlock`
+* Added a new `response` event upon successful data retrieval `components/friends/data-provider`
+
+* `build`:
+  * Now SSR build is bundled into a single file
+  * Use the forked `lib/server-renderer` everywhere in the SSR build
 
 ## v4.0.0-beta.107 (2024-07-10)
 
