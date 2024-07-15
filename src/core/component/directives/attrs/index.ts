@@ -379,10 +379,10 @@ ComponentEngine.directive('attrs', {
 
 			if (componentCtx != null && !isDOMEvent && Object.isFunction(attrVal)) {
 				if (isOnceEvent) {
-					componentCtx.$on(originalEvent, attrVal);
+					componentCtx.$once(originalEvent, attrVal);
 
 				} else {
-					componentCtx.$once(originalEvent, attrVal);
+					componentCtx.$on(originalEvent, attrVal);
 				}
 
 			} else {
