@@ -179,7 +179,7 @@
     "playwright": "1.32.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "simple-git": "^3.25.0",
+    "simple-git": "3.25.0",
     "storybook": "7.0.23",
     "ts-jest": "29.1.0",
     "ts-node": "10.7.0"

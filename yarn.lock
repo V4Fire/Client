@@ -5704,7 +5704,7 @@ __metadata:
     react-dom: "npm:18.2.0"
     requestidlecallback: "npm:0.3.0"
     sharp: "npm:0.30.6"
-    simple-git: "npm:^3.25.0"
+    simple-git: "npm:3.25.0"
     snakeskin: "github:SnakeskinTpl/Snakeskin#new-var"
     snakeskin-loader: "npm:8.0.1"
     ss2vue3: "github:snakeskintpl/ss2vue3"
@@ -22547,7 +22547,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"simple-git@npm:^3.25.0":
+"simple-git@npm:3.25.0":
   version: 3.25.0
   resolution: "simple-git@npm:3.25.0"
   dependencies:
