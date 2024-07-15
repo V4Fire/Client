@@ -19,6 +19,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * The modules `core/init` and `core/component/state` have been completely redesigned for the new API
 * The field `locale` has been removed `iStaticPage`
 
+#### :bug: Bug Fix
+
+* `core/page-meta-data` is now expects description element to be a `meta` tag with the attribute `name='description'` instead of the `description` tag
+
 #### :house: Internal
 
 * Now SSR build is bundled into a single file
