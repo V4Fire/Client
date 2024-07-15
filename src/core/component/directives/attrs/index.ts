@@ -331,7 +331,7 @@ ComponentEngine.directive('attrs', {
 				flags = Object.createDict<boolean>(),
 				isOnceEvent = flags.once;
 
-			eventChunks.forEach((chunk) => flags[chunk] = true);
+			eventChunks.slice(1).forEach((chunk) => flags[chunk] = true);
 			event = eventChunks[0];
 
 			if (flags.right && !event.startsWith('key')) {
