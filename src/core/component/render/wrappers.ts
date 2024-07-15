@@ -83,11 +83,15 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
  */
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
-		let
-			[name, attrs, slots, patchFlag, dynamicProps] = args;
+		let [
+			name,
+			attrs,
+			slots,
+			patchFlag,
+			dynamicProps
+		] = args;
 
-		let
-			component: CanNull<ComponentMeta> = null;
+		let component: CanNull<ComponentMeta> = null;
 
 		patchFlag = normalizePatchFlagUsingProps(patchFlag, attrs);
 
@@ -130,6 +134,8 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			vnode.virtualParent.value :
 			this;
 
+		// For refs within functional components,
+		// it is necessary to explicitly set a reference to the instance of the component
 		if (!SSR && vnode.ref != null && vnode.ref.i == null) {
 			vnode.ref.i ??= {
 				refs: this.$refs,
@@ -380,6 +386,8 @@ export function wrapRenderSlot<T extends typeof renderSlot>(original: T): T {
 export function wrapWithCtx<T extends typeof withCtx>(original: T): T {
 	return Object.cast(function withCtx(this: ComponentInterface, fn: Function) {
 		return original((...args: unknown[]) => {
+			// The number of arguments for this function varies depending on the compilation mode: either SSR or browser.
+			// This condition helps optimize performance in the browser.
 			if (args.length === 1) {
 				return fn(args[0], args[0]);
 			}

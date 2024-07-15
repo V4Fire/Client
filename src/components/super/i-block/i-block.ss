@@ -79,7 +79,10 @@
 	 *   < b-button
 	 *     Hello world
 	 *
-	 * += self.loadModules(['components/form/b-button', 'components/form/b-input'], {renderKey: 'controls', wait: 'promisifyOnce.bind(null, "needLoad")'})
+	 * += self.loadModules(['components/form/b-button', 'components/form/b-input'], { &
+	 *   renderKey: 'controls',
+	 *   wait: 'moduleLoader.waitSignal("controls")'
+	 * }) .
 	 *   < b-button
 	 *     Hello world
 	 *

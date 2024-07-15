@@ -662,7 +662,10 @@ Loads modules by the specified paths and dynamically inserted the provided conte
       < b-button
         Hello world
 
-    += self.loadModules(['components/form/b-button', 'components/form/b-input'], {renderKey: 'controls', wait: 'moduleLoader.waitSignal("controls")'})
+    += self.loadModules(['components/form/b-button', 'components/form/b-input'], { &
+      renderKey: 'controls',
+      wait: 'moduleLoader.waitSignal("controls")'
+    }) .
       < b-button
         Hello world
 ```
