@@ -51,6 +51,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 		$renderEngine: {r}
 	} = this;
 
+	// Setting the ref instance for the case of async rendering (does not work with SSR)
 	if (!SSR && ref != null) {
 		ref.i ??= r.getCurrentInstance();
 	}
