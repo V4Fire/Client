@@ -9,15 +9,15 @@
 import { sanitize } from 'core/html/xss';
 
 import type { AbstractElement } from 'core/page-meta-data/elements';
-import { SSREngine } from 'core/page-meta-data/elements/abstract/engines';
+import { SSREngine, allowedTags } from 'core/page-meta-data/elements/abstract/engines';
 
 export class SSRTitleEngine extends SSREngine {
 	override render(_element: AbstractElement, tag: string, attrs: Dictionary<string>): string {
 		return sanitize(`<${tag}>${attrs.text ?? ''}</${tag}>`, {
 			RETURN_DOM: true,
 			WHOLE_DOCUMENT: true,
-			ADD_TAGS: [tag],
-			ALLOWED_ATTR: []
+			ADD_TAGS: tag === 'title' ? [tag] : [],
+			ALLOWED_ATTR: allowedTags[tag] ?? []
 		}).querySelector(tag)!.outerHTML;
 	}
 }

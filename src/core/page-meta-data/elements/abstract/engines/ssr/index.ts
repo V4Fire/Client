@@ -11,20 +11,22 @@ import { sanitize } from 'core/html/xss';
 import type { Engine } from 'core/page-meta-data/elements/abstract/engines/interface';
 import type { AbstractElement } from 'core/page-meta-data/elements';
 
+import { allowedTags } from 'core/page-meta-data/elements/abstract/engines/ssr/const';
+
+export * from 'core/page-meta-data/elements/abstract/engines/ssr/const';
+
 export class SSREngine implements Engine {
 	/** {@link Engine.render} */
 	render(_element: AbstractElement, tag: string, attrs: Dictionary<string>): string {
-		const keys = Object.keys(attrs);
-
-		const attrsString = keys
-			.map((key) => `${key}="${attrs[key]}"`)
+		const attrsString = Object.entries(attrs)
+			.map(([key, val]) => `${key}="${val}"`)
 			.join(' ');
 
 		return sanitize(`<${tag} ${attrsString} />`, {
 			RETURN_DOM: true,
 			WHOLE_DOCUMENT: true,
-			ADD_TAGS: [tag],
-			ALLOWED_ATTR: keys
+			ADD_TAGS: allowedTags[tag] != null ? [tag] : [],
+			ALLOWED_ATTR: allowedTags[tag] ?? []
 		}).querySelector(tag)!.outerHTML;
 	}
 
