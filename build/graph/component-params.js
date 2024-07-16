@@ -35,7 +35,7 @@ Object.assign(componentParams, {
 	getParentParameters,
 
 	/**
-	 * Return a dictionary containing the prop attributes for a component by the specified name
+	 * Returns a dictionary containing the prop attributes for a component by the specified name
 	 *
 	 * @param {string} name - the component name
 	 * @returns {object}
