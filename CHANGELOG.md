@@ -15,10 +15,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Taking an exisiting `Session` instance instead of creating a new one while initializing the application `core`, `core/session`
-
-* `core/page-meta-data` is now expects description element to be a `meta` tag with the attribute `name='description'` instead of the `description` tag
-
+* Set global `Session` instance in the application state in `core/index`.
+  It fixes the session events not being emitted in `core/init/dependencies/load-session`.
 * Fixed the bug where the event name was set as an event modifier in the `v-attrs` directive `component/directives/attrs`
 * Replaced the method calls to `componentCtx.$once` and `componentCtx.$on` with correct event handling based on the isOnceEvent flag in `component/directives/attrs`
 * The page description element is now expected to be a meta tag
