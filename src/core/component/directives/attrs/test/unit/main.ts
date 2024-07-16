@@ -12,8 +12,10 @@ import {
 
 	renderDirective,
 	renderDummy,
+
 	resizeHandler,
 	clickHandler,
+
 	waitForWatcherCallsCount,
 	dummyDeleteHandler
 
@@ -24,15 +26,7 @@ test.describe('core/component/directives/attrs', () => {
 		await demoPage.goto();
 	});
 
-	test('the directive allows setting the value of another directive', async ({page}) => {
-		const component = await renderDirective(page, 'b-dummy', {
-			'v-show': false
-		});
-
-		await test.expect(component).toHaveCSS('display', 'none');
-	});
-
-	test('the directive allows setting regular props or attributes', async ({page}) => {
+	test('should allow setting regular props or attributes', async ({page}) => {
 		const component = await renderDirective(page, 'b-dummy', {
 			style: 'margin-top: 10px;',
 			class: 'croatoan'
@@ -42,7 +36,7 @@ test.describe('core/component/directives/attrs', () => {
 		await test.expect(component).toHaveCSS('margin-top', '10px');
 	});
 
-	test('the directive allows setting event listeners with support of Vue modifiers', async ({page}) => {
+	test('should allow setting event listeners with support of Vue modifiers', async ({page}) => {
 		const component = await renderDirective(page, 'b-dummy', {
 			'@click.once': clickHandler
 		});
@@ -52,10 +46,17 @@ test.describe('core/component/directives/attrs', () => {
 		await component.click();
 
 		await test.expect(component).toHaveAttribute('data-counter', '1');
-
 	});
 
-	test('the directive allows setting custom directives', async ({page}) => {
+	test('should allow setting Vue directives', async ({page}) => {
+		const component = await renderDirective(page, 'b-dummy', {
+			'v-show': false
+		});
+
+		await test.expect(component).toHaveCSS('display', 'none');
+	});
+
+	test('should allow setting custom directives', async ({page}) => {
 		const component = await renderDirective(page, 'b-dummy', {
 			'v-on-resize': resizeHandler
 		});
@@ -67,7 +68,7 @@ test.describe('core/component/directives/attrs', () => {
 		await test.expect(waitForWatcherCallsCount(page, component, 2)).toBeResolved();
 	});
 
-	test('the directive allows specifying directives, events, and attributes simultaneously', async ({page}) => {
+	test('should allow specifying directives, events, and attributes simultaneously', async ({page}) => {
 		const component = await renderDirective(page, 'b-dummy', {
 			style: 'margin-top: 10px;',
 			'@click.once': clickHandler,
@@ -87,7 +88,7 @@ test.describe('core/component/directives/attrs', () => {
 		await test.expect(waitForWatcherCallsCount(page, component, 3)).toBeResolved();
 	});
 
-	test('the directive works correctly when used on functional components', async ({page}) => {
+	test('should allow specifying directives, events, and attributes simultaneously', async ({page}) => {
 		const component = await renderDirective(page, 'b-dummy-functional', {
 			style: 'margin-top: 10px;',
 			'@click.once': clickHandler,
@@ -106,7 +107,7 @@ test.describe('core/component/directives/attrs', () => {
 		await test.expect(component).toHaveAttribute('data-counter', '3');
 	});
 
-	test('the directive works correctly with event named as registered key modifier', async ({page}) => {
+	test('should work correctly with an event named as a registered key modifier', async ({page}) => {
 		const target = await renderDummy(page, {
 			'@delete': dummyDeleteHandler
 		});
@@ -122,8 +123,8 @@ test.describe('core/component/directives/attrs', () => {
 
 	test(
 		[
-			'the directive correctly handles registered keys modifiers.',
-			'Our handler should be replaced by registered keys handler'
+			'should correctly handle registered keys modifiers:',
+			'our handler should be replaced by the registered handler'
 		].join(' '),
 
 		async ({page}) => {

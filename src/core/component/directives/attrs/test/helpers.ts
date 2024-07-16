@@ -8,9 +8,9 @@
 
 import type { ElementHandle, Locator, Page } from 'playwright';
 
-import type { Watcher } from 'components/directives/on-resize';
-
 import { Component } from 'tests/helpers';
+
+import type { Watcher } from 'components/directives/on-resize';
 
 import type bComponentDirectivesEmitterDummy from 'core/component/directives/attrs/test/b-component-directives-emitter-dummy/b-component-directives-emitter-dummy'
 
