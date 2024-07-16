@@ -13,15 +13,17 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2024-??-??)
 
+#### :bug: Bug Fix
+
+* `core/page-meta-data` is now expects description element to be a `meta` tag with the attribute `name='description'` instead of the `description` tag
+
+## v4.0.0-beta.?? (2024-??-??)
+
 #### :boom: Breaking Change
 
 * Added a wrapper for middleware with additional parameters `core/data/middlewares/hydration-cache`
 * The modules `core/init` and `core/component/state` have been completely redesigned for the new API
 * The field `locale` has been removed `iStaticPage`
-
-#### :bug: Bug Fix
-
-* `core/page-meta-data` is now expects description element to be a `meta` tag with the attribute `name='description'` instead of the `description` tag
 
 #### :house: Internal
 
