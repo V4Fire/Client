@@ -1,5 +1,5 @@
 {
-  "hash": "5a4d2a336984dd1ee0c0b713d0fbc356477b43181475f21b226b799ae574825f",
+  "hash": "bcc74ed555433a9d9272de5599a350a10b59e8f339a22a554b981f18589b9e54",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -702,12 +702,18 @@
           "declaration": {
             "name": "b-functional-dummy",
             "parent": "b-dummy",
-            "dependencies": [],
+            "dependencies": [
+              "b-functional-button-dummy",
+              "b-functional-getters-dummy"
+            ],
             "libs": []
           },
           "name": "b-functional-dummy",
           "parent": "b-dummy",
-          "dependencies": [],
+          "dependencies": [
+            "b-functional-button-dummy",
+            "b-functional-getters-dummy"
+          ],
           "libs": [],
           "resolvedLibs": {
             "%data": "%data:Set",
@@ -724,6 +730,38 @@
             "src/core/component/functional/test/b-functional-dummy/b-functional-dummy.styl"
           ],
           "tpl": "src/core/component/functional/test/b-functional-dummy/b-functional-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-functional-getters-dummy",
+        {
+          "index": "src/core/component/functional/test/b-functional-getters-dummy/index.js",
+          "declaration": {
+            "name": "b-functional-getters-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-functional-getters-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/functional/test/b-functional-getters-dummy/b-functional-getters-dummy.ts",
+          "styles": [
+            "src/core/component/functional/test/b-functional-getters-dummy/b-functional-getters-dummy.styl"
+          ],
+          "tpl": "src/core/component/functional/test/b-functional-getters-dummy/b-functional-getters-dummy.ss",
           "etpl": null
         }
       ],
@@ -1254,6 +1292,38 @@
             "src/components/super/i-block/decorators/test/b-super-i-block-decorators-dummy/b-super-i-block-decorators-dummy.styl"
           ],
           "tpl": "src/components/super/i-block/decorators/test/b-super-i-block-decorators-dummy/b-super-i-block-decorators-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-super-i-block-destructor-dummy",
+        {
+          "index": "src/components/super/i-block/test/b-super-i-block-destructor-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-destructor-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-super-i-block-destructor-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/test/b-super-i-block-destructor-dummy/b-super-i-block-destructor-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/test/b-super-i-block-destructor-dummy/b-super-i-block-destructor-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/test/b-super-i-block-destructor-dummy/b-super-i-block-destructor-dummy.ss",
           "etpl": null
         }
       ],

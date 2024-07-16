@@ -21,8 +21,8 @@ const deps = {
 		[
 			['requestidlecallback', {source: 'src', src: 'assets/lib/requestidlecallback.js'}],
 			['eventemitter2', {source: 'src', src: 'assets/lib/eventemitter2.js'}],
-			['vue', {source: 'output', src: `${config.webpack.output({name: 'lib'})}/vue.js`}]
-		]
+			!config.webpack.fatHTML() && ['vue', {source: 'output', src: `${config.webpack.output({name: 'lib'})}/vue.js`}]
+		].filter(Boolean)
 	),
 
 	/**
