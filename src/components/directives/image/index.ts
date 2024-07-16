@@ -69,6 +69,8 @@ ComponentEngine.directive('image', {
 	updated: mounted,
 
 	getSSRProps(params: SSRDirectiveParams) {
+		//#if node_js
+
 		const value = normalizeValue(params.value);
 
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -83,6 +85,8 @@ ComponentEngine.directive('image', {
 			...props,
 			innerHTML: imageElement.outerHTML
 		};
+
+		//#endif
 	}
 });
 

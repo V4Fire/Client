@@ -6,9 +6,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/**
- * [[include:core/html/README.md]]
- * @packageDocumentation
- */
-
-export * from 'core/html/attrs';
+export type { Config as SanitizedOptions } from 'dompurify';

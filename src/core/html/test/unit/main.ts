@@ -14,8 +14,7 @@ import Utils from 'tests/helpers/utils';
 import type * as HTMLAPI from 'core/html';
 
 test.describe('core/html', () => {
-	let
-		htmlAPI: JSHandle<typeof HTMLAPI>;
+	let htmlAPI: JSHandle<typeof HTMLAPI>;
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();

@@ -9,12 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.?? (2024-??-??)
+## 4.0.0-beta.108.a-new-hope (2024-07-15)
 
 #### :boom: Breaking Change
 
-* The field `locale` has been removed
-* The field `globalEnv` has been removed
+* Removed the `locale` field
+* Removed the `globalEnv` field
 
 ## v4.0.0-beta.62 (2024-02-19)
 
