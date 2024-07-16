@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Page description element is now expected as a `meta` tag with the attribute `name='description'` instead of the `description` tag
+
 ## v4.0.0-beta.108.a-new-hope (2024-07-15)
 
 #### :boom: Breaking Change

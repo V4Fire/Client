@@ -17,6 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fix the bug where the event name is set as an event modifier in the `v-attrs` directive `component/directives/attrs`
 * Replaced the method calls to `componentCtx.$once` and `componentCtx.$on` to correctly handle events based on the isOnceEvent flag in `component/directives/attrs`
+* `core/page-meta-data` is now expects description element to be a `meta` tag with the attribute `name='description'` instead of the `description` tag
 
 ## v4.0.0-beta.109 (2024-07-16)
 
