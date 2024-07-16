@@ -88,7 +88,7 @@ test.describe('core/component/directives/attrs', () => {
 		await test.expect(waitForWatcherCallsCount(page, component, 3)).toBeResolved();
 	});
 
-	test('should allow specifying directives, events, and attributes simultaneously', async ({page}) => {
+	test('should allow specifying directives, events, and attributes simultaneously for functional components', async ({page}) => {
 		const component = await renderDirective(page, 'b-dummy-functional', {
 			style: 'margin-top: 10px;',
 			'@click.once': clickHandler,
