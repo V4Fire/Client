@@ -14,7 +14,7 @@ import type { Watcher } from 'components/directives/on-resize';
 
 import type bComponentDirectivesEmitterDummy from 'core/component/directives/attrs/test/b-component-directives-emitter-dummy/b-component-directives-emitter-dummy'
 
-export async function renderDummy(page: Page, attrs: RenderComponentsVnodeParams['attrs']) {
+export function renderDummy(page: Page, attrs: RenderComponentsVnodeParams['attrs']) {
 	return Component.createComponent<bComponentDirectivesEmitterDummy>(page, 'b-component-directives-emitter-dummy', {
 		'data-testid': 'target',
 		'v-attrs': {
@@ -29,6 +29,7 @@ export async function renderDirective(
 	attrs: RenderComponentsVnodeParams['attrs']
 ): Promise<Locator> {
 	const componentTestId = 'target';
+
 	await Component.createComponent(page, componentName, {
 		'data-testid': componentTestId,
 		'data-counter': 0,
