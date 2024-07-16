@@ -6,10 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "components/super/i-block/i-block.styl"
-
-$p = {
-
-}
-
-b-component-emitter-dummy extends i-block
+package('b-component-directives-emitter-dummy')
+	.extends('i-block');

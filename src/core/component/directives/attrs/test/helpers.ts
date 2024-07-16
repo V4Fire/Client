@@ -12,10 +12,10 @@ import type { Watcher } from 'components/directives/on-resize';
 
 import { Component } from 'tests/helpers';
 
-import type bComponentEmitterDummy from 'core/component/directives/attrs/test/b-component-emitter-dummy/b-component-emitter-dummy'
+import type bComponentDirectivesEmitterDummy from 'core/component/directives/attrs/test/b-component-directives-emitter-dummy/b-component-directives-emitter-dummy'
 
 export async function renderDummy(page: Page, attrs: RenderComponentsVnodeParams['attrs']) {
-	return Component.createComponent<bComponentEmitterDummy>(page, 'b-component-emitter-dummy', {
+	return Component.createComponent<bComponentDirectivesEmitterDummy>(page, 'b-component-directives-emitter-dummy', {
 		'data-testid': 'target',
 		'v-attrs': {
 			...attrs
@@ -76,6 +76,6 @@ export function clickHandler(event: MouseEvent): void {
 	target.setAttribute('data-counter', nextValue.toString());
 }
 
-export function dummyDeleteHandler(target: bComponentEmitterDummy) {
+export function dummyDeleteHandler(target: bComponentDirectivesEmitterDummy) {
 	target.counter++;
 }
