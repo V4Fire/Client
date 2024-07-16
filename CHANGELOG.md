@@ -15,8 +15,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added the `createPropAccessors` method for creating accessors for props marked as `forceUpdate: false` `core/component/interface`
-* Added the `forceUpdate: false` property to designate props whose changes should not lead to a template re-render `core/component/decorators`
+* Added the `createPropAccessors` method for creating accessors
+  for props marked as `forceUpdate: false` `core/component/interface`
+
+* Added the `forceUpdate: false` property to designate props whose changes
+  should not lead to a template re-render `core/component/decorators/prop`
 
 #### :bug: Bug Fix
 
@@ -64,28 +67,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Now SSR build is bundled into a single file
 * Use the forked `lib/server-renderer` everywhere in the SSR build
 
-## v4.0.0-beta.?? (2024-??-??)
-
-#### :rocket: New Feature
-
-* Added the `createPropAccessors` method for creating accessors
-  for props marked as `forceUpdate: false` `core/component/interface`
-
-* Added the `forceUpdate: false` property to designate props whose changes
-  should not lead to a template re-render `core/component/decorators/prop`
-
-#### :bug: Bug Fix
-
-* Fixed a bug where adding refs to components could cause them to re-render `core/component/directives/ref`
-* Fixed a bug where adding `v-attrs` to components could cause them to re-render `core/component/directives/attrs`
-=======
-* The `hydrateStyles` method has been made public `iBlock`
-* Added a new `response` event upon successful data retrieval `components/friends/data-provider`
-
-* `build`:
-  * Now SSR build is bundled into a single file
-  * Use the forked `lib/server-renderer` everywhere in the SSR build
-
 ## v4.0.0-beta.107 (2024-07-10)
 
 #### :bug: Bug Fix
@@ -111,7 +92,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   The `$destroy` method now accepts an object with options, which enables control over
   both the recursion of the destructor and the unmounting of vnodes
   within the component `core/component/interface`
->>>>>>> v4
 
 ## v4.0.0-beta.104 (2024-06-19)
 
