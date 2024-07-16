@@ -51,7 +51,8 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 		$renderEngine: {r}
 	} = this;
 
-	if (ref != null) {
+	// Setting the ref instance for the case of async rendering (does not work with SSR)
+	if (!SSR && ref != null) {
 		ref.i ??= r.getCurrentInstance();
 	}
 
@@ -102,7 +103,12 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 
 			Object.keys(props).forEach((prop) => {
 				if (isHandler.test(prop)) {
-					dynamicProps.push(prop);
+					if (SSR) {
+						delete props![prop];
+
+					} else {
+						dynamicProps.push(prop);
+					}
 				}
 			});
 

@@ -31,7 +31,7 @@
 
 				:is = page |
 				:dispatching = true |
-				:renderComponentId = true |
+				:canFunctional = false |
 
 				v-attrs = {'@hook:destroyed': createPageDestructor()} |
 				${attrs}

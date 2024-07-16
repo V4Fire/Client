@@ -11,7 +11,7 @@ import type { SessionStore, SessionDescriptor, SessionKey, SessionParams } from 
 
 export class Session {
 	/**
-	 * An event emitter to broadcast session events
+	 * An event emitter for broadcasting session events
 	 */
 	readonly emitter: EventEmitter = new EventEmitter({maxListeners: 100, newListener: false});
 

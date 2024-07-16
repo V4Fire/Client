@@ -8,12 +8,12 @@
 
 import type { Config as SuperConfig } from '@v4fire/core/config/interface';
 import type { ImagePlaceholderOptions } from 'components/directives/image';
-import type { Options as SafeHtmlOptions } from 'components/directives/safe-html';
+import type { SanitizedOptions } from 'components/directives/safe-html';
 
 export interface Config extends SuperConfig {
 	/**
 	 * Default options for the `v-image` directive.
-	 * See `components/directives/v-image` for the more information.
+	 * For more information, see `components/directives/v-image`.
 	 */
 	image: {
 		/**
@@ -55,7 +55,7 @@ export interface Config extends SuperConfig {
 
 	/**
 	 * Options of the asynchronous component renderer.
-	 * See `core/components/render/daemon` for the more information.
+	 * For more information, see `core/components/render/daemon`.
 	 */
 	asyncRender: {
 		/**
@@ -71,9 +71,9 @@ export interface Config extends SuperConfig {
 
 	/**
 	 * Default options for the `v-safe-html` directive.
-	 * See `components/directives/safe-html` for the more information.
+	 * For more information, see `components/directives/safe-html`.
 	 */
-	safeHtml: SafeHtmlOptions;
+	safeHtml: SanitizedOptions;
 
 	components: typeof COMPONENTS;
 }

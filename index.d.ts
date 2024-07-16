@@ -41,13 +41,6 @@ declare const THEME: CanUndef<string>;
 declare const THEME_ATTRIBUTE: CanUndef<string>;
 declare const AVAILABLE_THEMES: CanUndef<string[]>;
 
-declare const DETECT_USER_PREFERENCES: CanUndef<
-	Dictionary<Dictionary<{
-		enabled: boolean;
-		aliases?: Dictionary<string>;
-	}>>
->;
-
 /**
  * If set to true, the theme attribute will be processed by a proxy server, such as Nginx.
  * The proxy server will interpolate the theme value from a cookie or header to the theme attribute.
@@ -142,7 +135,7 @@ declare var
 		 * @param canvasElement - the storybook canvas element
 		 * @param [rootComponent] - the name of the root component to initialize
 		 */
-		initApp(canvasElement: HTMLElement, rootComponent?: string): Promise<import('./src/core/component').App>;
+		initApp(canvasElement: HTMLElement, rootComponent?: string): Promise<import('./src/core/component').ComponentApp>;
 	},
 
 	/**

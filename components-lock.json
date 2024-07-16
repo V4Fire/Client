@@ -88,6 +88,36 @@
         }
       ],
       [
+        "b-cache-ssr",
+        {
+          "index": "src/components/base/b-cache-ssr/index.js",
+          "declaration": {
+            "name": "b-cache-ssr",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-cache-ssr",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/base/b-cache-ssr/b-cache-ssr.ts",
+          "styles": [],
+          "tpl": "src/components/base/b-cache-ssr/b-cache-ssr.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-checkbox",
         {
           "index": "src/components/form/b-checkbox/index.js",
@@ -980,6 +1010,36 @@
             "src/components/base/b-list/b-list.styl"
           ],
           "tpl": "src/components/base/b-list/b-list.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-prevent-ssr",
+        {
+          "index": "src/components/base/b-prevent-ssr/index.js",
+          "declaration": {
+            "name": "b-prevent-ssr",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-prevent-ssr",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/base/b-prevent-ssr/b-prevent-ssr.ts",
+          "styles": [],
+          "tpl": "src/components/base/b-prevent-ssr/b-prevent-ssr.ss",
           "etpl": null
         }
       ],
@@ -2561,6 +2621,8 @@
               "b-router",
               "b-dynamic-page",
               "b-remote-provider",
+              "b-cache-ssr",
+              "b-prevent-ssr",
               "b-list",
               "b-tree",
               "b-window",
@@ -2595,6 +2657,8 @@
               "core/browser",
               "core/cookies",
               "core/html",
+              "core/html/xss",
+              "core/page-meta-data",
               "models/modules/session"
             ]
           },
@@ -2605,6 +2669,8 @@
             "b-router",
             "b-dynamic-page",
             "b-remote-provider",
+            "b-cache-ssr",
+            "b-prevent-ssr",
             "b-list",
             "b-tree",
             "b-window",
@@ -2639,6 +2705,8 @@
             "core/browser",
             "core/cookies",
             "core/html",
+            "core/html/xss",
+            "core/page-meta-data",
             "models/modules/session"
           ],
           "resolvedLibs": {
@@ -2653,6 +2721,8 @@
               "core/browser",
               "core/cookies",
               "core/html",
+              "core/html/xss",
+              "core/page-meta-data",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
               "models/modules/session"
@@ -2670,6 +2740,8 @@
               "core/browser",
               "core/cookies",
               "core/html",
+              "core/html/xss",
+              "core/page-meta-data",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
               "models/modules/session"

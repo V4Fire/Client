@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.108.a-new-hope (2024-07-15)
+
+#### :bug: Bug Fix
+
+* Attached a handler to ensure the correct lifecycle for pages with keep-alive strategy
+
 ## v4.0.0-beta.98 (2024-05-21)
 
 #### :bug: Bug Fix

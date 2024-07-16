@@ -42,14 +42,14 @@
 							- block fold
 								< template v-if = hasChildren(el)
 									+= self.slot('fold', {':params': 'getFoldProps(el)'})
-										< .&__fold :v-attrs = getFoldProps(el)
+										< .&__fold v-attrs = getFoldProps(el)
 
 						- block item
 							+= self.slot('default', {':item': 'getItemProps(el, i)'})
 								< component.&__item &
-									v-if = item |
 									:is = Object.isFunction(item) ? item(el, i) : item |
-									:v-attrs = getItemProps(el, i)
+									v-if = item |
+									v-attrs = getItemProps(el, i)
 								.
 
 				- block children
@@ -62,9 +62,9 @@
 								:items = el.children |
 								:item = item |
 								:itemProps = itemProps |
-
 								:folded = getFoldedPropValue(el) |
-								:v-attrs = nestedTreeProps
+
+								v-attrs = nestedTreeProps
 							.
 								< template &
 									#default = o |

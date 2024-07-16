@@ -6,14 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Config as SuperConfig } from 'dompurify';
+import type { SanitizedOptions as XSSOptions } from 'core/html/xss';
 import type { DirectiveBinding } from 'core/component/engines';
 
-export interface Options extends Omit<SuperConfig, 'RETURN_DOM' | 'RETURN_DOM_FRAGMENT'> {}
+export interface SanitizedOptions extends Omit<XSSOptions, 'RETURN_DOM' | 'RETURN_DOM_FRAGMENT'> {}
 
 export interface SafeHtmlDirectiveParams extends DirectiveBinding {
 	value: Primitive | {
 		value: Primitive;
-		options?: Options;
+		options?: SanitizedOptions;
 	};
 }

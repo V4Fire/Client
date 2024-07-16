@@ -75,7 +75,7 @@ export function beforeCreateState(
 		configurable: true,
 		enumerable: false,
 		writable: true,
-		value: (ref: unknown) => {
+		value(ref: unknown) {
 			if (ref == null) {
 				return undefined;
 			}
@@ -223,6 +223,20 @@ export function beforeCreateState(
 				.filter((el) => el.component != null)
 				.map((el) => el.component);
 		}
+	});
+
+	unsafe.$async.worker(() => {
+		// We are cleaning memory in a deferred way, because this API may be needed when processing the destroyed hook
+		setTimeout(() => {
+			['$root', '$parent', '$normalParent', '$children'].forEach((key) => {
+				Object.defineProperty(unsafe, key, {
+					configurable: true,
+					enumerable: true,
+					writable: false,
+					value: null
+				});
+			});
+		}, 1000);
 	});
 
 	if (opts?.addMethods) {

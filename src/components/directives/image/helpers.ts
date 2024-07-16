@@ -88,15 +88,15 @@ export function createImgElement(
 			img.setAttribute('data-img', 'failed');
 		},
 
-		style: {
-			opacity: Object.isTruly(imageParams.preview) ? 0 : undefined
-		},
-
 		...optionalAttrs
 	};
 
+	if (Object.isTruly(imageParams.preview)) {
+		Object.assign(attrs, {style: {opacity: 0}});
+	}
+
 	return {
-		toElement: () => {
+		toElement: (document = globalThis.document) => {
 			const
 				img = document.createElement('img');
 
@@ -105,7 +105,12 @@ export function createImgElement(
 					Object.assign(img[name], prop);
 
 				} else if (Object.isTruly(prop)) {
-					img[name] = prop;
+					if (Object.isString(prop)) {
+						img.setAttribute(name, prop);
+
+					} else {
+						img[name] = prop;
+					}
 				}
 			});
 
@@ -157,12 +162,12 @@ export function createPictureElement(
 	commonParams: ImageOptions = imageParams
 ): VirtualElement<HTMLElement> {
 	return {
-		toElement: () => {
+		toElement: (document = globalThis.document) => {
 			const
 				picture = document.createElement('picture');
 
-			picture.appendChild(createSourceElements(imageParams, commonParams).toElement());
-			picture.appendChild(createImgElement(imageParams, commonParams).toElement());
+			picture.appendChild(createSourceElements(imageParams, commonParams).toElement(document));
+			picture.appendChild(createImgElement(imageParams, commonParams).toElement(document));
 
 			return picture;
 		},
@@ -198,7 +203,7 @@ export function createSourceElements(
 	commonParams: ImageOptions = imageParams
 ): VirtualElement<DocumentFragment, []> {
 	return {
-		toElement: () => {
+		toElement: (document = globalThis.document) => {
 			const
 				fragment = document.createDocumentFragment();
 
@@ -207,8 +212,21 @@ export function createSourceElements(
 			}
 
 			imageParams.sources.forEach((source) => {
-				const node = document.createElement('source');
-				addPropsFromSource(Object.cast(node), source);
+				const
+					node = document.createElement('source'),
+					props = {};
+
+				addPropsFromSource(props, source);
+
+				Object.entries(props).forEach(([name, value]) => {
+					if (Object.isString(value)) {
+						node.setAttribute(name, value);
+
+					} else {
+						node[name] = value;
+					}
+				});
+
 				fragment.appendChild(node);
 			});
 

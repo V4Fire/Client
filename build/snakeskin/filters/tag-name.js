@@ -19,9 +19,11 @@ module.exports = [
 	/**
 	 * Expands the `_` snippet as `<div v-tag=${rootTag}>`
 	 *
-	 * @param {string} tag
-	 * @param {object} attrs
-	 * @param {string} rootTag
+	 * @param {object} params
+	 * @param {string} params.tag
+	 * @param {object} params.attrs
+	 * @param {string} params.rootTag
+	 * @param {boolean} params.forceRenderAsVNode
 	 * @returns {string}
 	 *
 	 * @example
@@ -33,16 +35,18 @@ module.exports = [
 	 *   < _.bar
 	 * ```
 	 */
-	function expandRootTag(tag, attrs, rootTag) {
+	function expandRootTag({tag, attrs, rootTag, forceRenderAsVNode}) {
 		if (tag === '_') {
-			const tag = rootTag ? [JSON.stringify(rootTag)] : ["rootTag || 'div'"];
-			attrs['v-tag'] = tag;
+			const
+				def = JSON.stringify(rootTag ?? 'div'),
+				tag = [`'rootTag' in self ? (rootTag || ${def}) : ${def}`];
 
-			if (webpack.ssr) {
+			if (webpack.ssr && forceRenderAsVNode) {
 				attrs[':is'] = tag;
 				return 'component';
 			}
 
+			attrs['v-tag'] = tag;
 			return 'div';
 		}
 
@@ -53,7 +57,8 @@ module.exports = [
 	 * Expands the `:section` and `:/section` snippets.
 	 * These snippets help to use semantics HTML tags, like `article` or `section` and don't care about the `h` levels.
 	 *
-	 * @param {string} tag
+	 * @param {object} params
+	 * @param {string} params.tag
 	 * @returns {string}
 	 *
 	 * @example
@@ -65,7 +70,7 @@ module.exports = [
 	 * < :/section
 	 * ```
 	 */
-	function expandSection(tag) {
+	function expandSection({tag}) {
 		Vars.h = Vars.h ?? 0;
 
 		if (/^(.*):section$/.test(tag)) {
@@ -95,8 +100,9 @@ module.exports = [
 	/**
 	 * Expands the `a:void` snippet as `<a href="javascript:void(0)">`
 	 *
-	 * @param {string} tag
-	 * @param {object} attrs
+	 * @param {object} params
+	 * @param {string} params.tag
+	 * @param {object} params.attrs
 	 * @returns {string}
 	 *
 	 * @example
@@ -105,7 +111,7 @@ module.exports = [
 	 * < a:void.bar
 	 * ```
 	 */
-	function expandVoidLink(tag, attrs) {
+	function expandVoidLink({tag, attrs}) {
 		if (/^a:void$/.test(tag)) {
 			attrs.href = ['javascript:void(0)'];
 			return 'a';
@@ -117,8 +123,9 @@ module.exports = [
 	/**
 	 * Expands the `button:link` snippet as `<button class="a">`
 	 *
-	 * @param {string} tag
-	 * @param {object} attrs
+	 * @param {object} params
+	 * @param {string} params.tag
+	 * @param {object} params.attrs
 	 * @returns {string}
 	 *
 	 * @example
@@ -127,7 +134,7 @@ module.exports = [
 	 * < button:link.bar
 	 * ```
 	 */
-	function expandButtonLink(tag, attrs) {
+	function expandButtonLink({tag, attrs}) {
 		if (/^button:a$/.test(tag)) {
 			attrs.type = ['button'];
 			attrs.class = Array.concat([], attrs.class, 'a');
