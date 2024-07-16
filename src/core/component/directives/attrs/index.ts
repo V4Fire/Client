@@ -228,8 +228,7 @@ ComponentEngine.directive('attrs', {
 				modifiers
 			};
 
-			const
-				cantIgnoreDir = value != null || decl.length !== 2;
+			const cantIgnoreDir = value != null || decl.length !== 2;
 
 			if (Object.isDictionary(dir)) {
 				if (Object.isFunction(dir.beforeCreate)) {
@@ -270,7 +269,7 @@ ComponentEngine.directive('attrs', {
 				eventChunks = event.split('.'),
 				flags = Object.createDict<boolean>();
 
-			// First element is event name, we need to slice only part event modifiers
+			// The first element is the event name; we need to slice only the part containing the event modifiers
 			eventChunks.slice(1).forEach((chunk) => flags[chunk] = true);
 			event = eventChunks[0];
 			isOnceEvent = Boolean(flags.once);

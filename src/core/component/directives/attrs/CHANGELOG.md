@@ -13,8 +13,8 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fix the bug where the event name is set as an event modifier in the `v-attrs` directive `component/directives/attrs`
-* Replaced the method calls to `componentCtx.$once` and `componentCtx.$on` to correctly handle events based on the isOnceEvent flag
+* Fixed the bug where the event name was set as an event modifier in the `v-attrs` directive
+* Replaced the method calls to `componentCtx.$once` and `componentCtx.$on` with correct event handling based on the isOnceEvent flag
 
 ## v4.0.0-alpha.1 (2022-12-14)
 
