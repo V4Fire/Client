@@ -574,17 +574,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @returns {object}
 		 */
 		externals() {
-			const externals = {
+			return {
+				vue: this.config.webpack.ssr ? 'vue' : 'root Vue',
 				jsdom: 'jsdom',
 				eventemitter2: 'EventEmitter2',
 				setimmediate: 'setImmediate'
 			};
-
-			if (this.config.webpack.ssr) {
-				externals.vue = 'vue';
-			}
-
-			return externals;
 		},
 
 		/**

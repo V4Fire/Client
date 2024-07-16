@@ -57,14 +57,6 @@ module.exports = function optimization({buildId, plugins}) {
 					test: /(\/core\/(std.ts|shims))|(\/node_modules\/core-js\/)/
 				},
 
-				vue: {
-					name: 'vue',
-					chunks: 'all',
-					filename: `${config.webpack.output({name: 'lib'})}/vue.js`,
-					enforce: true,
-					test: /\/node_modules\/@?vue\//
-				},
-
 				async: {
 					chunks: 'async',
 					minChunks: 1,
