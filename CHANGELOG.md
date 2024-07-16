@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* `core/page-meta-data` is now expects description element to be a `meta` tag with the attribute `name='description'` instead of the `description` tag
+
 ## v4.0.0-beta.109 (2024-07-16)
 
 #### :house: Internal
@@ -18,12 +24,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Updated `monic-loader` to version `3.0.3` to fix memory leak on rebuild in watch mode
 
 ## v4.0.0-beta.108.a-new-hope (2024-07-15)
-
-#### :bug: Bug Fix
-
-* `core/page-meta-data` is now expects description element to be a `meta` tag with the attribute `name='description'` instead of the `description` tag
-
-## v4.0.0-beta.?? (2024-??-??)
 
 #### :boom: Breaking Change
 
