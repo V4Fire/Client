@@ -26,8 +26,8 @@ the last `replace` method call to be executed when multiple calls were made.
 
 #### :bug: Bug Fix
 
-* Renamed `bRouterProps` to `iRouterProps`. The incorrect name had caused infinite
-retries to load a non-existent template.
+* Renamed `bRouterProps` to `iRouterProps`.
+  The incorrect name had caused infinite retries to load a non-existent template.
 
 ## v4.0.0-beta.10 (2023-07-27)
 

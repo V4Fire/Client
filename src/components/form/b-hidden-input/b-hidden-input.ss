@@ -11,5 +11,7 @@
 - include 'components/super/i-input'|b as placeholder
 
 - template index() extends ['i-input'].index
+	- rootTag = 'span'
+
 	- block body
 		+= self.hiddenInput()

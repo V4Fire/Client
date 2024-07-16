@@ -117,17 +117,14 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 
 			if (ssr) {
 				if (!entryDeps.has(resourceName)) {
-					imports.unshift(`require('core/component/hydration').styles.set('${resourceName}', (${decl})).get('${resourceName}')`);
+					imports.unshift(`require('core/hydration-store').styles.set('${resourceName}', (${decl})).get('${resourceName}')`);
 				}
 
-			} else {
-				decl = `function () { return ${decl}; }`;
-				imports[0] = `TPLS['${resourceName}'] ? ${imports[0]} : ${imports[0]}.then(${decl}, function (err) { stderr(err); return ${decl}(); })`;
+				return `[${imports.join(',')}]`;
 			}
-		}
 
-		if (ssr) {
-			return `[${imports.join(',')}]`;
+			decl = `function () { return ${decl}; }`;
+			imports[0] = `TPLS['${resourceName}'] ? ${imports[0]} : ${imports[0]}.then(${decl}, function (err) { stderr(err); return ${decl}(); })`;
 		}
 
 		return `Promise.all([${imports.join(',')}])`;

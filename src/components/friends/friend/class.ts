@@ -114,8 +114,22 @@ export default class Friend {
 		return this.ctx.dom;
 	}
 
+	/** {@link iBlock.remoteState} */
+	protected get remoteState(): this['CTX']['remoteState'] {
+		return this.ctx.remoteState;
+	}
+
 	constructor(component: iBlock) {
 		this.ctx = component.unsafe;
 		this.component = component;
+
+		this.ctx.$async.worker(() => {
+			// We are cleaning memory in a deferred way, because this API may be needed when processing the destroyed hook
+			setTimeout(() => {
+				// Use Object.delete to bypass TS checks
+				Object.delete(this, 'ctx');
+				Object.delete(this, 'component');
+			}, 1000);
+		});
 	}
 }

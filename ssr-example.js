@@ -24,28 +24,39 @@
    ```
 */
 
-require('./dist/ssr/std');
+const v4app = require('./dist/ssr/main');
 
-const jsdom = require('jsdom');
-const app = require('./dist/ssr/p-v4-components-demo');
+const
+	fs = require('node:fs'),
+	express = require('express');
 
-app
-	.initApp('p-v4-components-demo', {
-		route: '/user/12345',
+const app = express();
+const port = 3000;
 
-		cookies: app.cookies.createCookieStore(''),
-		document: new jsdom.JSDOM(),
+app.use('/dist', express.static('dist'));
 
-		globalEnv: {
-			location: {
-				href: 'https://example.com/user/12345'
-			}
-		},
+app.get('/', (req, res) => {
+	v4app
+		.initApp('p-v4-components-demo', {
+			location: new URL('https://example.com/user/12345'),
 
-		ready: app.createInitAppSemaphore()
-	})
+			cookies: v4app.cookies.createCookieStore(''),
+			session: v4app.session.from(v4app.kvStorage.asyncSessionStorage)
+		})
 
-	.then(({content, styles}) => {
-		require('node:fs').writeFileSync('ssr-example.html', `<style>${styles}</style>${content}`);
-	});
+		.then(({content, styles}) => {
+			fs.writeFileSync('./ssr-example.html', content);
 
+			const html = fs.readFileSync('./dist/client/p-v4-components-demo.html', 'utf8');
+
+			res.send(
+				html
+					.replace(/<!--SSR-->/, content)
+					.replace(/<!--STYLES-->/, styles)
+			);
+		});
+});
+
+app.listen(port, () => {
+	console.log(`Start: http://localhost:${port}`);
+});

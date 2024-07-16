@@ -9,11 +9,31 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.108.a-new-hope (2024-07-15)
+
+#### :rocket: New Feature
+
+* Added Snakeskin constant `SSR` to determine that the template is being assembled for SSR
+* Added Snakeskin constant `renderSSRAsString` for optimizing component assembly under SSR
+* Added an optional `componentName` parameter to the `hydrateStyles` method.
+  This parameter allows for specifying the name of the component for which styles should be hydrated.
+* Added registration of styles for templates in SSR
+
+#### :house: Internal
+
+* The `hydrateStyles` method has been made public
+
 ## v4.0.0-beta.104 (2024-06-19)
 
 #### :house: Internal
 
 * The getter `r` has been moved from `iBlock` to `ComponentInterface`
+
+## v4.0.0-beta.91 (2024-04-19)
+
+#### :house: Internal
+
+* Updated the `ssrRendering` prop usage mechanism
 
 ## v4.0.0-beta.91 (2024-04-19)
 

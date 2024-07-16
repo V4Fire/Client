@@ -159,9 +159,11 @@ This function is useful when you want to decompose your component template into 
 ```
 
 Please note that the result of `getRenderFn` is in the context of the component from which `vdom` is called.
-This will have implications for the component hierarchy, i.e.,
-the created fragment's `$parent` will be the same as the component that owns vdom except for the `$slots` property.
-If your component uses slots, you should pass the `$slots` property explicitly. Otherwise, the slots within your component will not be rendered.
+This will have implications for the component hierarchy.
+For example, the `$parent` of the created fragment will be the same as the `$parent` of the component to
+which the vdom belongs, except the `$slots` property.
+If your component uses slots, you should explicitly pass the `$slots` property.
+Otherwise, the slots within your component will not be rendered.
 
 ```
 - namespace [%fileName%]
