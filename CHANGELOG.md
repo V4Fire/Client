@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.74.?? (2024-07-??)
+
+#### :house: Internal
+
+* Updated `monic-loader` to version `3.0.3` to fix memory leak on rebuild in watch mode
+
 ## v3.74.1 (2024-06-14)
 
 #### :house: Internal
