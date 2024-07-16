@@ -49,6 +49,8 @@ if (SSR) {
 				appProcessId: Object.fastHash(Math.random()),
 
 				cookies: document,
+
+				// FIXME: refactor core/session https://github.com/V4Fire/Client/issues/1329
 				session: session.globalSession,
 
 				location: getLocationAPI(),
