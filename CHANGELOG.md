@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.74.?? (2024-07-??)
+## v3.74.2 (2024-07-16)
 
 #### :house: Internal
 
