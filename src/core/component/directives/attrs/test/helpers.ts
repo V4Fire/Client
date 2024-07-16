@@ -6,15 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ElementHandle, Locator, Page } from 'playwright';
+import type { ElementHandle, JSHandle, Locator, Page } from 'playwright';
 
 import { Component } from 'tests/helpers';
 
 import type { Watcher } from 'components/directives/on-resize';
 
-import type bComponentDirectivesEmitterDummy from 'core/component/directives/attrs/test/b-component-directives-emitter-dummy/b-component-directives-emitter-dummy'
+import type bComponentDirectivesEmitterDummy from 'core/component/directives/attrs/test/b-component-directives-emitter-dummy/b-component-directives-emitter-dummy';
 
-export function renderDummy(page: Page, attrs: RenderComponentsVnodeParams['attrs']) {
+export function renderDummy(
+	page: Page,
+	attrs: RenderComponentsVnodeParams['attrs']
+): Promise<JSHandle<bComponentDirectivesEmitterDummy>> {
 	return Component.createComponent<bComponentDirectivesEmitterDummy>(page, 'b-component-directives-emitter-dummy', {
 		'data-testid': 'target',
 		'v-attrs': {
@@ -77,6 +80,6 @@ export function clickHandler(event: MouseEvent): void {
 	target.setAttribute('data-counter', nextValue.toString());
 }
 
-export function dummyDeleteHandler(target: bComponentDirectivesEmitterDummy) {
+export function dummyDeleteHandler(target: bComponentDirectivesEmitterDummy): void {
 	target.counter++;
 }
