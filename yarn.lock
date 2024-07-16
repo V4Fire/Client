@@ -3364,7 +3364,7 @@ __metadata:
     merge2: "npm:1.4.1"
     mini-css-extract-plugin: "npm:2.5.3"
     monic: "npm:2.6.1"
-    monic-loader: "npm:3.0.2"
+    monic-loader: "npm:3.0.3"
     nanoid: "npm:3.2.0"
     nib: "npm:1.1.2"
     node-static: "npm:0.7.11"
@@ -14156,16 +14156,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"monic-loader@npm:3.0.2":
-  version: 3.0.2
-  resolution: "monic-loader@npm:3.0.2"
+"monic-loader@npm:3.0.3":
+  version: 3.0.3
+  resolution: "monic-loader@npm:3.0.3"
   dependencies:
     collection.js: "npm:^6.7.11"
     loader-utils: "npm:^2.0.0"
   peerDependencies:
     monic: ^2.0.0
     webpack: "*"
-  checksum: b6e226b7b5f066e2bed27d0ed0c89a83c3286ca6d6cdb35b2a8619e86b07667befe03791a3a6bfb90be42009f95514d477804d5bef0b4281b5feb7a8ed3203a6
+  checksum: 009646c26f6f9dbda99b01b338280d58d39dad7954fb92851e84a2191290ad72c3e4e031491c507208416a56182833279acf3515de70291f468003e5cc47754d
   languageName: node
   linkType: hard
 
