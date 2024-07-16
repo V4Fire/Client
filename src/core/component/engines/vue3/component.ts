@@ -98,6 +98,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 						const init = ctx.$initializer;
 
 						try {
+							// If init is a synchronous promise, we explicitly perform an `unwrap` to eliminate the extra microtask
 							return SyncPromise.resolve(init).unwrap();
 
 						} catch {
@@ -140,7 +141,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 		},
 
 		beforeUnmount(): void {
-			init.beforeDestroyState(getComponentContext(this), false);
+			init.beforeDestroyState(getComponentContext(this), {recursive: false});
 		},
 
 		unmounted(): void {

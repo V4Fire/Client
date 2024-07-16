@@ -12,7 +12,7 @@
  */
 
 import config from 'config';
-import DOMPurify from 'dompurify';
+import * as xss from 'core/html/xss';
 
 import { ComponentEngine, VNode } from 'core/component/engines';
 import type { SafeHtmlDirectiveParams } from 'components/directives/safe-html/interface';
@@ -36,38 +36,23 @@ ComponentEngine.directive('safe-html', {
 			return;
 		}
 
-		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const {JSDOM} = require('jsdom');
-		const jsdom = new JSDOM();
-
-		return {innerHTML: sanitize(value, jsdom.window)};
+		return {innerHTML: sanitize(value)};
 	}
 });
 
-function sanitize(value: SafeHtmlDirectiveParams['value'], windowObject: typeof globalThis = globalThis): string {
-	const domPurify = DOMPurify(windowObject);
-
+function sanitize(value: SafeHtmlDirectiveParams['value']): string {
 	if (Object.isPrimitive(value)) {
-		return domPurify.sanitize(toString(value), config.safeHtml);
-
+		return xss.sanitize(toString(value), config.safeHtml);
 	}
 
-	return domPurify.sanitize(
-		toString(value.value),
+	return xss.sanitize(toString(value.value), {
+		...config.safeHtml,
+		...value.options,
 
-		{
-			...config.safeHtml,
-			...value.options,
+		RETURN_DOM_FRAGMENT: false,
+		RETURN_DOM: false
+	});
 
-			RETURN_DOM_FRAGMENT: false,
-			RETURN_DOM: false
-		}
-	);
-
-	/**
-	 * Converts the input value to a string for sanitization
-	 * @param value
-	 */
 	function toString(value: SafeHtmlDirectiveParams['value']): string {
 		return value == null ? '' : String(value);
 	}

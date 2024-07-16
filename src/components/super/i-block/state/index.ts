@@ -601,7 +601,7 @@ export default abstract class iBlockState extends iBlockMods {
 	@hook('mounted')
 	protected async shouldRenderOnHydration(): Promise<void> {
 		if (HYDRATION && !this.ssrRendering) {
-			await this.async.nextTick();
+			await this.nextTick();
 			this.ssrRendering = true;
 		}
 	}

@@ -14,17 +14,17 @@ import type { SessionDescriptor } from 'core/session';
  * @param state - the global application state
  */
 export async function loadSession(state: State): Promise<void> {
+	state.async.on(state.session.emitter, 'set', (e: SessionDescriptor) => {
+		state.isAuth = Boolean(e.auth);
+	});
+
+	state.async.on(state.session.emitter, 'clear', () => {
+		state.isAuth = false;
+	});
+
 	try {
 		// eslint-disable-next-line require-atomic-updates
 		state.isAuth = await state.session.isExists();
-
-		state.async.on(state.session.emitter, 'set', (e: SessionDescriptor) => {
-			state.isAuth = Boolean(e.auth);
-		});
-
-		state.async.on(state.session.emitter, 'clear', () => {
-			state.isAuth = false;
-		});
 
 	} catch (err) {
 		stderr(err);

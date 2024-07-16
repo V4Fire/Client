@@ -6,7 +6,7 @@
   "packageManager": "yarn@4.0.2",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "4.0.0-beta.104",
+  "version": "4.0.0-beta.108.a-new-hope",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -180,7 +180,7 @@
     "ts-jest": "29.1.0"
   },
   "peerDependencies": {
-    "@v4fire/core": "^4.0.0-alpha.34",
+    "@v4fire/core": "^4.0.0-alpha.37",
     "webpack": "^5.82.1"
   },
   "resolutions": {

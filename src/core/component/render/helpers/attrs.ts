@@ -12,7 +12,6 @@ import { beforeMountHooks } from 'core/component/const';
 import type { VNode } from 'core/component/engines';
 
 import { isHandler, mergeProps } from 'core/component/render/helpers/props';
-import { setVNodePatchFlags } from 'core/component/render/helpers/flags';
 
 import type { ComponentInterface } from 'core/component/interface';
 
@@ -54,6 +53,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 		$renderEngine: {r}
 	} = this;
 
+	// Setting the ref instance for the case of async rendering (does not work with SSR)
 	if (!SSR && ref != null) {
 		ref.i ??= r.getCurrentInstance();
 	}
@@ -135,8 +135,6 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 		const key = 'data-has-v-on-directives';
 
 		if (props[key] != null) {
-			setVNodePatchFlags(vnode, 'props');
-
 			const dynamicProps = vnode.dynamicProps ?? [];
 			vnode.dynamicProps = dynamicProps;
 

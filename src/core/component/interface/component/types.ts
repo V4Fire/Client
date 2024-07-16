@@ -52,3 +52,15 @@ export interface ComponentEmitterOptions {
 	 */
 	rawEmitter?: boolean;
 }
+
+export interface ComponentDestructorOptions {
+	/**
+	 * If set to false, the destructor will be executed for the component itself, but not for its descendants
+	 */
+	recursive?: boolean;
+
+	/**
+	 * If set to false, the vnodes won't be unmounted within the component
+	 */
+	shouldUnmountVNodes?: boolean;
+}

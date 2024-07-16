@@ -546,10 +546,17 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @returns {object}
 		 */
 		aliases() {
-			return {
+			const aliases = {
 				dompurify: this.config.es().toLowerCase() === 'es5' ? 'dompurify-v2' : 'dompurify-v3',
 				'vue/server-renderer': 'assets/lib/server-renderer.js'
 			};
+
+			if (!this.config.webpack.ssr) {
+				aliases['assets/lib/server-renderer'] = false;
+				aliases['vue/server-renderer'] = false;
+			}
+
+			return aliases;
 		},
 
 		/**
@@ -1117,7 +1124,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * Returns a dictionary with directive descriptors that need to be specifically processed during code generation
 		 * @returns {Object<string, {tag?: string, innerHTML?: boolean, withBindings?: boolean}>}
 		 */
-		directives() {
+		transformableDirectives() {
 			return {
 				tag: {},
 				icon: include('src/components/directives/icon/compiler-info'),
@@ -1134,14 +1141,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			const {ssr} = this.config.webpack;
 
 			const
-				NOT_CONSTANT = 0;
-
-			const
+				NOT_CONSTANT = 0,
 				EXPRESSION = 4,
 				DIRECTIVE = 7;
 
-			const
-				transformableDirectives = this.directives();
+			const transformableDirectives = this.transformableDirectives();
 
 			const nodeTransforms = [
 				(node) => {

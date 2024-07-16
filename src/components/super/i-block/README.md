@@ -113,6 +113,17 @@ Used to synchronize component data with various external storages.
 ### [rootTag]
 
 The component root tag type.
+This prop is similar to the SS constant *rootTag* but has a higher priority.
+It is convenient to use for various wrapper components.
+
+```
+< b-my-wrapper :rootTag = 'p'
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+  sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+  < b-button
+    Press on me!
+```
 
 ### [verbose = `false`]
 
@@ -491,7 +502,7 @@ However, this mode is necessary for using some directives.
 
 #### SSR
 
-True if the application needs to be built for SSR.
+True if the application is built for SSR.
 
 ```
 - namespace [%fileName%]
@@ -504,7 +515,7 @@ True if the application needs to be built for SSR.
 
 #### HYDRATION
 
-True if the application needs to be built for hydration.
+True if the application is built for hydration.
 
 ```
 - namespace [%fileName%]
@@ -650,7 +661,10 @@ Loads modules by the specified paths and dynamically inserted the provided conte
       < b-button
         Hello world
 
-    += self.loadModules(['components/form/b-button', 'components/form/b-input'], {renderKey: 'controls', wait: 'promisifyOnce.bind(null, "needLoad")'})
+    += self.loadModules(['components/form/b-button', 'components/form/b-input'], { &
+      renderKey: 'controls',
+      wait: 'moduleLoader.waitSignal("controls")'
+    }) .
       < b-button
         Hello world
 ```

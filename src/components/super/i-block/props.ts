@@ -25,7 +25,9 @@ export default abstract class iBlockProps extends ComponentInterface {
 	override readonly globalName?: string;
 
 	/**
-	 * The component root tag type
+	 * The component root tag type.
+	 * This prop is similar to the SS constant *rootTag* but has a higher priority.
+	 * It is convenient to use for various wrapper components.
 	 */
 	@prop({type: String, required: false})
 	readonly rootTag?: string;

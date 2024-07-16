@@ -70,25 +70,50 @@ export default abstract class iStaticPage extends iPage {
 	readonly CurrentPage!: AppliedRoute<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
 	/**
-	 * A module to work with data of data providers globally
+	 * A module to work with data of data providers globally.
+	 *
+	 * ```
+	 * < b-select :dataProvider = 'users.List'
+	 * < b-select :dataProvider = 'cities.List' | :globalName = 'foo'
+	 * ```
+	 *
+	 * ```js
+	 * /// Somewhere in your app code
+	 * if (this.r.providerDataStore.has('users.List')) {
+	 *   /// See `core/object/select`
+	 *   console.log(this.r.providerDataStore.get('users.List').select({where: {id: 1}}));
+	 * }
+	 *
+	 * console.log(this.r.providerDataStore.get('foo')?.data);
+	 * ```
+	 *
+	 * See `components/super/i-static-page/modules/provider-data-store` for more information.
 	 */
 	@system(() => SSR ? null : createProviderDataStore(new RestrictedCache(10)))
 	readonly providerDataStore?: ProviderDataStore;
 
 	/**
-	 * True if the current user is authorized
+	 * True if the current user is authorized.
+	 * This field is based on the one with the same name from `remoteState`.
+	 * It is used for convenience and reactive connection with the template.
+	 * That is, if it changes, the component's template will be updated (if it is used there).
 	 */
 	@field((o) => o.sync.link('remoteState.isAuth'))
 	isAuth!: boolean;
 
 	/**
-	 * True if there is a connection to the Internet
+	 * True if there is a connection to the Internet.
+	 * This field is based on the one with the same name from `remoteState`.
+	 * It is used for convenience and reactive connection with the template.
+	 * That is, if it changes, the component's template will be updated (if it is used there).
 	 */
 	@field((o) => o.sync.link('remoteState.isOnline'))
 	isOnline!: boolean;
 
 	/**
-	 * Last date when the application was online
+	 * Last date when the application was online.
+	 * This field is based on the one with the same name from `remoteState`.
+	 * It is used for convenience.
 	 */
 	@system((o) => o.sync.link('remoteState.lastOnlineDate'))
 	lastOnlineDate?: Date;

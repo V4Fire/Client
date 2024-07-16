@@ -14,8 +14,7 @@ import Utils from 'tests/helpers/utils';
 import type * as DependenciesAPI from 'core/init';
 
 test.describe('core/init/dependencies', () => {
-	let
-		dependenciesAPI: JSHandle<typeof DependenciesAPI>;
+	let dependenciesAPI: JSHandle<typeof DependenciesAPI>;
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();

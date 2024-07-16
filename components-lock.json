@@ -1,5 +1,5 @@
 {
-  "hash": "54aa38c145e3a5076e89e4d32b6f0c19cd5fc4b5f2c74e4ce8286c8c826e8586",
+  "hash": "cdb36634752979f1010d891e06e0201faeb22adbb8f532398331ac38f05a1aac",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -178,6 +178,38 @@
             "src/core/component/interface/component/test/b-component-interface-dummy/b-component-interface-dummy.styl"
           ],
           "tpl": "src/core/component/interface/component/test/b-component-interface-dummy/b-component-interface-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-component-render-flags-dummy",
+        {
+          "index": "src/core/component/render/helpers/test/b-component-render-flags-dummy/index.js",
+          "declaration": {
+            "name": "b-component-render-flags-dummy",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-component-render-flags-dummy",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/render/helpers/test/b-component-render-flags-dummy/b-component-render-flags-dummy.ts",
+          "styles": [
+            "src/core/component/render/helpers/test/b-component-render-flags-dummy/b-component-render-flags-dummy.styl"
+          ],
+          "tpl": "src/core/component/render/helpers/test/b-component-render-flags-dummy/b-component-render-flags-dummy.ss",
           "etpl": null
         }
       ],
@@ -802,12 +834,18 @@
           "declaration": {
             "name": "b-functional-dummy",
             "parent": "b-dummy",
-            "dependencies": [],
+            "dependencies": [
+              "b-functional-button-dummy",
+              "b-functional-getters-dummy"
+            ],
             "libs": []
           },
           "name": "b-functional-dummy",
           "parent": "b-dummy",
-          "dependencies": [],
+          "dependencies": [
+            "b-functional-button-dummy",
+            "b-functional-getters-dummy"
+          ],
           "libs": [],
           "resolvedLibs": {
             "%data": "%data:Set",
@@ -824,6 +862,38 @@
             "src/core/component/functional/test/b-functional-dummy/b-functional-dummy.styl"
           ],
           "tpl": "src/core/component/functional/test/b-functional-dummy/b-functional-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-functional-getters-dummy",
+        {
+          "index": "src/core/component/functional/test/b-functional-getters-dummy/index.js",
+          "declaration": {
+            "name": "b-functional-getters-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-functional-getters-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/functional/test/b-functional-getters-dummy/b-functional-getters-dummy.ts",
+          "styles": [
+            "src/core/component/functional/test/b-functional-getters-dummy/b-functional-getters-dummy.styl"
+          ],
+          "tpl": "src/core/component/functional/test/b-functional-getters-dummy/b-functional-getters-dummy.ss",
           "etpl": null
         }
       ],
@@ -2657,6 +2727,8 @@
               "core/browser",
               "core/cookies",
               "core/html",
+              "core/html/xss",
+              "core/page-meta-data",
               "models/modules/session"
             ]
           },
@@ -2703,6 +2775,8 @@
             "core/browser",
             "core/cookies",
             "core/html",
+            "core/html/xss",
+            "core/page-meta-data",
             "models/modules/session"
           ],
           "resolvedLibs": {
@@ -2717,6 +2791,8 @@
               "core/browser",
               "core/cookies",
               "core/html",
+              "core/html/xss",
+              "core/page-meta-data",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
               "models/modules/session"
@@ -2734,6 +2810,8 @@
               "core/browser",
               "core/cookies",
               "core/html",
+              "core/html/xss",
+              "core/page-meta-data",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
               "models/modules/session"

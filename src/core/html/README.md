@@ -2,6 +2,11 @@
 
 This module provides a bunch of helper functions for working with HTML tags and attributes.
 
+## Submodules
+
+* `core/html/xss` - the module provides an API for sanitizing and normalizing
+  HTML content to prevent XSS vulnerabilities.
+
 ## Functions
 
 ### getSrcSet

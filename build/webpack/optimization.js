@@ -25,7 +25,7 @@ const {
 
 const
 	{inherit} = include('build/helpers'),
-	{ssr, optimize} = config.webpack;
+	{optimize} = config.webpack;
 
 /**
  * Returns parameters for `webpack.optimization`

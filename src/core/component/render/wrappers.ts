@@ -39,6 +39,8 @@ import type {
 
 } from 'core/component/engines';
 
+import type { ssrRenderSlot as ISSRRenderSlot } from '@vue/server-renderer';
+
 import { registerComponent } from 'core/component/init';
 
 import {
@@ -46,6 +48,7 @@ import {
 	isHandler,
 
 	resolveAttrs,
+	normalizePatchFlagUsingProps,
 	normalizeComponentAttrs,
 
 	setVNodePatchFlags,
@@ -69,6 +72,7 @@ export function wrapCreateVNode<T extends typeof createVNode>(original: T): T {
  */
 export function wrapCreateElementVNode<T extends typeof createElementVNode>(original: T): T {
 	return Object.cast(function createElementVNode(this: ComponentInterface, ...args: Parameters<T>) {
+		args[3] = normalizePatchFlagUsingProps(args[3], args[1]);
 		return resolveAttrs.call(this, original.apply(null, args));
 	});
 }
@@ -79,11 +83,17 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
  */
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
-		let
-			[name, attrs, slots, patchFlag, dynamicProps] = args;
+		let [
+			name,
+			attrs,
+			slots,
+			patchFlag,
+			dynamicProps
+		] = args;
 
-		let
-			component: CanNull<ComponentMeta> = null;
+		let component: CanNull<ComponentMeta> = null;
+
+		patchFlag = normalizePatchFlagUsingProps(patchFlag, attrs);
 
 		if (Object.isString(name)) {
 			component = registerComponent(name);
@@ -124,6 +134,8 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			vnode.virtualParent.value :
 			this;
 
+		// For refs within functional components,
+		// it is necessary to explicitly set a reference to the instance of the component
 		if (!SSR && vnode.ref != null && vnode.ref.i == null) {
 			vnode.ref.i ??= {
 				refs: this.$refs,
@@ -236,6 +248,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
  */
 export function wrapCreateElementBlock<T extends typeof createElementBlock>(original: T): T {
 	return Object.cast(function createElementBlock(this: ComponentInterface, ...args: Parameters<T>) {
+		args[3] = normalizePatchFlagUsingProps(args[3], args[1]);
 		return resolveAttrs.call(this, original.apply(null, args));
 	});
 }
@@ -373,10 +386,14 @@ export function wrapRenderSlot<T extends typeof renderSlot>(original: T): T {
 export function wrapWithCtx<T extends typeof withCtx>(original: T): T {
 	return Object.cast(function withCtx(this: ComponentInterface, fn: Function) {
 		return original((...args: unknown[]) => {
+			// The number of arguments for this function varies depending on the compilation mode: either SSR or browser.
+			// This condition helps optimize performance in the browser.
 			if (args.length === 1) {
 				return fn(args[0], args[0]);
 			}
 
+			// If the original function expects more arguments than provided, we explicitly set them to `undefined`,
+			// to then add another, "unregistered" argument
 			if (fn.length - args.length > 0) {
 				args = args.concat(new Array(fn.length - args.length).fill(undefined));
 			}
@@ -479,6 +496,8 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
  * @param api
  */
 export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: string, api: T): T {
+	type BufItems = Array<Parameters<Parameters<typeof ISSRRenderSlot>[4]>[0]>;
+
 	if (path === 'vue/server-renderer') {
 		api = {...api};
 
@@ -504,16 +523,11 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 		if (Object.isFunction(api.ssrRenderSlot)) {
 			const {ssrRenderSlot} = api;
 
-			type RenderSlotArgs = [unknown, string, unknown, unknown, Function, unknown];
-
-			Object.set(api, 'ssrRenderSlot', (...args: RenderSlotArgs) => {
+			Object.set(api, 'ssrRenderSlot', (...args: Parameters<typeof ISSRRenderSlot>) => {
 				const
 					slotName = args[1],
-					cacheKey = `${this.globalName}-${slotName}`;
-
-				const
-					pushI = args.length - 2,
-					push = args[pushI];
+					cacheKey = `${this.globalName}-${slotName}`,
+					push = args[args.length - 2];
 
 				const canCache =
 					'$ssrCache' in this && this.$ssrCache != null && !this.$ssrCache.has(cacheKey) &&
@@ -521,17 +535,19 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 					Object.isFunction(push);
 
 				if (canCache) {
-					const buf: Array<CanPromise<CanArray<string>>> = [];
+					// A special buffer for caching the result during SSR.
+					// This is necessary to reduce substring concatenations during SSR and speed up the output.
+					// It is used in the bCacheSSR component.
+					const cacheBuffer: BufItems = [];
 
-					args[args.length - 2] = (str: CanPromise<CanArray<string>>) => {
-						buf.push(str);
+					args[args.length - 2] = (str) => {
+						cacheBuffer.push(str);
 						push(str);
 					};
 
-					const
-						res = ssrRenderSlot(...args);
+					const res = ssrRenderSlot(...args);
 
-					unrollBuffer(buf)
+					unrollBuffer(cacheBuffer)
 						.then((res) => this.$ssrCache!.set(cacheKey, res))
 						.catch(stderr);
 
@@ -545,7 +561,7 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 
 	return api;
 
-	async function unrollBuffer(buf: Array<CanPromise<CanArray<string>>>): Promise<string> {
+	async function unrollBuffer(buf: BufItems): Promise<string> {
 		let res = '';
 
 		for (let val of buf) {

@@ -6,17 +6,28 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { sanitize } from 'core/html/xss';
+
 import type { Engine } from 'core/page-meta-data/elements/abstract/engines/interface';
 import type { AbstractElement } from 'core/page-meta-data/elements';
+
+import { allowedTags } from 'core/page-meta-data/elements/abstract/engines/ssr/const';
+
+export * from 'core/page-meta-data/elements/abstract/engines/ssr/const';
 
 export class SSREngine implements Engine {
 	/** {@link Engine.render} */
 	render(_element: AbstractElement, tag: string, attrs: Dictionary<string>): string {
-		const attrsString = Object.keys(attrs)
-			.map((key) => `${key}="${attrs[key]}"`)
+		const attrsString = Object.entries(attrs)
+			.map(([key, val]) => `${key}="${val}"`)
 			.join(' ');
 
-		return `<${tag} ${attrsString} />`;
+		return sanitize(`<${tag} ${attrsString} />`, {
+			RETURN_DOM: true,
+			WHOLE_DOCUMENT: true,
+			ADD_TAGS: allowedTags[tag] != null ? [tag] : [],
+			ALLOWED_ATTR: allowedTags[tag] ?? []
+		}).querySelector(tag)!.outerHTML;
 	}
 
 	/** {@link Engine.remove} */

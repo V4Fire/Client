@@ -13,9 +13,51 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2024-??-??)
 
+#### :rocket: New Feature
+
+* Added the `createPropAccessors` method for creating accessors for props marked as `forceUpdate: false` `core/component/interface`
+* Added the `forceUpdate: false` property to designate props whose changes should not lead to a template re-render `core/component/decorators`
+
+#### :bug: Bug Fix
+
+* Fixed a bug where adding refs to components could cause them to re-render `core/component/directives/ref`
+* Fixed a bug where adding `v-attrs` to components could cause them to re-render `core/component/directives/attrs`
+
+## 4.0.0-beta.108.a-new-hope (2024-07-15)
+
 #### :boom: Breaking Change
 
+* `iStaticPage`:
+  * Removed the `locale` field
+  * Removed the `globalEnv` field
+
+* The modules `core/init` and `core/component/state` have been completely redesigned for the new API
+* The module `core/component/state` has been completely redesigned for the new API
+* Moved the hydration store to a separate module from `core/component/hydration` -> `core/hydration-store`
 * Added a wrapper for middleware with additional parameters `core/data/middlewares/hydration-cache`
+
+#### :rocket: New Feature
+
+* Added a new component `bPreventSSR`
+* Added a new component `bCacheSSR`
+* Added a new module `core/html/xss`
+* Added a new module `core/cache/decorators/hydration`
+* Added style registration in the `getRenderFactory` method for templates in SSR `components/friends/vdom`
+
+* `iBlock`:
+  * Added Snakeskin constant `SSR` to determine that the template is being assembled for SSR
+  * Added Snakeskin constant `renderSSRAsString` for optimizing component assembly under SSR
+  * Added an optional `componentName` parameter to the `hydrateStyles` method.
+    This parameter allows for specifying the name of the component for which styles should be hydrated.
+  * Added registration of styles for templates in SSR
+
+* `core/hydration-store`:
+  * Added the ability to set the current environment in the hydration store
+  * Added getting and removing the hydration store value by path
+
+#### :bug: Bug Fix
+
+* Attached a handler to ensure the correct lifecycle for pages with keep-alive strategy `bDynamicPage`
 
 #### :house: Internal
 
@@ -36,6 +78,40 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed a bug where adding refs to components could cause them to re-render `core/component/directives/ref`
 * Fixed a bug where adding `v-attrs` to components could cause them to re-render `core/component/directives/attrs`
+=======
+* The `hydrateStyles` method has been made public `iBlock`
+* Added a new `response` event upon successful data retrieval `components/friends/data-provider`
+
+* `build`:
+  * Now SSR build is bundled into a single file
+  * Use the forked `lib/server-renderer` everywhere in the SSR build
+
+## v4.0.0-beta.107 (2024-07-10)
+
+#### :bug: Bug Fix
+
+* Corrected the improper conversion of cookie attributes that are passed in camelCase format:
+  now all are forcibly converted to dash-style `core/cookies`
+* Fixed incorrect `patchFlag` when creating vnode with event handler `core/component/render`
+
+## v4.0.0-beta.106 (2024-06-25)
+
+#### :bug: Bug Fix
+
+* Do not store computed values in the cache before the functional component is fully created.
+  This fixes hard-to-detect bugs that can occur due to context inheritance.
+  See: https://github.com/V4Fire/Client/issues/1292 `core/component/accessor`
+
+## v4.0.0-beta.105 (2024-06-24)
+
+#### :bug: Bug Fix
+
+* Fixed unwanted execution of unmount handlers in the directives used
+  within the functional component during its re-creation.
+  The `$destroy` method now accepts an object with options, which enables control over
+  both the recursion of the destructor and the unmounting of vnodes
+  within the component `core/component/interface`
+>>>>>>> v4
 
 ## v4.0.0-beta.104 (2024-06-19)
 
@@ -115,12 +191,10 @@ node inside b-virtual-scroll will now be hidden (display: none) by default until
 * Add `REGION` to webpack globals `build`
 * Listen for i18n `setRegion` event `core/component/event`
 
-## v4.0.0-beta.95 (2024-05-06)
+#### :bug: Bug Fix
 
-#### :house: Internal
-
-* Add `REGION` to webpack globals `build`
-* Listen for i18n `setRegion` event `core/component/event`
+* Renamed `bRouterProps` to `iRouterProps`. The incorrect name had caused infinite
+retries to load a non-existent template.
 
 ## v4.0.0-beta.94 (2024-04-24)
 
@@ -327,13 +401,6 @@ node inside b-virtual-scroll will now be hidden (display: none) by default until
 * Fixed getting a component in `getComponent` when an additional root selector is passed `components/friends/dom`
 
 ## 4.0.0-beta.71 (2024-03-12)
-
-#### :boom: Breaking Change
-
-* The modules `core/init` and `core/component/state` have been completely redesigned for the new API
-* The field `locale` has been removed `iStaticPage`
-
-## v4.0.0-beta.?? (2024-??-??)
 
 #### :rocket: New Feature
 

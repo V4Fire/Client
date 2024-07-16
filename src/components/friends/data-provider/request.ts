@@ -238,13 +238,23 @@ export function createRequest<D = unknown>(
 		};
 
 		req
-			.then(then, (err) => {
-				try {
-					this.provider.emitter.emit('error', err, () => createRequest.call(this, method, body, opts));
-				} catch {}
+			.then(
+				(res) => {
+					try {
+						this.provider.emitter.emit('response', res);
+					} catch {}
 
-				return then();
-			})
+					return then();
+				},
+
+				(err) => {
+					try {
+						this.provider.emitter.emit('error', err, () => createRequest.call(this, method, body, opts));
+					} catch {}
+
+					return then();
+				}
+			)
 
 			.catch(stderr);
 	}

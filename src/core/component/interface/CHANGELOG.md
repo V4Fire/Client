@@ -15,6 +15,16 @@ Changelog
 
 * Added the `createPropAccessors` method for creating accessors for props marked as `forceUpdate: false`
 
+## v4.0.0-beta.105 (2024-06-24)
+
+#### :bug: Bug Fix
+
+* Fixed unwanted execution of unmount handlers in the directives used
+  within the functional component during its re-creation.
+  The `$destroy` method now accepts an object with options, which enables control over
+  both the recursion of the destructor and the unmounting of vnodes
+  within the component
+
 ## v4.0.0-beta.104 (2024-06-19)
 
 #### :rocket: New Feature

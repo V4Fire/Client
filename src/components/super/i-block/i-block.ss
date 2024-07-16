@@ -39,10 +39,10 @@
 	*/
 	- forceRenderAsVNode = false
 
-	/** True if the application needs to be built for SSR */
+	/** True if the application is built for SSR */
 	- SSR = require('@config/config').webpack.ssr
 
-	/** True if the application needs to be built for hydration */
+	/** True if the application is built for hydration */
 	: HYDRATION = require('@config/config').webpack.hydration()
 
 	/**
@@ -79,7 +79,10 @@
 	 *   < b-button
 	 *     Hello world
 	 *
-	 * += self.loadModules(['components/form/b-button', 'components/form/b-input'], {renderKey: 'controls', wait: 'promisifyOnce.bind(null, "needLoad")'})
+	 * += self.loadModules(['components/form/b-button', 'components/form/b-input'], { &
+	 *   renderKey: 'controls',
+	 *   wait: 'moduleLoader.waitSignal("controls")'
+	 * }) .
 	 *   < b-button
 	 *     Hello world
 	 *
@@ -97,11 +100,17 @@
 			wait = opts.wait
 		.
 
+		/// Dynamically loaded modules imply asynchronous behavior, meaning they
+		/// should not be rendered server-side (SSR) a priori.
+		/// Therefore, we create a special promise that will only resolve after the rendering has completed.
+		/// This will enable us to exclude such fragments from the SSR rendering.
 		- if SSR
 			- if paths.length > 0
 				? wait = '() => waitComponentStatus("destroyed")'
 
 			- else if wait
+				/// If the wait function is explicitly set to null,
+				/// it means that rendering on the server needs to be forced
 				? wait = '((f) => f == null ? f : () => waitComponentStatus("destroyed"))(' + wait + ')'
 
 		: &
@@ -161,7 +170,10 @@
 						+= content
 
 			- else
-				< template v-for = _ in asyncRender.iterate(moduleLoader.loadBucket(${SSR} ? 1 : ${bucket}), 1, {useRaf: true, filter: ${filter}})
+				< template v-for = _ in asyncRender.iterate(${SSR} ? 1 : moduleLoader.loadBucket(${bucket}), 1, { &
+					useRaf: true,
+					filter: ${filter}
+				}) .
 					+= content
 
 	/**

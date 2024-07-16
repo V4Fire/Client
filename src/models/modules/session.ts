@@ -75,6 +75,7 @@ export default class Session extends Provider {
 	};
 
 	override async getAuthParams(_params: MiddlewareParams): Promise<Dictionary> {
+		// FIXME: skip until the session module is revamped https://github.com/V4Fire/Client/issues/1329
 		if (SSR) {
 			return {};
 		}

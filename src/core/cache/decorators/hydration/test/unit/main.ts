@@ -13,7 +13,6 @@ import { Utils } from 'tests/helpers';
 
 import type * as Cache from 'core/cache';
 
-// @ts-ignore (vue)
 import type * as Decorator from 'core/cache/decorators/hydration';
 import type * as HydrationStore from 'core/hydration-store';
 

@@ -27,8 +27,8 @@ const
 hydrationStore.init(id);
 hydrationStore.set('foo', {key: 'value'});
 
-const
-  hydrationCache = addHydrationCache(cache, hydrationStore, {id, cacheKey});
+const hydrationCache = addHydrationCache(cache, hydrationStore, {id, cacheKey});
 
 hydrationCache.get('foo'); // {key: 'value'}
+hydrationStore.get('foo'); // undefined
 ```
