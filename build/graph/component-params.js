@@ -153,7 +153,7 @@ Object.values(componentParams).forEach((component) => {
 });
 
 /**
- * Return the runtime parameters of the specified component
+ * Returns the runtime parameters of the specified component
  *
  * @param {object} component - component object
  * @returns {object}
