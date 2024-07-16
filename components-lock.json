@@ -1,5 +1,5 @@
 {
-  "hash": "410c0b21f66077394343e6d7f20906dcbc8cfa9c493d1774f765acd4553cbc03",
+  "hash": "8d68ddaef9f57e4029a54ee2d137723f31596aa0e8a298cb8a9be6102e8374cf",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -116,6 +116,38 @@
             "src/components/form/b-checkbox/b-checkbox.styl"
           ],
           "tpl": "src/components/form/b-checkbox/b-checkbox.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-component-emitter-dummy",
+        {
+          "index": "src/core/component/directives/attrs/test/b-component-emitter-dummy/index.js",
+          "declaration": {
+            "name": "b-component-emitter-dummy",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-component-emitter-dummy",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/directives/attrs/test/b-component-emitter-dummy/b-component-emitter-dummy.ts",
+          "styles": [
+            "src/core/component/directives/attrs/test/b-component-emitter-dummy/b-component-emitter-dummy.styl"
+          ],
+          "tpl": "src/core/component/directives/attrs/test/b-component-emitter-dummy/b-component-emitter-dummy.ss",
           "etpl": null
         }
       ],

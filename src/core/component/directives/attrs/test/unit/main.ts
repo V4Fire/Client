@@ -6,13 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ElementHandle, Locator, Page } from 'playwright';
-
-import type { Watcher } from 'components/directives/on-resize';
-
 import test from 'tests/config/unit/test';
 
-import { Component } from 'tests/helpers';
+import {
+
+	renderDirective,
+	renderDummy,
+	resizeHandler,
+	clickHandler,
+	waitForWatcherCallsCount,
+	dummyDeleteHandler
+
+} from 'core/component/directives/attrs/test/helpers';
 
 test.describe('core/component/directives/attrs', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -101,56 +106,38 @@ test.describe('core/component/directives/attrs', () => {
 		await test.expect(component).toHaveAttribute('data-counter', '3');
 	});
 
-	async function renderDirective(
-		page: Page,
-		componentName: string,
-		attrs: RenderComponentsVnodeParams['attrs']
-	): Promise<Locator> {
-		const componentTestId = 'target';
-		await Component.createComponent(page, componentName, {
-			'data-testid': componentTestId,
-			'data-counter': 0,
-			'v-attrs': {...attrs},
-			style: 'width: 100px; height: 100px'
+	test('the directive works correctly with event named as registered key modifier', async ({page}) => {
+		const target = await renderDummy(page, {
+			'@delete': dummyDeleteHandler
 		});
 
-		return page.getByTestId(componentTestId);
-	}
+		const button = page.getByTestId('deleteButton');
 
-	async function waitForWatcherCallsCount(page: Page, observedEl: Locator, expected: number): Promise<void> {
-		const handle = await observedEl.elementHandle();
+		await button.click();
 
-		await page
-			.waitForFunction(
-				([div, val]) => Boolean(
-					div.getAttribute('data-counter') === val.toString(10)
-				),
+		await button.click();
 
-				<[ElementHandle<HTMLElement>, number]>[handle, expected]
-			);
-	}
+		await test.expect(target.evaluate((el) => el.counter)).resolves.toBe(2);
+	});
 
-	function resizeHandler(newRect: DOMRect, oldRect: DOMRect, watcher: Watcher): void {
-		const {target} = watcher;
+	test(
+		[
+			'the directive correctly handles registered keys modifiers.',
+			'Our handler should be replaced by registered keys handler'
+		].join(' '),
 
-		const previousValue = parseInt(
-			target.getAttribute('data-counter') ?? '0',
-			10
-		);
+		async ({page}) => {
+			const target = await renderDummy(page, {
+				'@delete.delete': dummyDeleteHandler
+			});
 
-		const nextValue = previousValue + 1;
-		target.setAttribute('data-counter', nextValue.toString());
-	}
+			const button = page.getByTestId('deleteButton');
 
-	function clickHandler(event: MouseEvent): void {
-		const target = <Element>event.target;
+			await button.click();
 
-		const previousValue = parseInt(
-			target.getAttribute('data-counter') ?? '0',
-			10
-		);
+			await button.click();
 
-		const nextValue = previousValue + 1;
-		target.setAttribute('data-counter', nextValue.toString());
-	}
+			await test.expect(target.evaluate((el) => el.counter)).resolves.toBe(0);
+		}
+	);
 });

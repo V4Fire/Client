@@ -44,6 +44,10 @@ import {
 import type { ComponentInterface } from 'core/component/interface';
 import type { DirectiveParams } from 'core/component/directives/attrs/interface';
 
+//#if runtime has dummyComponents
+import('core/component/directives/attrs/test/b-component-emitter-dummy');
+//#endif
+
 export * from 'core/component/directives/attrs/const';
 export * from 'core/component/directives/attrs/interface';
 
