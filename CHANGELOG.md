@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2024-07-??)
+## v4.0.0-beta.110 (2024-07-17)
 
 #### :bug: Bug Fix
 

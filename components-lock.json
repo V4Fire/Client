@@ -1,5 +1,5 @@
 {
-  "hash": "8d68ddaef9f57e4029a54ee2d137723f31596aa0e8a298cb8a9be6102e8374cf",
+  "hash": "fe7fd65571047ea1d3345ab9972ffeff501edf1aa95b5b0174a5e6a39134a459",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -150,16 +150,16 @@
         }
       ],
       [
-        "b-component-emitter-dummy",
+        "b-component-directives-emitter-dummy",
         {
-          "index": "src/core/component/directives/attrs/test/b-component-emitter-dummy/index.js",
+          "index": "src/core/component/directives/attrs/test/b-component-directives-emitter-dummy/index.js",
           "declaration": {
-            "name": "b-component-emitter-dummy",
+            "name": "b-component-directives-emitter-dummy",
             "parent": "i-block",
             "dependencies": [],
             "libs": []
           },
-          "name": "b-component-emitter-dummy",
+          "name": "b-component-directives-emitter-dummy",
           "parent": "i-block",
           "dependencies": [],
           "libs": [],
@@ -173,11 +173,11 @@
           },
           "type": "block",
           "mixin": false,
-          "logic": "src/core/component/directives/attrs/test/b-component-emitter-dummy/b-component-emitter-dummy.ts",
+          "logic": "src/core/component/directives/attrs/test/b-component-directives-emitter-dummy/b-component-directives-emitter-dummy.ts",
           "styles": [
-            "src/core/component/directives/attrs/test/b-component-emitter-dummy/b-component-emitter-dummy.styl"
+            "src/core/component/directives/attrs/test/b-component-directives-emitter-dummy/b-component-directives-emitter-dummy.styl"
           ],
-          "tpl": "src/core/component/directives/attrs/test/b-component-emitter-dummy/b-component-emitter-dummy.ss",
+          "tpl": "src/core/component/directives/attrs/test/b-component-directives-emitter-dummy/b-component-directives-emitter-dummy.ss",
           "etpl": null
         }
       ],
