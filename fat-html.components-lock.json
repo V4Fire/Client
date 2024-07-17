@@ -1,5 +1,5 @@
 {
-  "hash": "bcc74ed555433a9d9272de5599a350a10b59e8f339a22a554b981f18589b9e54",
+  "hash": "0e8352ab4d111e324b5806d9e1bd95a6d2ba75751c29d181edb549a58ef79d98",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -88,6 +88,36 @@
         }
       ],
       [
+        "b-cache-ssr",
+        {
+          "index": "src/components/base/b-cache-ssr/index.js",
+          "declaration": {
+            "name": "b-cache-ssr",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-cache-ssr",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/base/b-cache-ssr/b-cache-ssr.ts",
+          "styles": [],
+          "tpl": "src/components/base/b-cache-ssr/b-cache-ssr.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-checkbox",
         {
           "index": "src/components/form/b-checkbox/index.js",
@@ -120,6 +150,38 @@
         }
       ],
       [
+        "b-component-directives-emitter-dummy",
+        {
+          "index": "src/core/component/directives/attrs/test/b-component-directives-emitter-dummy/index.js",
+          "declaration": {
+            "name": "b-component-directives-emitter-dummy",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-component-directives-emitter-dummy",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/directives/attrs/test/b-component-directives-emitter-dummy/b-component-directives-emitter-dummy.ts",
+          "styles": [
+            "src/core/component/directives/attrs/test/b-component-directives-emitter-dummy/b-component-directives-emitter-dummy.styl"
+          ],
+          "tpl": "src/core/component/directives/attrs/test/b-component-directives-emitter-dummy/b-component-directives-emitter-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-component-interface-dummy",
         {
           "index": "src/core/component/interface/component/test/b-component-interface-dummy/index.js",
@@ -148,6 +210,38 @@
             "src/core/component/interface/component/test/b-component-interface-dummy/b-component-interface-dummy.styl"
           ],
           "tpl": "src/core/component/interface/component/test/b-component-interface-dummy/b-component-interface-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-component-render-flags-dummy",
+        {
+          "index": "src/core/component/render/helpers/test/b-component-render-flags-dummy/index.js",
+          "declaration": {
+            "name": "b-component-render-flags-dummy",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-component-render-flags-dummy",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/render/helpers/test/b-component-render-flags-dummy/b-component-render-flags-dummy.ts",
+          "styles": [
+            "src/core/component/render/helpers/test/b-component-render-flags-dummy/b-component-render-flags-dummy.styl"
+          ],
+          "tpl": "src/core/component/render/helpers/test/b-component-render-flags-dummy/b-component-render-flags-dummy.ss",
           "etpl": null
         }
       ],
@@ -916,6 +1010,36 @@
             "src/components/base/b-list/b-list.styl"
           ],
           "tpl": "src/components/base/b-list/b-list.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-prevent-ssr",
+        {
+          "index": "src/components/base/b-prevent-ssr/index.js",
+          "declaration": {
+            "name": "b-prevent-ssr",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-prevent-ssr",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/base/b-prevent-ssr/b-prevent-ssr.ts",
+          "styles": [],
+          "tpl": "src/components/base/b-prevent-ssr/b-prevent-ssr.ss",
           "etpl": null
         }
       ],
@@ -2497,6 +2621,8 @@
               "b-router",
               "b-dynamic-page",
               "b-remote-provider",
+              "b-cache-ssr",
+              "b-prevent-ssr",
               "b-list",
               "b-tree",
               "b-window",
@@ -2531,6 +2657,8 @@
               "core/browser",
               "core/cookies",
               "core/html",
+              "core/html/xss",
+              "core/page-meta-data",
               "models/modules/session"
             ]
           },
@@ -2541,6 +2669,8 @@
             "b-router",
             "b-dynamic-page",
             "b-remote-provider",
+            "b-cache-ssr",
+            "b-prevent-ssr",
             "b-list",
             "b-tree",
             "b-window",
@@ -2575,6 +2705,8 @@
             "core/browser",
             "core/cookies",
             "core/html",
+            "core/html/xss",
+            "core/page-meta-data",
             "models/modules/session"
           ],
           "resolvedLibs": {
@@ -2589,6 +2721,8 @@
               "core/browser",
               "core/cookies",
               "core/html",
+              "core/html/xss",
+              "core/page-meta-data",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
               "models/modules/session"
@@ -2606,6 +2740,8 @@
               "core/browser",
               "core/cookies",
               "core/html",
+              "core/html/xss",
+              "core/page-meta-data",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
               "models/modules/session"

@@ -19,7 +19,7 @@ import type { SessionStore } from 'core/session/interface';
 export * from 'core/session/class';
 export * from 'core/session/interface';
 
-const globalSession = new Session(session);
+export const globalSession = new Session(session);
 
 /**
  * Returns an API for managing the session of the specified store

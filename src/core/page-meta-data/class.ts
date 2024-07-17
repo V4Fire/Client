@@ -218,15 +218,16 @@ export class PageMetaData {
 					this.title = attrs.text!;
 					break;
 
-				case 'description':
-					this.description = attrs.value!;
-					break;
-
 				case 'link':
 					this.addLink(attrs);
 					break;
 
 				case 'meta':
+					if (attrs.name === 'description') {
+						this.description = attrs.content!;
+						break;
+					}
+
 					this.addMeta(attrs);
 					break;
 
