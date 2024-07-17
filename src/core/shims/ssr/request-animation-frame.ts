@@ -10,7 +10,7 @@ import GLOBAL from 'core/shims/global';
 
 if (typeof process === 'object' && typeof GLOBAL['requestAnimationFrame'] === 'undefined') {
 	(function requestAnimationFrameShim() {
-		GLOBAL['requestAnimationFrame'] = function requestAnimationFrame(cb) {
+		GLOBAL['requestAnimationFrame'] = function requestAnimationFrame(cb: Function) {
 			return setTimeout(() => cb(performance.now()), 0);
 		};
 
