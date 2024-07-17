@@ -558,7 +558,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		aliases() {
 			const aliases = {
 				dompurify: this.config.es().toLowerCase() === 'es5' ? 'dompurify-v2' : 'dompurify-v3',
-				'vue/server-renderer': 'assets/lib/server-renderer.js'
+				'vue/server-renderer': 'assets/lib/server-renderer.js',
+				// Disable setImmedate polyfill from core-js in favor of our realisation `core/shims/set-immediate`
+				'core-js/modules/web.immediate.js': false
 			};
 
 			if (!this.config.webpack.ssr) {
