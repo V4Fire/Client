@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.??? (2024-??-??)
+
+#### :boom: Breaking Change
+
+* Removed ES build option
+* Added `legacy` build option for the old environment support which can be configured in `.browserslistrc`
+
+#### :house: Internal
+
+* Used SWC with support for browserslist
+
 ## v4.0.0-beta.110 (2024-07-17)
 
 #### :bug: Bug Fix
