@@ -13,7 +13,7 @@ import GLOBAL from 'core/shims/global';
 if (typeof GLOBAL['setImmediate'] !== 'function') {
 	(function setImmediateShim() {
 		if (typeof Promise !== 'function') {
-			GLOBAL['setImmediate'] = function setImmediate(cb) {
+			GLOBAL['setImmediate'] = function setImmediate(cb: Function) {
 				return setTimeout(cb, 0);
 			};
 
@@ -26,20 +26,20 @@ if (typeof GLOBAL['setImmediate'] !== 'function') {
 			resolved = 0;
 
 		var
-			map = {},
+			map: Dictionary<{queue: Array<CanNull<Function>>; pos: number}> = {},
 			queue = new Array(16);
 
 		var
 			fired = false,
 			promise = Promise.resolve();
 
-		function getRandomInt(min, max) {
+		function getRandomInt(min: number, max: number) {
 			return Math.floor(Math.random() * (max - min + 1)) + min;
 		}
 
 		function call() {
 			var
-				track = queue;
+				track: CanNull<Array<CanUndef<Function>>> = queue;
 
 			i = 0;
 			queue = new Array(16);
@@ -61,7 +61,7 @@ if (typeof GLOBAL['setImmediate'] !== 'function') {
 			track = null;
 		}
 
-		GLOBAL['setImmediate'] = function setImmediate(cb) {
+		GLOBAL['setImmediate'] = function setImmediate(cb: Function) {
 			var
 				id,
 				pos = i++;
@@ -84,7 +84,7 @@ if (typeof GLOBAL['setImmediate'] !== 'function') {
 			return id;
 		};
 
-		GLOBAL['clearImmediate'] = function clearImmediate(id) {
+		GLOBAL['clearImmediate'] = function clearImmediate(id: number) {
 			var
 				obj = map[id];
 
