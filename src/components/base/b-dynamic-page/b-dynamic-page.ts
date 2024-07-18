@@ -423,6 +423,8 @@ export default class bDynamicPage extends iDynamicPage {
 					}
 				}
 
+				unsafe.onPageChange = undefined;
+
 				resolve(true);
 			};
 		}
