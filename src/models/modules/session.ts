@@ -29,7 +29,7 @@ import('models/modules/test/test-session');
 export * from 'core/data';
 
 @provider
-class Session extends Provider {
+export default class Session extends Provider {
 	/**
 	 * Authorization scheme prefix
 	 */
@@ -161,5 +161,3 @@ class Session extends Provider {
 		}));
 	}
 }
-
-export default Session;

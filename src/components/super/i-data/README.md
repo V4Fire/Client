@@ -87,7 +87,7 @@ import { provider, Provider } from 'core/data';
 import RestrictedCache from 'core/cache/restricted';
 
 @provider
-class User extends Provider {
+export default class User extends Provider {
   // Each get request will be cached for 10 minutes,
   // but there can be no more than 15 values in the cache
   static request = Provider.request({
@@ -97,8 +97,6 @@ class User extends Provider {
 
   override baseURL: string = '/user/:uuid';
 }
-
-export default User;
 ```
 
 ### Composition of data providers

@@ -11,7 +11,7 @@ import Super, { provider } from 'models/modules/session';
 export * from 'models/modules/session';
 
 @provider('test')
-class Session extends Super {
+export default class Session extends Super {
 	override baseURL: string = '/session';
 
 	static override request: typeof Super.request = Super.request({
@@ -22,5 +22,3 @@ class Session extends Super {
 		}
 	});
 }
-
-export default Session;
