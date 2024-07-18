@@ -46,9 +46,9 @@ export function initProps(
 
 	const
 		isFunctional = meta.params.functional === true,
-		target: typeof props = p.forceUpdate ? props : attrs;
+		source: typeof props = p.forceUpdate ? props : attrs;
 
-	Object.entries(target).forEach(([name, prop]) => {
+	Object.entries(source).forEach(([name, prop]) => {
 		const canSkip =
 			prop == null ||
 			!SSR && isFunctional && prop.functional === false;
@@ -95,6 +95,7 @@ export function initProps(
 			const privateField = `[[${name}]]`;
 
 			if (!opts.forceUpdate) {
+				// Set the property as enumerable so that it can be deleted in the destructor later
 				Object.defineProperty(store, privateField, {
 					configurable: true,
 					enumerable: true,

@@ -193,6 +193,7 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 	attrs[':getParent'] = ["$getParent(self, typeof $restArgs !== 'undefined' ? $restArgs : undefined)"];
 
 	if (component.inheritMods !== false && !attrs[':modsProp']) {
+		// Explicitly pass a prop to activate the reactive effect
 		attrs[':modsProp'] = ['provide.mods()'];
 		attrs['@:modsProp'] = ['createPropAccessors(() => provide.mods())()'];
 	}
@@ -213,7 +214,6 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 		} else if (vFuncDir !== 'false') {
 			if (webpack.ssr) {
 				attrs[':canFunctional'] = [vFuncDir];
-				attrs[':renderComponentId'] = [!vFuncDir];
 
 			} else {
 				attrs[':is'] = [`'${attrs['is'][0]}' + (${vFuncDir} ? '-functional' : '')`];
