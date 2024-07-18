@@ -85,9 +85,11 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		cache = new Map();
 
 	meta.component[SSR ? 'ssrRender' : 'render'] = Object.cast((ctx: object, ...args: unknown[]) => {
-		const
-			unsafe = getComponentContext(ctx),
-			result = callRenderFunction();
+		const unsafe = getComponentContext(ctx);
+
+		Object.set(unsafe, '$renderCounter', unsafe.$renderCounter + 1);
+
+		const result = callRenderFunction();
 
 		Object.set(unsafe, 'renderedOnce', true);
 

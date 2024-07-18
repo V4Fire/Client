@@ -231,6 +231,11 @@ export abstract class ComponentInterface {
 	readonly $renderEngine!: RenderEngine<any>;
 
 	/**
+	 * A number that increments every time the component is rendered
+	 */
+	readonly $renderCounter!: number;
+
+	/**
 	 * A link to the component metaobject.
 	 * This object contains all information of the component properties, methods, etc.
 	 */
@@ -262,11 +267,6 @@ export abstract class ComponentInterface {
 	 * The name of the component's field being initialized at the current moment
 	 */
 	protected readonly $activeField?: string;
-
-	/**
-	 * A number that increments every time the component is re-rendered
-	 */
-	protected readonly $renderCounter!: number;
 
 	/**
 	 * A dictionary containing references to component elements with the "ref" attribute
