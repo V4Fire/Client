@@ -85,11 +85,6 @@ export abstract class ComponentInterface {
 	readonly instance!: this;
 
 	/**
-	 * True if the component has been rendered at least once
-	 */
-	readonly renderedOnce: boolean = false;
-
-	/**
 	 * Additional modifiers for the component.
 	 * Modifiers allow binding the state properties of a component directly to CSS classes,
 	 * without the need for unnecessary re-rendering.

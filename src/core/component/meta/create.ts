@@ -90,7 +90,6 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			result = callRenderFunction();
 
 		Object.set(unsafe, '$renderCounter', unsafe.$renderCounter + 1);
-		Object.set(unsafe, 'renderedOnce', true);
 
 		return result;
 
