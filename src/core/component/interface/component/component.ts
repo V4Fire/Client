@@ -109,7 +109,7 @@ export abstract class ComponentInterface {
 	 * and you give the outer component some theme modifier. This modifier will be recursively provided to
 	 * all child components.
 	 */
-	abstract get sharedMods(): CanNull<Readonly<ModsDict>>;
+	abstract get sharedMods(): CanNull<ModsDict>;
 
 	/**
 	 * Additional classes for the component elements.

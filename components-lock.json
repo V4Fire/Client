@@ -1,5 +1,5 @@
 {
-  "hash": "cdb36634752979f1010d891e06e0201faeb22adbb8f532398331ac38f05a1aac",
+  "hash": "5a9f76edd6bea6fc780aa3b6c92334879259447a8c6703874bfd94a15c006e6f",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1582,6 +1582,38 @@
             "src/components/super/i-block/test/b-super-i-block-lfc-dummy/b-super-i-block-lfc-dummy.styl"
           ],
           "tpl": "src/components/super/i-block/test/b-super-i-block-lfc-dummy/b-super-i-block-lfc-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-super-i-block-mods-dummy",
+        {
+          "index": "src/components/super/i-block/test/b-super-i-block-mods-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-mods-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-super-i-block-mods-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/test/b-super-i-block-mods-dummy/b-super-i-block-mods-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/test/b-super-i-block-mods-dummy/b-super-i-block-mods-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/test/b-super-i-block-mods-dummy/b-super-i-block-mods-dummy.ss",
           "etpl": null
         }
       ],
