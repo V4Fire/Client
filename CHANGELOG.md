@@ -87,8 +87,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Now SSR build is bundled into a single file
-* Use the forked `lib/server-renderer` everywhere in the SSR build
+* The `hydrateStyles` method has been made public `iBlock`
+* Added a new `response` event upon successful data retrieval `components/friends/data-provider`
+
+* `build`:
+  * Now SSR build is bundled into a single file
+  * Use the forked `lib/server-renderer` everywhere in the SSR build
 
 ## v4.0.0-beta.107 (2024-07-10)
 
