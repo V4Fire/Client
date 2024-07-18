@@ -18,7 +18,6 @@ import PageMetaData, { AbstractElementProperties } from 'core/page-meta-data';
 import ThemeManager, { SystemThemeExtractorWeb } from 'core/theme-manager';
 
 import * as session from 'core/session';
-import SessionEngine from 'core/session/engines';
 
 export * as cookies from 'core/cookies';
 export * as session from 'core/session';
@@ -50,7 +49,9 @@ if (SSR) {
 				appProcessId: Object.fastHash(Math.random()),
 
 				cookies: document,
-				session: session.from(SessionEngine),
+
+				// FIXME: refactor core/session https://github.com/V4Fire/Client/issues/1329
+				session: session.globalSession,
 
 				location: getLocationAPI(),
 				pageMetaData: new PageMetaData(getLocationAPI(), getPageMetaElements()),

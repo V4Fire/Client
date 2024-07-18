@@ -11,6 +11,11 @@ Changelog
 
 ## v4.0.0-beta.?? (2024-??-??)
 
+#### :boom: Breaking Change
+
+* Removed the `renderedOnce` field
+* The `$renderCounter` field is now public and updates after each call to the render function
+
 #### :rocket: New Feature
 
 * Added the `createPropAccessors` method for creating accessors for props marked as `forceUpdate: false`

@@ -64,7 +64,7 @@ test.describe('contracts for props effects', () => {
 				await test.expect(text).toHaveText('Content: {}');
 
 				await test.expect(
-					target.evaluate((ctx) => ctx.unsafe.$refs.child?.renderCounter)
+					target.evaluate((ctx) => ctx.unsafe.$refs.child?.$renderCounter)
 				).resolves.toBe(1);
 			}
 		});

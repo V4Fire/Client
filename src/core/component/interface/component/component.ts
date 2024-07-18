@@ -85,11 +85,6 @@ export abstract class ComponentInterface {
 	readonly instance!: this;
 
 	/**
-	 * True if the component has been rendered at least once
-	 */
-	readonly renderedOnce: boolean = false;
-
-	/**
 	 * Additional modifiers for the component.
 	 * Modifiers allow binding the state properties of a component directly to CSS classes,
 	 * without the need for unnecessary re-rendering.
@@ -109,7 +104,7 @@ export abstract class ComponentInterface {
 	 * and you give the outer component some theme modifier. This modifier will be recursively provided to
 	 * all child components.
 	 */
-	abstract get sharedMods(): CanNull<Readonly<ModsDict>>;
+	abstract get sharedMods(): CanNull<ModsDict>;
 
 	/**
 	 * Additional classes for the component elements.
@@ -231,6 +226,11 @@ export abstract class ComponentInterface {
 	readonly $renderEngine!: RenderEngine<any>;
 
 	/**
+	 * A number that increments every time the component is rendered
+	 */
+	readonly $renderCounter!: number;
+
+	/**
 	 * A link to the component metaobject.
 	 * This object contains all information of the component properties, methods, etc.
 	 */
@@ -262,11 +262,6 @@ export abstract class ComponentInterface {
 	 * The name of the component's field being initialized at the current moment
 	 */
 	protected readonly $activeField?: string;
-
-	/**
-	 * A number that increments every time the component is re-rendered
-	 */
-	protected readonly $renderCounter!: number;
 
 	/**
 	 * A dictionary containing references to component elements with the "ref" attribute

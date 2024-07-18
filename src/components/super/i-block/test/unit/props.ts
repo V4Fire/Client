@@ -7,11 +7,12 @@
  */
 
 import { LIGHT } from 'core/theme-manager';
+
 import test from 'tests/config/unit/test';
 
 import { DOM } from 'tests/helpers';
 
-import { renderDummy } from 'components/super/i-block/test/helpers';
+import { renderDummy, renderModsDummy } from 'components/super/i-block/test/helpers';
 
 test.describe('<i-block> props', () => {
 	const
@@ -31,8 +32,8 @@ test.describe('<i-block> props', () => {
 	});
 
 	test('`mods` should set default values for the component modifiers', async ({page}) => {
-		const target = await renderDummy(page, {
-			mods: {
+		const target = await renderModsDummy(page, {
+			modsToProvide: {
 				foo: 1,
 				bla: true,
 				baz: 'ban'
@@ -40,7 +41,7 @@ test.describe('<i-block> props', () => {
 		});
 
 		await test.expect(
-			target.evaluate((ctx) => Object.fastClone(ctx.mods))
+			target.evaluate((ctx) => Object.fastClone(ctx.providedMods))
 
 		).resolves.toEqual({
 			foo: '1',

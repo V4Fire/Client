@@ -46,7 +46,7 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 				const getterName = propPrefix + attrName;
 
 				if (!Object.isFunction(unsafe.$attrs[getterName])) {
-					throw new Error(`No accessors are defined for the prop "${attrName}". To set the accessors, pass them as "@:${attrName} = createPropAccessors(() => propValue)".`);
+					throw new Error(`No accessors are defined for the prop "${attrName}". To set the accessors, pass them as "@:${attrName} = createPropAccessors(() => propValue)()".`);
 				}
 			}
 
