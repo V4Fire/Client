@@ -13,6 +13,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2024-??-??)
 
+#### :boom: Breaking Change
+
+* `core/component/interface`:
+  * Removed the `renderedOnce` field
+  * The `$renderCounter` field is now public and updates after each call to the render function
+
 #### :rocket: New Feature
 
 * Added the `createPropAccessors` method for creating accessors
