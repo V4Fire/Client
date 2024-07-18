@@ -37,16 +37,14 @@ import type { Mods } from 'components/friends/provide/interface';
  * console.log(this.provide.mods({size: 'x'}));
  * ```
  */
-export function mods(this: Friend, mods?: Mods): CanUndef<Readonly<ModsDict>> {
-	const
-		{sharedMods} = this.ctx;
+export function mods(this: Friend, mods?: Mods): CanNull<ModsDict> {
+	const {sharedMods} = this.ctx;
 
-	if (!sharedMods && !mods) {
-		return;
+	if (sharedMods == null && mods == null) {
+		return null;
 	}
 
-	const
-		resolvedMods = {...sharedMods};
+	const resolvedMods = {...sharedMods};
 
 	if (mods != null) {
 		Object.entries(mods).forEach(([key, val]) => {
@@ -54,5 +52,5 @@ export function mods(this: Friend, mods?: Mods): CanUndef<Readonly<ModsDict>> {
 		});
 	}
 
-	return Object.freeze(resolvedMods);
+	return resolvedMods;
 }
