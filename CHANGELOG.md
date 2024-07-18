@@ -16,7 +16,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 * Removed ES build option
-* Added `legacy` build option for the old environment support which can be configured in `.browserslistrc`
+* Added `edition` build option for configuring environment support
+* Added browserslist support
 
 #### :house: Internal
 

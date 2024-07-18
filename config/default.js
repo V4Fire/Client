@@ -83,16 +83,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
-		 * Enable legacy target build for old browsers/environments
-		 * Target for this environment can be configured in .browserslistrc
+		 * Option for configuring target environment for build, for example list of polyfills
 		 *
-		 * @cli legacy-build
-		 * @env LEGACY_BUILD
+		 * @cli build-edition
+		 * @env BUILD_EDITION
 		 */
-		legacy: o('legacy-build', {
+		edition: o('build-edition', {
 			env: true,
-			default: false,
-			type: 'boolean'
+			default: 'modern'
 		}),
 
 		/**
@@ -860,13 +858,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				if (this.ssr) {
 					env = 'ssr';
 
-				} else if (configEnv != null) {
-					if (configEnv === 'production') {
-						env = this.config.build.legacy ? 'production-legacy' : 'production-modern';
-
-					} else {
-						env = 'development';
-					}
+				} else if (configEnv === 'production') {
+					env = this.config.build.edition;
 
 				} else {
 					env = 'development';
@@ -1519,7 +1512,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			// eslint-disable-next-line camelcase
 			node_js: this.webpack.target() === 'node',
-			legacyBuild: this.build.legacy
+			buildEdition: this.build.edition
 		};
 
 		return {
