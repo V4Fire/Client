@@ -16,7 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Removed dead code `core/component/attrs`
-* Updated `monic-loader` to version `3.0.4` to fix memory leak on rebuild in watch mode
+* Updated `monic-loader` to version `3.0.4` to fix regression
 
 ## v4.0.0-beta.110 (2024-07-17)
 
