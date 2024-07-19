@@ -25,6 +25,7 @@ import('components/super/i-block/test/b-super-i-block-watch-dummy');
 import('components/super/i-block/test/b-super-i-block-lfc-dummy');
 import('components/super/i-block/test/b-super-i-block-destructor-dummy');
 import('components/super/i-block/test/b-super-i-block-deactivation-dummy');
+import('components/super/i-block/test/b-super-i-block-teleport-dummy');
 //#endif
 
 export * from 'core/component';
@@ -108,6 +109,8 @@ export default abstract class iBlock extends iBlockProviders {
 			mountedAttrsGroup = {group: 'mountedAttrs'};
 
 		if (originalNode != null && node != null && originalNode !== node) {
+			console.log(2222, this.componentName);
+
 			// Fix the DOM element link to the component
 			originalNode.component = this;
 

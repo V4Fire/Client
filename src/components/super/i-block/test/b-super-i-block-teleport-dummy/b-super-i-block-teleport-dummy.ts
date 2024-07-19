@@ -6,14 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type bButton from 'components/form/b-button/b-button';
+import type bButtonSlide from 'components/base/b-bottom-slide/b-bottom-slide';
 
 import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component()
-export default class bSuperIBlockDeactivationDummy extends iBlock {
+export default class bSuperIBlockTeleportDummy extends iBlock {
 	protected override $refs!: iBlock['$refs'] & {
-		button1: bButton;
-		button2: bButton;
+		component: bButtonSlide;
 	};
 }
