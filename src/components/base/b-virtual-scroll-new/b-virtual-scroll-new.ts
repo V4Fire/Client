@@ -502,7 +502,7 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 
 			if (!SSR) {
 				itemsForMount = this.componentFactory
-					.produceMounted(itemsForMount, <HTMLElement[]>Array.from(this.$refs.container.children));
+					.produceMounted(items, <HTMLElement[]>Array.from(this.$refs.container.children));
 			}
 
 			this.observer.observe(itemsForMount);
