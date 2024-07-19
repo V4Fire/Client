@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.??? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an issue where `initLoadNext` would not properly cancel when a promise was created without initiating a corresponding request. This fix ensures that the virtual scroll component correctly handles the lifecycle of requests, preventing unnecessary data fetching and state inconsistencies.
+
 ## v4.0.0-beta.101 (2024-05-30)
 
 #### :bug: Bug Fix

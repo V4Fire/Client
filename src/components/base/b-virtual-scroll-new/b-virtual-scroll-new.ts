@@ -37,7 +37,9 @@ import type {
 	UnsafeBVirtualScroll,
 	ItemsProcessors,
 	ComponentMode,
-	ComponentItem
+	ComponentItem,
+	MountedChild,
+	MountedItem
 
 } from 'components/base/b-virtual-scroll-new/interface';
 
@@ -137,7 +139,7 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 
 		const
 			params = this.getRequestParams(),
-			get = this.dataProvider.get(params[0], {...params[1], showProgress: false});
+			get = this.async.request(this.dataProvider.get(params[0], {showProgress: false}), params[1]);
 
 		return get
 			.then((res) => {
@@ -426,23 +428,23 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 		this.onRenderStart();
 
 		const
-			items = this.componentFactory.produceComponentItems(),
+			componentItems = this.componentFactory.produceComponentItems(),
 			{renderPage, isInitialRender} = this.getVirtualScrollState();
 
 		if (isInitialRender) {
-			return this.performFirstChunkRender(items);
+			return this.performFirstChunkRender(componentItems);
 		}
 
 		const
-			nodes = this.componentFactory.produceNodes(items),
-			mounted = this.componentFactory.produceMounted(items, nodes);
+			nodes = this.componentFactory.produceNodes(componentItems),
+			itemsForMount = this.componentFactory.produceMounted(componentItems, nodes);
 
-		if (mounted.length === 0) {
+		if (itemsForMount.length === 0) {
 			return this.onRenderDone();
 		}
 
-		this.observer.observe(mounted);
-		this.onDomInsertStart(mounted);
+		this.observer.observe(itemsForMount);
+		this.onDomInsertStart(itemsForMount);
 
 		const
 			fragment = document.createDocumentFragment(),
@@ -496,14 +498,15 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 		this.nextTick({label: $$.firstChunkRender, group: asyncGroup}).then(() => {
 			this.componentInternalState.setIsDomInsertInProgress(false);
 
-			let mounted: ReturnType<typeof this.componentFactory.produceMounted> = [];
+			let itemsForMount: Array<MountedChild | MountedItem> = [];
 
 			if (!SSR) {
-				mounted = this.componentFactory.produceMounted(items, <HTMLElement[]>Array.from(this.$refs.container.children));
+				itemsForMount = this.componentFactory
+					.produceMounted(itemsForMount, <HTMLElement[]>Array.from(this.$refs.container.children));
 			}
 
-			this.observer.observe(mounted);
-			this.onDomInsertStart(mounted);
+			this.observer.observe(itemsForMount);
+			this.onDomInsertStart(itemsForMount);
 
 			this.onDomInsertDone();
 			this.onRenderDone();

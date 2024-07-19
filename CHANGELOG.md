@@ -11,6 +11,10 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.??? (2024-??-??)
+
+* Fixed an issue where `initLoadNext` would not properly cancel when a promise was created without initiating a corresponding request. This fix ensures that the virtual scroll component correctly handles the lifecycle of requests, preventing unnecessary data fetching and state inconsistencies. `components/base/b-virtual-scroll-new`
+
 ## v4.0.0-beta.111 (2024-07-18)
 
 #### :house: Internal

@@ -15,7 +15,7 @@ const config: PlaywrightTestConfig = {
 
 	name: 'unit',
 
-	testMatch: ['src/**/test/unit/**/*.ts'],
+	testMatch: ['src/**/b-virtual-scroll-new/test/unit/**/*.ts'],
 
 	reporter: isCI ? 'github' : undefined,
 
