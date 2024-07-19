@@ -104,17 +104,17 @@ export default abstract class iBlock extends iBlockProviders {
 			mountedAttrs = new Set<string>(),
 			mountedAttrsGroup = {group: 'mountedAttrs'};
 
-		if (this.$el && this.$el.component !== this) {
+		if (node != null && node.component !== this) {
 			// Fix the DOM element link to the component
-			this.$el.component = this;
+			node.component = this;
 
 			Object.defineProperty(this.unsafe, '$el', {
 				configurable: true,
-				get: () => this.$refs[this.$resolveRef('$el')] ?? this.$el
+				get: getNode
 			});
 
 			// Fix the teleported DOM element link to the component
-			this.$el.component = this;
+			this.$el!.component = this;
 
 			mountAttrs(this.$attrs);
 
