@@ -15,9 +15,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed a typo in the hookChange event name for processing activate/deactivate in component `core/component/init`
-* Fixed the component deactivation order: children must be deactivated first `core/component/init`
-* Fixed an issue where the hookChange event should not bubble in `bDynamicPage`
+* `core/component/init`:
+  * Fixed a typo in the event name `hookChange` which is responsible for processing activation and deactivation in the component
+  * Amended the deactivation sequence within the component to ensure that children are deactivated first
+
+*  Fixed an issue to prevent the `hookChange` event from bubbling up `bDynamicPage`
 
 ## v4.0.0-beta.111 (2024-07-18)
 

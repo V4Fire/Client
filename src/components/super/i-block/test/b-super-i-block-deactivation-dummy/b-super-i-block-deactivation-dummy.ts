@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { component } from 'core/component';
-import iBlock from 'components/super/i-block/i-block';
+import iBlock, { component } from 'components/super/i-block/i-block';
+
 import type bButton from 'components/form/b-button/b-button';
 
 @component()

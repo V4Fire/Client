@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import { component, UnsafeGetter, watch } from 'core/component';
+import { component, watch, UnsafeGetter } from 'core/component';
 import type { Classes } from 'components/friends/provide';
 
 import type { ModVal, ModsDecl, ModsProp, ModsDict } from 'components/super/i-block/modules/mods';
@@ -85,11 +85,12 @@ export default abstract class iBlock extends iBlockProviders {
 	}
 
 	/**
-	 * Fixes the teleported component and its DOM nodes that were rendered before the teleport container became ready
+	 * Fixes the issue where the teleported component
+	 * and its DOM nodes were rendered before the teleport container was ready
 	 */
 	@watch('r.shouldMountTeleports')
-	async shouldMountTeleportsChange(): Promise<void> {
-		await this.async.nextTick();
+	protected async shouldMountTeleports(): Promise<void> {
+		await this.nextTick();
 
 		if (this.$el && this.$el.component !== this) {
 			// Fix the DOM element link to the component
@@ -103,6 +104,5 @@ export default abstract class iBlock extends iBlockProviders {
 			// Fix the teleported DOM element link to the component
 			this.$el.component = this;
 		}
-
 	}
 }

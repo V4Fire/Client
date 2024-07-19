@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed an issue where the hookChange event should not bubble
+* Fixed an issue to prevent the `hookChange` event from bubbling up
 
 ## 4.0.0-beta.108.a-new-hope (2024-07-15)
 
