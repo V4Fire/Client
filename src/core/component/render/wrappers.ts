@@ -441,28 +441,24 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 				modifiers: modifiers ?? {}
 			};
 
-			const
-				cantIgnoreDir = value != null || decl.length !== 2;
+			if (!Object.isDictionary(dir)) {
+				return bindings.push(binding);
+			}
 
-			if (Object.isDictionary(dir)) {
-				if (Object.isFunction(dir.beforeCreate)) {
-					const
-						newVnode = dir.beforeCreate(binding, vnode);
+			if (Object.isFunction(dir.beforeCreate)) {
+				const
+					newVnode = dir.beforeCreate(binding, vnode);
 
-					if (newVnode != null) {
-						vnode = newVnode;
-						patchVNode(vnode);
-					}
+				if (newVnode != null) {
+					vnode = newVnode;
+					patchVNode(vnode);
+				}
 
-					if (Object.keys(dir).length > 1 && cantIgnoreDir) {
-						bindings.push(binding);
-					}
-
-				} else if (Object.keys(dir).length > 0 && cantIgnoreDir) {
+				if (Object.keys(dir).length > 1) {
 					bindings.push(binding);
 				}
 
-			} else if (cantIgnoreDir) {
+			} else if (Object.keys(dir).length > 0) {
 				bindings.push(binding);
 			}
 		});
