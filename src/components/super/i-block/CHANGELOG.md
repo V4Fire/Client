@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.?? (2024-??-??)
+
+#### :house: Internal
+
+* Added a new `rootContent` layout wrapper block
+
 ## 4.0.0-beta.108.a-new-hope (2024-07-15)
 
 #### :rocket: New Feature
