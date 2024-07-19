@@ -47,6 +47,7 @@ $RECYCLE.BIN
 /dist
 /tsconfig.json
 /client.tsconfig.json
+/statoscope-stats
 .env
 
 # Log
@@ -56,6 +57,7 @@ $RECYCLE.BIN
 # Temporary
 *.tmp
 *.gz
+*.tgz
 /Releases-js
 /tmp
 /app-cache

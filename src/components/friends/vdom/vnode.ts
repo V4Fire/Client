@@ -7,7 +7,7 @@
  */
 
 import { isComponent } from 'core/component';
-import { getDirectiveComponent } from 'core/component/directives/helpers';
+import { getDirectiveComponent } from 'core/component/directives';
 import type { VNode, VNodeVirtualParent } from 'core/component/engines';
 
 import type VDOM from 'components/friends/vdom/class';

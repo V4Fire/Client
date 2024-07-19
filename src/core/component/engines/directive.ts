@@ -10,8 +10,12 @@ import { ComponentEngine } from 'core/component/engines/engine';
 import type { Directive, DirectiveBinding, VNode } from 'core/component/engines/interface';
 import type { ComponentDestructorOptions } from 'core/component/interface';
 
-// eslint-disable-next-line @v4fire/unbound-method
-const staticDirective = ComponentEngine.directive.length > 0 ? ComponentEngine.directive : null;
+let staticDirective: Nullable<typeof ComponentEngine.directive>;
+
+if (!SSR) {
+	// eslint-disable-next-line @v4fire/unbound-method
+	staticDirective = ComponentEngine.directive.length > 0 ? ComponentEngine.directive : null;
+}
 
 /**
  * A wrapped version of the `ComponentEngine.directive` function, providing hooks for functional components
@@ -36,6 +40,8 @@ ComponentEngine.directive = function directive(name: string, directive?: Directi
 	if (Object.isFunction(directive)) {
 		return originalDirective.call(ctx, name, directive);
 	}
+
+	directive = {...directive};
 
 	if (directive.beforeCreate != null) {
 		const directiveCtx = Object.assign(Object.create(directive), {directive: originalDirective});

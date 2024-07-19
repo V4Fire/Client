@@ -17,8 +17,8 @@
 	/** The hardcoded name of the component. If a name is not explicitly set, it will be based on the template file name. */
 	- componentName = ''
 
-	/** The root tag type. If not specified, it will be taken from the component `rootTag` prop. */
-	- rootTag = null
+	/** The root tag type. This value will be used if a similarly named runtime prop is not passed to the component. */
+	- rootTag = 'div'
 
 	/** Should or not to create an extra wrapper inside the root tag */
 	- rootWrapper = false
@@ -33,10 +33,17 @@
 	- teleport = false
 
 	/**
-	 * If set to false, the component will generate a special markup to
-	 * allow it to not render during server-side rendering
-	 */
-	- ssrRendering = true
+	* If set to true, the component will always be rendered by creating an intermediate VNODE tree.
+	* Enabling this option may negatively affect rendering speed in SSR.
+	* However, this mode is necessary for using some directives.
+	*/
+	- forceRenderAsVNode = false
+
+	/** True if the application is built for SSR */
+	- SSR = require('@config/config').webpack.ssr
+
+	/** True if the application is built for hydration */
+	: HYDRATION = require('@config/config').webpack.hydration()
 
 	/**
 	 * Defines the rendering mode of the template.
@@ -60,7 +67,7 @@
 		- return name.split('.').slice(-1)[0].dasherize()
 
 	/**
-	 * Loads modules by the specified paths and dynamically inserted the provided content when them are loaded
+	 * Loads modules by the specified paths and dynamically inserted the provided content when they are loaded
 	 *
 	 * @param {(string|Array<string>)} path - the module path or list of paths
 	 * @param {{renderKey: string, wait: string}} [opts] - additional options
@@ -72,7 +79,10 @@
 	 *   < b-button
 	 *     Hello world
 	 *
-	 * += self.loadModules(['components/form/b-button', 'components/form/b-input'], {renderKey: 'controls', wait: 'promisifyOnce.bind(null, "needLoad")'})
+	 * += self.loadModules(['components/form/b-button', 'components/form/b-input'], { &
+	 *   renderKey: 'controls',
+	 *   wait: 'moduleLoader.waitSignal("controls")'
+	 * }) .
 	 *   < b-button
 	 *     Hello world
 	 *
@@ -80,8 +90,6 @@
 	 * ```
 	 */
 	- block loadModules(path, opts = {}, content)
-		: SSR = require('@config/config').webpack.ssr
-
 		- if arguments.length < 3
 			? content = opts
 			? opts = {}
@@ -92,9 +100,18 @@
 			wait = opts.wait
 		.
 
+		/// Dynamically loaded modules imply asynchronous behavior, meaning they
+		/// should not be rendered server-side (SSR) a priori.
+		/// Therefore, we create a special promise that will only resolve after the rendering has completed.
+		/// This will enable us to exclude such fragments from the SSR rendering.
 		- if SSR
-			- if paths.length > 0 || wait
-				? wait = '() => { const {Promise} = global; return new Promise(() => {}); }'
+			- if paths.length > 0
+				? wait = '() => waitComponentStatus("destroyed")'
+
+			- else if wait
+				/// If the wait function is explicitly set to null,
+				/// it means that rendering on the server needs to be forced
+				? wait = '((f) => f == null ? f : () => waitComponentStatus("destroyed"))(' + wait + ')'
 
 		: &
 			filter = (wait ? buble.transform("`" + wait + "`").code : 'undefined')
@@ -125,9 +142,8 @@
 			.
 
 			{{
-				void(moduleLoader.addToBucket(${bucket}, {
+				void(${SSR} ? null : moduleLoader.addToBucket(${bucket}, {
 					id: ${interpolatedId},
-					ssr: false,
 					load: () => (async () => {
 						if (typeof (${filter}) === 'function') {
 							return (${filter})();
@@ -146,7 +162,7 @@
 				< template v-if = !field.get('ifOnceStore.' + ${renderKey})
 					{{ void(field.set('ifOnceStore.' + ${renderKey}, true)) }}
 
-					< template v-for = _ in asyncRender.iterate(moduleLoader.loadBucket(${bucket}), 1, { &
+					< template v-for = _ in asyncRender.iterate(${SSR} ? 1 : moduleLoader.loadBucket(${bucket}), 1, { &
 						useRaf: true,
 						group: 'module:' + ${renderKey},
 						filter: ${filter}
@@ -154,7 +170,10 @@
 						+= content
 
 			- else
-				< template v-for = _ in asyncRender.iterate(moduleLoader.loadBucket(${bucket}), 1, {useRaf: true, filter: ${filter}})
+				< template v-for = _ in asyncRender.iterate(${SSR} ? 1 : moduleLoader.loadBucket(${bucket}), 1, { &
+					useRaf: true,
+					filter: ${filter}
+				}) .
 					+= content
 
 	/**
@@ -220,8 +239,8 @@
 
 	: componentId = 'data-cached-class-component-id'
 
-	- if require('@config/config').webpack.ssr
-		? rootAttrs[':' + componentId] = 'String(renderComponentId)'
+	- if SSR
+		? rootAttrs[':' + componentId] = 'String(!canFunctional)'
 
 	- else
 		? rootAttrs[componentId] = 'true'
@@ -243,7 +262,7 @@
 				< ${teleport ? 'teleport' : '?'} to = ${teleport}
 					< _ v-attrs = rootAttrs | ${rootAttrs|!html}
 						{{ void(vdom.saveRenderContext()) }}
-						{{ void(r.initGlobalEnv()) }}
+						{{ void(hydrateStyles('${self.name()}')) }}
 
 						/**
 						 * Generates a slot declaration by the specified parameters
@@ -284,12 +303,10 @@
 
 								- block bodyFooter
 
-						- if !ssrRendering
-							< template v-if = !ssrRendering
-								+= self.render({wait: 'async.idle.bind(async)'})
-									+= self.renderRootContent()
+						- block skeleton
 
-							< template v-else
+						- if SSR || HYDRATION
+							< template v-if = ssrRendering
 								+= self.renderRootContent()
 
 						- else

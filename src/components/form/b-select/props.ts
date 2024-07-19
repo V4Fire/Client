@@ -31,8 +31,6 @@ export default abstract class iSelectProps extends iInputText {
 	/** {@link iActiveItems.Active} */
 	readonly Active!: iActiveItems['Active'];
 
-	override readonly rootTag: string = 'span';
-
 	override readonly valueProp?: this['ActiveProp'];
 
 	/**

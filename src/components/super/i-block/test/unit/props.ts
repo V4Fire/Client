@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { LIGHT } from 'core/theme-manager';
 import test from 'tests/config/unit/test';
 
 import { DOM } from 'tests/helpers';
@@ -45,9 +46,10 @@ test.describe('<i-block> props', () => {
 			foo: '1',
 			bla: 'true',
 			baz: 'ban',
+			context: undefined,
 			progress: undefined,
 			diff: undefined,
-			theme: undefined,
+			theme: LIGHT,
 			exterior: undefined,
 			stage: undefined
 		});
@@ -63,10 +65,11 @@ test.describe('<i-block> props', () => {
 			target.evaluate((ctx) => Object.fastClone(ctx.mods))
 
 		).resolves.toEqual({
+			context: undefined,
 			exterior: 'foo',
 			diff: 'true',
 			progress: undefined,
-			theme: undefined,
+			theme: LIGHT,
 			stage: undefined
 		});
 	});

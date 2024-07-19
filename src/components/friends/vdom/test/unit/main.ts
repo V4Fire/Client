@@ -212,7 +212,7 @@ test.describe('friends/vdom', () => {
 		test('should return a vnode if the provided template exists', async () => {
 			const res = await target.evaluate((ctx) => {
 				const vnode = ctx.unsafe.$withCtx(() => ctx.vdom.getRenderFn('bButton.index')());
-				return !Object.isArray(vnode) && vnode.type === 'div';
+				return !Object.isArray(vnode) && vnode.type === 'span';
 			});
 
 			test.expect(res).toBe(true);

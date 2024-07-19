@@ -10,18 +10,17 @@
 
 import type Async from 'core/async';
 import type { BoundFn, ProxyCb, EventId } from 'core/async';
+import type { AbstractCache } from 'core/cache';
 
-import type { State } from 'core/component/state';
-import type { HydrationStore } from 'core/component/hydration';
-import type { VNode, Slots, ComponentOptions, SetupContext, CreateAppFunction } from 'core/component/engines';
 import type { ComponentMeta } from 'core/component/meta';
+import type { VNode, Slots, ComponentOptions, SetupContext } from 'core/component/engines';
 
 import type { Hook } from 'core/component/interface/lc';
 import type { ModsProp, ModsDict } from 'core/component/interface/mod';
 import type { SyncLinkCache } from 'core/component/interface/link';
 import type { RenderEngine } from 'core/component/interface/engine';
 
-import type { ComponentDestructorOptions, ComponentElement, ComponentEmitterOptions } from 'core/component/interface/component/types';
+import type { ComponentApp, ComponentDestructorOptions, ComponentElement, ComponentEmitterOptions } from 'core/component/interface/component/types';
 import type { WatchPath, WatchOptions, RawWatchHandler } from 'core/component/interface/watch';
 import type { UnsafeGetter, UnsafeComponentInterface } from 'core/component/interface/component/unsafe';
 
@@ -40,14 +39,9 @@ export abstract class ComponentInterface {
 	readonly Component!: ComponentInterface;
 
 	/**
-	 * A link to the application object
+	 * References to the instance of the entire application and its state
 	 */
-	readonly app!: ReturnType<CreateAppFunction>;
-
-	/**
-	 * The unique identifier for the application process
-	 */
-	readonly appProcessId!: string;
+	readonly app!: ComponentApp;
 
 	/**
 	 * The unique component identifier.
@@ -67,6 +61,18 @@ export abstract class ComponentInterface {
 	 * The component name in dash-style without special postfixes like `-functional`
 	 */
 	readonly componentName!: string;
+
+	/**
+	 * The unique or global name of the component.
+	 * Used to synchronize component data with various external storages.
+	 */
+	readonly globalName?: string;
+
+	/**
+	 * True if the component renders as a regular one, but can be rendered as a functional.
+	 * This parameter is used during SSR and when hydrating the page.
+	 */
+	readonly canFunctional?: boolean;
 
 	/**
 	 * A reference to the class instance of the component.
@@ -228,18 +234,6 @@ export abstract class ComponentInterface {
 	protected readonly meta!: ComponentMeta;
 
 	/**
-	 * Hydrated data repository.
-	 * This API is used only for SSR.
-	 */
-	protected readonly hydrationStore?: HydrationStore;
-
-	/**
-	 * The global state with which the SSR rendering process is initialized.
-	 * This API is used only for SSR.
-	 */
-	protected readonly ssrState?: State;
-
-	/**
 	 * A dictionary containing component attributes that are not identified as input properties
 	 */
 	protected readonly $attrs!: Dictionary<string>;
@@ -296,6 +290,11 @@ export abstract class ComponentInterface {
 	 * This property is used by restricted/private consumers, such as private directives or component engines.
 	 */
 	protected readonly $async!: Async<ComponentInterface>;
+
+	/**
+	 * Cache for rendered SSR templates
+	 */
+	protected readonly $ssrCache?: AbstractCache<string>;
 
 	/**
 	 * A promise that resolves when the component is initialized.

@@ -4,29 +4,36 @@ This module provides an API for convenient work with component states.
 
 ## Component lifecycle
 
-Each V4Fire component instance goes through a series of initialization steps when it's created - for example, it needs to set up data observation,
-compile the template, mount the instance to the DOM, and update the DOM when data changes. Along the way, it also runs functions called lifecycle
-hooks, giving users the opportunity to add their own code at specific stages.
+Each V4Fire component instance undergoes a series of initialization steps when it's created;
+for instance, it needs to set up data observation, compile the template, mount the instance to the DOM,
+and update the DOM when data changes.
+Throughout the process, it also initiates functions called lifecycle hooks,
+allowing users to incorporate their own code at specific stages.
 
 ### Supported hooks
 
-V4Fire components have a standard life cycle: the component is created, the component is mounted to the DOM,
-the component is unmounted from the DOM, and so on. V4Fire implements an extended version of the [Vue component life cycle](https://vuejs.org/api/options-lifecycle.html#options-lifecycle).
+V4Fire components follow a standard life cycle: the component is created, the component is mounted to the DOM,
+the component is unmounted from the DOM, and so on.
+
+V4Fire implements an extended version of the [Vue component life cycle](https://vuejs.org/api/options-lifecycle.html#options-lifecycle).
 That is, the V4 component supports all the lifecycle states (hereinafter referred to as hooks) of the Vue component and
 adds two of its own.
 
-1. `beforeRuntime` is a hook that is called before `beforeCreate`;
-2. `beforeDataCreate` is a hook that is called after `beforeCreate` but before `created`.
+1. `beforeRuntime` - a hook that is called prior to `beforeCreate`;
+2. `beforeDataCreate` - a hook that is called after `beforeCreate` but prior to `created`.
 
-Also, V4Fire uses the `beforeDestroy` and `destroyed` hooks, not `beforeUnmount` and `unmounted` as Vue3 does.
+Additionally, V4Fire uses the `beforeDestroy` and `destroyed` hooks,
+instead of `beforeUnmount` and `unmounted` as in Vue3.
 
 #### beforeRuntime
 
-The need for this hook exists due to Vue limitations: the fact is that when a component is called within a template,
-it has a state when it does not yet have its own methods and fields, but only props (`beforeCreate`).
-After `beforeCreate`, a special function is called on the component, which forms a base object with the watchable fields
-of the component, and only then `created` is triggered. So, before `created` we cannot use the component API, like methods,
-getters, etc. However, in order to use some methods before the `created` hook, the [[iBlock]] class has the following code.
+The need for this hook arises due to limitations in Vue: the fact is that when a component is invoked within a template,
+it is in a state where it does not yet possess its own methods and fields, but solely props (`beforeCreate`).
+After `beforeCreate`, a special function is run on the component which forms a base object with the watchable fields
+of the component, and only then is created triggered.
+Hence, before created we cannot use the component API, like methods,
+getters, etc. However, to use some methods before the created hook,
+the [[iBlock]] class incorporates the following code.
 
 ```
 @hook('beforeRuntime')
@@ -44,19 +51,23 @@ protected initBaseAPI() {
 }
 ```
 
-That is, before `beforeCreate`, a special method is triggered that explicitly sets the most necessary API,
-which the component should always have. There are not many methods that can be used before the `created` hook,
-and usually all of them are registered in `iBlock.initBaseAPI`. However, if your component has a new method that needs
-to be used in this way, you can always override the `initBaseAPI` method.
+In other words, before `beforeCreate`,
+there's a special method that is invoked to explicitly set the most essential API,
+which the component should always possess.
+There aren't many methods that can be used before the `created` hook,
+and usually, all of them are registered in `iBlock.initBaseAPI`.
+However, if your component has a new method that needs to be used in this manner,
+the `initBaseAPI` method can always be overridden.
 
 #### beforeDataCreate
 
-It is often necessary to make some modification to watchable fields (such as normalization) before creating a component,
-because once created, any change to such fields can cause re-rendering and can be disastrous for performance.
-We have links, initializers, and API to control the order of initialization, but what if we need to get the entire
-watchable store and modify it in a complex way. It is to solve this problem that the `beforeDataCreate` hook exists:
-it will be called exactly when all observable properties have been created, but not yet linked to the component,
-i.e., we can safely change them and not expect consequences.
+Often, it is crucial to perform some modifications to watchable fields (like normalization) before creating a component,
+because once created, any change to these fields can trigger re-rendering and potentially be detrimental to performance.
+We have links, initializers, and API to manage the order of initialization, but in case we need to access the entire
+watchable store and modify it in a complex manner, the `beforeDataCreate` hook comes to the rescue.
+This hook is exactly triggered when all observable properties have been formulated
+but are not yet linked to the component.
+Therefore, we can safely alter them without worrying about repercussions.
 
 ```typescript
 import iBlock, { component, field, hook } from 'components/super/i-block/i-block';
@@ -72,7 +83,7 @@ export default class bExample extends iBlock {
   @hook('beforeDataCreate')
   normalizeData() {
     // Since `@field` properties are not yet connected to the component,
-    // we cannot call them directly, but only through special methods
+    // we can't call them directly, but only through special methods
     if (this.field.get('i') === 0) {
       this.field.set('j', 1);
     }
@@ -80,15 +91,16 @@ export default class bExample extends iBlock {
 }
 ```
 
-It should also be noted that the `@prop` and `@system` properties are initialized before `beforeCreate`,
-so no special methods or hooks are needed to access them.
+It's also worth noting that the `@prop` and `@system` properties are initialized before `beforeCreate`,
+so there is no need for special methods or hooks to access them.
 
-As a rule, it is better to use link mechanisms to create relationships during initialization and normalization,
-but nevertheless, `beforeDataCreate` can be quite useful.
+Typically, it's better to use link mechanisms for establishing relationships during initialization and normalization.
+However, `beforeDataCreate` can still prove to be quite useful.
 
 ### Hook change events
 
-Every time a component hook value changes, the component emits a series of events that can be listened to both inside and outside the component.
+Every time a component hook value changes,
+the component triggers a series of events that can be listened to both internally and externally to the component.
 
 | EventName    | Description                                  | Payload description                         | Payload            |
 |--------------|----------------------------------------------|---------------------------------------------|--------------------|
@@ -116,7 +128,7 @@ To bind a method to a specific hook, there are three ways:
    ```
 
 2. You can use the `@hook` decorator, which accepts a hook name or a list of names.
-   This way is preferred because it allows you to write more flexible code.
+   This method is preferred because it permits more flexible code writing.
    Note that the non-standard `beforeRuntime` and `beforeDataCreate` hooks can only be used through a decorator.
 
    ```typescript
@@ -155,7 +167,7 @@ To bind a method to a specific hook, there are three ways:
 
 ### Component hook accessor
 
-All V4Fire components have a hook accessor that indicates which hook the component is currently in.
+All V4Fire components have a hook accessor that indicates the current hook of the component.
 
 ```typescript
 import iBlock, { component, hook } from 'components/super/i-block/i-block';
@@ -172,9 +184,10 @@ class bExample extends iBlock {
 
 ### Hook handler execution order
 
-All hook handlers are executed in a queue: those added through the decorator are executed first (in order of addition),
-and then the associated methods (if any) are already executed. If we need to declare that some method should be executed
-only after the execution of another, then we can set this explicitly through a decorator.
+All hook handlers are executed in a queue: those added through the decorator are executed first
+(in the order of addition), followed by the execution of the associated methods (if any).
+If we need to declare that a certain method should be executed only after the execution of another,
+then we can explicitly set this through a decorator.
 
 ```typescript
 import iBlock, { component, field, hook } from 'components/super/i-block/i-block';
@@ -205,27 +218,45 @@ export default class bExample extends iBlock {
 
 ### Asynchronous handlers
 
-Some hooks support asynchronous handlers: `mounted`, `updated`, `destroyed`, `renderTriggered` and `errorCaptured`.
-That is, if one of the hook handlers returns a Promise, then the rest will wait for its resolving to preserve the initialization order.
+Certain hooks support asynchronous handlers: `mounted`, `updated`, `destroyed`, `renderTriggered`, and `errorCaptured`.
+That is, if one of the hook handlers returns a Promise,
+then the rest will wait for its resolution to maintain the initialization order.
 
 ## Component status
 
-V4Fire provides a special status for components that displays their state: the component is loading, the component is ready,
-and so on. We already have a similar status - these are component lifecycle hooks, like `created` or `mounted`.
-But they don't reflect the component state in terms of loading. For example, a component can be mounted, but in fact
-show a spinner and load data. Therefore, all V4Fire components have the special `componentStatus` property.
-This property can take the following values:
+V4Fire provides a special status for components that reflects their state: whether the component is loading, ready,
+and so on.
+We already have a similar status — these are component lifecycle hooks, like `created` or `mounted`.
+However, they don't mirror the component state in terms of loading.
+For instance, a component might be mounted, but in reality, it might display a spinner and be loading data.
+Therefore, all V4Fire components possess the special componentStatus property.
+This property can assume the following values:
 
-* `unloaded` - the component has just been created, but does not load any data;
-* `loading` - the component loads its data;
-* `beforeReady` - the component has loaded all the necessary data and is preparing to update its template;
-* `ready` - the component has loaded all the necessary data and started updating the template;
-* `inactive` - the component is deactivated (see `components/super/i-block/modules/activation`);
-* `destroyed` - the component is destroyed.
+1. `unloaded` - the component has been just created without any initialization:
+   this status might coincide with certain component hooks such as `beforeCreate` or `created`.
+
+2. `loading` - the component begins its data loading process from providers:
+   this status might coincide with certain component hooks such as `created` or `mounted`.
+   If the component gets mounted with this status,
+   it can be reflected in the component's UI, for instance, by displaying a loading indicator.
+
+3. `beforeReady` - the component has fully loaded and is starting to prepare for rendering:
+   this status might coincide with certain component hooks such as created or mounted.
+
+4. `ready` - the component has been completely loaded and rendered:
+   this status might coincide with the mounted hook.
+
+5. `inactive` - the component is in a dormant state,
+   made so by a keep-alive manager or directly through an `activatedProp`:
+   this status might coincide with the `deactivated` hook.
+
+6. `destroyed` - the component has been destroyed:
+   this status might coincide with certain component hooks such as `beforeDestroy` or `destroyed`.
 
 ### Component status change events
 
-Every time a component status value changes, the component emits a series of events that can be listened to both inside and outside the component.
+Each time a component status value changes,
+the component emits a series of events that can be listened to both internally and externally to the component.
 
 | EventName               | Description                                    | Payload description                             | Payload            |
 |-------------------------|------------------------------------------------|-------------------------------------------------|--------------------|
@@ -251,7 +282,7 @@ export default class bExample extends iBlock {
 
 ### Component status accessor
 
-All V4Fire components have a status accessor that indicates which status the component is currently in.
+All V4Fire components have a status accessor that indicates the current status of the component.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -266,8 +297,8 @@ class bExample extends iBlock {
 
 ### The `@wait` decorator
 
-This decorator solves the problem of calling component methods in a state when the component is not yet ready to do so.
-See the documentation for the `components/super/i-block/decorators` module.
+This decorator addresses the issue of invoking component methods when the component is not yet ready for it.
+Refer to the documentation for the `components/super/i-block/decorators` module.
 
 ```typescript
 import iBlock, { component, field, wait } from 'components/super/i-block/i-block';
@@ -303,19 +334,22 @@ class bExample extends iBlock {
 
 ## Synchronizing component state with external sources
 
-Any component can bind its state to a state of another external module.
-For example, a component may store some of its properties in a local storage.
-This means that when such a property changes, it should be automatically synchronized with the storage,
-and on the other hand, when the component is initialized, we must read its value from the storage.
-This is exactly what this module does - it offers a set of APIs to synchronize external states with a component state.
+Any component can bind its state to the state of another external module.
+For instance, a component may store some of its properties in local storage.
+This implies that when such a property changes, it should be automatically synchronized with the storage,
+and conversely, when the component initializes, we must read its value from the storage.
+This is precisely what this module does — it provides a set of APIs to synchronize external states with
+the component state.
 
 ### How does synchronization work?
 
-Synchronization works using two-way connector methods. For example, when a component is initializing,
-it calls the special `syncStorageState` method, which takes data from the storage associated with the component as
-an argument. If this method returns an object, then the values of this object will be mapped to
-the component properties (the keys are the names of the properties). On the other hand, each of these properties
-will be watched and when any of them change, `syncStorageState` will be called again, which will now take an object
+Synchronization operates using two-way connector methods.
+For instance, when a component is initializing, it invokes the special `syncStorageState` method,
+which accepts data from the storage associated with the component as an argument.
+If this method returns an object, then the values of this object will be mapped to
+the component properties (the keys are the names of the properties).
+Conversely, each of these properties will be watched and when any of them change,
+`syncStorageState` will be called again, which will now accept an object
 with the component state and should return an object to store in the storage.
 
 ```typescript
@@ -345,8 +379,11 @@ export default class bExample extends iBlock {
 }
 ```
 
-By default, all components have two basic methods for synchronizing with the router: `syncRouterState` and `convertStateToRouterReset`.
-Also, all components have two similar methods for synchronizing with a storage: `syncStorageState` and `convertStateToStorageReset`.
+By default, all components possess two fundamental methods for synchronizing with
+the router: `syncRouterState` and `convertStateToRouterReset`.
+
+Similarly, all components have two analogous methods for synchronization with
+storage: `syncStorageState` and `convertStateToStorageReset`.
 
 ## API
 
@@ -354,8 +391,8 @@ Also, all components have two similar methods for synchronizing with a storage: 
 
 #### [syncRouterStoreOnInit = `false`]
 
-If true, the component state will be synchronized with the router after initializing.
-For example, you have a component that uses the `syncRouterState` method to create two-way binding with the router.
+If set to true, the component state will be synchronized with the router after initialization.
+For example, you have a component that uses the `syncRouterState` method to create two-way binding with the router:
 
 ```typescript
 import iBlock, { component, field } from 'components/super/i-block/i-block';
@@ -366,27 +403,43 @@ class bExample extends iBlock {
   stage: string = 'defaultStage';
 
   syncRouterState(data?: Dictionary) {
-    // This notation means that if there is a value within `route.query`
-    // it will be mapped to the component as `stage`.
-    // If the route has been changed, the mapping is repeated.
-    // Also, if the `stage` field of the component has been changed,
-    // it will be mapped to the router query parameters as `stage` by using `router.push`.
+    // This notation signifies that if there is a value within the `route.query`,
+    // it will be mapped to the component as stage.
+    // This mapping will also be repeated if the route has been changed.
+    // Additionally, if the stage field of the component has been modified,
+    // it will be mapped to the router query parameters as stage using `router.push`.
     return {stage: data?.stage || this.stage};
   }
 }
 ```
 
-But, if in some cases we don't have `stage` in `route.query`, and the component has a default value,
-we trap in a situation where there is a route that has not been synchronized with the component.
-This can affect the "back" navigation logic. Sometimes this behavior does not meet our expectations.
-But if we switch `syncRouterStoreOnInit` to true, the component will force its state to be synchronized with
-the router after initialization.
+However, in certain cases where the stage value is not present in the `route.query`,
+and the component has a default value for stage.
+We may encounter a situation where there is a route that has not been synchronized with the component.
+This can impact the logic for "back" navigation as it may not meet our expectations.
+
+To address this, if you set `syncRouterStateOnInit` to true,
+the component will force its state to be synchronized with the router after initialization.
+This ensures that the component's state is always in sync with the router,
+even if the route does not have the stage value initially.
+This can provide a more consistent navigation experience, especially when using "back" navigation.
+
+### Fields
+
+#### ssrRendering
+
+If set to false, the component will not render its content during SSR.
+
+In a hydration context, the field value is determined by the value of the `renderOnHydration` flag,
+which is stored in a `hydrationStore` during SSR for components that
+have the `ssrRenderingProp` value set to false.
+In other cases, the field value is derived from the `ssrRenderingProp` property.
 
 ### Getters
 
 #### hook
 
-A string value that indicates what lifecycle hook the component is in.
+A string value that indicates which lifecycle hook the component is currently in.
 For instance, `created`, `mounted` or `destroyed`.
 
 #### isRelatedToSSR
@@ -395,22 +448,23 @@ True if the component is in the context of SSR or hydration.
 
 #### remoteState
 
-A link to an application state object located in `core/component/state`.
+A link to the global state of the application.
+The state interface is described in the `core/component/state` module.
 
-This object is used to set any general application parameters. For example, the status of user authorization or
-online connection; global sharable application data, etc.
+The state object provides multiple APIs for interacting with the application environment,
+for example, the location or session modules.
 
-The way you work with the state object itself is up to you. You can use an API like Redux or just set
-properties directly. Note that the state object is observable and can be reactively bond to component templates.
+Also, you can extend this object with any necessary properties.
+Please note that the state object is observable and can be reactively bound to component templates.
 
 #### isReady
 
-True if the current component is completely ready to work.
-The `ready` status is mean that the component is mounted and all data providers are loaded.
+True if the current component is fully prepared to function.
+The `ready` status means that the component is mounted and all data providers have been loaded.
 
 #### isReadyOnce
 
-True if the component has been in the `ready` state at least once.
+This is true if the component has been in the `ready` state at least once.
 
 #### router
 
@@ -418,7 +472,7 @@ A link to the application router.
 
 #### route
 
-A link to the active route object.
+A link to the current route object.
 
 #### stageGroup
 
@@ -428,35 +482,39 @@ A name of the [[Async]] group associated with the `stage` parameter.
 
 #### componentStatus
 
-A string value indicating the component initializing status:
+A string value indicating the initialization status of the component:
 
-1. `unloaded` - the component has just been created without any initializing:
-   this status may overlap with some component hooks such as `beforeCreate` or `created`.
+1. `unloaded` - the component has been just created without any initialization:
+   this status might coincide with certain component hooks such as `beforeCreate` or `created`.
 
-2. `loading` - the component starts loading data from its providers:
-   this status may overlap with some component hooks such as `created` or `mounted`.
-   If the component has been mounted with this status, you can display this in the component UI.
-   For example, by showing a loading indicator.
+2. `loading` - the component begins its data loading process from providers:
+   this status might coincide with certain component hooks such as `created` or `mounted`.
+   If the component gets mounted with this status,
+   it can be reflected in the component's UI, for instance, by displaying a loading indicator.
 
-3. `beforeReady` - the component has been fully loaded and has started preparing to render:
-   this status may overlap with some component hooks such as `created` or `mounted`.
+3. `beforeReady` - the component has fully loaded and is starting to prepare for rendering:
+   this status might coincide with certain component hooks such as created or mounted.
 
-4. `ready` - the component has been fully loaded and rendered: this status may overlap with the `mounted` hook.
+4. `ready` - the component has been completely loaded and rendered:
+   this status might coincide with the mounted hook.
 
-5. `inactive` - the component is frozen by a keep-alive manager or directly using `activatedProp`:
-   this status can overlap with the `deactivated` hook.
+5. `inactive` - the component is in a dormant state,
+   made so by a keep-alive manager or directly through an `activatedProp`:
+   this status might coincide with the `deactivated` hook.
 
 6. `destroyed` - the component has been destroyed:
-   this status may overlap with some component hooks such as `beforeDestroy` or `destroyed`.
+   this status might coincide with certain component hooks such as `beforeDestroy` or `destroyed`.
 
 #### stage
 
-A string value that specifies in which logical state the component should run.
-For instance, depending on this option, the component can render different templates by separating them with `v-if` directives.
+A string value specifying the logic state in which the component should operate.
+For instance, depending on this option, the component may render different templates
+by distinguishing them with the `v-if` directive.
 
 ##### Component stage change events
 
-Every time a component stage value changes, the component emits a series of events that can be listened to both inside and outside the component.
+Each time a component stage value changes,
+the component emits a series of events that can be listened to both internally and externally to the component.
 
 | EventName     | Description                                   | Payload description                           | Payload            |
 |---------------|-----------------------------------------------|-----------------------------------------------|--------------------|
@@ -467,7 +525,7 @@ Every time a component stage value changes, the component emits a series of even
 
 #### getComponentInfo
 
-Returns a dictionary with information for debugging or logging the component.
+Returns a dictionary containing information about the component, useful for debugging or logging purposes.
 
 ```
 getComponentInfo(): Dictionary {
@@ -479,9 +537,9 @@ getComponentInfo(): Dictionary {
 }
 ```
 
-#### waitStatus
+#### waitComponentStatus
 
-Returns a promise that will be resolved when the component is switched to the specified component status.
+Returns a promise that will be resolved when the component transitions to the specified component status.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -496,16 +554,18 @@ class bExample extends iBlock {
 
 #### syncStorageState
 
-This method works as a two-way connector between the component and its storage.
+This method serves as a two-way connector between the component and its storage.
 
-While the component is initializing, it requests the storage for its associated data, using the `globalName` prop
-as the namespace to search. When the storage is ready to provide data to the component, it passes the data to
-this method. After that, the method returns a dictionary associated with the component properties
-(you can specify a complex path with dots, like `'foo.bla.bar'` or `'mods.hidden'`).
+During the component's initialization, it requests its associated data from the storage,
+using the `globalName` prop as the namespace for the search.
+When the storage is ready to supply the data to the component, it passes the data to this method.
+Consequently, the method returns a dictionary associated with the component properties
+(complex paths with dots can be specified, like `'foo.bla.bar'` or `'mods.hidden'`).
 
-Also, the component will watch for changes to each property in this dictionary.
-If at least one of  these properties is changed, the entire data batch will be synchronized with the storage
-using this method. When the component provides the storage data, the second argument to the method is `'remote'`.
+Moreover, the component will monitor changes to each property in this dictionary.
+If at least one of these properties changes, the entire data batch gets synchronized with
+the storage using this method.
+When the component delivers the storage data, the second argument to the method is `'remote'`.
 
 #### convertStateToStorageReset
 
@@ -514,20 +574,36 @@ This method will be used when calling `state.resetStorage`.
 
 #### syncRouterState
 
-This method works as a two-way connector between the component and the application router.
+This method serves as a two-way connector between the component and the application router.
 
-While the component is initializing, it requests the router for its associated data.
-The router provides the data by using this method. After that, the method returns a dictionary associated with
-the component properties (you can specify a complex path with dots, like `'foo.bla.bar'` or `'mods.hidden'`).
+During the component's initialization, it requests its associated data from the router.
+The router delivers the data by using this method.
+Following this, the method returns a dictionary associated with the component properties
+(you can specify a complex path with dots, such as `'foo.bla.bar'` or `'mods.hidden'`).
 
-Also, the component will watch for changes to each property in this dictionary.
-If at least one of  these properties is changed, the entire data batch will be synchronized with the router
-using this method. When the component provides the router data, the second argument to the method is `'remote'`.
+Moreover, the component will monitor changes to each property within this dictionary.
+If at least one of these properties changes,
+the entire data batch is synchronized with the router using this method.
+When the component supplies the data to the router, the second argument to the method is `'remote'`.
 
-Keep in mind that the router is global to all components, meaning the dictionary this method passes to the router
-will extend the current route data, but not override  (`router.push(null, {...route, ...componentData}})`).
+Keep in mind that the router is global to all components.
+This means the dictionary passed to the router by this method will extend the existing route data,
+but not override it (`router.push(null, {...route, ...componentData})`).
 
 #### convertStateToRouterReset
 
 Returns a dictionary with the default component properties to reset the router state.
 This method will be used when calling `state.resetRouter`.
+
+#### hydrateStyles
+
+This method is used to hydrate the component styles for server-side rendering (SSR).
+It is automatically invoked for the current component upon creation.
+
+Since this method is called automatically during the component's lifecycle,
+there is generally no need to call it manually.
+However, if you need to manually force a hydration of styles, you can call it as follows:
+
+```typescript
+yourComponentInstance.hydrateStyles('yourComponentName');
+```
