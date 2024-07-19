@@ -85,11 +85,11 @@ export default abstract class iBlock extends iBlockProviders {
 	}
 
 	/**
-	 * Fixes the issue where the teleported component
+	 * Handler: fixes the issue where the teleported component
 	 * and its DOM nodes were rendered before the teleport container was ready
 	 */
 	@watch('r.shouldMountTeleports')
-	protected async shouldMountTeleports(): Promise<void> {
+	protected async onMountTeleports(): Promise<void> {
 		await this.nextTick();
 
 		if (this.$el && this.$el.component !== this) {
