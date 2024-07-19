@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Resolved the issue with consecutive router calls and option merging during `replace(null)` `bRouter`
+
 ## v4.0.0-beta.111 (2024-07-18)
 
 #### :house: Internal
