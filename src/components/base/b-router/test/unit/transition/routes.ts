@@ -10,12 +10,11 @@ import type { JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
 
-import { createInitRouter, assertPathTransitionsTo } from 'components/base/b-router/test/helpers';
-import type { EngineName } from 'components/base/b-router/test/interface';
-
+import type { TransitionOptions } from 'core/router';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
-import type { TransitionOptions } from 'core/router';
+import { createInitRouter, assertPathTransitionsTo } from 'components/base/b-router/test/helpers';
+import type { EngineName } from 'components/base/b-router/test/interface';
 
 // eslint-disable-next-line max-lines-per-function
 test.describe('<b-router> route handling', () => {
