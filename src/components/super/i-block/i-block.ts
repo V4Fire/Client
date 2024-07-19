@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import { component, watch, UnsafeGetter } from 'core/component';
+import { component, hook, watch, UnsafeGetter } from 'core/component';
 import type { Classes } from 'components/friends/provide';
 
 import type { ModVal, ModsDecl, ModsProp, ModsDict } from 'components/super/i-block/modules/mods';
@@ -88,10 +88,13 @@ export default abstract class iBlock extends iBlockProviders {
 	 * Handler: fixes the issue where the teleported component
 	 * and its DOM nodes were rendered before the teleport container was ready
 	 */
-	@watch('r.shouldMountTeleports')
-	protected async onMountTeleports(): Promise<void> {
-		await this.nextTick();
+	@watch({
+		path: 'r.shouldMountTeleports',
+		flush: 'post'
+	})
 
+	@hook('before:mounted')
+	protected onMountTeleports(): void {
 		const getNode = () => this.$refs[this.$resolveRef('$el')] ?? this.$el;
 
 		const {
@@ -113,18 +116,16 @@ export default abstract class iBlock extends iBlockProviders {
 
 			Object.defineProperty(this.unsafe, '$el', {
 				configurable: true,
-				get: getNode
+				get: () => node
 			});
 
 			mountAttrs(this.$attrs);
-
-			this.watch('$attrs', {deep: true}, (attrs: Dictionary<string>) => {
-				$a.terminateWorker(mountedAttrsGroup);
-				mountAttrs(attrs);
-			});
+			this.watch('$attrs', {deep: true}, mountAttrs);
 		}
 
 		function mountAttrs(attrs: Dictionary<string>) {
+			$a.terminateWorker(mountedAttrsGroup);
+
 			if (node == null || originalNode == null) {
 				return;
 			}
