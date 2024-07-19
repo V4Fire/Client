@@ -104,7 +104,7 @@ export default abstract class iBlock extends iBlockProviders {
 			mountedAttrs = new Set<string>(),
 			mountedAttrsGroup = {group: 'mountedAttrs'};
 
-		if (originalNode != null && originalNode.component !== this) {
+		if (originalNode != null && node != null && originalNode !== node) {
 			// Fix the DOM element link to the component
 			originalNode.component = this;
 
