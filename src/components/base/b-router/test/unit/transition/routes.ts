@@ -10,10 +10,11 @@ import type { JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
 
+import type { TransitionOptions } from 'core/router';
+import type iStaticPage from 'components/super/i-static-page/i-static-page';
+
 import { createInitRouter, assertPathTransitionsTo } from 'components/base/b-router/test/helpers';
 import type { EngineName } from 'components/base/b-router/test/interface';
-
-import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 // eslint-disable-next-line max-lines-per-function
 test.describe('<b-router> route handling', () => {
@@ -450,6 +451,149 @@ test.describe('<b-router> route handling', () => {
 				});
 			}
 		);
+
+		test(
+			'the router should change the route according to last `push()` call during a series of subsequent calls',
+
+			async ({page}) => {
+				const root = await createInitRouter(engineName, {
+					main: {
+						path: '/'
+					},
+
+					second: {
+						path: '/second'
+					},
+
+					third: {
+						path: '/third'
+					},
+
+					forth: {
+						path: '/forth'
+					}
+				})(page, {
+					initialRoute: 'main'
+				});
+
+				const transition = root.evaluate((ctx) => {
+					const promise = new Promise((resolve) => {
+						ctx.router!.on('transition', () => {
+							if (ctx.route?.name == null) {
+								return;
+							}
+
+							resolve(ctx.route.name);
+						});
+					});
+
+					void ctx.router!.push('second');
+					void ctx.router!.push('third');
+					void ctx.router!.push('forth');
+
+					return promise;
+				});
+
+				await test.expect(transition).resolves.toEqual('forth');
+			}
+		);
+
+		for (const paramKind of <Array<keyof TransitionOptions>>['params', 'query']) {
+			test.describe(
+				[
+					`the router should only update keys listed in "${paramKind}" dictionary`,
+					'in a series of subsequent `.replace(null, ...)` calls'
+				].join(' '),
+
+				() => {
+					let root: JSHandle<iStaticPage>;
+
+					test.beforeEach(async ({page}) => {
+						root = await createInitRouter(engineName, {
+							main: {
+								path: '/',
+								[paramKind]: {
+									doNotTouch: 1,
+									mayChange: 1,
+									mayChangeToo: 1
+								}
+							}
+						})(page, {
+							initialRoute: 'main'
+						});
+					});
+
+					test('if an existing parameter is changed', async () => {
+						await testReplaceSequenceTransition(
+							paramKind,
+							[
+								{mayChange: 2},
+								{mayChangeToo: 2}
+							],
+
+							{
+								doNotTouch: 1,
+								mayChange: 2,
+								mayChangeToo: 2
+							}
+						);
+					});
+
+					test('if a new parameter is added', async () => {
+						await testReplaceSequenceTransition(
+							paramKind,
+							[
+								{firstNewParam: 1},
+								{secondNewParam: 1}
+							],
+
+							{
+								doNotTouch: 1,
+								mayChange: 1,
+								mayChangeToo: 1,
+								firstNewParam: 1,
+								secondNewParam: 1
+							}
+						);
+					});
+
+					/**
+					 * Performs a test of a transition caused by a sequence of not-awaited `replace()` calls.
+					 * Returns a Promise.
+					 *
+					 * @param paramKind - the kind of parameter to test; must be either `query` or `params`
+					 * @param optsForCalls - an array of options where each element corresponds to one `replace()` call
+					 * @param expectedResult - a dictionary representing the expected value
+					 *   of `ctx.route.[paramKind]` after the transition
+					 */
+					async function testReplaceSequenceTransition(
+						paramKind: keyof TransitionOptions,
+						optsForCalls: Dictionary[],
+						expectedResult: Dictionary
+					): Promise<void> {
+						const transition = root.evaluate((ctx, [paramKind, optsForCalls]) => {
+							const promise = new Promise((resolve) => {
+								ctx.router!.on('transition', () => {
+									if (ctx.route?.[paramKind] == null) {
+										return;
+									}
+
+									resolve(ctx.route[paramKind]);
+								});
+							});
+
+							for (const opts of optsForCalls) {
+								void ctx.router!.replace(null, {[paramKind]: opts});
+							}
+
+							return promise;
+						}, <[string, Dictionary[]]>[paramKind, optsForCalls]);
+
+						await test.expect(transition).resolves.toEqual(expectedResult);
+					}
+				}
+			);
+		}
 
 		/**
 		 * Checks whether the name of the active route page matches the assertion.
