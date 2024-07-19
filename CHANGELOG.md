@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Resolved the issue with consecutive router calls and option merging during `replace(null)` `bRouter`
+* Fixed a bug in `core/component/engines/vue3/render`, when passing a `nullable` value to a directive would result in it not being bound to the vNode
 
 ## v4.0.0-beta.111 (2024-07-18)
 
