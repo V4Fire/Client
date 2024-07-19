@@ -215,7 +215,7 @@ export function createRequest<D = unknown>(
 		reqParams = Object.reject(opts, asyncOptionsKeys),
 		asyncParams = Object.select(opts, asyncOptionsKeys);
 
-	const req = ctx.waitPermissionToRequest().then(() => {
+	const req = this.async.promise(ctx.waitPermissionToRequest().then(() => {
 		let
 			rawRequest;
 
@@ -226,8 +226,8 @@ export function createRequest<D = unknown>(
 			rawRequest = this.provider[method](Object.cast(body), reqParams);
 		}
 
-		return this.async.request(rawRequest, asyncParams);
-	});
+		return rawRequest;
+	}), asyncParams);
 
 	if (ctx.mods.progress !== 'true') {
 		const
