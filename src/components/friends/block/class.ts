@@ -81,69 +81,6 @@ class Block extends Friend {
 		Object.entries(component.mods).forEach(([name, val]) => {
 			this.setMod(name, val, 'initSetMod');
 		});
-
-		const {
-			node,
-			ctx: {
-				$el: originalNode,
-				$async: $a
-			}
-		} = this;
-
-		const
-			mountedAttrs = new Set<string>(),
-			mountedAttrsGroup = {group: 'mountedAttrs'};
-
-		if (originalNode != null && node != null && originalNode !== node) {
-			Object.defineProperty(this.ctx, '$el', {
-				configurable: true,
-				get: () => node
-			});
-
-			node.component = component;
-			mountAttrs(this.ctx.$attrs);
-
-			this.ctx.watch('$attrs', {deep: true}, (attrs) => {
-				$a.terminateWorker(mountedAttrsGroup);
-				mountAttrs(attrs);
-			});
-		}
-
-		function mountAttrs(attrs: Dictionary<string>) {
-			if (node == null || originalNode == null) {
-				return;
-			}
-
-			Object.entries(attrs).forEach(([name, attr]) => {
-				if (attr == null) {
-					return;
-				}
-
-				if (name === 'class') {
-					attr.split(/\s+/).forEach((val) => {
-						node.classList.add(val);
-						mountedAttrs.add(`class.${val}`);
-					});
-
-				} else if (originalNode.hasAttribute(name)) {
-					node.setAttribute(name, attr);
-					mountedAttrs.add(name);
-				}
-			});
-
-			$a.worker(() => {
-				mountedAttrs.forEach((attr) => {
-					if (attr.startsWith('class.')) {
-						node.classList.remove(attr.split('.')[1]);
-
-					} else {
-						node.removeAttribute(attr);
-					}
-				});
-
-				mountedAttrs.clear();
-			}, mountedAttrsGroup);
-		}
 	}
 }
 

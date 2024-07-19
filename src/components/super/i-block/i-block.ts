@@ -92,6 +92,18 @@ export default abstract class iBlock extends iBlockProviders {
 	protected async onMountTeleports(): Promise<void> {
 		await this.nextTick();
 
+		const getNode = () => this.$refs[this.$resolveRef('$el')] ?? this.$el;
+
+		const {
+			$el: originalNode,
+			$async: $a
+		} = this;
+
+		const
+			node = getNode(),
+			mountedAttrs = new Set<string>(),
+			mountedAttrsGroup = {group: 'mountedAttrs'};
+
 		if (this.$el && this.$el.component !== this) {
 			// Fix the DOM element link to the component
 			this.$el.component = this;
@@ -103,6 +115,49 @@ export default abstract class iBlock extends iBlockProviders {
 
 			// Fix the teleported DOM element link to the component
 			this.$el.component = this;
+
+			mountAttrs(this.$attrs);
+
+			this.watch('$attrs', {deep: true}, (attrs: Dictionary<string>) => {
+				$a.terminateWorker(mountedAttrsGroup);
+				mountAttrs(attrs);
+			});
+		}
+
+		function mountAttrs(attrs: Dictionary<string>) {
+			if (node == null || originalNode == null) {
+				return;
+			}
+
+			Object.entries(attrs).forEach(([name, attr]) => {
+				if (attr == null) {
+					return;
+				}
+
+				if (name === 'class') {
+					attr.split(/\s+/).forEach((val) => {
+						node.classList.add(val);
+						mountedAttrs.add(`class.${val}`);
+					});
+
+				} else if (originalNode.hasAttribute(name)) {
+					node.setAttribute(name, attr);
+					mountedAttrs.add(name);
+				}
+			});
+
+			$a.worker(() => {
+				mountedAttrs.forEach((attr) => {
+					if (attr.startsWith('class.')) {
+						node.classList.remove(attr.split('.')[1]);
+
+					} else {
+						node.removeAttribute(attr);
+					}
+				});
+
+				mountedAttrs.clear();
+			}, mountedAttrsGroup);
 		}
 	}
 }
