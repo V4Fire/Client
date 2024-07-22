@@ -5,9 +5,12 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+import log from 'core/log';
 
 import { propGetterRgxp } from 'core/component/reflect';
 import type { ComponentInterface } from 'core/component/interface';
+
+const logger = log.namespace('core/component');
 
 /**
  * Attaches the necessary listeners for prop-attributes marked with the `forceUpdate: false` flag.
@@ -46,7 +49,8 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 				const getterName = propPrefix + attrName;
 
 				if (!Object.isFunction(unsafe.$attrs[getterName])) {
-					throw new Error(`No accessors are defined for the prop "${attrName}". To set the accessors, pass them as "@:${attrName} = createPropAccessors(() => propValue)()".`);
+					logger.warn(`No accessors are defined in the component "${unsafe.componentName}:${unsafe.componentId}" for the prop "${attrName}". To set the accessors, pass them as "@:${attrName} = createPropAccessors(() => propValue)()".`);
+					return;
 				}
 			}
 
