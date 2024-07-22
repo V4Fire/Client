@@ -286,7 +286,7 @@ However, if you are creating a component using `component :is`,
 you may be required to explicitly set accessors for this prop.
 
 ```
-< component :is = 'b-example' | :value = someValue | @:value = createPropAccessors(() => someValue)
+< component :is = 'b-example' | :value = someValue | @:value = createPropAccessors(() => someValue)()
 ```
 
 The `createPropAccessors` function generates accessor functions for `someValue`,
