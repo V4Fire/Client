@@ -215,7 +215,7 @@ export function createRequest<D = unknown>(
 		reqParams = Object.reject(opts, asyncOptionsKeys),
 		asyncParams = Object.select(opts, asyncOptionsKeys);
 
-	const req = ctx.waitPermissionToRequest(asyncParams).then(() => {
+	const req = ctx.waitPermissionToRequest().then(() => {
 		let
 			rawRequest;
 

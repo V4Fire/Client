@@ -151,29 +151,21 @@ export default abstract class iDataProvider implements iProgress {
 	};
 
 	/** {@link iDataProvider.prototype.waitPermissionToRequest} */
-	static waitPermissionToRequest: AddSelf<iDataProvider['waitPermissionToRequest'], iBlock & iDataProvider> = (component, asyncOpts) => {
-
-		let permission: Promise<boolean>;
-
+	static waitPermissionToRequest: AddSelf<iDataProvider['waitPermissionToRequest'], iBlock & iDataProvider> = (component) => {
 		if (component.suspendedRequests === false) {
-			permission = SyncPromise.resolve(true);
-
-		} else {
-			permission = new Promise((resolve) => {
-				component.unsuspendRequests = () => {
-					resolve(true);
-					component.suspendedRequests = false;
-				};
-			});
+			return SyncPromise.resolve(true);
 		}
 
-		const opts = {
-			label: $$.waitPermissionToRequest,
-			join: true,
-			...asyncOpts
-		};
+		return component.unsafe.async.promise(() => new Promise((resolve) => {
+			component.unsuspendRequests = () => {
+				resolve(true);
+				component.suspendedRequests = false;
+			};
 
-		return component.unsafe.async.promise(permission, opts);
+		}), {
+			label: $$.waitPermissionToRequest,
+			join: true
+		});
 	};
 
 	/**
