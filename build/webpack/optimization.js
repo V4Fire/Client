@@ -19,6 +19,7 @@ const
 const {
 	isLayerDep,
 	isExternalDep,
+	isPolyfillRegExp,
 
 	RUNTIME
 } = include('build/const');
@@ -54,7 +55,7 @@ module.exports = function optimization({buildId, plugins}) {
 					name: 'std',
 					chunks: 'all',
 					enforce: true,
-					test: /(\/core\/(std.ts|shims))|(\/node_modules\/core-js\/)/
+					test: isPolyfillRegExp
 				},
 
 				async: {

@@ -851,6 +851,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			});
 		},
 
+		/**
+		 * SWC webpack loader configuration
+		 */
 		swc(env) {
 			if (env == null) {
 				const configEnv = this.config.environment;
