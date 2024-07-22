@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with canceling the `waitPermissionToRequest` promise.
+
 ## 4.0.0-beta.108.a-new-hope (2024-07-15)
 
 #### :house: Internal

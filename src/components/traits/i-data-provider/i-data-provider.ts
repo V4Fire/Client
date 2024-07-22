@@ -12,6 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import { AsyncOptions } from 'core/async';
 
 import SyncPromise from 'core/promise/sync';
 import type { ModsDecl } from 'core/component';
@@ -150,21 +151,25 @@ export default abstract class iDataProvider implements iProgress {
 	};
 
 	/** {@link iDataProvider.prototype.waitPermissionToRequest} */
-	static waitPermissionToRequest: AddSelf<iDataProvider['waitPermissionToRequest'], iBlock & iDataProvider> = (component) => {
+	static waitPermissionToRequest: AddSelf<iDataProvider['waitPermissionToRequest'], iBlock & iDataProvider> = (component, asyncOpts) => {
+
+		let permission: Promise<boolean>;
+
 		if (component.suspendedRequests === false) {
-			return SyncPromise.resolve(true);
+			permission = SyncPromise.resolve(true);
+
+		} else {
+			permission = new Promise((resolve) => {
+				component.unsuspendRequests = () => {
+					resolve(true);
+					component.suspendedRequests = false;
+				};
+			});
 		}
 
-		return component.unsafe.async.promise(() => new Promise((resolve) => {
-			component.unsuspendRequests = () => {
-				resolve(true);
-				component.suspendedRequests = false;
-			};
+		const opts = asyncOpts ?? {label: $$.waitPermissionToRequest, join: true};
 
-		}), {
-			label: $$.waitPermissionToRequest,
-			join: true
-		});
+		return component.unsafe.async.promise(permission, opts);
 	};
 
 	/**
@@ -201,8 +206,9 @@ export default abstract class iDataProvider implements iProgress {
 
 	/**
 	 * Returns a promise that will be resolved when the component can make requests to the data provider
+	 * @param _asyncOpts
 	 */
-	waitPermissionToRequest(): Promise<boolean> {
+	waitPermissionToRequest(_asyncOpts?: AsyncOptions): Promise<boolean> {
 		return Object.throw();
 	}
 }

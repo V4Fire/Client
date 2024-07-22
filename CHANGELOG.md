@@ -13,9 +13,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2024-??-??)
 
+#### :rocket: New Feature
+
+* Added ability to provide an async options to the `waitPermissionToRequest` method. `components/traits/i-data-provider`
+
 #### :bug: Bug Fix
 
-* Fixed an issue where `initLoadNext` would not properly cancel when a promise was created without initiating a corresponding request. This fix ensures that the virtual scroll component correctly handles the lifecycle of requests, preventing unnecessary data fetching and state inconsistencies. `components/base/b-virtual-scroll-new`
+* Fixed an issue with canceling the `waitPermissionToRequest` promise. `components/friends/data-provider`
 * Resolved the issue with consecutive router calls and option merging during `replace(null)` `bRouter`
 * Fixed a bug in `core/component/engines/vue3/render`, when passing a `nullable` value to a directive would result in it not being bound to the vNode
 
