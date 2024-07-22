@@ -18,6 +18,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed a bug by ensuring the onPageChange callback is cleaned up in
   renderFilter to prevent execution by syncPageWatcher before the next
   renderFilter call, maintaining proper rendering sequence `bDynamicPage`
+* Resolved the issue with consecutive router calls and option merging during `replace(null)` `bRouter`
+* Fixed a bug in `core/component/engines/vue3/render`, when passing a `nullable` value to a directive would result in it not being bound to the vNode
+
+## v4.0.0-beta.111 (2024-07-18)
+
+#### :house: Internal
+
+* Removed dead code `core/component/attrs`
+* Updated `monic-loader` to version `3.0.4` to fix regression
 
 ## v4.0.0-beta.110 (2024-07-17)
 

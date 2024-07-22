@@ -10,16 +10,17 @@ import test from 'tests/config/unit/test';
 
 import {
 
-	renderDirective,
-	renderDummy,
+	renderComponentWithVAttrs,
+	renderElementWithVAttrs,
 
 	resizeHandler,
 	clickHandler,
 
-	waitForWatcherCallsCount,
-	dummyDeleteHandler
+	waitForWatcherCallsCount
 
 } from 'core/component/directives/attrs/test/helpers';
+
+import type bComponentDirectivesAttrsDummy from 'core/component/directives/attrs/test/b-component-directives-attrs-dummy/b-component-directives-attrs-dummy';
 
 test.describe('core/component/directives/attrs', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -27,7 +28,7 @@ test.describe('core/component/directives/attrs', () => {
 	});
 
 	test('should allow setting regular props or attributes', async ({page}) => {
-		const component = await renderDirective(page, 'b-dummy', {
+		const component = await renderElementWithVAttrs(page, {
 			style: 'margin-top: 10px;',
 			class: 'croatoan'
 		});
@@ -37,19 +38,18 @@ test.describe('core/component/directives/attrs', () => {
 	});
 
 	test('should allow setting event listeners with support of Vue modifiers', async ({page}) => {
-		const component = await renderDirective(page, 'b-dummy', {
+		const component = await renderElementWithVAttrs(page, {
 			'@click.once': clickHandler
 		});
 
 		await component.click();
-
 		await component.click();
 
 		await test.expect(component).toHaveAttribute('data-counter', '1');
 	});
 
 	test('should allow setting Vue directives', async ({page}) => {
-		const component = await renderDirective(page, 'b-dummy', {
+		const component = await renderElementWithVAttrs(page, {
 			'v-show': false
 		});
 
@@ -57,7 +57,7 @@ test.describe('core/component/directives/attrs', () => {
 	});
 
 	test('should allow setting custom directives', async ({page}) => {
-		const component = await renderDirective(page, 'b-dummy', {
+		const component = await renderElementWithVAttrs(page, {
 			'v-on-resize': resizeHandler
 		});
 
@@ -68,68 +68,79 @@ test.describe('core/component/directives/attrs', () => {
 		await test.expect(waitForWatcherCallsCount(page, component, 2)).toBeResolved();
 	});
 
-	test('should allow specifying directives, events, and attributes simultaneously', async ({page}) => {
-		const component = await renderDirective(page, 'b-dummy', {
-			style: 'margin-top: 10px;',
-			'@click.once': clickHandler,
-			'v-on-resize': resizeHandler
+	test.describe('should allow specifying directives, events, and attributes simultaneously', () => {
+		test('for non-functional components', async ({page}) => {
+			const component = await renderElementWithVAttrs(page, {
+				style: 'margin-top: 10px;',
+				'@click.once': clickHandler,
+				'v-on-resize': resizeHandler
+			});
+
+			await component.evaluate((div) => {
+				div.style.width = '200px';
+			});
+
+			await component.click();
+
+			await component.click();
+
+			await test.expect(component).toHaveCSS('margin-top', '10px');
+
+			await test.expect(waitForWatcherCallsCount(page, component, 3)).toBeResolved();
 		});
 
-		await component.evaluate((div) => {
-			div.style.width = '200px';
+		test('for functional components', async ({page}) => {
+			const component = await renderElementWithVAttrs(page, {
+				style: 'margin-top: 10px;',
+				'@click.once': clickHandler,
+				'v-on-resize': resizeHandler
+			}, true);
+
+			await component.click();
+
+			await component.click();
+
+			await component.evaluate((div) => {
+				div.style.width = '200px';
+			});
+
+			await test.expect(component).toHaveCSS('margin-top', '10px');
+			await test.expect(component).toHaveAttribute('data-counter', '3');
 		});
-
-		await component.click();
-
-		await component.click();
-
-		await test.expect(component).toHaveCSS('margin-top', '10px');
-
-		await test.expect(waitForWatcherCallsCount(page, component, 3)).toBeResolved();
 	});
 
-	test('should allow specifying directives, events, and attributes simultaneously for functional components', async ({page}) => {
-		const component = await renderDirective(page, 'b-dummy-functional', {
-			style: 'margin-top: 10px;',
-			'@click.once': clickHandler,
-			'v-on-resize': resizeHandler
+	test.describe('should support listening to component events', () => {
+		test('for non-functional components', async ({page}) => {
+			const target = await renderComponentWithVAttrs<bComponentDirectivesAttrsDummy>(page, 'b-component-directives-attrs-dummy', {
+				'@delete': deleteHandler
+			});
+
+			const button = page.getByTestId('deleteButton');
+
+			await button.click();
+
+			await button.click();
+
+			await test.expect(target.evaluate((el) => el.counter)).resolves.toBe(2);
 		});
 
-		await component.click();
+		test('for functional components', async ({page}) => {
+			const target = await renderComponentWithVAttrs<bComponentDirectivesAttrsDummy>(page, 'b-component-directives-attrs-dummy-functional', {
+				'@delete': deleteHandler
+			});
 
-		await component.click();
+			const button = page.getByTestId('deleteButton');
 
-		await component.evaluate((div) => {
-			div.style.width = '200px';
+			await button.click();
+
+			await button.click();
+
+			await test.expect(target.evaluate((el) => el.counter)).resolves.toBe(2);
 		});
 
-		await test.expect(component).toHaveCSS('margin-top', '10px');
-		await test.expect(component).toHaveAttribute('data-counter', '3');
-	});
-
-	test('should work correctly with an event named as a registered key modifier', async ({page}) => {
-		const target = await renderDummy(page, {
-			'@delete': dummyDeleteHandler
-		});
-
-		const button = page.getByTestId('deleteButton');
-
-		await button.click();
-
-		await button.click();
-
-		await test.expect(target.evaluate((el) => el.counter)).resolves.toBe(2);
-	});
-
-	test(
-		[
-			'should correctly handle registered keys modifiers:',
-			'our handler should be replaced by the registered handler'
-		].join(' '),
-
-		async ({page}) => {
-			const target = await renderDummy(page, {
-				'@delete.delete': dummyDeleteHandler
+		test('the component event handler cannot have modifiers', async ({page}) => {
+			const target = await renderComponentWithVAttrs<bComponentDirectivesAttrsDummy>(page, 'b-component-directives-attrs-dummy', {
+				'@delete.delete': deleteHandler
 			});
 
 			const button = page.getByTestId('deleteButton');
@@ -139,6 +150,10 @@ test.describe('core/component/directives/attrs', () => {
 			await button.click();
 
 			await test.expect(target.evaluate((el) => el.counter)).resolves.toBe(0);
+		});
+
+		function deleteHandler(target: bComponentDirectivesAttrsDummy): void {
+			target.counter++;
 		}
-	);
+	});
 });

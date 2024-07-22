@@ -6,7 +6,7 @@
   "packageManager": "yarn@4.0.2",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "4.0.0-beta.110",
+  "version": "4.0.0-beta.111",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -116,7 +116,7 @@
     "merge2": "1.4.1",
     "mini-css-extract-plugin": "2.5.3",
     "monic": "2.6.1",
-    "monic-loader": "3.0.3",
+    "monic-loader": "3.0.4",
     "nanoid": "3.2.0",
     "nib": "1.1.2",
     "node-static": "0.7.11",

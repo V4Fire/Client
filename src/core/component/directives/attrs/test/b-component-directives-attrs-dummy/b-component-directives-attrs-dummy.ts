@@ -12,12 +12,12 @@ import iBlock, { component, system } from 'components/super/i-block/i-block';
 
 export * from 'components/super/i-block/i-block';
 
-@component({functional: true})
-export default class bComponentDirectivesEmitterDummy extends iBlock {
+@component({functional: {}})
+export default class bComponentDirectivesAttrsDummy extends iBlock {
 	@system()
 	counter: number = 0;
 
-	onClick(): void {
+	protected onClick(): void {
 		this.emit('delete');
 	}
 }

@@ -12,5 +12,5 @@
 
 - template index() extends ['i-block'].index
 	- block body
-		< button @click = () => onClick() | -testid = deleteButton
-			delete
+		< button @click = onClick | -testid = deleteButton
+			Delete
