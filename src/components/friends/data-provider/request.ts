@@ -265,7 +265,9 @@ export function createRequest<D = unknown>(
 			.catch(stderr);
 	}
 
-	return req.then((res) => res.data).then((data) => data ?? undefined);
+	return req
+		.then((res) => this.async.request(res.data, asyncParams))
+		.then((data) => data ?? undefined);
 }
 
 /**

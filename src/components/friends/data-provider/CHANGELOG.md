@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed an issue with canceling the `waitPermissionToRequest` promise.
+* Fixed an issue with canceling a request when resolving response data
 
 ## 4.0.0-beta.108.a-new-hope (2024-07-15)
 

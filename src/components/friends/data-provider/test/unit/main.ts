@@ -7,7 +7,7 @@
  */
 
 import test from 'tests/config/unit/test';
-import { BOM, Component, RequestInterceptor } from 'tests/helpers';
+import { Component, RequestInterceptor } from 'tests/helpers';
 
 import type bDummy from 'components/dummies/b-dummy/b-dummy';
 
@@ -23,28 +23,28 @@ test.describe('components/friends/data-provider', () => {
 		await provider.start();
 	});
 
-	test('should cancel a request promise if the `waitPermissionToRequest` is not resolved', async ({page}) => {
+	test('should cancel a request promise if the component is destroyed when applying decoders', async ({page}) => {
 		const component = await Component.createComponent<bDummy>(page, 'b-dummy', {
 			attrs: {
 				dataProvider: 'test.FriendsDataProvider'
 			}
 		});
 
-		await component.evaluate((ctx) => {
-			const originalWaitPermissionToRequest = ctx.waitPermissionToRequest.bind(ctx);
+		const mockResponseFn = await component.evaluateHandle(() => jestMock.mock());
 
-			ctx.waitPermissionToRequest = (...args) => {
-				const p = originalWaitPermissionToRequest(...args);
+		await component.evaluate((ctx, [mockResponseFn]) => {
+			void ctx.dataProvider!
+				.get()
+				.then(() => mockResponseFn());
 
-				return ctx.unsafe.async.promise(new Promise((resolve) => setTimeout(() => resolve(p))), args[0]);
-			};
+			ctx.dataProvider?.provider.emitter.once('friendsDataProviderDecoder', () => {
+				ctx.unsafe.$destroy();
+			});
+		}, [mockResponseFn]);
 
-			void ctx.dataProvider!.get(undefined, {group: 'friends-data-provider-test'});
-			ctx.unsafe.async.clearAll({group: 'friends-data-provider-test'});
-		});
+		await new Promise((resolve) => setTimeout(resolve, 50));
 
-		await BOM.waitForIdleCallback(page);
-
-		test.expect(provider.calls).toHaveLength(1);
+		test.expect(await mockResponseFn.evaluate((fn) => fn.mock.calls)).toHaveLength(0);
+		test.expect(provider.calls).toHaveLength(2);
 	});
 });
