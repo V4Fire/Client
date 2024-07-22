@@ -12,7 +12,6 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import type { AsyncOptions } from 'core/async';
 
 import SyncPromise from 'core/promise/sync';
 import type { ModsDecl } from 'core/component';
@@ -202,9 +201,8 @@ export default abstract class iDataProvider implements iProgress {
 
 	/**
 	 * Returns a promise that will be resolved when the component can make requests to the data provider
-	 * @param _asyncOpts
 	 */
-	waitPermissionToRequest(_asyncOpts?: AsyncOptions): Promise<boolean> {
+	waitPermissionToRequest(): Promise<boolean> {
 		return Object.throw();
 	}
 }
