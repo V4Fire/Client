@@ -266,6 +266,8 @@ export function createRequest<D = unknown>(
 	}
 
 	return req
+		// We use `async.request` here so that, if `cancelRequest` is called after the `async.request` above has resolved,
+		// we can still perform cancel at this point.
 		.then((res) => this.async.request(res.data, asyncParams))
 		.then((data) => data ?? undefined);
 }
