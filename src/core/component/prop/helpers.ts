@@ -49,7 +49,10 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 				const getterName = propPrefix + attrName;
 
 				if (!Object.isFunction(unsafe.$attrs[getterName])) {
-					logger.warn(`No accessors are defined in the component "${unsafe.componentName}:${unsafe.componentId}" for the prop "${attrName}". To set the accessors, pass them as "@:${attrName} = createPropAccessors(() => propValue)()".`);
+					if (unsafe.$attrs[getterName] !== undefined) {
+						logger.warn(`No accessors are defined in the component "${unsafe.componentName}:${unsafe.componentId}" for the prop "${attrName}". To set the accessors, pass them as "@:${attrName} = createPropAccessors(() => propValue)()".`);
+					}
+
 					return;
 				}
 			}
