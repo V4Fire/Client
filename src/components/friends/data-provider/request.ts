@@ -266,8 +266,8 @@ export function createRequest<D = unknown>(
 	}
 
 	return req
-		// We use `async.request` here so that, if `cancelRequest` is called after the `async.request` above has resolved,
-		// we can still perform cancel at this point.
+		// `res.data` returns a promise that may execute slowly, for example, due to the application of decoders.
+		// This can lead to a situation where the component is destroyed, but the request is not canceled.
 		.then((res) => this.async.request(res.data, asyncParams))
 		.then((data) => data ?? undefined);
 }
