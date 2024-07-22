@@ -9,7 +9,7 @@
 import test from 'tests/config/unit/test';
 import { BOM, Component, RequestInterceptor } from 'tests/helpers';
 
-import bDummy from 'components/dummies/b-dummy/b-dummy';
+import type bDummy from 'components/dummies/b-dummy/b-dummy';
 
 test.describe('components/friends/data-provider', () => {
 	let provider: RequestInterceptor;

@@ -12,7 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { AsyncOptions } from 'core/async';
+import type { AsyncOptions } from 'core/async';
 
 import SyncPromise from 'core/promise/sync';
 import type { ModsDecl } from 'core/component';
@@ -167,7 +167,11 @@ export default abstract class iDataProvider implements iProgress {
 			});
 		}
 
-		const opts = asyncOpts ?? {label: $$.waitPermissionToRequest, join: true};
+		const opts = {
+			label: $$.waitPermissionToRequest,
+			join: true,
+			...asyncOpts
+		};
 
 		return component.unsafe.async.promise(permission, opts);
 	};
