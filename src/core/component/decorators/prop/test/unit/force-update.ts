@@ -80,6 +80,36 @@ test.describe('contracts for props effects', () => {
 					shouldReRender('functional v-attrs without effect', true, page));
 			});
 		});
+
+		test.describe('for a dynamic component with v-attrs', () => {
+			test('request prop changes should trigger initLoad call', async ({page}) => {
+				const target = await Component.createComponent<bEffectPropWrapperDummy>(page, 'b-effect-prop-wrapper-dummy', {
+					stage: 'component :is with v-attrs'
+				});
+
+				await target.evaluate((ctx) => {
+					ctx.testComponent = 'b-virtual-scroll-new';
+					ctx.testComponentAttrs = {
+						'@:request': ctx.unsafe.createPropAccessors(() => ({
+							get: {
+								chunkSize: 10
+							}
+						})),
+						dataProvider: 'Provider'
+					};
+				});
+
+				await target.evaluate((ctx) => {
+					ctx.testComponentAttrs = {
+						'@:request': ctx.unsafe.createPropAccessors(() => ({
+							get: {
+								chunkSize: 20
+							}
+						}))
+					};
+				});
+			});
+		});
 	});
 
 	test.describe('changing the value of the prop without `forceUpdate: false`', () => {
