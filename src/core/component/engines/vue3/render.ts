@@ -8,6 +8,8 @@
 
 import { disposeLazy } from 'core/lazy';
 
+import * as gc from 'core/component/gc';
+
 import {
 
 	resolveComponent as superResolveComponent,
@@ -225,17 +227,21 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 
 			function registerDestructor() {
 				parent?.unsafe.async.worker(() => {
-					setImmediate(() => {
+					gc.add(function* destructor() {
 						if ('skipDestruction' in vnode) {
 							delete vnode.skipDestruction;
 							registerDestructor();
 
 						} else {
 							vue.unmount();
+							yield;
+
 							Array.concat([], vnode).forEach(destroy);
+							yield;
+
 							disposeLazy(vue);
 						}
-					});
+					}());
 				}, {group});
 			}
 		},
@@ -323,19 +329,25 @@ export function destroy(node: VNode | Node): void {
 			vnode['dynamicChildren'].forEach((vnode) => removeVNode(Object.cast(vnode)));
 		}
 
-		if (vnode.component != null) {
-			vnode.component.effect.stop();
-			vnode.component = null;
-		}
+		gc.add(function* destructor() {
+			if (vnode.component != null) {
+				vnode.component.effect.stop();
+				vnode.component = null;
+			}
 
-		vnode.props = {};
+			vnode.props = {};
 
-		['dirs', 'children', 'dynamicChildren', 'dynamicProps'].forEach((key) => {
-			vnode[key] = [];
-		});
+			yield;
 
-		['el', 'ctx', 'ref', 'virtualComponent', 'virtualContext'].forEach((key) => {
-			vnode[key] = null;
-		});
+			['dirs', 'children', 'dynamicChildren', 'dynamicProps'].forEach((key) => {
+				vnode[key] = [];
+			});
+
+			yield;
+
+			['el', 'ctx', 'ref', 'virtualComponent', 'virtualContext'].forEach((key) => {
+				vnode[key] = null;
+			});
+		}());
 	}
 }

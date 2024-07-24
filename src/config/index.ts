@@ -27,7 +27,7 @@ extend({
 	},
 
 	gc: {
-		quota: 50,
+		quota: 25,
 		delay: 5000
 	},
 

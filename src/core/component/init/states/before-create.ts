@@ -8,6 +8,7 @@
 
 import Async from 'core/async';
 
+import * as gc from 'core/component/gc';
 import { getComponentContext } from 'core/component/context';
 
 import { forkMeta } from 'core/component/meta';
@@ -226,17 +227,18 @@ export function beforeCreateState(
 	});
 
 	unsafe.$async.worker(() => {
-		// We are cleaning memory in a deferred way, because this API may be needed when processing the destroyed hook
-		setTimeout(() => {
-			['$root', '$parent', '$normalParent', '$children'].forEach((key) => {
+		gc.add(function* destructor() {
+			for (const key of ['$root', '$parent', '$normalParent', '$children']) {
 				Object.defineProperty(unsafe, key, {
 					configurable: true,
 					enumerable: true,
 					writable: false,
 					value: null
 				});
-			});
-		}, 1000);
+
+				yield;
+			}
+		}());
 	});
 
 	if (opts?.addMethods) {

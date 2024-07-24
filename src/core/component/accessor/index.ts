@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import * as gc from 'core/component/gc';
+
 import { deprecate } from 'core/functools/deprecation';
 
 import { beforeHooks } from 'core/component/const';
@@ -159,9 +161,12 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 	// Register a worker to clean up memory upon component destruction
 	$a.worker(() => {
-		computedFields.forEach(([name]) => {
-			delete Object.getOwnPropertyDescriptor(component, name)?.get?.[cacheStatus];
-		});
+		gc.add(function* destructor() {
+			for (const [name] of computedFields) {
+				delete Object.getOwnPropertyDescriptor(component, name)?.get?.[cacheStatus];
+				yield;
+			}
+		}());
 	});
 
 	if (deprecatedProps != null) {

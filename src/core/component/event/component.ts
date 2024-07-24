@@ -7,8 +7,9 @@
  */
 
 import type { EventId } from 'core/async';
-
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+
+import * as gc from 'core/component/gc';
 import type { UnsafeComponentInterface, ComponentEmitterOptions } from 'core/component/interface';
 
 import { globalEmitter } from 'core/component/event/emitter';
@@ -114,17 +115,18 @@ export function implementEventEmitterAPI(component: object): void {
 	});
 
 	ctx.$async.worker(() => {
-		// We are cleaning memory in a deferred way, because this API may be needed when processing the destroyed hook
-		setTimeout(() => {
-			['$emit', '$on', '$once', '$off'].forEach((key) => {
+		gc.add(function* destructor() {
+			for (const key of ['$emit', '$on', '$once', '$off']) {
 				Object.defineProperty(ctx, key, {
 					configurable: true,
 					enumerable: true,
 					writable: false,
 					value: null
 				});
-			});
-		}, 1000);
+
+				yield;
+			}
+		}());
 	});
 
 	function getMethod(method: 'on' | 'once' | 'off') {

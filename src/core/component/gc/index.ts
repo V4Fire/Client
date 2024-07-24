@@ -11,4 +11,6 @@
  * @packageDocumentation
  */
 
+import 'core/component/gc/daemon';
+
 export { daemon, add } from 'core/component/gc/const';

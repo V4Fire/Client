@@ -6,8 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import * as gc from 'core/component/gc';
+
 import { dropRawComponentContext } from 'core/component/context';
 import { callMethodFromComponent } from 'core/component/method';
+
 import { runHook } from 'core/component/hook';
 import { destroyedHooks } from 'core/component/const';
 
@@ -44,9 +47,10 @@ export function beforeDestroyState(component: ComponentInterface, opts: Componen
 		delete $el.component;
 	}
 
-	setTimeout(() => {
+	gc.add(function* destructor() {
 		if ($el != null && !$el.isConnected && $el.component == null) {
 			unsafe.$renderEngine.r.destroy($el);
+			yield;
 		}
 
 		const {componentName, componentId, hook} = unsafe;
@@ -74,16 +78,16 @@ export function beforeDestroyState(component: ComponentInterface, opts: Componen
 			}
 		};
 
-		Object.getOwnPropertyNames(unsafe).forEach((key) => {
+		for (const key of Object.getOwnPropertyNames(unsafe)) {
 			delete unsafe[key];
-		});
+			yield;
+		}
 
 		Object.assign(unsafe, {componentId, componentName, hook});
 		Object.setPrototypeOf(unsafe, Object.create({}, destroyedDescriptors));
 
-		dropRawComponentContext(unsafe);
+		yield;
 
-	// To avoid freezing during cleaning of a larger number of components at once,
-	// a little randomness is added to the process
-	}, Math.floor(Math.random() * 1000));
+		dropRawComponentContext(unsafe);
+	}());
 }
