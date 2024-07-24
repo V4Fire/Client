@@ -18,7 +18,7 @@ exports.isV4Prop = /^(:|@|v-)/;
  * A RegExp to detect V4Fire-specific static attributes
  * @type {RegExp}
  */
-exports.isStaticV4Prop = /^[^[]+$/;
+exports.isStaticV4Prop = /^[^#[]+$/;
 
 /**
  * A RegExp to detect commas
