@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :house: Internal
+
+* Removed unnecessary rerendering of container in case of `request` prop change;
+rerendering of the container and all nodes inside occurs only when `firstChunkRender` is changed. `components/base/b-virtual-scroll-new`
+
 ## v4.0.0-beta.113 (2024-07-24)
 
 #### :bug: Bug Fix

@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :house: Internal
+
+* Removed unnecessary rerendering of container in case of `request` prop change;
+rerendering of the container and all nodes inside occurs only when `firstChunkRender` is changed.
+
 ## v4.0.0-beta.101 (2024-05-30)
 
 #### :bug: Bug Fix
