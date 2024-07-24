@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { gc } from 'core/component';
+
 import type iBlock from 'components/super/i-block/i-block';
 
 export default class Friend {
@@ -125,11 +127,10 @@ export default class Friend {
 
 		this.ctx.$async.worker(() => {
 			// We are cleaning memory in a deferred way, because this API may be needed when processing the destroyed hook
-			setTimeout(() => {
-				// Use Object.delete to bypass TS checks
+			gc.add(function* destructor() {
 				Object.delete(this, 'ctx');
 				Object.delete(this, 'component');
-			}, 1000);
+			}());
 		});
 	}
 }

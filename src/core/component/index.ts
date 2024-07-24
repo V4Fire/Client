@@ -14,6 +14,7 @@
 import 'core/component/directives';
 
 export * as init from 'core/component/init';
+export * as gc from 'core/component/gc';
 
 export type { State } from 'core/component/state';
 export { ComponentEngine as default } from 'core/component/engines';
