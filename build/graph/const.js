@@ -30,7 +30,7 @@ exports.componentRgxp = /@component\(([^@]*?)\).+?class\s+/s;
  * A RegExp to extract the name of a component and the name of the parent component
  * @type {RegExp}
  */
-exports.componentClassRgxp = /^\s*(?:export\s+default\s+)?(?:abstract\s+)?class\s+((.*?)\s+extends\s+.*?)(?:\s+implements\s+[^{]*|\s*){/sm;
+exports.componentClassRgxp = /^\s*(?:export\s+(?:default\s+)?)?(?:abstract\s+)?class\s+((.*?)\s+extends\s+.*?)(?:\s+implements\s+[^{]*|\s*){/sm;
 
 /**
  * A RegExp to extract the @prop-s of a component
