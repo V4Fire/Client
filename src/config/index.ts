@@ -26,6 +26,11 @@ extend({
 		delay: 40
 	},
 
+	gc: {
+		quota: 50,
+		delay: 5000
+	},
+
 	/**
 	 * Default options for the `v-safe-html` directive.
 	 * @see https://github.com/cure53/DOMPurify#can-i-configure-dompurify

@@ -70,6 +70,22 @@ export interface Config extends SuperConfig {
 	};
 
 	/**
+	 * Options of the asynchronous component renderer.
+	 * For more information, see `core/components/render/daemon`.
+	 */
+	gc: {
+		/**
+		 * The maximum time in milliseconds that the garbage collector can spend in one cleanup iteration
+		 */
+		quota: number;
+
+		/**
+		 * The maximum delay in milliseconds between cleanup iterations
+		 */
+		delay: number;
+	};
+
+	/**
 	 * Default options for the `v-safe-html` directive.
 	 * For more information, see `components/directives/safe-html`.
 	 */
