@@ -9,13 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## 4.0.0-beta.?? (2024-??-??)
+## v4.0.0-beta.113 (2024-07-24)
 
 #### :bug: Bug Fix
 
 * Fixed an issue with canceling a request when resolving response data
 
-## 4.0.0-beta.108.a-new-hope (2024-07-15)
+## v4.0.0-beta.108.a-new-hope (2024-07-15)
 
 #### :house: Internal
 

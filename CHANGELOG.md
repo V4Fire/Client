@@ -11,11 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.112 (2024-07-22)
+## v4.0.0-beta.113 (2024-07-24)
 
 #### :bug: Bug Fix
 
 * Fixed an issue with canceling a request when resolving response data. `components/friends/data-provider`
+
+## v4.0.0-beta.112 (2024-07-22)
+
+#### :bug: Bug Fix
+
 * Fixed a bug by ensuring the onPageChange callback is cleaned up in
   renderFilter to prevent execution by syncPageWatcher before the next
   renderFilter call, maintaining proper rendering sequence `bDynamicPage`
