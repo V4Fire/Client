@@ -71,6 +71,15 @@ export function initProps(
 			propValue = prop.default !== undefined ? prop.default : Object.fastClone(meta.instance[name]);
 		}
 
+		let needSaveToStore = opts.saveToStore;
+
+		if (Object.isFunction(propValue)) {
+			if (opts.saveToStore === true || propValue[DEFAULT_WRAPPER] !== true) {
+				propValue = isTypeCanBeFunc(prop.type) ? propValue.bind(component) : propValue.call(component);
+				needSaveToStore = true;
+			}
+		}
+
 		const componentName = unsafe.componentName.camelize(false);
 
 		if (propValue === undefined) {
@@ -80,15 +89,6 @@ export function initProps(
 
 		} else if (prop.validator != null && !prop.validator(propValue)) {
 			throw new TypeError(`Invalid prop: custom validator check failed for prop "${name}" at ${componentName}`);
-		}
-
-		let needSaveToStore = opts.saveToStore;
-
-		if (Object.isFunction(propValue)) {
-			if (opts.saveToStore === true || propValue[DEFAULT_WRAPPER] !== true) {
-				propValue = isTypeCanBeFunc(prop.type) ? propValue.bind(component) : propValue.call(component);
-				needSaveToStore = true;
-			}
 		}
 
 		if (needSaveToStore) {
