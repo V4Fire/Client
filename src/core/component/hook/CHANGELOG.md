@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.104 (2024-06-19)
+
+#### :bug: Bug Fix
+
+* Fixed an error where a component could transition to a hook in which it was already located
+
 ## v4.0.0-beta.21 (2023-09-14)
 
 #### :rocket: New Feature

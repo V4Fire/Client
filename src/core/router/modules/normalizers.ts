@@ -32,12 +32,11 @@ import type {
  * ```
  */
 export function normalizeTransitionOpts(data: Nullable<TransitionOptions>): CanUndef<TransitionOptions> {
-	if (!data) {
+	if (data == null) {
 		return;
 	}
 
-	let
-		isEmptyData = true;
+	let isEmptyData = true;
 
 	for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
 		if (Object.size(data[keys[i]]) > 0) {
@@ -50,45 +49,40 @@ export function normalizeTransitionOpts(data: Nullable<TransitionOptions>): CanU
 		return;
 	}
 
-	const
-		normalizedData = Object.mixin<Dictionary>(true, {}, Object.select(data, transitionOptions));
+	const normalizedData = Object.mixin<Dictionary>(true, {}, Object.select(data, transitionOptions));
 
-	const normalizer = (data, key?, parent?) => {
+	normalize(normalizedData.params);
+	normalize(normalizedData.query);
+
+	return normalizedData;
+
+	function normalize(data: unknown, key?: PropertyKey, parent?: Dictionary | unknown[]) {
 		if (data == null) {
 			return;
 		}
 
 		if (Object.isArray(data)) {
-			for (let i = 0; i < data.length; i++) {
-				normalizer(data[i], i, data);
-			}
-
+			data.forEach((val, i) => normalize(val, i, data));
 			return;
 		}
 
 		if (Object.isDictionary(data)) {
-			Object.entries(data).forEach(([key, val]) => normalizer(val, key, data));
+			Object.entries(data).forEach(([key, val]) => normalize(val, key, data));
 			return;
 		}
 
-		if (parent != null) {
-			const
-				strVal = String(data);
+		if (key != null && parent != null) {
+			const strVal = String(data);
 
 			if (canParseStr.test(strVal)) {
 				parent[key] = Object.isString(data) ? Object.parse(data) : data;
 
 			} else {
 				const numVal = Number(data);
-				parent[key] = isNaN(data) || strVal !== String(numVal) ? strVal : numVal;
+				parent[key] = isNaN(<number>data) || strVal !== String(numVal) ? strVal : numVal;
 			}
 		}
-	};
-
-	normalizer(normalizedData.params);
-	normalizer(normalizedData.query);
-
-	return normalizedData;
+	}
 }
 
 /**
@@ -96,11 +90,11 @@ export function normalizeTransitionOpts(data: Nullable<TransitionOptions>): CanU
  * @param params
  */
 export function purifyRoute<T extends AnyRoute>(params: Nullable<T>): PurifiedRoute<T> {
-	if (params) {
-		return convertRouteToPlainObject(params, (el, key) => !key.startsWith('_') && systemRouteParams[key] !== true);
+	if (params == null) {
+		return {};
 	}
 
-	return {};
+	return convertRouteToPlainObject(params, (_, key) => !key.startsWith('_') && systemRouteParams[key] !== true);
 }
 
 /**
@@ -125,17 +119,15 @@ export function convertRouteToPlainObject<T extends AnyRoute, FILTER extends str
 	route: Nullable<T>,
 	filter?: RouteParamsFilter
 ): PlainRoute<T, FILTER> {
-	const
-		res = {};
+	const res = {};
 
-	if (!route) {
+	if (route == null) {
 		return res;
 	}
 
 	// eslint-disable-next-line guard-for-in
 	for (const key in route) {
-		const
-			el = route[key];
+		const el = route[key];
 
 		if (filter && !filter(el, key)) {
 			continue;
@@ -156,23 +148,23 @@ export function convertRouteToPlainObject<T extends AnyRoute, FILTER extends str
  * @param route
  */
 export function convertRouteToPlainObjectWithoutProto<T extends AnyRoute>(route: Nullable<T>): PlainRoute<T> {
-	const
-		res = {};
+	const res = {};
 
-	if (route) {
-		Object.keys(route).sort().forEach((key) => {
-			const
-				el = route[key];
-
-			if (key.startsWith('_')) {
-				return;
-			}
-
-			if (!Object.isFunction(el)) {
-				res[key] = el;
-			}
-		});
+	if (route == null) {
+		return res;
 	}
+
+	Object.keys(route).sort().forEach((key) => {
+		const el = route[key];
+
+		if (key.startsWith('_')) {
+			return;
+		}
+
+		if (!Object.isFunction(el)) {
+			res[key] = el;
+		}
+	});
 
 	return res;
 }

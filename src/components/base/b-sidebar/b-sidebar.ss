@@ -11,6 +11,7 @@
 - include 'components/super/i-data'|b as placeholder
 
 - template index() extends ['i-data'].index
+	- rootTag = 'aside'
 	- rootWrapper = true
 	- overWrapper = true
 

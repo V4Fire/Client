@@ -38,8 +38,7 @@ export function getIcon(id?: string): CanPromise<Icon> {
 //#if runtime has svgSprite
 // @context: ['@sprite', 'sprite' in flags ? flags.sprite : '@super', 'ds/icons']
 
-let
-	ctx: __WebpackModuleApi.RequireContext;
+let ctx: __WebpackModuleApi.RequireContext;
 
 if (!SSR && MODULE === 'ES2020') {
 	if (IS_PROD) {
@@ -49,7 +48,9 @@ if (!SSR && MODULE === 'ES2020') {
 		ctx = require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/, 'lazy');
 	}
 
-} else if (IS_PROD) {
+// For SSR builds, optimizing SVGs is pointless since these SVGs do not end up on the client side,
+// and size is not an issue
+} else if (!SSR && IS_PROD) {
 	ctx = require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/);
 
 } else {
@@ -57,8 +58,7 @@ if (!SSR && MODULE === 'ES2020') {
 }
 
 Object.forEach(ctx.keys(), (path: string) => {
-	const
-		id = normalize(path);
+	const id = normalize(path);
 
 	if (iconsStore[id] == null) {
 		iconsStore[id] = {ctx, path};

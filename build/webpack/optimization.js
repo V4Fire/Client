@@ -25,7 +25,7 @@ const {
 
 const
 	{inherit} = include('build/helpers'),
-	{ssr, optimize} = config.webpack;
+	{optimize} = config.webpack;
 
 /**
  * Returns parameters for `webpack.optimization`
@@ -39,11 +39,6 @@ module.exports = function optimization({buildId, plugins}) {
 	const
 		params = {},
 		cssMinimizer = new CssMinimizerPlugin(config.cssMinimizer());
-
-	if (ssr) {
-		params.minimizer = [cssMinimizer];
-		return params;
-	}
 
 	if (optimize.minChunkSize) {
 		plugins.set(

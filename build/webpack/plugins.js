@@ -37,11 +37,14 @@ module.exports = async function plugins({name}) {
 
 	const plugins = new Map([
 		['globals', new webpack.DefinePlugin(await $C(globals).async.map())],
-		['dependencies', new DependenciesPlugin()],
 		['ignoreNotFoundExport', new IgnoreInvalidWarningsPlugin()],
 		['i18nGeneratorPlugin', new I18NGeneratorPlugin()],
 		['invalidateExternalCache', new InvalidateExternalCachePlugin()]
 	]);
+
+	if (!config.webpack.ssr) {
+		plugins.set('dependencies', new DependenciesPlugin());
+	}
 
 	if (config.webpack.mode() !== 'production' || config.build.trace()) {
 		plugins.set('measurePlugin', new MeasurePlugin({
@@ -64,7 +67,7 @@ module.exports = async function plugins({name}) {
 		plugins.set('progress-plugin', createProgressPlugin(name));
 	}
 
-	if (config.webpack.fatHTML() || config.webpack.storybook()) {
+	if (config.webpack.fatHTML() || config.webpack.storybook() || config.webpack.ssr) {
 		plugins.set('limit-chunk-count-plugin', new webpack.optimize.LimitChunkCountPlugin({
 			maxChunks: 1
 		}));

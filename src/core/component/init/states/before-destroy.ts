@@ -9,15 +9,18 @@
 import { dropRawComponentContext } from 'core/component/context';
 import { callMethodFromComponent } from 'core/component/method';
 import { runHook } from 'core/component/hook';
+import { destroyedHooks } from 'core/component/const';
 
-import type { ComponentInterface } from 'core/component/interface';
+import type { ComponentInterface, ComponentDestructorOptions } from 'core/component/interface';
 
 /**
  * Initializes the "beforeDestroy" state to the specified component instance
+ *
  * @param component
+ * @param [opts]
  */
-export function beforeDestroyState(component: ComponentInterface): void {
-	if (component.hook === 'beforeDestroy' || component.hook === 'destroyed') {
+export function beforeDestroyState(component: ComponentInterface, opts: ComponentDestructorOptions = {}): void {
+	if (destroyedHooks[component.hook] != null) {
 		return;
 	}
 
@@ -28,6 +31,11 @@ export function beforeDestroyState(component: ComponentInterface): void {
 		unsafe,
 		unsafe: {$el}
 	} = component;
+
+	unsafe.$emit('[[BEFORE_DESTROY]]', <Required<ComponentDestructorOptions>>{
+		recursive: opts.recursive ?? true,
+		shouldUnmountVNodes: opts.shouldUnmountVNodes ?? true
+	});
 
 	unsafe.async.clearAll().locked = true;
 	unsafe.$async.clearAll().locked = true;
@@ -41,18 +49,37 @@ export function beforeDestroyState(component: ComponentInterface): void {
 			unsafe.$renderEngine.r.destroy($el);
 		}
 
-		const destroyedComponent = {
-			componentId: unsafe.componentId,
-			componentName: unsafe.componentName,
-			hook: unsafe.hook
+		const {componentName, componentId, hook} = unsafe;
+
+		const destroyedDescriptors = {
+			componentId: {
+				writable: false,
+				enumerable: true,
+				configurable: false,
+				value: componentId
+			},
+
+			componentName: {
+				writable: false,
+				enumerable: true,
+				configurable: false,
+				value: componentName
+			},
+
+			hook: {
+				writable: false,
+				enumerable: true,
+				configurable: false,
+				value: hook
+			}
 		};
 
 		Object.getOwnPropertyNames(unsafe).forEach((key) => {
 			delete unsafe[key];
 		});
 
-		Object.assign(unsafe, destroyedComponent);
-		Object.setPrototypeOf(unsafe, destroyedComponent);
+		Object.assign(unsafe, {componentId, componentName, hook});
+		Object.setPrototypeOf(unsafe, Object.create({}, destroyedDescriptors));
 
 		dropRawComponentContext(unsafe);
 

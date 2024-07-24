@@ -244,18 +244,32 @@ export function createRequest<D = unknown>(
 		};
 
 		req
-			.then(then, (err) => {
-				try {
-					this.provider.emitter.emit('error', err, () => createRequest.call(this, method, body, opts));
-				} catch {}
+			.then(
+				(res) => {
+					try {
+						this.provider.emitter.emit('response', res);
+					} catch {}
 
-				return then();
-			})
+					return then();
+				},
+
+				(err) => {
+					try {
+						this.provider.emitter.emit('error', err, () => createRequest.call(this, method, body, opts));
+					} catch {}
+
+					return then();
+				}
+			)
 
 			.catch(stderr);
 	}
 
-	return req.then((res) => res.data).then((data) => data ?? undefined);
+	return req
+		// `res.data` returns a promise that may execute slowly, for example, due to the application of decoders.
+		// This can lead to a situation where the component is destroyed, but the request is not canceled.
+		.then((res) => this.async.request(res.data, asyncParams))
+		.then((data) => data ?? undefined);
 }
 
 /**

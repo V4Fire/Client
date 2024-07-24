@@ -12,7 +12,7 @@
  */
 
 import { ComponentEngine, VNode } from 'core/component/engines';
-import { getDirectiveContext } from 'core/component/directives/helpers';
+import { getDirectiveContext } from 'core/component/directives';
 
 import { idsCache } from 'components/directives/bind-with/const';
 import { bindListenerToElement, clearElementBindings } from 'components/directives/bind-with/helpers';

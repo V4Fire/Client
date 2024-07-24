@@ -11,3 +11,4 @@
 - include 'components/super/i-page'|b as placeholder
 
 - template index() extends ['i-page'].index
+	- rootTag = 'main'

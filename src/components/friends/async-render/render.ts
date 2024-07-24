@@ -11,7 +11,7 @@ import { restart, deferRestart } from 'core/component/render/daemon';
 import type Friend from 'components/friends/friend';
 
 /**
- * Restarts the `asyncRender` daemon to force rendering of async chunks
+ * Restarts the asyncRender daemon to enforce the rendering of asynchronous chunks
  * @see core/component/render/daemon
  */
 export function forceRender(this: Friend): void {
@@ -20,7 +20,7 @@ export function forceRender(this: Friend): void {
 }
 
 /**
- * Creates a task to restart the `asyncRender` daemon on the next tick
+ * Schedules a task to restart the asyncRender daemon on the next tick
  *
  * @see forceRender
  * @see core/component/render/daemon
@@ -31,18 +31,18 @@ export function deferForceRender(this: Friend): void {
 }
 
 /**
- * A factory to create filters for `AsyncRender`, it returns a new function.
- * The new function can return a boolean or promise. If the function returns a promise,
- * it will be resolved after firing a `forceRender` event.
+ * A factory to create filters for AsyncRender; it returns a new function.
+ * This new function can return either a boolean or a promise.
+ * If the function returns a promise, it will be resolved after a forceRender event is triggered.
  *
- * The main function can take an element name as the first parameter.
- * This element will be dropped before resolving the resulting promise.
+ * The main function can accept an element name as the first parameter.
+ * This element will be removed before the returned promise is resolved.
  *
- * Notice, the initial component rendering is mean the same as `forceRender`.
- * This function is useful to re-render a functional component without touching the parent state.
+ * Note that the initial component rendering is equivalent to a forceRender event.
+ * This function is useful for re-rendering a functional component without altering the parent state.
  *
- * @param elementToDrop - an element to drop before resolving the promise
- * (if the element is passed as a function, it would be invoked)
+ * @param elementToDrop - an element to be dropped before the promise is resolved
+ * (if the element is passed as a function, it will be invoked)
  *
  * @example
  * ```
@@ -67,7 +67,7 @@ export function waitForceRender(
 		return this.localEmitter.promisifyOnce('forceRender').then(async () => {
 			if (elementToDrop != null) {
 				let
-					el;
+					el: Nullable<string | Element>;
 
 				if (Object.isFunction(elementToDrop)) {
 					el = await elementToDrop(this.ctx);

@@ -10,3 +10,9 @@ import type { Module } from 'components/friends/module-loader/interface';
 
 export const
 	cache = new Map<unknown, Module>();
+
+if (SSR) {
+	Object.defineProperty(cache, 'set', {value: () => {
+		// Do nothing
+	}});
+}

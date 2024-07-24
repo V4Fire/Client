@@ -2,7 +2,7 @@
 
 This module provides an API to work with data of data providers.
 
-## How does it work?
+## How Does It Work?
 
 When you create a component with a data provider, it loads the data from the provider during initialization.
 If the data was loaded successfully, it will be stored in the root storage. The key to store data is taken from the name of the provider used.

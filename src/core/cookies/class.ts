@@ -71,7 +71,7 @@ export class Cookies {
 			cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
 
 		Object.entries(opts).forEach(([key, val]) => {
-			cookie += `; ${key}`;
+			cookie += `; ${key.dasherize()}`;
 
 			if (val !== true) {
 				cookie += `=${val}`;

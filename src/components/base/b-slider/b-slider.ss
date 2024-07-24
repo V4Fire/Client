@@ -26,7 +26,7 @@
 					< component.&__option.&__item &
 						:is = getItemComponentName(el, i) |
 						:key = getItemKey(el, i) |
-						:v-attrs = getItemAttrs(el, i)
+						v-attrs = getItemAttrs(el, i)
 					.
 
 				+= self.slot('afterItems')

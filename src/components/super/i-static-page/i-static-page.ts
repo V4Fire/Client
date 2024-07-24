@@ -18,37 +18,21 @@ import { Xor128 } from 'core/random/xor128';
 import { RestrictedCache } from 'core/cache';
 import { instanceCache } from 'core/data';
 
-import { setLocale, locale } from 'core/i18n';
-
 import type { AppliedRoute, InitialRoute } from 'core/router';
+import type PageMetaData from 'core/page-meta-data';
 
-import * as cookies from 'core/cookies';
-import CookieStorage from 'core/kv-storage/engines/cookie';
-
-import { SystemThemeExtractorWeb } from 'components/super/i-static-page/modules/theme';
-
-import {
-
-	resetComponents,
-
-	GlobalEnvironment,
-	ComponentResetType
-
-} from 'core/component';
+import { resetComponents, ComponentResetType } from 'core/component';
 
 import type bRouter from 'components/base/b-router/b-router';
 import type iBlock from 'components/super/i-block/i-block';
 
 import iPage, { component, field, system, computed, hook, watch } from 'components/super/i-page/i-page';
 
-import PageMetaData from 'components/super/i-static-page/modules/page-meta-data';
 import createProviderDataStore, { ProviderDataStore } from 'components/super/i-static-page/modules/provider-data-store';
-import themeManagerFactory, { ThemeManager } from 'components/super/i-static-page/modules/theme';
 
 import type { RootMod } from 'components/super/i-static-page/interface';
 
 export * from 'components/super/i-page/i-page';
-export * from 'components/super/i-static-page/modules/theme';
 
 export { createProviderDataStore };
 export * from 'components/super/i-static-page/modules/provider-data-store';
@@ -86,51 +70,50 @@ export default abstract class iStaticPage extends iPage {
 	readonly CurrentPage!: AppliedRoute<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
 	/**
-	 * A module for manipulating page metadata, such as the page title or description
+	 * A module to work with data of data providers globally.
+	 *
+	 * ```
+	 * < b-select :dataProvider = 'users.List'
+	 * < b-select :dataProvider = 'cities.List' | :globalName = 'foo'
+	 * ```
+	 *
+	 * ```js
+	 * /// Somewhere in your app code
+	 * if (this.r.providerDataStore.has('users.List')) {
+	 *   /// See `core/object/select`
+	 *   console.log(this.r.providerDataStore.get('users.List').select({where: {id: 1}}));
+	 * }
+	 *
+	 * console.log(this.r.providerDataStore.get('foo')?.data);
+	 * ```
+	 *
+	 * See `components/super/i-static-page/modules/provider-data-store` for more information.
 	 */
-	@system<iStaticPage>((o) => new PageMetaData({
-		document: o.remoteState.document ?? document
-	}))
-
-	readonly pageMetaData!: PageMetaData;
+	@system(() => SSR ? null : createProviderDataStore(new RestrictedCache(10)))
+	readonly providerDataStore?: ProviderDataStore;
 
 	/**
-	 * A module to work with data of data providers globally
-	 */
-	@system(() => createProviderDataStore(new RestrictedCache(10)))
-	readonly providerDataStore!: ProviderDataStore;
-
-	/**
-	 * A module to manage app themes from the Design System
-	 */
-	@system<iStaticPage>((o) => themeManagerFactory(
-		o,
-		{
-			themeStorageEngine: new CookieStorage('v4ls', {
-				cookies: cookies.from(o.remoteState.cookies ?? cookies.createCookieStore('')),
-				maxAge: 2 ** 31 - 1
-			}),
-
-			systemThemeExtractor: new SystemThemeExtractorWeb(o)
-		}
-	))
-
-	readonly theme: CanUndef<ThemeManager>;
-
-	/**
-	 * True if the current user is authorized
+	 * True if the current user is authorized.
+	 * This field is based on the one with the same name from `remoteState`.
+	 * It is used for convenience and reactive connection with the template.
+	 * That is, if it changes, the component's template will be updated (if it is used there).
 	 */
 	@field((o) => o.sync.link('remoteState.isAuth'))
 	isAuth!: boolean;
 
 	/**
-	 * True if there is a connection to the Internet
+	 * True if there is a connection to the Internet.
+	 * This field is based on the one with the same name from `remoteState`.
+	 * It is used for convenience and reactive connection with the template.
+	 * That is, if it changes, the component's template will be updated (if it is used there).
 	 */
 	@field((o) => o.sync.link('remoteState.isOnline'))
 	isOnline!: boolean;
 
 	/**
-	 * Last date when the application was online
+	 * Last date when the application was online.
+	 * This field is based on the one with the same name from `remoteState`.
+	 * It is used for convenience.
 	 */
 	@system((o) => o.sync.link('remoteState.lastOnlineDate'))
 	lastOnlineDate?: Date;
@@ -143,16 +126,11 @@ export default abstract class iStaticPage extends iPage {
 	initialRoute?: InitialRoute | this['CurrentPage'];
 
 	/**
-	 * An object whose properties will extend the global object.
-	 * For example, for SSR rendering, the proper functioning of APIs such as `document.cookie` or `location` is required.
-	 * Using this object, polyfills for all necessary APIs can be passed through.
+	 * Number of external root instances of the application.
+	 * This parameter allows you to detect memory leaks when using asyncRender.
 	 */
-	@system<iStaticPage>({
-		atom: true,
-		init: (o) => o.initGlobalEnv(o.remoteState)
-	})
-
-	globalEnv!: GlobalEnvironment;
+	@system()
+	readonly remoteRootInstances: number = 0;
 
 	/**
 	 * The name of the active route page
@@ -160,6 +138,14 @@ export default abstract class iStaticPage extends iPage {
 	@computed({cache: true, dependencies: ['route.meta.name']})
 	get activePage(): CanUndef<string> {
 		return this.field.get('route.meta.name');
+	}
+
+	/**
+	 * An API for managing the meta information of a page,
+	 * such as the title, description, and other meta tags
+	 */
+	get pageMetaData(): PageMetaData {
+		return this.r.remoteState.pageMetaData;
 	}
 
 	@computed()
@@ -176,27 +162,6 @@ export default abstract class iStaticPage extends iPage {
 	override set route(value: CanUndef<this['CurrentPage']>) {
 		this.field.set('routeStore', value);
 		this.emit('setRoute', value);
-	}
-
-	/**
-	 * The application locale
-	 */
-	get locale(): Language {
-		return this.field.get<Language>('localeStore')!;
-	}
-
-	/**
-	 * Sets a new application locale
-	 * @param value
-	 */
-	set locale(value: Language) {
-		this.field.set('localeStore', value);
-
-		try {
-			document.documentElement.setAttribute('lang', value);
-		} catch {}
-
-		setLocale(value);
 	}
 
 	override get randomGenerator(): IterableIterator<number> {
@@ -222,31 +187,6 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system()
 	protected routerStore?: this['Router'];
-
-	/** {@link iStaticPage.locale} */
-	@field(() => {
-		const
-			lang = locale.value;
-
-		if (Object.isTruly(lang)) {
-			try {
-				const
-					el = document.documentElement;
-
-				if (lang != null) {
-					el.setAttribute('lang', lang);
-
-				} else {
-					el.removeAttribute('lang');
-				}
-
-			} catch {}
-		}
-
-		return lang;
-	})
-
-	protected localeStore!: string;
 
 	/**
 	 * Cache of root modifiers
@@ -406,34 +346,18 @@ export default abstract class iStaticPage extends iPage {
 		this.shouldMountTeleports = true;
 	}
 
-	/**
-	 * Synchronization of the `localeStore` field
-	 * @param locale
-	 */
-	@watch(['localeStore', 'globalEmitter:i18n.setLocale'])
-	protected syncLocaleWatcher(locale: Language): void {
-		if (this.locale === locale) {
-			return;
-		}
-
-		this.locale = locale;
-		this.forceUpdate().catch(stderr);
-	}
-
 	protected override beforeDestroy(): void {
 		super.beforeDestroy();
-		this.hydrationStore?.clear();
-
-		Object.forEach(this.ssrState, (_, key: string, state) => {
-			delete state![key];
-		});
+		this.remoteState.hydrationStore.clear();
 
 		const
-			isThisApp = new RegExp(RegExp.escape(`:${RegExp.escape(this.appProcessId)}:`));
+			isThisApp = new RegExp(RegExp.escape(`:${RegExp.escape(this.remoteState.appProcessId)}:`));
 
 		Object.forEach(instanceCache, (provider, key) => {
 			if (isThisApp.test(key)) {
-				provider.destroy();
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				provider?.destroy();
+				delete instanceCache[key];
 			}
 		});
 	}

@@ -8,7 +8,7 @@
 
 /* eslint-disable prefer-spread */
 
-import { app, isComponent, componentRenderFactories, ASYNC_RENDER_ID } from 'core/component/const';
+import { app, isComponent, componentRenderFactories, destroyedHooks, ASYNC_RENDER_ID } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 
 import { isSmartComponent } from 'core/component/reflect';
@@ -39,6 +39,8 @@ import type {
 
 } from 'core/component/engines';
 
+import type { ssrRenderSlot as ISSRRenderSlot } from '@vue/server-renderer';
+
 import { registerComponent } from 'core/component/init';
 
 import {
@@ -46,6 +48,7 @@ import {
 	isHandler,
 
 	resolveAttrs,
+	normalizePatchFlagUsingProps,
 	normalizeComponentAttrs,
 
 	setVNodePatchFlags,
@@ -69,6 +72,7 @@ export function wrapCreateVNode<T extends typeof createVNode>(original: T): T {
  */
 export function wrapCreateElementVNode<T extends typeof createElementVNode>(original: T): T {
 	return Object.cast(function createElementVNode(this: ComponentInterface, ...args: Parameters<T>) {
+		args[3] = normalizePatchFlagUsingProps(args[3], args[1]);
 		return resolveAttrs.call(this, original.apply(null, args));
 	});
 }
@@ -79,11 +83,17 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
  */
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
-		let
-			[name, attrs, slots, patchFlag, dynamicProps] = args;
+		let [
+			name,
+			attrs,
+			slots,
+			patchFlag,
+			dynamicProps
+		] = args;
 
-		let
-			component: CanNull<ComponentMeta> = null;
+		let component: CanNull<ComponentMeta> = null;
+
+		patchFlag = normalizePatchFlagUsingProps(patchFlag, attrs);
 
 		if (Object.isString(name)) {
 			component = registerComponent(name);
@@ -124,7 +134,9 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			vnode.virtualParent.value :
 			this;
 
-		if (vnode.ref != null && vnode.ref.i == null) {
+		// For refs within functional components,
+		// it is necessary to explicitly set a reference to the instance of the component
+		if (!SSR && vnode.ref != null && vnode.ref.i == null) {
 			vnode.ref.i ??= {
 				refs: this.$refs,
 				setupState: {}
@@ -170,12 +182,30 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 
 			value: {
 				created: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'created', n),
+
 				beforeMount: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeMount', n),
 				mounted: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'mounted', n),
+
 				beforeUpdate: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeUpdate', n),
 				updated: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'updated', n),
-				beforeUnmount: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeDestroy', n),
-				unmounted: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'destroyed', n)
+
+				beforeUnmount: (n: Element) => {
+					// A component might have already been removed by explicitly calling $destroy
+					if (destroyedHooks[virtualCtx.hook] != null) {
+						return;
+					}
+
+					virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeDestroy', n);
+				},
+
+				unmounted: (n: Element) => {
+					// A component might have already been removed by explicitly calling $destroy
+					if (destroyedHooks[virtualCtx.hook] != null) {
+						return;
+					}
+
+					virtualCtx.$emit('[[COMPONENT_HOOK]]', 'destroyed', n);
+				}
 			},
 
 			oldValue: undefined,
@@ -192,7 +222,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			vnode.patchFlag |= functionalVNode.patchFlag;
 		}
 
-		if (Object.size(functionalVNode.dynamicProps) > 0) {
+		if (!SSR && Object.size(functionalVNode.dynamicProps) > 0) {
 			vnode.dynamicProps ??= [];
 			functionalVNode.dynamicProps?.forEach((propName) => {
 				if (isHandler.test(propName)) {
@@ -218,6 +248,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
  */
 export function wrapCreateElementBlock<T extends typeof createElementBlock>(original: T): T {
 	return Object.cast(function createElementBlock(this: ComponentInterface, ...args: Parameters<T>) {
+		args[3] = normalizePatchFlagUsingProps(args[3], args[1]);
 		return resolveAttrs.call(this, original.apply(null, args));
 	});
 }
@@ -241,8 +272,7 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 			return name;
 		}
 
-		const
-			appCtx = SSR ? this.app : app.context;
+		const {context: appCtx} = SSR ? this.app : app;
 
 		if (isComponent.test(name) && appCtx != null) {
 			return appCtx.component(name) ?? original(name);
@@ -260,7 +290,7 @@ export function wrapResolveDirective<T extends typeof resolveDirective>(
 	original: T
 ): T {
 	return Object.cast(function resolveDirective(this: ComponentInterface, name: string) {
-		const appCtx = SSR ? this.app : app.context;
+		const {context: appCtx} = SSR ? this.app : app;
 		return appCtx != null ? appCtx.directive(name) ?? original(name) : original(name);
 	});
 }
@@ -355,7 +385,21 @@ export function wrapRenderSlot<T extends typeof renderSlot>(original: T): T {
  */
 export function wrapWithCtx<T extends typeof withCtx>(original: T): T {
 	return Object.cast(function withCtx(this: ComponentInterface, fn: Function) {
-		return original((slotArgs: object) => fn(slotArgs, slotArgs));
+		return original((...args: unknown[]) => {
+			// The number of arguments for this function varies depending on the compilation mode: either SSR or browser.
+			// This condition helps optimize performance in the browser.
+			if (args.length === 1) {
+				return fn(args[0], args[0]);
+			}
+
+			// If the original function expects more arguments than provided, we explicitly set them to `undefined`,
+			// to then add another, "unregistered" argument
+			if (fn.length - args.length > 0) {
+				args = args.concat(new Array(fn.length - args.length).fill(undefined));
+			}
+
+			return fn(...args.concat(args[0]));
+		});
 	});
 }
 
@@ -397,28 +441,24 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 				modifiers: modifiers ?? {}
 			};
 
-			const
-				cantIgnoreDir = value != null || decl.length !== 2;
+			if (!Object.isDictionary(dir)) {
+				return bindings.push(binding);
+			}
 
-			if (Object.isDictionary(dir)) {
-				if (Object.isFunction(dir.beforeCreate)) {
-					const
-						newVnode = dir.beforeCreate(binding, vnode);
+			if (Object.isFunction(dir.beforeCreate)) {
+				const
+					newVnode = dir.beforeCreate(binding, vnode);
 
-					if (newVnode != null) {
-						vnode = newVnode;
-						patchVNode(vnode);
-					}
+				if (newVnode != null) {
+					vnode = newVnode;
+					patchVNode(vnode);
+				}
 
-					if (Object.keys(dir).length > 1 && cantIgnoreDir) {
-						bindings.push(binding);
-					}
-
-				} else if (Object.keys(dir).length > 0 && cantIgnoreDir) {
+				if (Object.keys(dir).length > 1) {
 					bindings.push(binding);
 				}
 
-			} else if (cantIgnoreDir) {
+			} else if (Object.keys(dir).length > 0) {
 				bindings.push(binding);
 			}
 		});
@@ -452,6 +492,8 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
  * @param api
  */
 export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: string, api: T): T {
+	type BufItems = Array<Parameters<Parameters<typeof ISSRRenderSlot>[4]>[0]>;
+
 	if (path === 'vue/server-renderer') {
 		api = {...api};
 
@@ -473,7 +515,64 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 				return ssrRenderComponent(component, props, ...args);
 			});
 		}
+
+		if (Object.isFunction(api.ssrRenderSlot)) {
+			const {ssrRenderSlot} = api;
+
+			Object.set(api, 'ssrRenderSlot', (...args: Parameters<typeof ISSRRenderSlot>) => {
+				const
+					slotName = args[1],
+					cacheKey = `${this.globalName}-${slotName}`,
+					push = args[args.length - 2];
+
+				const canCache =
+					'$ssrCache' in this && this.$ssrCache != null && !this.$ssrCache.has(cacheKey) &&
+					'globalName' in this && this.globalName != null &&
+					Object.isFunction(push);
+
+				if (canCache) {
+					// A special buffer for caching the result during SSR.
+					// This is necessary to reduce substring concatenations during SSR and speed up the output.
+					// It is used in the bCacheSSR component.
+					const cacheBuffer: BufItems = [];
+
+					args[args.length - 2] = (str) => {
+						cacheBuffer.push(str);
+						push(str);
+					};
+
+					const res = ssrRenderSlot(...args);
+
+					unrollBuffer(cacheBuffer)
+						.then((res) => this.$ssrCache!.set(cacheKey, res))
+						.catch(stderr);
+
+					return res;
+				}
+
+				return ssrRenderSlot(...args);
+			});
+		}
 	}
 
 	return api;
+
+	async function unrollBuffer(buf: BufItems): Promise<string> {
+		let res = '';
+
+		for (let val of buf) {
+			if (Object.isPromise(val)) {
+				val = await val;
+			}
+
+			if (Object.isString(val)) {
+				res += val;
+				continue;
+			}
+
+			res += await unrollBuffer(val);
+		}
+
+		return res;
+	}
 }

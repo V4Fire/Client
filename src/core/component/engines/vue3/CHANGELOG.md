@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.112 (2024-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed a bug where passing a `nullable` value to a directive would result in it not being bound to the vNode
+
+## v4.0.0-beta.104 (2024-06-19)
+
+#### :house: Internal
+
+* Use `r` instead of `$root` as the prototype of the root with the `$remoteParent`
+
 ## v4.0.0-beta.83 (2024-04-08)
 
 #### :house: Internal
