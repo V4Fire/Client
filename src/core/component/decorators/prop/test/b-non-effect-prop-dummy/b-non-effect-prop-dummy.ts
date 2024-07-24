@@ -17,6 +17,9 @@ export default class bNonEffectPropDummy extends bDummy {
 	@prop({type: Object, forceUpdate: false})
 	readonly dataProp?: object;
 
+	@prop({default: () => 42, type: Number, validator: Number.isPositive, forceUpdate: false})
+	readonly propWithDefault?: number;
+
 	@system((o) => o.sync.link<Dictionary>((v) => ({...v})))
 	data?: object;
 

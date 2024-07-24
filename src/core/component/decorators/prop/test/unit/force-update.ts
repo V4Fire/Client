@@ -6,17 +6,35 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Page } from '@playwright/test';
+import type { JSHandle, Page } from '@playwright/test';
 import test from 'tests/config/unit/test';
 
 import { Component } from 'tests/helpers';
 
 import type { WatchHandlerParams } from 'components/super/i-block/i-block';
+
 import type bEffectPropWrapperDummy from 'core/component/decorators/prop/test/b-effect-prop-wrapper-dummy/b-effect-prop-wrapper-dummy';
 
 test.describe('contracts for props effects', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
+	});
+
+	test.describe('pros with the `forceUpdate: false` flag', () => {
+		let target: JSHandle<bEffectPropWrapperDummy>;
+
+		test.beforeEach(async ({page}) => {
+			target = await Component.createComponent(page, 'b-effect-prop-wrapper-dummy', {
+				stage: 'without effect'
+			});
+		});
+
+		test('should support `validator` and `default` options', async () => {
+			const res = target.evaluate((ctx) =>
+				ctx.unsafe.$refs.child!.propWithDefault);
+
+			await test.expect(res).resolves.toBe(42);
+		});
 	});
 
 	test.describe('changing the value of the prop with `forceUpdate: false`', () => {
