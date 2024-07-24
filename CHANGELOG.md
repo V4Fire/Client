@@ -15,6 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
+* Fixed an issue with canceling a request when resolving response data. `components/friends/data-provider`
 * Fixed a bug by ensuring the onPageChange callback is cleaned up in
   renderFilter to prevent execution by syncPageWatcher before the next
   renderFilter call, maintaining proper rendering sequence `bDynamicPage`
