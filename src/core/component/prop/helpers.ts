@@ -29,9 +29,9 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 	meta.hooks['before:mounted'].push({fn: init});
 
 	function init() {
-		const parent = unsafe.$normalParent?.unsafe;
+		const nonFunctionalParent = unsafe.$normalParent?.unsafe;
 
-		if (parent == null) {
+		if (nonFunctionalParent == null) {
 			return;
 		}
 
@@ -63,11 +63,22 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 		});
 
 		if (propValuesToUpdate.length > 0) {
-			parent.$on('hook:beforeUpdate', updatePropsValues);
-			unsafe.$async.worker(() => parent.$off('hook:beforeUpdate', updatePropsValues));
+			nonFunctionalParent.$on('hook:beforeUpdate', updatePropsValues);
+			unsafe.$async.worker(() => nonFunctionalParent.$off('hook:beforeUpdate', updatePropsValues));
 		}
 
-		function updatePropsValues() {
+		async function updatePropsValues() {
+			const parent = unsafe.$parent?.unsafe;
+
+			if (parent == null) {
+				return;
+			}
+
+			// For functional components, their complete mounting into the DOM is additionally awaited
+			if (parent.isFunctional === true) {
+				await parent.$nextTick();
+			}
+
 			propValuesToUpdate.forEach(([propName, getterName]) => {
 				const getter = unsafe.$attrs[getterName];
 
