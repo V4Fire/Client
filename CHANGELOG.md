@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2024-06-??)
+## v4.0.0-beta.?? (2024-07-??)
 
 #### :bug: Bug Fix
 
@@ -21,10 +21,26 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 *  Fixed an issue to prevent the `hookChange` event from bubbling up `bDynamicPage`
 
-## v4.0.0-beta.?? (2024-??-??)
+## v4.0.0-beta.114 (2024-07-24)
+
+#### :house: Internal
+
+* Removed unnecessary rerendering of container in case of `request` prop change;
+rerendering of the container and all nodes inside occurs only when `firstChunkRender` is changed. `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.113 (2024-07-24)
 
 #### :bug: Bug Fix
 
+* Fixed an issue with canceling a request when resolving response data. `components/friends/data-provider`
+
+## v4.0.0-beta.112 (2024-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed a bug by ensuring the onPageChange callback is cleaned up in
+  renderFilter to prevent execution by syncPageWatcher before the next
+  renderFilter call, maintaining proper rendering sequence `bDynamicPage`
 * Resolved the issue with consecutive router calls and option merging during `replace(null)` `bRouter`
 * Fixed a bug in `core/component/engines/vue3/render`, when passing a `nullable` value to a directive would result in it not being bound to the vNode
 
