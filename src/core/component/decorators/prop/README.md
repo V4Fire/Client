@@ -268,25 +268,51 @@ Use this mode for props that are not used in the template to reduce the number o
 The need for this property arose after upgrading to Vue3,
 where any change to a component's prop always triggers a re-render of its template.
 
-__Note that this logic only applies to non-functional components,
-as a functional component updates with any change in the parent state.__
-
 ```typescript
 import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
+  // Note that this logic only applies to non-functional components, as a functional component updates
+  // with any change in the parent state
   @prop({type: Number, forceUpdate: false})
   value!: number;
 }
 ```
+
+Keep in mind that if you use this option, you must ensure that the prop is never used explicitly or
+implicitly in the template.
+
+For instance, consider a situation where you have a field bound to such a prop,
+and it is used in the template in conjunction with v-model.
+This will lead to incorrect behavior (updating the prop will not lead to updating the value in the input).
+
+```typescript
+import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
+
+@component()
+class bExample extends iBlock {
+  @prop({type: Number, forceUpdate: false})
+  valueProp!: number;
+
+  @field((o) => o.syn.link())
+  value!: number;
+}
+```
+
+```
+/// This code may function incorrectly
+< input v-model = value
+```
+
+#### Usage
 
 As a rule, adding the property `forceUpdate: false` is the only thing needed to activate this mode for the prop.
 However, if you are creating a component using `component :is`,
 you may be required to explicitly set accessors for this prop.
 
 ```
-< component :is = 'b-example' | :value = someValue | @:value = createPropAccessors(() => someValue)
+< component :is = 'b-example' | :value = someValue | @:value = createPropAccessors(() => someValue)()
 ```
 
 The `createPropAccessors` function generates accessor functions for `someValue`,
@@ -301,13 +327,14 @@ and then the necessary accessors will be passed automatically.
 < component :is = 'b-example' | :instanceOf = bExample | :value = someValue
 ```
 
-#### Passing Through v-attrs
+##### Passing Through v-attrs
 
 Please note that when setting such props using the `v-attrs` directive,
 you need to define them differently from other props.
 See the example below.
 
 ```
+/// Note that we do not invoke the result of createPropAccessors, but pass it as is
 < b-example v-attrs = {'@:value': createPropAccessors(() => someValue)}
 ```
 
