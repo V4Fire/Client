@@ -29,6 +29,7 @@ exports.urlLoaderOpts = {
 	outputPath: path.dirname(assetsOutput),
 	limit: webpack.optimize.dataURILimit(),
 	encoding: true,
+	emitFile: !webpack.ssr,
 	esModule: false
 };
 

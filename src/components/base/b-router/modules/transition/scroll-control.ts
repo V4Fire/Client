@@ -90,24 +90,26 @@ export default class ScrollControl {
 				label: $$.autoScroll
 			};
 
-			const setScroll = () => {
-				const
-					s = meta.scroll;
+			try {
+				await component.nextTick(label);
+				setScroll();
 
-				if (s != null) {
-					component.r.scrollTo(s.x, s.y);
-
-				} else if (reset) {
-					component.r.scrollTo(0, 0);
-				}
-			};
-
-			await component.nextTick(label);
-			setScroll();
-
-			// Restoring the scroll for dynamic height components
-			await component.async.sleep(10, label);
-			setScroll();
+				// Restoring the scroll for dynamic height components
+				await component.async.sleep(10, label);
+				setScroll();
+			} catch {}
 		})().catch(stderr);
+
+		function setScroll() {
+			const
+				s = meta!.scroll;
+
+			if (s != null) {
+				component.r.scrollTo(s.x, s.y);
+
+			} else if (reset) {
+				component.r.scrollTo(0, 0);
+			}
+		}
 	}
 }

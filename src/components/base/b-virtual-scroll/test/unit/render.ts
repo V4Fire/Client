@@ -18,7 +18,7 @@ import { interceptPaginationRequest } from 'tests/network-interceptors/paginatio
 test.describe('b-virtual-scroll render', () => {
 
 	const baseAttrs = {
-		theme: 'demo',
+		exterior: 'demo',
 		item: 'section',
 		id: 'target',
 		itemProps: ({current}) => ({'data-index': current.i})

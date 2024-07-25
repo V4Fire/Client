@@ -11,6 +11,204 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-07-??)
+
+#### :bug: Bug Fix
+
+* `core/component/init`:
+  * Fixed a typo in the event name `hookChange` which is responsible for processing activation and deactivation in the component
+  * Amended the deactivation sequence within the component to ensure that children are deactivated first
+
+*  Fixed an issue to prevent the `hookChange` event from bubbling up `bDynamicPage`
+
+## v4.0.0-beta.114 (2024-07-24)
+
+#### :house: Internal
+
+* Removed unnecessary rerendering of container in case of `request` prop change;
+rerendering of the container and all nodes inside occurs only when `firstChunkRender` is changed. `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.113 (2024-07-24)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with canceling a request when resolving response data. `components/friends/data-provider`
+
+## v4.0.0-beta.112 (2024-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed a bug by ensuring the onPageChange callback is cleaned up in
+  renderFilter to prevent execution by syncPageWatcher before the next
+  renderFilter call, maintaining proper rendering sequence `bDynamicPage`
+* Resolved the issue with consecutive router calls and option merging during `replace(null)` `bRouter`
+* Fixed a bug in `core/component/engines/vue3/render`, when passing a `nullable` value to a directive would result in it not being bound to the vNode
+
+## v4.0.0-beta.111 (2024-07-18)
+
+#### :house: Internal
+
+* Removed dead code `core/component/attrs`
+* Updated `monic-loader` to version `3.0.4` to fix regression
+
+## v4.0.0-beta.110 (2024-07-17)
+
+#### :bug: Bug Fix
+
+* Set global `Session` instance in the application state in `core/index`.
+  It fixes the session events not being emitted in `core/init/dependencies/load-session`.
+* Fixed the bug where the event name was set as an event modifier in the `v-attrs` directive `component/directives/attrs`
+* Replaced the method calls to `componentCtx.$once` and `componentCtx.$on` with correct event handling based on the isOnceEvent flag in `component/directives/attrs`
+* The page description element is now expected to be a meta tag
+  with the attribute `name='description'` instead of the `description` tag `core/page-meta-data`
+
+## v4.0.0-beta.109 (2024-07-16)
+
+#### :house: Internal
+
+* Updated `monic-loader` to version `3.0.3` to fix memory leak on rebuild in watch mode
+
+## v4.0.0-beta.108.a-new-hope (2024-07-15)
+
+#### :boom: Breaking Change
+
+* `iStaticPage`:
+  * Removed the `locale` field
+  * Removed the `globalEnv` field
+
+* The modules `core/init` and `core/component/state` have been completely redesigned for the new API
+* The module `core/component/state` has been completely redesigned for the new API
+* Moved the hydration store to a separate module from `core/component/hydration` -> `core/hydration-store`
+* Added a wrapper for middleware with additional parameters `core/data/middlewares/hydration-cache`
+
+#### :rocket: New Feature
+
+* Added a new component `bPreventSSR`
+* Added a new component `bCacheSSR`
+* Added a new module `core/html/xss`
+* Added a new module `core/cache/decorators/hydration`
+* Added style registration in the `getRenderFactory` method for templates in SSR `components/friends/vdom`
+
+* `iBlock`:
+  * Added Snakeskin constant `SSR` to determine that the template is being assembled for SSR
+  * Added Snakeskin constant `renderSSRAsString` for optimizing component assembly under SSR
+  * Added an optional `componentName` parameter to the `hydrateStyles` method.
+    This parameter allows for specifying the name of the component for which styles should be hydrated.
+  * Added registration of styles for templates in SSR
+
+* `core/hydration-store`:
+  * Added the ability to set the current environment in the hydration store
+  * Added getting and removing the hydration store value by path
+
+#### :bug: Bug Fix
+
+* Attached a handler to ensure the correct lifecycle for pages with keep-alive strategy `bDynamicPage`
+
+#### :house: Internal
+
+* The `hydrateStyles` method has been made public `iBlock`
+* Added a new `response` event upon successful data retrieval `components/friends/data-provider`
+
+* `build`:
+  * Now SSR build is bundled into a single file
+  * Use the forked `lib/server-renderer` everywhere in the SSR build
+
+## v4.0.0-beta.107 (2024-07-10)
+
+#### :bug: Bug Fix
+
+* Corrected the improper conversion of cookie attributes that are passed in camelCase format:
+  now all are forcibly converted to dash-style `core/cookies`
+* Fixed incorrect `patchFlag` when creating vnode with event handler `core/component/render`
+
+## v4.0.0-beta.106 (2024-06-25)
+
+#### :bug: Bug Fix
+
+* Do not store computed values in the cache before the functional component is fully created.
+  This fixes hard-to-detect bugs that can occur due to context inheritance.
+  See: https://github.com/V4Fire/Client/issues/1292 `core/component/accessor`
+
+## v4.0.0-beta.105 (2024-06-24)
+
+#### :bug: Bug Fix
+
+* Fixed unwanted execution of unmount handlers in the directives used
+  within the functional component during its re-creation.
+  The `$destroy` method now accepts an object with options, which enables control over
+  both the recursion of the destructor and the unmounting of vnodes
+  within the component `core/component/interface`
+
+## v4.0.0-beta.104 (2024-06-19)
+
+#### :rocket: New Feature
+
+* The `$destroy` method now accepts a recursive parameter for targeted removal
+  of the component without deleting its children and vice versa `core/component/interface`
+* Added the `consoleTracker` fixture to enable access to console messages in unit tests `tests/fixtures`
+
+#### :bug: Bug Fix
+
+* Fixed an error where a component could transition to a hook in which it was already located `core/component/hook`
+
+#### :house: Internal
+
+* The getter `r` has been moved from `iBlock` to `ComponentInterface`
+
+## v4.0.0-beta.103 (2024-06-14)
+
+#### :house: Internal
+
+* Updated `terser` to version `5.31.0` to include [bug fix](https://github.com/terser/terser/issues/1432)
+
+## v4.0.0-beta.102 (2024-06-11)
+
+#### :bug: Bug Fix
+
+* Removed the use of `$a.promise` in the `execute` method of the `Transition` class. This previously caused only
+the last `replace` method call to be executed when multiple calls were made `components/base/b-router`
+
+## v4.0.0-beta.101 (2024-05-30)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with intersection-observer in `b-virtual-scroll-new`: added `watchForIntersection` method to `DOM` prototype
+
+## v4.0.0-beta.100 (2024-05-24)
+
+#### :bug: Bug Fix
+
+* Fixed an issue in `b-virtual-scroll-new` where nodes from the previous rendering cycle were not being hidden and remained displayed.
+Now, the container will always be hidden if it is empty or during the loading process until an initial render occurs.
+It is important to note that the nodes are hidden, not deleted, and will later be replaced by new nodes.
+This approach helps avoid unnecessary re-renders.
+Additionally, this fix can be considered a breaking change because the container
+node inside b-virtual-scroll will now be hidden (display: none) by default until the first successful render in the rendering cycle. `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.99 (2024-05-23)
+
+#### :rocket: New Feature
+
+* Added color param to `i` mixin `components/global/g-def/funcs/ds.styl`
+
+## v4.0.0-beta.98 (2024-05-21)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition when changing props `bDynamicPage`
+
+## v4.0.0-beta.97 (2024-05-21)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition when switching routes `bRouter`
+* Reverted style dynamic load for fat-html from v4.0.0-beta.94 `build/monic`
+
+## v4.0.0-beta.96 (2024-05-16)
+
+#### :rocket: New Feature
+
+* Added new methods waitSignal and sendSignal for deferred module loading `components/friends/module-loader`
 
 ## v4.0.0-beta.95 (2024-05-06)
 

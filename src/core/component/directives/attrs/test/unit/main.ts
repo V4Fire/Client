@@ -6,29 +6,29 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ElementHandle, Locator, Page } from 'playwright';
-
-import type { Watcher } from 'components/directives/on-resize';
-
 import test from 'tests/config/unit/test';
 
-import { Component } from 'tests/helpers';
+import {
+
+	renderComponentWithVAttrs,
+	renderElementWithVAttrs,
+
+	resizeHandler,
+	clickHandler,
+
+	waitForWatcherCallsCount
+
+} from 'core/component/directives/attrs/test/helpers';
+
+import type bComponentDirectivesAttrsDummy from 'core/component/directives/attrs/test/b-component-directives-attrs-dummy/b-component-directives-attrs-dummy';
 
 test.describe('core/component/directives/attrs', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
-	test('the directive allows setting the value of another directive', async ({page}) => {
-		const component = await renderDirective(page, 'b-dummy', {
-			'v-show': false
-		});
-
-		await test.expect(component).toHaveCSS('display', 'none');
-	});
-
-	test('the directive allows setting regular props or attributes', async ({page}) => {
-		const component = await renderDirective(page, 'b-dummy', {
+	test('should allow setting regular props or attributes', async ({page}) => {
+		const component = await renderElementWithVAttrs(page, {
 			style: 'margin-top: 10px;',
 			class: 'croatoan'
 		});
@@ -37,21 +37,27 @@ test.describe('core/component/directives/attrs', () => {
 		await test.expect(component).toHaveCSS('margin-top', '10px');
 	});
 
-	test('the directive allows setting event listeners with support of Vue modifiers', async ({page}) => {
-		const component = await renderDirective(page, 'b-dummy', {
+	test('should allow setting event listeners with support of Vue modifiers', async ({page}) => {
+		const component = await renderElementWithVAttrs(page, {
 			'@click.once': clickHandler
 		});
 
 		await component.click();
-
 		await component.click();
 
 		await test.expect(component).toHaveAttribute('data-counter', '1');
-
 	});
 
-	test('the directive allows setting custom directives', async ({page}) => {
-		const component = await renderDirective(page, 'b-dummy', {
+	test('should allow setting Vue directives', async ({page}) => {
+		const component = await renderElementWithVAttrs(page, {
+			'v-show': false
+		});
+
+		await test.expect(component).toHaveCSS('display', 'none');
+	});
+
+	test('should allow setting custom directives', async ({page}) => {
+		const component = await renderElementWithVAttrs(page, {
 			'v-on-resize': resizeHandler
 		});
 
@@ -62,95 +68,92 @@ test.describe('core/component/directives/attrs', () => {
 		await test.expect(waitForWatcherCallsCount(page, component, 2)).toBeResolved();
 	});
 
-	test('the directive allows specifying directives, events, and attributes simultaneously', async ({page}) => {
-		const component = await renderDirective(page, 'b-dummy', {
-			style: 'margin-top: 10px;',
-			'@click.once': clickHandler,
-			'v-on-resize': resizeHandler
+	test.describe('should allow specifying directives, events, and attributes simultaneously', () => {
+		test('for non-functional components', async ({page}) => {
+			const component = await renderElementWithVAttrs(page, {
+				style: 'margin-top: 10px;',
+				'@click.once': clickHandler,
+				'v-on-resize': resizeHandler
+			});
+
+			await component.evaluate((div) => {
+				div.style.width = '200px';
+			});
+
+			await component.click();
+
+			await component.click();
+
+			await test.expect(component).toHaveCSS('margin-top', '10px');
+
+			await test.expect(waitForWatcherCallsCount(page, component, 3)).toBeResolved();
 		});
 
-		await component.evaluate((div) => {
-			div.style.width = '200px';
+		test('for functional components', async ({page}) => {
+			const component = await renderElementWithVAttrs(page, {
+				style: 'margin-top: 10px;',
+				'@click.once': clickHandler,
+				'v-on-resize': resizeHandler
+			}, true);
+
+			await component.click();
+
+			await component.click();
+
+			await component.evaluate((div) => {
+				div.style.width = '200px';
+			});
+
+			await test.expect(component).toHaveCSS('margin-top', '10px');
+			await test.expect(component).toHaveAttribute('data-counter', '3');
 		});
-
-		await component.click();
-
-		await component.click();
-
-		await test.expect(component).toHaveCSS('margin-top', '10px');
-
-		await test.expect(waitForWatcherCallsCount(page, component, 3)).toBeResolved();
 	});
 
-	test('the directive works correctly when used on functional components', async ({page}) => {
-		const component = await renderDirective(page, 'b-dummy-functional', {
-			style: 'margin-top: 10px;',
-			'@click.once': clickHandler,
-			'v-on-resize': resizeHandler
+	test.describe('should support listening to component events', () => {
+		test('for non-functional components', async ({page}) => {
+			const target = await renderComponentWithVAttrs<bComponentDirectivesAttrsDummy>(page, 'b-component-directives-attrs-dummy', {
+				'@delete': deleteHandler
+			});
+
+			const button = page.getByTestId('deleteButton');
+
+			await button.click();
+
+			await button.click();
+
+			await test.expect(target.evaluate((el) => el.counter)).resolves.toBe(2);
 		});
 
-		await component.click();
+		test('for functional components', async ({page}) => {
+			const target = await renderComponentWithVAttrs<bComponentDirectivesAttrsDummy>(page, 'b-component-directives-attrs-dummy-functional', {
+				'@delete': deleteHandler
+			});
 
-		await component.click();
+			const button = page.getByTestId('deleteButton');
 
-		await component.evaluate((div) => {
-			div.style.width = '200px';
+			await button.click();
+
+			await button.click();
+
+			await test.expect(target.evaluate((el) => el.counter)).resolves.toBe(2);
 		});
 
-		await test.expect(component).toHaveCSS('margin-top', '10px');
-		await test.expect(component).toHaveAttribute('data-counter', '3');
+		test('the component event handler cannot have modifiers', async ({page}) => {
+			const target = await renderComponentWithVAttrs<bComponentDirectivesAttrsDummy>(page, 'b-component-directives-attrs-dummy', {
+				'@delete.delete': deleteHandler
+			});
+
+			const button = page.getByTestId('deleteButton');
+
+			await button.click();
+
+			await button.click();
+
+			await test.expect(target.evaluate((el) => el.counter)).resolves.toBe(0);
+		});
+
+		function deleteHandler(target: bComponentDirectivesAttrsDummy): void {
+			target.counter++;
+		}
 	});
-
-	async function renderDirective(
-		page: Page,
-		componentName: string,
-		attrs: RenderComponentsVnodeParams['attrs']
-	): Promise<Locator> {
-		const componentTestId = 'target';
-		await Component.createComponent(page, componentName, {
-			'data-testid': componentTestId,
-			'data-counter': 0,
-			'v-attrs': {...attrs},
-			style: 'width: 100px; height: 100px'
-		});
-
-		return page.getByTestId(componentTestId);
-	}
-
-	async function waitForWatcherCallsCount(page: Page, observedEl: Locator, expected: number): Promise<void> {
-		const handle = await observedEl.elementHandle();
-
-		await page
-			.waitForFunction(
-				([div, val]) => Boolean(
-					div.getAttribute('data-counter') === val.toString(10)
-				),
-
-				<[ElementHandle<HTMLElement>, number]>[handle, expected]
-			);
-	}
-
-	function resizeHandler(newRect: DOMRect, oldRect: DOMRect, watcher: Watcher): void {
-		const {target} = watcher;
-
-		const previousValue = parseInt(
-			target.getAttribute('data-counter') ?? '0',
-			10
-		);
-
-		const nextValue = previousValue + 1;
-		target.setAttribute('data-counter', nextValue.toString());
-	}
-
-	function clickHandler(event: MouseEvent): void {
-		const target = <Element>event.target;
-
-		const previousValue = parseInt(
-			target.getAttribute('data-counter') ?? '0',
-			10
-		);
-
-		const nextValue = previousValue + 1;
-		target.setAttribute('data-counter', nextValue.toString());
-	}
 });

@@ -32,7 +32,8 @@ module.exports = function output({buildId}) {
 		Object.assign(params, {
 			libraryTarget: 'commonjs2',
 			chunkLoading: 'require',
-			chunkFormat: 'commonjs'
+			chunkFormat: 'commonjs',
+			filename: '[name].js'
 		});
 
 	} else {

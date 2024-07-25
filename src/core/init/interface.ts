@@ -6,33 +6,62 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type Async from 'core/async';
+
 import type { InitialRoute } from 'core/router';
+import type { CookieStore } from 'core/cookies';
 
 import type { State } from 'core/component/state';
 import type { ComponentOptions } from 'core/component/engines';
 
-type OptionalState = {
-	[K in keyof State]?: State[K];
-};
-
 export interface AppSSR {
 	content: string;
 	styles: string;
+	state: State;
 }
 
 export type App = Element | AppSSR;
 
-export interface InitAppOptions extends OptionalState {
+export interface CreateAppOptions {
 	/**
-	 * The unique identifier for the application process
+	 * A function that is called before the initialization of the root component
+	 * @param rootComponentParams
 	 */
-	appProcessId?: string;
+	setup?(rootComponentParams: ComponentOptions): void;
 
 	/**
 	 * A link to the element where the application should be mounted.
 	 * This parameter is only used when initializing the application in a browser.
 	 */
 	targetToMount?: Nullable<HTMLElement>;
+}
+
+export type InitAppOptions = CreateAppOptions & Overwrite<State, {
+	/**
+	 * The unique identifier for the application process
+	 */
+	appProcessId?: string;
+
+	/**
+	 * A store of application cookies
+	 */
+	cookies: CookieStore;
+
+	/**
+	 * An API for managing app themes from the Design System
+	 */
+	theme?: State['theme'];
+
+	/**
+	 * An API for working with the meta information of the current page
+	 */
+	pageMetaData?: State['pageMetaData'];
+
+	/**
+	 * A storage for hydrated data.
+	 * During SSR, data is saved in this storage and then restored from it on the client.
+	 */
+	hydrationStore?: State['hydrationStore'];
 
 	/**
 	 * The initial route for initializing the router.
@@ -41,19 +70,10 @@ export interface InitAppOptions extends OptionalState {
 	route?: InitialRoute;
 
 	/**
-	 * A function that is called before the initialization of the root component
-	 * @param rootComponentParams
+	 * An API to work with a network, such as testing of the network connection, etc.
 	 */
-	setup?(rootComponentParams: ComponentOptions): void;
+	net?: State['net'];
 
-	/**
-	 * Sets the passed flag to a ready status.
-	 * When all the declared flags are ready, the application itself will be initialized.
-	 *
-	 * @param flag
-	 */
-	ready(flag: string): Promise<(
-		rootComponentName: Nullable<string>,
-		opts: InitAppOptions
-	) => Promise<App>>;
-}
+	/** {@link Async} */
+	async?: State['async'];
+}>;

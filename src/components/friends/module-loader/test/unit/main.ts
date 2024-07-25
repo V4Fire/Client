@@ -56,7 +56,7 @@ test.describe('friends/module-loader', () => {
 		await test.expect(page.locator(resultSelector)).toHaveText('Dummy module #1');
 	});
 
-	test('module should be loaded only after its associated "wait" function is resolved', async ({page}) => {
+	test('the module should be loaded only after its associated "wait" function is resolved', async ({page}) => {
 		let contents: Array<Promise<string>> = [];
 
 		page.on('response', (response) => {
@@ -65,7 +65,7 @@ test.describe('friends/module-loader', () => {
 			}
 		});
 
-		const target = await renderDummy(page, 'load module only after wait is resolved');
+		const target = await renderDummy(page, 'load the module only after the wait is resolved');
 
 		await BOM.waitForIdleCallback(page);
 
@@ -90,12 +90,40 @@ test.describe('friends/module-loader', () => {
 		].join(' '));
 	});
 
-	/**
-	 * Returns the rendered `b-friends-module-loader-dummy` component
-	 *
-	 * @param page
-	 * @param stage
-	 */
+	test('the module should be loaded only after its associated signal is sent', async ({page}) => {
+		let contents: Array<Promise<string>> = [];
+
+		page.on('response', (response) => {
+			if (response.url().endsWith('js')) {
+				contents.push(response.text());
+			}
+		});
+
+		const target = await renderDummy(page, 'load the module only after the signal is received');
+
+		await BOM.waitForIdleCallback(page);
+
+		await test.expect(
+			Promise.all(contents).then((r) => r.every((text) => text.includes('dummy1')))
+		).resolves.toBeTruthy();
+
+		await test.expect(page.locator(resultSelector)).toHaveText('Dummy module #1');
+
+		// eslint-disable-next-line require-atomic-updates
+		contents = [];
+
+		await performAsyncRenderBySignal(target, 'dummy2');
+
+		await test.expect(
+			Promise.all(contents).then((r) => r.every((text) => text.includes('dummy2')))
+		).resolves.toBeTruthy();
+
+		await test.expect(page.locator(resultSelector)).toHaveText([
+			'Dummy module #1',
+			'Dummy module #2'
+		].join(' '));
+	});
+
 	async function renderDummy(page: Page, stage: string) {
 		await Component.waitForComponentTemplate(page, componentName);
 		return Component.createComponent(page, componentName, {stage});
@@ -111,6 +139,19 @@ test.describe('friends/module-loader', () => {
 	async function performAsyncRender(dummy: JSHandle<iBlock>, target: string): Promise<void> {
 		const renderCompleted = dummy.evaluate((ctx) => ctx.unsafe.localEmitter.promisifyOnce('asyncRenderComplete'));
 		await dummy.evaluate((ctx, target) => ctx.unsafe.localEmitter.emit(target), target);
+		await renderCompleted;
+	}
+
+	/**
+	 * Initiates the asynchronous rendering of a specified component using a signal.
+	 * The function returns a promise that resolves once the rendering process is completed.
+	 *
+	 * @param dummy
+	 * @param target
+	 */
+	async function performAsyncRenderBySignal(dummy: JSHandle<iBlock>, target: string): Promise<void> {
+		const renderCompleted = dummy.evaluate((ctx) => ctx.unsafe.localEmitter.promisifyOnce('asyncRenderComplete'));
+		await dummy.evaluate((ctx, target) => ctx.unsafe.moduleLoader.sendSignal(target), target);
 		await renderCompleted;
 	}
 });

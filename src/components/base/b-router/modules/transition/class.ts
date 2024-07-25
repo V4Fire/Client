@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
+
 import * as router from 'core/router';
 import type { Router } from 'core/router/interface';
 
@@ -15,8 +17,11 @@ import type bRouter from 'components/base/b-router/b-router';
 import ScrollControl from 'components/base/b-router/modules/transition/scroll-control';
 import type { TransitionContext } from 'components/base/b-router/modules/transition/interface';
 
+const
+	$$ = symbolGenerator();
+
 const transitionLabel = {
-	label: Symbol('transition')
+	label: $$.transition
 };
 
 export default class Transition {

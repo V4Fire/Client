@@ -301,8 +301,8 @@ export default class bDynamicPage extends iDynamicPage {
 		return component.reload(params);
 	}
 
-	override canSelfDispatchEvent(_: string): boolean {
-		return true;
+	override canSelfDispatchEvent(event: string): boolean {
+		return !/^hook(?::\w+(-\w+)*|-change)$/.test(event.dasherize());
 	}
 
 	/**
@@ -425,6 +425,15 @@ export default class bDynamicPage extends iDynamicPage {
 				}
 
 				console.log(Date.now(), 'render filter - resolve');
+
+				// The `onPageChange` callback is created during the `renderFilter` call.
+				// When this callback resolves, the asynchronous render starts rendering a new page
+				// and proceeds to the next iteration by calling `renderFilter` again.
+				// However, we can't guarantee that the next `renderFilter` call will occur before `syncPageWatcher`.
+				// If `syncPageWatcher` is called before the next `renderFilter`, it will execute
+				// the `onPageChange` callback, which is why we must clean it up here.
+				unsafe.onPageChange = undefined;
+
 				resolve(true);
 			};
 		}
@@ -566,14 +575,10 @@ export default class bDynamicPage extends iDynamicPage {
 	@watch('emitter')
 	@watch({path: 'event', immediate: true})
 	protected syncEmitterWatcher(): void {
-		const
-			{async: $a} = this;
+		const {async: $a} = this;
 
-		const
-			group = {group: 'emitter'};
-
-		$a
-			.clearAll(group);
+		const group = {group: 'emitter'};
+		$a.clearAll(group);
 
 		if (this.event != null) {
 			$a.on(this.emitter ?? this.r, this.event, (component, e) => {
@@ -601,6 +606,17 @@ export default class bDynamicPage extends iDynamicPage {
 	@watch({path: 'page', immediate: true})
 	protected syncPageWatcher(page: CanUndef<string>, oldPage: CanUndef<string>): void {
 		if (HYDRATION && !this.hydrated) {
+			const label = {
+				label: $$.hydratePageWatcher
+			};
+
+			this.watch('onPageChange', {...label, immediate: true}, () => {
+				if (this.hydrated) {
+					this.onPageHydrated(page);
+					this.async.terminateWorker(label);
+				}
+			});
+
 			return;
 		}
 
@@ -627,7 +643,24 @@ export default class bDynamicPage extends iDynamicPage {
 		super.initModEvents();
 
 		if (!SSR) {
-			this.sync.mod('hidden', 'page', (v) => !Object.isTruly(v));
+			this.async.setImmediate(() => {
+				this.sync.mod('hidden', 'page', (v) => !Object.isTruly(v));
+			});
+		}
+	}
+
+	/**
+	 * Handler: the page has been hydrated
+	 * @param page
+	 */
+	protected onPageHydrated(page: CanUndef<string>): void {
+		const
+			pageEl = this.unsafe.block?.element<iDynamicPageEl>('component'),
+			pageComponent = pageEl?.component?.unsafe,
+			pageStrategy = this.unsafe.getKeepAliveStrategy(page, this.route);
+
+		if (pageComponent != null && !pageStrategy.isLoopback) {
+			pageComponent.activate(true);
 		}
 	}
 

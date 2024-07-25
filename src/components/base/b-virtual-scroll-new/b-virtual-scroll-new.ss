@@ -13,11 +13,16 @@
 - template index() extends ['i-data'].index
 	- block body
 		< .&__wrapper
-			< .&__container ref = container | -test-ref = container
+			< .&__container &
+				ref = container |
+				-test-ref = container |
+				v-memo = [firstChunkItems]
+			.
 				< component &
-					v-for = {item, props} in firstChunkItems |
+					v-for = {item, key, props} in firstChunkItems |
+					:key = key |
 					:is = item |
-					:v-attrs = props
+					v-attrs = props
 				.
 
 			< .&__tombstones &

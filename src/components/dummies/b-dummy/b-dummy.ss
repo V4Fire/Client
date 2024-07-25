@@ -11,12 +11,14 @@
 - include 'components/super/i-data'|b as placeholder
 
 - template index() extends ['i-data'].index
+	- forceRenderAsVNode = true
+
 	- block body
 		< template v-if = testComponent
 			< component &
 				ref = testComponent |
 				:is = testComponent |
-				:v-attrs = testComponentAttrs |
+				v-attrs = testComponentAttrs |
 				v-render = testComponentSlots
 			.
 

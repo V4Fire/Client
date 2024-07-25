@@ -13,10 +13,9 @@
 
 import SyncPromise from 'core/promise/sync';
 
-import { setVNodePatchFlags } from 'core/component/render';
 import { ComponentEngine, VNode } from 'core/component/engines';
 
-import { getDirectiveContext } from 'core/component/directives/helpers';
+import { getDirectiveContext } from 'core/component/directives';
 import { bindListenerToElement, clearElementBindings } from 'components/directives/bind-with/helpers';
 
 import { idsCache } from 'components/directives/icon/const';
@@ -27,29 +26,9 @@ import type { DirectiveParams } from 'components/directives/icon/interface';
 export * from 'components/directives/icon/interface';
 
 ComponentEngine.directive('icon', {
-	beforeCreate(params: DirectiveParams, vnode: VNode): void {
-		vnode.type = 'svg';
-
-		if (SSR) {
-			const
-				ctx = getDirectiveContext(params, vnode);
-
-			if (ctx == null) {
-				return;
-			}
-
-			const
-				{r} = ctx.$renderEngine;
-
-			vnode.children = [
-				r.createVNode.call(ctx, 'use', {
-					href: SyncPromise.resolve(getIconHref(params.value ?? params.arg)).unwrap()
-				})
-			];
-
-			vnode.dynamicChildren = Object.cast(vnode.children.slice());
-			setVNodePatchFlags(vnode, 'children');
-		}
+	beforeCreate(_: DirectiveParams, vnode: VNode): void {
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		vnode.type = require('components/directives/icon/compiler-info').tag;
 	},
 
 	mounted(el: Element, params: DirectiveParams, vnode: VNode): void {
@@ -70,6 +49,11 @@ ComponentEngine.directive('icon', {
 	unmounted(el: Element, params: DirectiveParams, vnode: VNode): void {
 		clearElementBindings(el, getDirectiveContext(params, vnode));
 		idsCache.delete(el);
+	},
+
+	getSSRProps(params: DirectiveParams): Dictionary {
+		const href = SyncPromise.resolve(getIconHref(params.value ?? params.arg)).unwrap();
+		return {innerHTML: `<use xlink:href="${href}" />`};
 	}
 });
 

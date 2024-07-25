@@ -94,7 +94,7 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 		if (webpack.ssr) {
 			if (!entryDeps.has(component.name)) {
 				styles.forEach(([key, style]) => {
-					decl += `require('core/component/hydration').styles.set('${key}', ${style});`;
+					decl += `require('core/hydration-store').styles.set('${key}', ${style});`;
 				});
 			}
 

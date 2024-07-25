@@ -15,7 +15,7 @@ However, there are several submodules that you should become familiar with.
 * `core/component/render/daemon` - provides an API to register and manage tasks of asynchronous rendering;
 * `core/component/engines` - contains adaptors for component libraries and the V4Fire DSL.
 
-## How does it work?
+## How Does It Work?
 
 In V4Fire, user interface components are described as regular TypeScript classes.
 Class methods are component methods and properties are either input parameters to components or

@@ -12,7 +12,7 @@
  */
 
 import config from 'config';
-import DOMPurify from 'dompurify';
+import * as xss from 'core/html/xss';
 
 import { ComponentEngine, VNode } from 'core/component/engines';
 import type { SafeHtmlDirectiveParams } from 'components/directives/safe-html/interface';
@@ -21,40 +21,39 @@ export * from 'components/directives/safe-html/interface';
 
 ComponentEngine.directive('safe-html', {
 	beforeCreate({value, oldValue}: SafeHtmlDirectiveParams, vnode: VNode) {
-		if (value === oldValue) {
+		if (value === oldValue || SSR) {
 			return;
-		}
-
-		let sanitized: string;
-
-		if (Object.isPrimitive(value)) {
-			sanitized = DOMPurify.sanitize(toString(value), config.safeHtml);
-
-		} else {
-			sanitized = DOMPurify.sanitize(
-				toString(value.value),
-
-				{
-					...config.safeHtml,
-					...value.options,
-
-					RETURN_DOM_FRAGMENT: false,
-					RETURN_DOM: false
-				}
-			);
 		}
 
 		vnode.props = {
 			...vnode.props,
-			innerHTML: sanitized
+			innerHTML: sanitize(value)
 		};
+	},
 
-		/**
-		 * Converts the input value to a string for sanitization
-		 * @param value
-		 */
-		function toString(value: SafeHtmlDirectiveParams['value']): string {
-			return value == null ? '' : String(value);
+	getSSRProps({value, oldValue}: SafeHtmlDirectiveParams) {
+		if (value === oldValue) {
+			return;
 		}
+
+		return {innerHTML: sanitize(value)};
 	}
 });
+
+function sanitize(value: SafeHtmlDirectiveParams['value']): string {
+	if (Object.isPrimitive(value)) {
+		return xss.sanitize(toString(value), config.safeHtml);
+	}
+
+	return xss.sanitize(toString(value.value), {
+		...config.safeHtml,
+		...value.options,
+
+		RETURN_DOM_FRAGMENT: false,
+		RETURN_DOM: false
+	});
+
+	function toString(value: SafeHtmlDirectiveParams['value']): string {
+		return value == null ? '' : String(value);
+	}
+}

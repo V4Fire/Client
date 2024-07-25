@@ -123,7 +123,7 @@ export function deleteField(
 			// If the property has not yet been watched, do not force proxy creation
 			needDeleteToWatch = isReady && (
 				// eslint-disable-next-line @v4fire/unbound-method
-				!ctx.isFunctional || Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get)
+				!ctx.isFunctionalWatchers || Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get)
 			);
 
 			if (isSystem) {
@@ -138,7 +138,7 @@ export function deleteField(
 					sync = () => Object.delete(ctx.$systemFields, [name]);
 				}
 
-			} else if (ctx.isFunctional) {
+			} else if (ctx.isFunctionalWatchers) {
 				ref = ctx.$fields;
 
 				// If the component has not yet initialized field watchers,

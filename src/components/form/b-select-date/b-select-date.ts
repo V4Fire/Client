@@ -36,7 +36,6 @@ export { Value, FormValue };
 export default class bSelectDate extends iInput implements iWidth {
 	override readonly Value!: Value;
 	override readonly FormValue!: FormValue;
-	override readonly rootTag: string = 'span';
 
 	@prop({type: Date, required: false})
 	override readonly valueProp?: this['Value'];

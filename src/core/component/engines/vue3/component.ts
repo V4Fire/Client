@@ -55,7 +55,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 				group: 'watchers:suspend'
 			});
 
-			return ctx.$fields;
+			return SSR ? {} : ctx.$fields;
 
 			function watcher(value: unknown, oldValue: unknown, info: WatchHandlerParams): void {
 				const
@@ -91,6 +91,25 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			});
 
 			init.beforeCreateState(ctx, meta, {implementEventAPI: true});
+
+			if (SSR) {
+				if (ctx.canFunctional !== true) {
+					this._.type.serverPrefetch = () => {
+						const init = ctx.$initializer;
+
+						try {
+							// If init is a synchronous promise, we explicitly perform an `unwrap` to eliminate the extra microtask
+							return SyncPromise.resolve(init).unwrap();
+
+						} catch {
+							return init;
+						}
+					};
+
+				} else {
+					delete this._.type.serverPrefetch;
+				}
+			}
 		},
 
 		created(): void {
@@ -122,7 +141,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 		},
 
 		beforeUnmount(): void {
-			init.beforeDestroyState(getComponentContext(this));
+			init.beforeDestroyState(getComponentContext(this), {recursive: false});
 		},
 
 		unmounted(): void {
@@ -135,19 +154,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 
 		renderTriggered(...args: unknown[]): void {
 			init.renderTriggeredState(getComponentContext(this), ...args);
-		},
-
-		serverPrefetch(): CanPromise<any> {
-			const
-				ctx = getComponentContext(this),
-				init = ctx.$initializer;
-
-			try {
-				return SyncPromise.resolve(init).unwrap();
-
-			} catch {
-				return init;
-			}
 		}
 	};
 }

@@ -490,17 +490,22 @@ __components/pages/p-v4-components-demo/p-v4-components-demo.ess__
 #### isAuth
 
 True if the current user is authorized.
-See `core/session` for more information.
+This field is based on the one with the same name from `remoteState`.
+It is used for convenience and reactive connection with the template.
+That is, if it changes, the component's template will be updated (if it is used there).
 
 #### isOnline
 
-True if there is a connection to the Internet
-See `core/net` for more information.
+True if there is a connection to the Internet.
+This field is based on the one with the same name from `remoteState`.
+It is used for convenience and reactive connection with the template.
+That is, if it changes, the component's template will be updated (if it is used there).
 
 #### lastOnlineDate
 
-The last date when the application was online.
-See `core/net` for more information.
+Last date when the application was online.
+This field is based on the one with the same name from `remoteState`.
+It is used for convenience.
 
 #### activePage
 
@@ -509,7 +514,7 @@ See [[bDynamicPage]] for more information.
 
 ### pageMetaData
 
-A module for manipulating page metadata, such as the page title or description.
+An API for managing the meta information of a page, such as the title, description, and other meta tags.
 
 ```js
 this.r.pageMetaData.title = 'Example';
@@ -549,17 +554,6 @@ this.r.theme.current = 'dark';
 ```
 
 See `components/super/i-static-page/modules/theme` for more information.
-
-### Accessors
-
-#### locale
-
-The application locale.
-
-```js
-console.log(this.r);
-this.r.locale = 'ru';
-```
 
 ### Methods
 

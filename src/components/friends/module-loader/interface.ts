@@ -37,3 +37,12 @@ export interface ResolvedModule extends Module {
 	 */
 	promise: Promise<unknown>;
 }
+
+/**
+ * The internal structure is designed to store information about received signals
+ * as well as signals that are being awaited
+ */
+export interface Signal {
+	promise: Promise<void>;
+	resolver: CanUndef<Function>;
+}

@@ -18,9 +18,6 @@ export * from 'components/super/i-static-page/i-static-page';
 
 VDOM.addToPrototype(VDOMAPI);
 
-// eslint-disable-next-line no-console
-console.time('Initializing');
-
 /**
  * Page with component demos.
  * Basically it uses with component tests.

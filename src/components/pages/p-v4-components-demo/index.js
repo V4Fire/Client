@@ -15,6 +15,9 @@ package('p-v4-components-demo')
 		'b-dynamic-page',
 		'b-remote-provider',
 
+		'b-cache-ssr',
+		'b-prevent-ssr',
+
 		'b-list',
 		'b-tree',
 		'b-window',
@@ -55,6 +58,8 @@ package('p-v4-components-demo')
 		'core/browser',
 		'core/cookies',
 		'core/html',
+		'core/html/xss',
+		'core/page-meta-data',
 
 		'models/modules/session'
 	);

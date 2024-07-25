@@ -31,3 +31,11 @@ export const beforeRenderHooks = Object.createDict({
 	...beforeMountHooks,
 	beforeUpdate: true
 });
+
+/**
+ * A dictionary with names of hooks that occur after a component is destroyed
+ */
+export const destroyedHooks = Object.createDict({
+	beforeDestroy: true,
+	destroyed: true
+});
