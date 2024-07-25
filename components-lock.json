@@ -1,5 +1,5 @@
 {
-  "hash": "406a89d1d4566f8ca6c0295f03069691ff70dcece32f482c139f87345618a25f",
+  "hash": "0327635cc8b537894b87876e38788b3cf77286c111458add1d2a20c2928a4c59",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1554,6 +1554,42 @@
         }
       ],
       [
+        "b-super-i-block-teleport-dummy",
+        {
+          "index": "src/components/super/i-block/test/b-super-i-block-teleport-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-teleport-dummy",
+            "parent": "i-block",
+            "dependencies": [
+              "b-bottom-slide"
+            ],
+            "libs": []
+          },
+          "name": "b-super-i-block-teleport-dummy",
+          "parent": "i-block",
+          "dependencies": [
+            "b-bottom-slide"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/test/b-super-i-block-teleport-dummy/b-super-i-block-teleport-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/test/b-super-i-block-teleport-dummy/b-super-i-block-teleport-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/test/b-super-i-block-teleport-dummy/b-super-i-block-teleport-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-super-i-block-watch-dummy",
         {
           "index": "src/components/super/i-block/test/b-super-i-block-watch-dummy/index.js",
@@ -2901,6 +2937,154 @@
           ],
           "tpl": "src/components/pages/p-v4-dynamic-page3/p-v4-dynamic-page3.ss",
           "etpl": null
+        }
+      ],
+      [
+        "p-v4-sync-test-page",
+        {
+          "index": "src/components/pages/p-v4-sync-test-page/index.js",
+          "declaration": {
+            "name": "p-v4-sync-test-page",
+            "parent": "i-static-page",
+            "dependencies": [
+              "b-dummy",
+              "b-router",
+              "b-dynamic-page",
+              "b-remote-provider",
+              "b-cache-ssr",
+              "b-prevent-ssr",
+              "b-list",
+              "b-tree",
+              "b-window",
+              "b-virtual-scroll",
+              "b-virtual-scroll-new",
+              "b-bottom-slide",
+              "b-slider",
+              "b-sidebar",
+              "b-form",
+              "b-button",
+              "b-icon-button",
+              "b-checkbox",
+              "b-radio-button",
+              "b-input",
+              "b-hidden-input",
+              "b-textarea",
+              "b-select",
+              "b-select-date",
+              "p-v4-dynamic-page1",
+              "p-v4-dynamic-page2",
+              "p-v4-dynamic-page3"
+            ],
+            "libs": [
+              "components/directives/bind-with",
+              "components/directives/image",
+              "components/directives/icon",
+              "components/directives/in-view",
+              "components/directives/safe-html",
+              "core/router/engines/browser-history",
+              "core/router/engines/in-memory",
+              "components/traits/i-control-list/i-control-list",
+              "core/browser",
+              "core/cookies",
+              "core/html",
+              "core/html/xss",
+              "core/page-meta-data",
+              "models/modules/session"
+            ]
+          },
+          "name": "p-v4-sync-test-page",
+          "parent": "i-static-page",
+          "dependencies": [
+            "b-dummy",
+            "b-router",
+            "b-dynamic-page",
+            "b-remote-provider",
+            "b-cache-ssr",
+            "b-prevent-ssr",
+            "b-list",
+            "b-tree",
+            "b-window",
+            "b-virtual-scroll",
+            "b-virtual-scroll-new",
+            "b-bottom-slide",
+            "b-slider",
+            "b-sidebar",
+            "b-form",
+            "b-button",
+            "b-icon-button",
+            "b-checkbox",
+            "b-radio-button",
+            "b-input",
+            "b-hidden-input",
+            "b-textarea",
+            "b-select",
+            "b-select-date",
+            "p-v4-dynamic-page1",
+            "p-v4-dynamic-page2",
+            "p-v4-dynamic-page3"
+          ],
+          "libs": [
+            "components/directives/bind-with",
+            "components/directives/image",
+            "components/directives/icon",
+            "components/directives/in-view",
+            "components/directives/safe-html",
+            "core/router/engines/browser-history",
+            "core/router/engines/in-memory",
+            "components/traits/i-control-list/i-control-list",
+            "core/browser",
+            "core/cookies",
+            "core/html",
+            "core/html/xss",
+            "core/page-meta-data",
+            "models/modules/session"
+          ],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": [
+              "components/directives/bind-with",
+              "components/directives/icon",
+              "components/directives/image",
+              "components/directives/in-view",
+              "components/directives/safe-html",
+              "components/traits/i-control-list/i-control-list",
+              "core/browser",
+              "core/cookies",
+              "core/html",
+              "core/html/xss",
+              "core/page-meta-data",
+              "core/router/engines/browser-history",
+              "core/router/engines/in-memory",
+              "models/modules/session"
+            ]
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": [
+              "components/directives/bind-with",
+              "components/directives/icon",
+              "components/directives/image",
+              "components/directives/in-view",
+              "components/directives/safe-html",
+              "components/traits/i-control-list/i-control-list",
+              "core/browser",
+              "core/cookies",
+              "core/html",
+              "core/html/xss",
+              "core/page-meta-data",
+              "core/router/engines/browser-history",
+              "core/router/engines/in-memory",
+              "models/modules/session"
+            ]
+          },
+          "type": "page",
+          "mixin": false,
+          "logic": "src/components/pages/p-v4-sync-test-page/p-v4-sync-test-page.ts",
+          "styles": [
+            "src/components/pages/p-v4-sync-test-page/p-v4-sync-test-page.styl"
+          ],
+          "tpl": "src/components/pages/p-v4-sync-test-page/p-v4-sync-test-page.ss",
+          "etpl": "src/components/pages/p-v4-sync-test-page/p-v4-sync-test-page.ess"
         }
       ]
     ]

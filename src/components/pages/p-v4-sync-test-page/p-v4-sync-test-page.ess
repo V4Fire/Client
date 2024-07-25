@@ -1,0 +1,13 @@
+- namespace [%fileName%]
+
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+- include 'components/super/i-static-page/i-static-page.html.ss'|b as placeholder
+
+- template index() extends ['i-static-page.html'].index
