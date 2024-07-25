@@ -205,22 +205,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * The name of the component to run synchronous tests
-		 *
-		 * @cli sync-test-page
-		 * @env SYNC_TEST_PAGE
-		 *
-		 * @param {string} [def] - default value
-		 * @returns {string}
-		 */
-		syncTestPage(def = 'p-v4-sync-test-page') {
-			return o('sync-test-page', {
-				env: true,
-				default: def
-			});
-		},
-
-		/**
 		 * Returns true if the application build should include special stub components for testing purposes.
 		 * By default, these components are only loaded in the development environment.
 		 *

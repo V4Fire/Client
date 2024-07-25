@@ -52,8 +52,8 @@ test.describe('<i-block> using the root teleport', () => {
 	test.describe('using sync render', () => {
 		let target: JSHandle<bBottomSlide>;
 
-		test.beforeEach(async ({syncTestPage, page}) => {
-			await syncTestPage.goto(toQueryString({stage: 'teleports'}));
+		test.beforeEach(async ({demoPage, page}) => {
+			await demoPage.goto(toQueryString({stage: 'teleports'}));
 			target = await Component.waitForComponentByQuery(page, '.b-bottom-slide');
 		});
 

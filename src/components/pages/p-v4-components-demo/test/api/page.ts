@@ -56,13 +56,13 @@ export default class DemoPage {
 
 	/**
 	 * Opens a demo page
-	 * @param [search]
+	 * @param [query] - query parameters for the URL, i.e. `a=1&b=1`
 	 */
-	async goto(search: string = ''): Promise<DemoPage> {
+	async goto(query: string = ''): Promise<DemoPage> {
 		const
 			root = this.page.locator('#root-component');
 
-		await this.page.goto(concatURLs(this.baseUrl, `${this.pageFileName}.html`) + (search.length > 0 ? `?${search}` : ''), {waitUntil: 'networkidle'});
+		await this.page.goto(concatURLs(this.baseUrl, `${this.pageFileName}.html`) + (query.length > 0 ? `?${query}` : ''), {waitUntil: 'networkidle'});
 		await root.waitFor({state: 'attached'});
 
 		this.component = await root.evaluateHandle((ctx) => ctx.component);

@@ -343,6 +343,7 @@ export default abstract class iStaticPage extends iPage {
 		}));
 
 		await this.nextTick();
+		this.console.log(Date.now(), this.componentName, 'should mount teleports');
 		this.shouldMountTeleports = true;
 	}
 
