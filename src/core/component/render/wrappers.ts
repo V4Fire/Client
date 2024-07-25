@@ -72,7 +72,7 @@ export function wrapCreateVNode<T extends typeof createVNode>(original: T): T {
  */
 export function wrapCreateElementVNode<T extends typeof createElementVNode>(original: T): T {
 	return Object.cast(function createElementVNode(this: ComponentInterface, ...args: Parameters<T>) {
-		args[3] = normalizePatchFlagUsingProps(args[3], args[1]);
+		args[3] = normalizePatchFlagUsingProps.call(this, args[3], args[1]);
 		return resolveAttrs.call(this, original.apply(null, args));
 	});
 }
@@ -93,7 +93,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 
 		let component: CanNull<ComponentMeta> = null;
 
-		patchFlag = normalizePatchFlagUsingProps(patchFlag, attrs);
+		patchFlag = normalizePatchFlagUsingProps.call(this, patchFlag, attrs);
 
 		if (Object.isString(name)) {
 			component = registerComponent(name);
@@ -248,7 +248,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
  */
 export function wrapCreateElementBlock<T extends typeof createElementBlock>(original: T): T {
 	return Object.cast(function createElementBlock(this: ComponentInterface, ...args: Parameters<T>) {
-		args[3] = normalizePatchFlagUsingProps(args[3], args[1]);
+		args[3] = normalizePatchFlagUsingProps.call(this, args[3], args[1]);
 		return resolveAttrs.call(this, original.apply(null, args));
 	});
 }
