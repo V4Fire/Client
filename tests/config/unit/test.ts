@@ -9,10 +9,12 @@
 import base from 'tests/config/super/test';
 
 import DemoPage from 'components/pages/p-v4-components-demo/test/api/page';
+import SyncTestPage from 'components/pages/p-v4-sync-test-page/test/api/page';
 import ConsoleTracker from 'tests/fixtures/console-tracker';
 
 export interface Fixtures {
 	demoPage: DemoPage;
+	syncTestPage: SyncTestPage;
 	consoleTracker: ConsoleTracker;
 }
 
@@ -26,6 +28,16 @@ const test = base.extend<Fixtures>({
 	 * @param fixture
 	 */
 	demoPage: ({page, baseURL}, fixture) => fixture(new DemoPage(page, <string>baseURL)),
+
+	/**
+	 * Returns an instance of the sync test page
+	 *
+	 * @param opts
+	 * @param opts.page
+	 * @param opts.baseURL
+	 * @param fixture
+	 */
+	syncTestPage: ({page, baseURL}, fixture) => fixture(new SyncTestPage(page, <string>baseURL)),
 
 	/**
 	 * Returns an instance of the ConsolerTracker
