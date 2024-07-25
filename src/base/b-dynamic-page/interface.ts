@@ -72,3 +72,8 @@ export interface OnBeforeSwitchPage {
 	 */
 	saveScroll(el: Element): void;
 }
+
+type PageComponentName = string;
+type PageKey = string;
+
+export type PageInfo = [PageComponentName, PageKey?];
