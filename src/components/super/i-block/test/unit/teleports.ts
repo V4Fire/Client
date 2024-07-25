@@ -12,8 +12,8 @@ import test from 'tests/config/unit/test';
 import { Component } from 'tests/helpers';
 import { toQueryString } from 'core/url';
 
+import type bBottomSlide from 'components/base/b-bottom-slide/b-bottom-slide';
 import type bSuperIBlockTeleportDummy from 'components/super/i-block/test/b-super-i-block-teleport-dummy/b-super-i-block-teleport-dummy';
-import bBottomSlide from 'components/base/b-bottom-slide/b-bottom-slide';
 
 test.describe('<i-block> using the root teleport', () => {
 	// NOTE: Component.createComponent uses async render
