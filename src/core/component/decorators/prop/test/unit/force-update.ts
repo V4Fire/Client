@@ -14,6 +14,7 @@ import { Component } from 'tests/helpers';
 import type { WatchHandlerParams } from 'components/super/i-block/i-block';
 
 import type bEffectPropWrapperDummy from 'core/component/decorators/prop/test/b-effect-prop-wrapper-dummy/b-effect-prop-wrapper-dummy';
+import { VirtualScrollComponentObject } from 'components/base/b-virtual-scroll-new/test/api/component-object';
 
 test.describe('contracts for props effects', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -118,6 +119,18 @@ test.describe('contracts for props effects', () => {
 					};
 				});
 
+				const virtualScroll = new VirtualScrollComponentObject(page);
+				await virtualScroll.pick('.b-virtual-scroll-new');
+
+				await virtualScroll.evaluate((ctx) => {
+					const originalInitLoad = ctx.initLoad.bind(ctx);
+
+					ctx.initLoad = (...args) => {
+						originalInitLoad(...args);
+						globalThis.isExecuted = true;
+					};
+				});
+
 				await target.evaluate((ctx) => {
 					ctx.testComponentAttrs = {
 						'@:request': ctx.unsafe.createPropAccessors(() => ({
@@ -127,6 +140,8 @@ test.describe('contracts for props effects', () => {
 						}))
 					};
 				});
+
+				await test.expect.poll(await page.evaluate(() => globalThis.isExecuted)).toBe(true);
 			});
 		});
 	});
