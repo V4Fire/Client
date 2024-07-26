@@ -135,19 +135,21 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 		const key = 'data-has-v-on-directives';
 
 		if (props[key] != null) {
-			const dynamicProps = vnode.dynamicProps ?? [];
-			vnode.dynamicProps = dynamicProps;
+			if (SSR || this.meta.params.functional === true) {
+				const dynamicProps = vnode.dynamicProps ?? [];
+				vnode.dynamicProps = dynamicProps;
 
-			Object.keys(props).forEach((prop) => {
-				if (isHandler.test(prop)) {
-					if (SSR) {
-						delete props![prop];
+				Object.keys(props).forEach((prop) => {
+					if (isHandler.test(prop)) {
+						if (SSR) {
+							delete props![prop];
 
-					} else {
-						dynamicProps.push(prop);
+						} else {
+							dynamicProps.push(prop);
+						}
 					}
-				}
-			});
+				});
+			}
 
 			delete props[key];
 		}

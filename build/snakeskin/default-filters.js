@@ -173,6 +173,10 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 		attrs[':componentIdProp'] = [`componentId + ${JSON.stringify(id)}`];
 	}
 
+	if (component.inheritMods !== false && !attrs[':modsProp']) {
+		attrs[':modsProp'] = ['provide.mods()'];
+	}
+
 	Object.entries(attrs).forEach(([name, val]) => {
 		if (!name.startsWith(':')) {
 			return;
@@ -186,17 +190,12 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 
 		if (component.props[propName]?.forceUpdate === false) {
 			attrs[`@:${propName}`] = [`createPropAccessors(() => (${val.join('')}))()`];
+			attrs['data-has-v-on-directives'] = [];
 		}
 	});
 
 	attrs[':getRoot'] = ['$getRoot(self)'];
 	attrs[':getParent'] = ["$getParent(self, typeof $restArgs !== 'undefined' ? $restArgs : undefined)"];
-
-	if (component.inheritMods !== false && !attrs[':modsProp']) {
-		// Explicitly pass a prop to activate the reactive effect
-		attrs[':modsProp'] = ['provide.mods()'];
-		attrs['@:modsProp'] = ['createPropAccessors(() => provide.mods())()'];
-	}
 
 	if (isFunctional && webpack.ssr) {
 		attrs[':canFunctional'] = [true];
