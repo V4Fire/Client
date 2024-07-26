@@ -423,6 +423,14 @@ export default class bDynamicPage extends iDynamicPage {
 					}
 				}
 
+				// The `onPageChange` callback is created during the `renderFilter` call.
+				// When this callback resolves, the asynchronous render starts rendering a new page
+				// and proceeds to the next iteration by calling `renderFilter` again.
+				// However, we can't guarantee that the next `renderFilter` call will occur before `syncPageWatcher`.
+				// If `syncPageWatcher` is called before the next `renderFilter`, it will execute
+				// the `onPageChange` callback, which is why we must clean it up here.
+				unsafe.onPageChange = undefined;
+
 				resolve(true);
 			};
 		}

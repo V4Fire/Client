@@ -9,7 +9,15 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## 4.0.0-beta.108.a-new-hope (2024-07-15)
+## v4.0.0-beta.112 (2024-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed a bug by ensuring the onPageChange callback is cleaned up in
+  renderFilter to prevent execution by syncPageWatcher before the next
+  renderFilter call, maintaining proper rendering sequence
+
+## v4.0.0-beta.108.a-new-hope (2024-07-15)
 
 #### :bug: Bug Fix
 
