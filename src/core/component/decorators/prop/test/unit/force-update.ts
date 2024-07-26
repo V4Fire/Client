@@ -113,6 +113,7 @@ test.describe('contracts for props effects', () => {
 								chunkSize: 10
 							}
 						})),
+
 						dataProvider: 'Provider'
 					};
 				});
