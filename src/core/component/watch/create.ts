@@ -256,6 +256,9 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 					return h();
 				};
+
+			} else if (flush === 'post') {
+				handler = (...args) => component.$nextTick().then(() => originalHandler.call(this, ...args));
 			}
 
 			if (needImmediate) {

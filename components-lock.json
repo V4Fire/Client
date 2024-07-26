@@ -1,5 +1,5 @@
 {
-  "hash": "406a89d1d4566f8ca6c0295f03069691ff70dcece32f482c139f87345618a25f",
+  "hash": "5ccda0c56681f6df98bcce9b5a48a424b09f104f6e403b75c7dd9ac02a30e93d",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1550,6 +1550,42 @@
             "src/components/super/i-block/test/b-super-i-block-lfc-dummy/b-super-i-block-lfc-dummy.styl"
           ],
           "tpl": "src/components/super/i-block/test/b-super-i-block-lfc-dummy/b-super-i-block-lfc-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-super-i-block-teleport-dummy",
+        {
+          "index": "src/components/super/i-block/test/b-super-i-block-teleport-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-teleport-dummy",
+            "parent": "i-block",
+            "dependencies": [
+              "b-bottom-slide"
+            ],
+            "libs": []
+          },
+          "name": "b-super-i-block-teleport-dummy",
+          "parent": "i-block",
+          "dependencies": [
+            "b-bottom-slide"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/test/b-super-i-block-teleport-dummy/b-super-i-block-teleport-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/test/b-super-i-block-teleport-dummy/b-super-i-block-teleport-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/test/b-super-i-block-teleport-dummy/b-super-i-block-teleport-dummy.ss",
           "etpl": null
         }
       ],
