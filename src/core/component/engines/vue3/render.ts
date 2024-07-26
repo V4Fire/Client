@@ -227,20 +227,23 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 
 			function registerDestructor() {
 				parent?.unsafe.async.worker(() => {
+					if ('skipDestruction' in vnode) {
+						delete vnode.skipDestruction;
+						registerDestructor();
+
+					} else {
+						vue.unmount();
+					}
+
 					gc.add(function* destructor() {
-						if ('skipDestruction' in vnode) {
-							delete vnode.skipDestruction;
-							registerDestructor();
+						const vnodes = Array.concat([], vnode);
 
-						} else {
-							vue.unmount();
+						for (const vnode of vnodes) {
+							destroy(vnode);
 							yield;
-
-							Array.concat([], vnode).forEach(destroy);
-							yield;
-
-							disposeLazy(vue);
 						}
+
+						disposeLazy(vue);
 					}());
 				}, {group});
 			}
