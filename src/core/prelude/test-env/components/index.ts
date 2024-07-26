@@ -76,7 +76,7 @@ globalThis.renderComponents = (
 
 		Object.keys(attrs).forEach((key) => {
 			if (componentMeta.props[key]?.forceUpdate === false) {
-				attrs[`@:${key}`] = ctx!.createPropAccessors(() => attrs[key]!);
+				attrs[`@:${key}`] = ctx!.createPropAccessors(() => <object>attrs[key]!);
 				delete attrs[key];
 			}
 		});
