@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-07-??)
+
+#### :bug: Bug Fix
+
+* Fixed an issue to prevent the `hookChange` event from bubbling up
+
 ## v4.0.0-beta.112 (2024-07-22)
 
 #### :bug: Bug Fix

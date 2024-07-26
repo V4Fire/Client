@@ -94,8 +94,8 @@ export function createdState(component: ComponentInterface): void {
 				onActivation(normalParent.hook);
 			}
 
-			normalParent.$on('on-hook-change', onActivation);
-			$a.worker(() => normalParent.$off('on-hook-change', onActivation));
+			normalParent.$on('onHookChange', onActivation);
+			$a.worker(() => normalParent.$off('onHookChange', onActivation));
 		}
 	}
 
