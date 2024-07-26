@@ -1,0 +1,11 @@
+[legacy]
+chrome >= 51, firefox >= 54, ios >= 10, safari >= 10, opera >= 38
+
+[modern]
+chrome >= 62, firefox >= 79, ios >= 11.3, safari >= 11.1, opera >= 49
+
+[development]
+last 1 chrome version
+
+[ssr]
+node 18

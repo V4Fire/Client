@@ -1,5 +1,5 @@
 {
-  "hash": "23d17036073396142d81f3c91143966489f3337fbfb97bd1a3362b9cfb87c889",
+  "hash": "fe7fd65571047ea1d3345ab9972ffeff501edf1aa95b5b0174a5e6a39134a459",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -150,16 +150,16 @@
         }
       ],
       [
-        "b-component-directives-attrs-dummy",
+        "b-component-directives-emitter-dummy",
         {
-          "index": "src/core/component/directives/attrs/test/b-component-directives-attrs-dummy/index.js",
+          "index": "src/core/component/directives/attrs/test/b-component-directives-emitter-dummy/index.js",
           "declaration": {
-            "name": "b-component-directives-attrs-dummy",
+            "name": "b-component-directives-emitter-dummy",
             "parent": "i-block",
             "dependencies": [],
             "libs": []
           },
-          "name": "b-component-directives-attrs-dummy",
+          "name": "b-component-directives-emitter-dummy",
           "parent": "i-block",
           "dependencies": [],
           "libs": [],
@@ -173,11 +173,11 @@
           },
           "type": "block",
           "mixin": false,
-          "logic": "src/core/component/directives/attrs/test/b-component-directives-attrs-dummy/b-component-directives-attrs-dummy.ts",
+          "logic": "src/core/component/directives/attrs/test/b-component-directives-emitter-dummy/b-component-directives-emitter-dummy.ts",
           "styles": [
-            "src/core/component/directives/attrs/test/b-component-directives-attrs-dummy/b-component-directives-attrs-dummy.styl"
+            "src/core/component/directives/attrs/test/b-component-directives-emitter-dummy/b-component-directives-emitter-dummy.styl"
           ],
-          "tpl": "src/core/component/directives/attrs/test/b-component-directives-attrs-dummy/b-component-directives-attrs-dummy.ss",
+          "tpl": "src/core/component/directives/attrs/test/b-component-directives-emitter-dummy/b-component-directives-emitter-dummy.ss",
           "etpl": null
         }
       ],

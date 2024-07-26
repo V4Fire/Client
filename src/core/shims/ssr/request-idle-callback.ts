@@ -6,11 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-'use strict';
-
 /* eslint-disable no-var */
 
-var GLOBAL = require('core/shims/global');
+import GLOBAL from 'core/shims/global';
 
 if (typeof process === 'object' && typeof GLOBAL['requestIdleCallback'] === 'undefined') {
 	(function requestIdleCallbackShim() {
