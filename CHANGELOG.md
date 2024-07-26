@@ -11,7 +11,8 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2024-07-??)
+## v4.0.0-beta.115.the-force-awakens (2024-07-26)
+
 
 #### :bug: Bug Fix
 
@@ -19,7 +20,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Fixed a typo in the event name `hookChange` which is responsible for processing activation and deactivation in the component
   * Amended the deactivation sequence within the component to ensure that children are deactivated first
 
-*  Fixed an issue to prevent the `hookChange` event from bubbling up `bDynamicPage`
+* Fixed an issue to prevent the `hookChange` event from bubbling up `bDynamicPage`
+* Fixed the `$el` property of the teleported component `iBlock`
+
+#### :house: Internal
+
+* Added unit tests that use synchronous rendering
 
 ## v4.0.0-beta.114 (2024-07-24)
 
