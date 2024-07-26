@@ -7,6 +7,7 @@
  */
 
 import { app, ComponentInterface } from 'core/component';
+import { registerComponent } from 'core/component/init';
 import { render, create } from 'components/friends/vdom';
 
 import type iBlock from 'components/super/i-block/i-block';
@@ -43,14 +44,15 @@ globalThis.renderComponents = (
 		throw new TypeError('The root context does not implement the iBlock interface');
 	}
 
-	const
-		ids = scheme.map(() => Math.random().toString(16).slice(2));
+	const ids = scheme.map(() => Math.random().toString(16).slice(2));
+
+	const componentMeta = registerComponent(componentName);
 
 	const vnodes = create.call(ctx.vdom, scheme.map(({attrs, children}, i) => ({
 		type: componentName,
 
 		attrs: {
-			...attrs,
+			...normalizeAttrs(attrs),
 			[ID_ATTR]: ids[i]
 		},
 
@@ -66,6 +68,21 @@ globalThis.renderComponents = (
 	ids.forEach((id) => {
 		components.add(document.querySelector(`[${ID_ATTR}="${id}"]`));
 	});
+
+	function normalizeAttrs(attrs?: Dictionary): Nullable<Dictionary> {
+		if (attrs == null || componentMeta == null) {
+			return attrs;
+		}
+
+		Object.keys(attrs).forEach((key) => {
+			if (componentMeta.props[key]?.forceUpdate === false) {
+				attrs[`@:${key}`] = ctx!.createPropAccessors(() => attrs[key]!);
+				delete attrs[key];
+			}
+		});
+
+		return attrs;
+	}
 };
 
 globalThis.removeCreatedComponents = () => {
