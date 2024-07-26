@@ -14,7 +14,6 @@ import { Component } from 'tests/helpers';
 import type { WatchHandlerParams } from 'components/super/i-block/i-block';
 
 import type bEffectPropWrapperDummy from 'core/component/decorators/prop/test/b-effect-prop-wrapper-dummy/b-effect-prop-wrapper-dummy';
-import { VirtualScrollComponentObject } from 'components/base/b-virtual-scroll-new/test/api/component-object';
 
 test.describe('contracts for props effects', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -32,7 +31,7 @@ test.describe('contracts for props effects', () => {
 
 		test('should support `validator` and `default` options', async () => {
 			const res = target.evaluate((ctx) =>
-				ctx.unsafe.$refs.child!.propWithDefault);
+				ctx.child.propWithDefault);
 
 			await test.expect(res).resolves.toBe(42);
 		});
@@ -70,7 +69,7 @@ test.describe('contracts for props effects', () => {
 				});
 
 				await test.expect(
-					target.evaluate((ctx) => ctx.unsafe.$refs.child?.isFunctional)
+					target.evaluate((ctx) => ctx.child.isFunctional)
 				).resolves.toBe(false);
 
 				const text = await page.getByText('Content');
@@ -83,7 +82,7 @@ test.describe('contracts for props effects', () => {
 				await test.expect(text).toHaveText('Content: {}');
 
 				await test.expect(
-					target.evaluate((ctx) => ctx.unsafe.$refs.child?.$renderCounter)
+					target.evaluate((ctx) => ctx.child.$renderCounter)
 				).resolves.toBe(1);
 			}
 		});
@@ -100,48 +99,25 @@ test.describe('contracts for props effects', () => {
 			});
 		});
 
-		test.describe('for a dynamic component with v-attrs', () => {
-			test('request prop changes should trigger initLoad call', async ({page}) => {
+		test.describe('for a dynamic component with `v-attrs`', () => {
+			test('`request` prop changes should trigger an `initLoad` call', async ({page}) => {
 				const target = await Component.createComponent<bEffectPropWrapperDummy>(page, 'b-effect-prop-wrapper-dummy', {
 					stage: 'component :is with v-attrs'
 				});
 
-				await target.evaluate((ctx) => {
-					ctx.testComponent = 'b-virtual-scroll-new';
-					ctx.testComponentAttrs = {
-						'@:request': ctx.unsafe.createPropAccessors(() => ({
-							get: {
-								chunkSize: 10
-							}
-						})),
+				await target.evaluate(({unsafe: ctx}) => {
+					const originalInitLoad = ctx.child.initLoad.bind(ctx);
 
-						dataProvider: 'Provider'
-					};
-				});
-
-				const virtualScroll = new VirtualScrollComponentObject(page);
-				await virtualScroll.pick('.b-virtual-scroll-new');
-
-				await virtualScroll.evaluate((ctx) => {
-					const originalInitLoad = ctx.initLoad.bind(ctx);
-
-					ctx.initLoad = (...args) => {
+					ctx.child.initLoad = (...args) => {
 						originalInitLoad(...args);
-						globalThis.isExecuted = true;
+						ctx.tmp.isExecuted = true;
 					};
+
+					ctx.requestField.get.chunkSize = 20;
 				});
 
-				await target.evaluate((ctx) => {
-					ctx.testComponentAttrs = {
-						'@:request': ctx.unsafe.createPropAccessors(() => ({
-							get: {
-								chunkSize: 20
-							}
-						}))
-					};
-				});
-
-				await test.expect.poll(await page.evaluate(() => globalThis.isExecuted)).toBe(true);
+				await test.expect(target.evaluate(({unsafe: ctx}) => ctx.tmp.isExecuted))
+					.resolves.toBe(true);
 			});
 		});
 	});
@@ -174,7 +150,7 @@ test.describe('contracts for props effects', () => {
 		const text = await page.getByText('Content');
 
 		await test.expect(
-			target.evaluate((ctx) => ctx.unsafe.$refs.child?.isFunctional)
+			target.evaluate((ctx) => ctx.child.isFunctional)
 		).resolves.toBe(functional);
 
 		await test.expect(text).toHaveText('Content: {}');
@@ -192,11 +168,11 @@ test.describe('contracts for props effects', () => {
 		});
 
 		await test.expect(
-			target.evaluate((ctx) => ctx.unsafe.$refs.child?.isFunctional)
+			target.evaluate((ctx) => ctx.child.isFunctional)
 		).resolves.toBe(false);
 
 		await target.evaluate((ctx) => {
-			const child = ctx.unsafe.$refs.child!.unsafe;
+			const child = ctx.child.unsafe;
 
 			type Log = Array<[unknown, unknown, CanUndef<unknown[]>]>;
 

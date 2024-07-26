@@ -40,7 +40,7 @@
 
 		< template v-else-if = stage === 'component :is with v-attrs'
 			< component &
-				v-if = testComponent |
-				:is = testComponent |
-				v-attrs = testComponentAttrs
+				ref = child |
+				:is = 'b-effect-prop-dummy' |
+				v-attrs = {dataProvider: 'Provider', '@:request': createPropAccessors(() => requestField)}
 			.

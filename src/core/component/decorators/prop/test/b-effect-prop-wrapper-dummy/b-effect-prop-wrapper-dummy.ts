@@ -18,7 +18,14 @@ export default class bEffectPropWrapperDummy extends bDummy {
 	@field()
 	someField: {a?: number; b?: {c: number}} = {};
 
+	@field()
+	requestField: {get: {chunkSize: number}} = {get: {chunkSize: 10}};
+
+	get child(): bNonEffectPropDummy {
+		return this.$refs.child;
+	}
+
 	protected override readonly $refs!: bDummy['$refs'] & {
-		child?: bNonEffectPropDummy;
+		child: bNonEffectPropDummy;
 	};
 }
