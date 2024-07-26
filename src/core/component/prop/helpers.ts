@@ -58,7 +58,10 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 
 			if (meta.props[propName]?.forceUpdate === false) {
 				propValuesToUpdate.push([propName, attrName]);
-				el?.removeAttribute(propName);
+
+				if (el instanceof Element) {
+					el.removeAttribute(propName);
+				}
 			}
 		});
 
