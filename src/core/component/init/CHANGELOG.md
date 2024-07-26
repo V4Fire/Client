@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-06-??)
+
+#### :bug: Bug Fix
+
+* Fixed a typo in the event name `hookChange` which is responsible for processing activation and deactivation in the component
+* Amended the deactivation sequence within the component to ensure that children are deactivated first
+
 ## v4.0.0-beta.91 (2024-04-19)
 
 #### :rocket: New Feature

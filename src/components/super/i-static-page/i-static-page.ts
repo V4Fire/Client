@@ -340,7 +340,7 @@ export default abstract class iStaticPage extends iPage {
 			id: 'teleports'
 		}));
 
-		await this.async.nextTick();
+		await this.nextTick();
 		this.shouldMountTeleports = true;
 	}
 

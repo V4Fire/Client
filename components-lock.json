@@ -1,5 +1,5 @@
 {
-  "hash": "89c4ac6423f0ce533b075fee72f3ed10a6c52bba2f980a3f2ba1e48c7f2adf7d",
+  "hash": "cf42b6d3305a7aa82f03a6a2e1777d6f80d56f444952b156ab1c06a1a331a112",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1490,6 +1490,44 @@
         }
       ],
       [
+        "b-super-i-block-deactivation-dummy",
+        {
+          "index": "src/components/super/i-block/test/b-super-i-block-deactivation-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-deactivation-dummy",
+            "parent": "i-block",
+            "dependencies": [
+              "b-button",
+              "b-bottom-slide"
+            ],
+            "libs": []
+          },
+          "name": "b-super-i-block-deactivation-dummy",
+          "parent": "i-block",
+          "dependencies": [
+            "b-button",
+            "b-bottom-slide"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/test/b-super-i-block-deactivation-dummy/b-super-i-block-deactivation-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/test/b-super-i-block-deactivation-dummy/b-super-i-block-deactivation-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/test/b-super-i-block-deactivation-dummy/b-super-i-block-deactivation-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-super-i-block-decorators-dummy",
         {
           "index": "src/components/super/i-block/decorators/test/b-super-i-block-decorators-dummy/index.js",
@@ -1646,6 +1684,42 @@
             "src/components/super/i-block/test/b-super-i-block-mods-dummy/b-super-i-block-mods-dummy.styl"
           ],
           "tpl": "src/components/super/i-block/test/b-super-i-block-mods-dummy/b-super-i-block-mods-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-super-i-block-teleport-dummy",
+        {
+          "index": "src/components/super/i-block/test/b-super-i-block-teleport-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-teleport-dummy",
+            "parent": "i-block",
+            "dependencies": [
+              "b-bottom-slide"
+            ],
+            "libs": []
+          },
+          "name": "b-super-i-block-teleport-dummy",
+          "parent": "i-block",
+          "dependencies": [
+            "b-bottom-slide"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/test/b-super-i-block-teleport-dummy/b-super-i-block-teleport-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/test/b-super-i-block-teleport-dummy/b-super-i-block-teleport-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/test/b-super-i-block-teleport-dummy/b-super-i-block-teleport-dummy.ss",
           "etpl": null
         }
       ],

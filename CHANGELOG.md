@@ -11,6 +11,29 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-07-??)
+
+#### :bug: Bug Fix
+
+* `core/component/init`:
+  * Fixed a typo in the event name `hookChange` which is responsible for processing activation and deactivation in the component
+  * Amended the deactivation sequence within the component to ensure that children are deactivated first
+
+*  Fixed an issue to prevent the `hookChange` event from bubbling up `bDynamicPage`
+
+## v4.0.0-beta.114 (2024-07-24)
+
+#### :house: Internal
+
+* Removed unnecessary rerendering of container in case of `request` prop change;
+rerendering of the container and all nodes inside occurs only when `firstChunkRender` is changed. `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.113 (2024-07-24)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with canceling a request when resolving response data. `components/friends/data-provider`
+
 ## v4.0.0-beta.112 (2024-07-22)
 
 #### :bug: Bug Fix

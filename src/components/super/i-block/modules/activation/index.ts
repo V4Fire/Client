@@ -40,8 +40,8 @@ const
  * Activates the component.
  * A deactivated component won't load data from providers on initializing.
  *
- * Basically, you don't need to think about component activation,
- * because it automatically synchronizes with the `keep-alive` mode or a special component prop.
+ * Essentially, you don't need to worry about component activation,
+ * as it automatically synchronizes with the `keep-alive` mode or a specific component prop.
  *
  * @param component
  * @param [force] - if true, then the component will be forced to be activated, even if it is already activated
@@ -117,26 +117,16 @@ export function activate(component: iBlock, force?: boolean): void {
  * Deactivates the component.
  * A deactivated component won't load data from providers on initializing.
  *
- * Basically, you don't need to think about component activation,
- * because it automatically synchronizes with the `keep-alive` mode or a special component prop.
+ * Essentially, you don't need to worry about component activation,
+ * as it automatically synchronizes with the `keep-alive` mode or a specific component prop.
  *
  * @param component
  */
 export function deactivate(component: iBlock): void {
-	const
-		{unsafe} = component;
+	const {unsafe} = component;
 
 	if (unsafe.lfc.isBeforeCreate()) {
 		return;
-	}
-
-	if (unsafe.isActivated) {
-		// It's important to deactivate the component ASAP to prevent any unexpected re-renders
-		// because the state of the component might change during the deactivation process
-		onDeactivated(component);
-		runHook('deactivated', component).then(() => {
-			callMethodFromComponent(component, 'deactivated');
-		}).catch(stderr);
 	}
 
 	unsafe.$children.forEach((component) => {
@@ -144,6 +134,19 @@ export function deactivate(component: iBlock): void {
 			component.unsafe.deactivate();
 		}
 	});
+
+	if (unsafe.isActivated) {
+		runHook('deactivated', component).then(() => {
+			callMethodFromComponent(component, 'deactivated');
+		}).catch(stderr);
+
+		// It's important to deactivate the component ASAP to prevent any unexpected re-renders.
+		// The state of the component might change during the deactivation process,
+		// but it is crucial to call runHook before deactivation.
+		// This ensures that the onHookChange event listeners are not muted
+		// and that child dynamic components receive the deactivation signal.
+		onDeactivated(component);
+	}
 }
 
 /**
@@ -152,9 +155,8 @@ export function deactivate(component: iBlock): void {
  * @param component
  * @param [force] - if true, then the component will be forced to be activated, even if it is already activated
  */
-export function onActivated(component: iBlock, force?: boolean): void {
-	const
-		{unsafe} = component;
+export function onActivated(component: iBlock, force: boolean = false): void {
+	const {unsafe} = component;
 
 	const cantActivate =
 		unsafe.isActivated ||
@@ -210,8 +212,7 @@ export function onActivated(component: iBlock, force?: boolean): void {
  * @param component
  */
 export function onDeactivated(component: iBlock): void {
-	const
-		{unsafe} = component;
+	const {unsafe} = component;
 
 	const async = [
 		unsafe.$async,
@@ -224,8 +225,7 @@ export function onDeactivated(component: iBlock): void {
 				return;
 			}
 
-			const
-				fn = $a[`mute-${asyncNames[key]}`.camelize(false)];
+			const fn = $a[`mute-${asyncNames[key]}`.camelize(false)];
 
 			if (Object.isFunction(fn)) {
 				fn.call($a);
