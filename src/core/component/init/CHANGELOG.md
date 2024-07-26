@@ -9,7 +9,7 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.?? (2024-06-??)
+## v4.0.0-beta.115.the-force-awakens (2024-07-26)
 
 #### :bug: Bug Fix
 
