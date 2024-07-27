@@ -70,6 +70,14 @@ export class Cookies {
 		let
 			cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
 
+		const
+			regExp = new RegExp(`${name}=.+(?=;|$)`),
+			currentCookie = regExp.exec(this.store.cookie)?.[0];
+
+		if (currentCookie === cookie) {
+			return value;
+		}
+
 		Object.entries(opts).forEach(([key, val]) => {
 			cookie += `; ${key.dasherize()}`;
 
