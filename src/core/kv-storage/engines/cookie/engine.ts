@@ -21,7 +21,7 @@ export default class CookieEngine extends StringEngine {
 			this.cookies.remove(this.cookieName, Object.select(this.setOptions, ['path', 'domains']));
 
 		} else {
-			this.cookies.set(this.cookieName, value, this.setOptions);
+			this.cookies.set(this.cookieName, value, this.actualizeOptions());
 		}
 	}
 
@@ -41,6 +41,11 @@ export default class CookieEngine extends StringEngine {
 	protected setOptions: SetOptions;
 
 	/**
+	 * The date of setting cookie
+	 */
+	protected date: number;
+
+	/**
 	 * @param cookieName - the name of the cookie in which the data is stored
 	 * @param [opts] - additional options for setting cookies
 	 */
@@ -49,5 +54,23 @@ export default class CookieEngine extends StringEngine {
 		this.cookies = opts?.cookies ?? from(createCookieStore(''));
 		this.cookieName = cookieName;
 		this.setOptions = Object.reject(opts, ['cookies', 'separators']);
+		this.date = Date.now();
+	}
+
+	/**
+	 * Actualize setting options
+	 */
+	protected actualizeOptions(): SetOptions {
+		if (this.setOptions.maxAge == null) {
+			return this.setOptions;
+		}
+
+		const
+			passedTime = Math.floor((Date.now() - this.date) / 1000);
+
+		return  {
+			...this.setOptions,
+			maxAge: this.setOptions.maxAge - passedTime
+		};
 	}
 }
