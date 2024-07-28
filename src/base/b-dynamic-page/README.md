@@ -180,6 +180,21 @@ By default, `bDynamicPage` dispatches all events from an internal page component
 < b-dynamic-page :keepAlive = true | @initLoad = console.log('Caught!')
 ```
 
+## Forcing Recreation of the Page Component When Switching Between the Same Route
+
+When switching between routes that use the same page component but have different path or query parameters,
+it can be beneficial to recreate the page component to avoid considering the previous state and current prop values.
+
+To achieve this, you can specify a unique key for each route. You can do this by using the second element
+of the page prop array. This value helps determine whether a new page component should be used to render the next page.
+
+For example, this approach ensures that every page with the same route but different path parameters
+will be tied to separate component instances:
+
+```
+< b-dynamic-page :eventConverter = (e) => [e.meta.pageComponent, Object.fastHash(e.params)]
+```
+
 ## API
 
 Also, you can see the implemented traits or the parent component.
@@ -188,7 +203,7 @@ Also, you can see the implemented traits or the parent component.
 
 #### [pageProp]
 
-An initial component name to load.
+An initial component name to load and its key.
 
 #### [keepAlive = `false`]
 
@@ -234,19 +249,19 @@ An event name of the page switching.
 < b-dynamic-page :emitter = router | :event = 'transition'
 ```
 
-#### [eventConverter = `(e) => e?.meta.component ?? e?.name`]
+#### [eventConverter = `(e) => [e?.meta.component ?? e?.name]`]
 
 A function to extract a component name to load from the caught event object.
 
 ```
-< b-dynamic-page :emitter = router | :event = 'transition' | :eventConverter = (e) => e.meta.pageComponent
+< b-dynamic-page :emitter = router | :event = 'transition' | :eventConverter = (e) => [e.meta.pageComponent]
 ```
 
 ### Fields
 
 #### page
 
-An active component name to load.
+An active component name to load and its key.
 
 #### keepAliveCache
 

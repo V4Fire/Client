@@ -71,13 +71,13 @@ export default class bDynamicPage extends iDynamicPage {
 	override readonly selfDispatching: boolean = true;
 
 	/**
-	 * Initial component name to load
+	 * Initial component name to load and its key
 	 */
 	@prop({type: Array, required: false})
 	readonly pageProp?: PageInfo;
 
 	/**
-	 * Active component name to load
+	 * Active component name to load and its key
 	 * @see [[bDynamicPage.pageProp]]
 	 */
 	@system((o) => o.sync.link())
@@ -162,7 +162,7 @@ export default class bDynamicPage extends iDynamicPage {
 	readonly event?: string = 'setRoute';
 
 	/**
-	 * Function to extract a component name to load from the caught event object
+	 * Function to extract a component name and its key to load from the caught event object
 	 */
 	@prop({
 		type: [Function, Array],
