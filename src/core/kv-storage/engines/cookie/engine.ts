@@ -68,7 +68,7 @@ export default class CookieEngine extends StringEngine {
 		const
 			passedTime = Math.floor((Date.now() - this.date) / 1000);
 
-		return  {
+		return {
 			...this.setOptions,
 			maxAge: this.setOptions.maxAge - passedTime
 		};
