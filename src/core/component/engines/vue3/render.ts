@@ -232,19 +232,24 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 						registerDestructor();
 
 					} else {
-						vue.unmount();
+						// To immediately initiate the removal of all asynchronously added components, we explicitly call unmount,
+						// but we do this through setImmediate to allow the destroyed hook to execute,
+						// as it relies on the component having an event API
+						setImmediate(() => {
+							vue.unmount();
+						});
+
+						gc.add(function* destructor() {
+							const vnodes = Array.concat([], vnode);
+
+							for (const vnode of vnodes) {
+								destroy(vnode);
+								yield;
+							}
+
+							disposeLazy(vue);
+						}());
 					}
-
-					gc.add(function* destructor() {
-						const vnodes = Array.concat([], vnode);
-
-						for (const vnode of vnodes) {
-							destroy(vnode);
-							yield;
-						}
-
-						disposeLazy(vue);
-					}());
 				}, {group});
 			}
 		},
