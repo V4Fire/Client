@@ -85,6 +85,13 @@ export default class bRouter extends iRouterProps {
 	@system()
 	protected routeStore?: router.Route;
 
+	/**
+	 * Parameters of the previous transition.
+	 * Used for merging query parameters when replacing null.
+	 */
+	@system()
+	private previousTransitionOptions: Nullable<router.TransitionOptions>;
+
 	override get unsafe(): UnsafeGetter<UnsafeBRouter<this>> {
 		return Object.cast(this);
 	}
@@ -258,6 +265,11 @@ export default class bRouter extends iRouterProps {
 		opts?: router.TransitionOptions,
 		method: TransitionMethod = 'push'
 	): Promise<CanUndef<router.Route>> {
+		if (method === 'replace' && ref == null) {
+			opts = Object.mixin(true, {}, this.previousTransitionOptions, opts);
+		}
+
+		this.previousTransitionOptions = opts;
 		return new Transition(this, {ref, opts, method}).execute();
 	}
 

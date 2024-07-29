@@ -15,6 +15,12 @@ Changelog
 
 * Added a new `rootContent` layout wrapper block
 
+## v4.0.0-beta.115.the-force-awakens (2024-07-26)
+
+#### :bug: Bug Fix
+
+* Fixed the `$el` property of the teleported component
+
 ## 4.0.0-beta.108.a-new-hope (2024-07-15)
 
 #### :rocket: New Feature

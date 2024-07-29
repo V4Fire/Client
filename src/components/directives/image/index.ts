@@ -19,6 +19,7 @@ import { getDirectiveContext, getElementId } from 'core/component/directives';
 
 import { unsupportedElements } from 'components/directives/image/const';
 import { createImageElement, getCurrentSrc } from 'components/directives/image/helpers';
+import { window } from 'core/const/browser';
 
 import type { DirectiveParams, ImageOptions, SSRDirectiveParams } from 'components/directives/image/interface';
 
@@ -70,16 +71,10 @@ ComponentEngine.directive('image', {
 
 	getSSRProps(params: SSRDirectiveParams) {
 		//#if node_js
-
-		const value = normalizeValue(params.value);
-
-		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const {JSDOM} = require('jsdom');
-		const jsdom = new JSDOM();
-
-		const props = normalizeProps(value, params.bindings?.style, jsdom.window);
-
-		const imageElement = createImageElement(value).toElement(jsdom.window.document);
+		const
+			value = normalizeValue(params.value),
+			props = normalizeProps(value, params.bindings?.style, <typeof globalThis>window),
+			imageElement = createImageElement(value).toElement(window.document);
 
 		return {
 			...props,

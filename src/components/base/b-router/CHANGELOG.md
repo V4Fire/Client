@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.112 (2024-07-22)
+
+#### :bug: Bug Fix
+
+* Resolved the issue with consecutive router calls and option merging during `replace(null)`
+
 ## v4.0.0-beta.102 (2024-06-11)
 
 #### :bug: Bug Fix
