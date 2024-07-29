@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Added a new `rootContent` layout wrapper block `components/super/i-block`
+* Added a new `rootContent` layout wrapper block `iBlock`
 
 ## v4.0.0-beta.111 (2024-07-18)
 
