@@ -12,17 +12,11 @@
  */
 
 import DOMPurify, { DOMPurifyI } from 'dompurify';
+import DOM from 'core/const/dom';
 
 import type { SanitizedOptions } from 'core/html/xss/interface';
 
 export * from 'core/html/xss/interface';
-
-//#if node_js
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const {JSDOM} = require('jsdom');
-
-const jsdom = new JSDOM();
-//#endif
 
 /**
  * Sanitizes the input string value from potentially harmful HTML
@@ -31,14 +25,7 @@ const jsdom = new JSDOM();
  * @param [opts] - sanitizing options
  */
 export const sanitize: typeof DOMPurify['sanitize'] = (value: string | Node, opts?: SanitizedOptions) => {
-	let domPurify: DOMPurifyI;
-
-	if (SSR) {
-		domPurify = DOMPurify(jsdom.window);
-
-	} else {
-		domPurify = DOMPurify(globalThis);
-	}
+	const domPurify: DOMPurifyI = DOMPurify(DOM.window);
 
 	return Object.cast<any>(domPurify.sanitize(value, opts ?? {}));
 };

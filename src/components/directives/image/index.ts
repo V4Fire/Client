@@ -19,6 +19,7 @@ import { getDirectiveContext, getElementId } from 'core/component/directives';
 
 import { unsupportedElements } from 'components/directives/image/const';
 import { createImageElement, getCurrentSrc } from 'components/directives/image/helpers';
+import DOM from 'core/const/dom';
 
 import type { DirectiveParams, ImageOptions, SSRDirectiveParams } from 'components/directives/image/interface';
 
@@ -26,13 +27,6 @@ export * from 'components/directives/image/interface';
 
 export const
 	idsCache = new WeakMap<Element, string>();
-
-//#if node_js
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const {JSDOM} = require('jsdom');
-
-const jsdom = new JSDOM();
-//#endif
 
 ComponentEngine.directive('image', {
 	beforeCreate(params: DirectiveParams, vnode: VNode): CanUndef<VNode> {
@@ -79,8 +73,8 @@ ComponentEngine.directive('image', {
 		//#if node_js
 		const
 			value = normalizeValue(params.value),
-			props = normalizeProps(value, params.bindings?.style, jsdom.window),
-			imageElement = createImageElement(value).toElement(jsdom.window.document);
+			props = normalizeProps(value, params.bindings?.style, <typeof globalThis>DOM.window),
+			imageElement = createImageElement(value).toElement(DOM.window.document);
 
 		return {
 			...props,
