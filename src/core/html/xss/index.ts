@@ -12,7 +12,7 @@
  */
 
 import DOMPurify, { DOMPurifyI } from 'dompurify';
-import DOM from 'core/const/dom';
+import { window } from 'core/const/browser';
 
 import type { SanitizedOptions } from 'core/html/xss/interface';
 
@@ -25,7 +25,7 @@ export * from 'core/html/xss/interface';
  * @param [opts] - sanitizing options
  */
 export const sanitize: typeof DOMPurify['sanitize'] = (value: string | Node, opts?: SanitizedOptions) => {
-	const domPurify: DOMPurifyI = DOMPurify(DOM.window);
+	const domPurify: DOMPurifyI = DOMPurify(window);
 
 	return Object.cast<any>(domPurify.sanitize(value, opts ?? {}));
 };

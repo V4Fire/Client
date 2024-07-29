@@ -19,7 +19,7 @@ import { getDirectiveContext, getElementId } from 'core/component/directives';
 
 import { unsupportedElements } from 'components/directives/image/const';
 import { createImageElement, getCurrentSrc } from 'components/directives/image/helpers';
-import DOM from 'core/const/dom';
+import { window } from 'core/const/browser';
 
 import type { DirectiveParams, ImageOptions, SSRDirectiveParams } from 'components/directives/image/interface';
 
@@ -73,8 +73,8 @@ ComponentEngine.directive('image', {
 		//#if node_js
 		const
 			value = normalizeValue(params.value),
-			props = normalizeProps(value, params.bindings?.style, <typeof globalThis>DOM.window),
-			imageElement = createImageElement(value).toElement(DOM.window.document);
+			props = normalizeProps(value, params.bindings?.style, <typeof globalThis>window),
+			imageElement = createImageElement(value).toElement(window.document);
 
 		return {
 			...props,

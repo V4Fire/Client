@@ -12,4 +12,4 @@ import { JSDOM } from 'jsdom';
 const jsdom = new JSDOM();
 //#endif
 
-export default SSR ? jsdom : globalThis;
+export const window = SSR ? jsdom.window : globalThis;
