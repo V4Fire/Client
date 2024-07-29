@@ -13,7 +13,7 @@ import * as init from 'core/component/init';
 import { beforeRenderHooks } from 'core/component/const';
 
 import { fillMeta } from 'core/component/meta';
-import { getComponentContext } from 'core/component/context';
+import { getComponentContext, dropRawComponentContext } from 'core/component/context';
 import { wrapAPI } from 'core/component/render';
 
 import type { ComponentEngine, ComponentOptions, SetupContext } from 'core/component/engines';
@@ -141,11 +141,26 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 		},
 
 		beforeUnmount(): void {
-			init.beforeDestroyState(getComponentContext(this), {recursive: false});
+			const ctx = getComponentContext(this);
+
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (ctx == null) {
+				return;
+			}
+
+			init.beforeDestroyState(ctx, {recursive: false});
 		},
 
 		unmounted(): void {
-			init.destroyedState(getComponentContext(this));
+			const ctx = getComponentContext(this);
+
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (ctx == null) {
+				return;
+			}
+
+			init.destroyedState(ctx);
+			dropRawComponentContext(ctx);
 		},
 
 		errorCaptured(...args: unknown[]): void {
