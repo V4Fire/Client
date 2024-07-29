@@ -11,8 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.115.the-force-awakens (2024-07-26)
+## v4.0.0-beta.116 (2024-07-29)
 
+#### :house: Internal
+
+* Now JSDOM used as singleton in server render `core/const/browser`
+
+## v4.0.0-beta.115.the-force-awakens (2024-07-26)
 
 #### :bug: Bug Fix
 
