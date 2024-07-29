@@ -7,15 +7,21 @@
  */
 
 import test from 'tests/config/unit/test';
-import { BOM } from 'tests/helpers';
+
+import type { JSHandle } from 'playwright';
+import { Component, BOM } from 'tests/helpers';
 
 import type iBlock from 'components/super/i-block/i-block';
+import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 import { renderDestructorDummy } from 'components/super/i-block/test/helpers';
 
 test.describe('<i-block> calling a component\'s destructor', () => {
-	test.beforeEach(async ({demoPage}) => {
+	let root: JSHandle<iStaticPage>;
+
+	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
+		root = await Component.waitForRoot<iStaticPage>(page);
 	});
 
 	test('the destructors of all components should be implicitly called if they are removed in the template', async ({page}) => {
@@ -27,7 +33,7 @@ test.describe('<i-block> calling a component\'s destructor', () => {
 		});
 
 		const componentsStatuses = await target.evaluate(
-			(ctx) => ctx.store.map((el) => el.componentStatus)
+			(ctx) => ctx.store.map((el) => el.hook)
 		);
 
 		test.expect(componentsStatuses.every((status) => status === 'destroyed')).toBe(true);
@@ -45,7 +51,7 @@ test.describe('<i-block> calling a component\'s destructor', () => {
 			});
 
 			// 1 because the test case itself was created using async
-			await test.expect(target.evaluate(({r}) => r.remoteRootInstances)).resolves.toBe(1);
+			await test.expect(root.evaluate((ctx) => ctx.remoteRootInstances)).resolves.toBe(1);
 		}
 	);
 
@@ -72,7 +78,7 @@ test.describe('<i-block> calling a component\'s destructor', () => {
 			});
 
 			// 1 because the test case itself was created using async
-			await test.expect(target.evaluate(({r}) => r.remoteRootInstances)).resolves.toBe(1);
+			await test.expect(root.evaluate((ctx) => ctx.remoteRootInstances)).resolves.toBe(1);
 		}
 	);
 
@@ -101,7 +107,7 @@ test.describe('<i-block> calling a component\'s destructor', () => {
 		});
 
 		test(
-			'when it is called via beforeUnmount hook during async chunk unmount',
+			'when it is called via the `beforeUnmount` hook during the async chunk unmount',
 
 			async ({page, consoleTracker}) => {
 				const
