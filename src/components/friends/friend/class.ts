@@ -126,10 +126,13 @@ export default class Friend {
 		this.component = component;
 
 		this.ctx.$async.worker(() => {
+			const that = this;
+
 			// We are cleaning memory in a deferred way, because this API may be needed when processing the destroyed hook
 			gc.add(function* destructor() {
-				Object.delete(this, 'ctx');
-				Object.delete(this, 'component');
+				Object.delete(that, 'ctx');
+				Object.delete(that, 'component');
+				yield;
 			}());
 		});
 	}
