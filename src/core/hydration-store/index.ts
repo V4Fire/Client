@@ -41,6 +41,12 @@ const toJSON = extraTypes.reduce<Array<Nullable<PropertyDescriptor>>>((res, cons
 	return res;
 }, []);
 
+toJSON.forEach((fn, i) => {
+	if (fn != null) {
+		Object.defineProperty(extraTypes[i].prototype, 'toJSON', fn);
+	}
+});
+
 export default class HydrationStore {
 	/**
 	 * A dictionary containing the necessary styles for hydration
@@ -316,12 +322,6 @@ export default class HydrationStore {
 	 */
 	protected serializeData(data: unknown): string {
 		const serializedData = JSON.stringify(data, expandedStringify);
-
-		toJSON.forEach((fn, i) => {
-			if (fn != null) {
-				Object.defineProperty(extraTypes[i].prototype, 'toJSON', fn);
-			}
-		});
 
 		return serializedData;
 	}
