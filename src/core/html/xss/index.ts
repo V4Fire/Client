@@ -17,6 +17,13 @@ import type { SanitizedOptions } from 'core/html/xss/interface';
 
 export * from 'core/html/xss/interface';
 
+//#if node_js
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const {JSDOM} = require('jsdom');
+
+const jsdom = new JSDOM();
+//#endif
+
 /**
  * Sanitizes the input string value from potentially harmful HTML
  *
@@ -27,10 +34,6 @@ export const sanitize: typeof DOMPurify['sanitize'] = (value: string | Node, opt
 	let domPurify: DOMPurifyI;
 
 	if (SSR) {
-		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const {JSDOM} = require('jsdom');
-		const jsdom = new JSDOM();
-
 		domPurify = DOMPurify(jsdom.window);
 
 	} else {

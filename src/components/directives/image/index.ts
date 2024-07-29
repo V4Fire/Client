@@ -27,6 +27,13 @@ export * from 'components/directives/image/interface';
 export const
 	idsCache = new WeakMap<Element, string>();
 
+//#if node_js
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const {JSDOM} = require('jsdom');
+
+const jsdom = new JSDOM();
+//#endif
+
 ComponentEngine.directive('image', {
 	beforeCreate(params: DirectiveParams, vnode: VNode): CanUndef<VNode> {
 		if (SSR) {
@@ -70,16 +77,10 @@ ComponentEngine.directive('image', {
 
 	getSSRProps(params: SSRDirectiveParams) {
 		//#if node_js
-
-		const value = normalizeValue(params.value);
-
-		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const {JSDOM} = require('jsdom');
-		const jsdom = new JSDOM();
-
-		const props = normalizeProps(value, params.bindings?.style, jsdom.window);
-
-		const imageElement = createImageElement(value).toElement(jsdom.window.document);
+		const
+			value = normalizeValue(params.value),
+			props = normalizeProps(value, params.bindings?.style, jsdom.window),
+			imageElement = createImageElement(value).toElement(jsdom.window.document);
 
 		return {
 			...props,
