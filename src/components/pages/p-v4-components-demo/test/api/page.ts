@@ -40,21 +40,29 @@ export default class DemoPage {
 	}
 
 	/**
+	 * Name of the HTML file
+	 */
+	protected pageFileName: string;
+
+	/**
 	 * @param page
+	 * @param baseUrl
 	 */
 	constructor(page: Page, baseUrl: string) {
 		this.page = page;
 		this.baseUrl = baseUrl;
+		this.pageFileName = build.demoPage();
 	}
 
 	/**
 	 * Opens a demo page
+	 * @param [query] - query parameters for the URL, i.e. `a=1&b=1`
 	 */
-	async goto(): Promise<DemoPage> {
+	async goto(query: string = ''): Promise<DemoPage> {
 		const
 			root = this.page.locator('#root-component');
 
-		await this.page.goto(concatURLs(this.baseUrl, `${build.demoPage()}.html`), {waitUntil: 'networkidle'});
+		await this.page.goto(concatURLs(this.baseUrl, `${this.pageFileName}.html`) + (query.length > 0 ? `?${query}` : ''), {waitUntil: 'networkidle'});
 		await root.waitFor({state: 'attached'});
 
 		this.component = await root.evaluateHandle((ctx) => ctx.component);

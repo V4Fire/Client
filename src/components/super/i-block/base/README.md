@@ -264,16 +264,16 @@ export default class bExample extends iBlock {
 Activates the component.
 The deactivated component won't load data from its providers during initializing.
 
-Basically, you don't need to think about the component activation,
-because it's automatically synchronized with `keep-alive` or the component prop.
+Essentially, you don't need to worry about component activation,
+as it automatically synchronizes with the `keep-alive` mode or a specific component prop.
 
 #### deactivate
 
 Deactivates the component.
 The deactivated component won't load data from its providers during initializing.
 
-Basically, you don't need to think about the component activation,
-because it's automatically synchronized with `keep-alive` or the component prop.
+Essentially, you don't need to worry about component activation,
+as it automatically synchronizes with the `keep-alive` mode or a specific component prop.
 
 #### watch
 
