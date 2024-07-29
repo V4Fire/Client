@@ -16,7 +16,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Now JSDOM used as singleton in server render `core/const/browser`
-* Externalize patch of toJSON `core/hydration-store`
 
 ## v4.0.0-beta.115.the-force-awakens (2024-07-26)
 

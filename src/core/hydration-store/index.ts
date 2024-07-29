@@ -19,34 +19,6 @@ import type { Store, HydratedData, HydratedValue, Environment, StoreJSON } from 
 export * from 'core/hydration-store/const';
 export * from 'core/hydration-store/interface';
 
-const extraTypes = [
-	Date,
-	typeof BigInt === 'function' ? BigInt : Object,
-	Function,
-	Map,
-	Set
-];
-
-const toJSON = extraTypes.reduce<Array<Nullable<PropertyDescriptor>>>((res, constr) => {
-	if ('toJSON' in constr.prototype) {
-		res.push(Object.getOwnPropertyDescriptor(constr.prototype, 'toJSON'));
-
-		// @ts-ignore (ts)
-		delete constr.prototype.toJSON;
-
-	} else {
-		res.push(null);
-	}
-
-	return res;
-}, []);
-
-toJSON.forEach((fn, i) => {
-	if (fn != null) {
-		Object.defineProperty(extraTypes[i].prototype, 'toJSON', fn);
-	}
-});
-
 export default class HydrationStore {
 	/**
 	 * A dictionary containing the necessary styles for hydration
@@ -321,7 +293,35 @@ export default class HydrationStore {
 	 * @param data
 	 */
 	protected serializeData(data: unknown): string {
+		const extraTypes = [
+			Date,
+			typeof BigInt === 'function' ? BigInt : Object,
+			Function,
+			Map,
+			Set
+		];
+
+		const toJSON = extraTypes.reduce<Array<Nullable<PropertyDescriptor>>>((res, constr) => {
+			if ('toJSON' in constr.prototype) {
+				res.push(Object.getOwnPropertyDescriptor(constr.prototype, 'toJSON'));
+
+				// @ts-ignore (ts)
+				delete constr.prototype.toJSON;
+
+			} else {
+				res.push(null);
+			}
+
+			return res;
+		}, []);
+
 		const serializedData = JSON.stringify(data, expandedStringify);
+
+		toJSON.forEach((fn, i) => {
+			if (fn != null) {
+				Object.defineProperty(extraTypes[i].prototype, 'toJSON', fn);
+			}
+		});
 
 		return serializedData;
 	}
