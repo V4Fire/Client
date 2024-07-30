@@ -14,7 +14,7 @@ export * from 'components/dummies/b-dummy/b-dummy';
 
 @component()
 export default class bNonEffectPropDummy extends bDummy {
-	@prop({type: Object, forceUpdate: false})
+	@prop({type: Object, forceUpdate: false, required: false})
 	readonly dataProp?: object;
 
 	@prop({default: () => 42, type: Number, validator: Number.isPositive, forceUpdate: false})
