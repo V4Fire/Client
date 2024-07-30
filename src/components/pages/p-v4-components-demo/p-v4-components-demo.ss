@@ -12,5 +12,26 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
+		{{ someField }}
+
+		< hr
+
+		< b-form v-func = false | :action = onSubmit | ref = form
+			< b-checkbox &
+				:name = 'agree' |
+				:required = true |
+				:validators = ['required'] |
+				:checked = getCheckedValue() |
+				@onChange = onCheckedChange |
+				v-func = false
+			.
+				< template #label
+					I agree
+
+			< hr
+
+			< button type = submit
+				Submit
+
 		< template v-if = stage === 'teleports'
 			< b-bottom-slide

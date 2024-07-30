@@ -43,6 +43,9 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	@field()
 	someField: unknown = 'foo';
 
+	@system()
+	checkedValue?: boolean;
+
 	@hook('beforeCreate')
 	setStageFromLocation(): void {
 		const matches = /stage=(.*)/.exec(globalThis.location.search);
@@ -50,5 +53,21 @@ export default class pV4ComponentsDemo extends iStaticPage {
 		if (matches != null) {
 			this.stage = decodeURIComponent(matches[1]);
 		}
+	}
+
+	async onSubmit(): Promise<void> {
+		// Trigger re-render
+		this.someField = this.someField === 'foo' ? 'bar' : 'foo';
+
+		return Promise.resolve();
+	}
+
+	protected getCheckedValue(): boolean {
+		return this.checkedValue ?? false;
+	}
+
+	protected onCheckedChange(value: boolean): void {
+		this.console.trace('checkbox value changed', value);
+		this.checkedValue = value;
 	}
 }
