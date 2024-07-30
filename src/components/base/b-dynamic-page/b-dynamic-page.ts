@@ -48,7 +48,9 @@ import type {
 
 	iDynamicPageEl,
 	KeepAliveStrategy,
-	UnsafeBDynamicPage
+	UnsafeBDynamicPage,
+
+	PageInfo
 
 } from 'components/base/b-dynamic-page/interface';
 
@@ -79,22 +81,22 @@ export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * The initial name of the page to load
 	 */
-	@prop({type: String, required: false})
-	readonly pageProp?: string;
+	@prop({type: Array, required: false})
+	readonly pageProp?: PageInfo;
 
 	/**
 	 * The name of the active page to load
 	 * {@link bDynamicPage.pageProp}
 	 */
 	@system<bDynamicPage>((o) => o.sync.link((val) => val ?? o.pageGetter(o.route, Object.cast(o))))
-	page?: string;
+	page?: PageInfo;
 
 	/**
 	 * A function that takes a route object and returns the name of the page component to load
 	 */
 	@prop({
 		type: Function,
-		default: (e: bDynamicPage['route']) => e?.meta.component ?? e?.name,
+		default: (e: bDynamicPage['route']) => [e?.meta.component ?? e?.name],
 		forceDefault: true
 	})
 
@@ -357,7 +359,11 @@ export default class bDynamicPage extends iDynamicPage {
 			resolve: (status: boolean) => void,
 			currentRoute: typeof route
 		): AnyFunction {
-			return (newPage: CanUndef<string>, currentPage: CanUndef<string>) => {
+			return (newPageInfo: CanUndef<PageInfo>, currentPageInfo: CanUndef<PageInfo>) => {
+				if (newPageInfo?.[0] === currentPageInfo?.[0] && newPageInfo?.[1] === currentPageInfo?.[1]) {
+					return;
+				}
+
 				unsafe.pageTakenFromCache = false;
 
 				const componentRef = unsafe.$refs[unsafe.$resolveRef('component')];
@@ -372,7 +378,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 					if (currentPageComponent != null) {
 						const
-							currentPageStrategy = unsafe.getKeepAliveStrategy(currentPage, currentRoute);
+							currentPageStrategy = unsafe.getKeepAliveStrategy(currentPageInfo?.[0], currentRoute);
 
 						if (currentPageStrategy.isLoopback) {
 							currentPageComponent.$destroy();
@@ -387,7 +393,7 @@ export default class bDynamicPage extends iDynamicPage {
 				}
 
 				const
-					newPageStrategy = unsafe.getKeepAliveStrategy(newPage),
+					newPageStrategy = unsafe.getKeepAliveStrategy(newPageInfo?.[0]),
 					pageElFromCache = newPageStrategy.get();
 
 				if (pageElFromCache == null) {
@@ -584,10 +590,12 @@ export default class bDynamicPage extends iDynamicPage {
 				}
 
 				const
-					newPage = this.pageGetter(e, this) ?? e;
+					newPageInfo = this.pageGetter(e, this) ?? e;
 
-				if (newPage == null || Object.isString(newPage)) {
-					this.page = newPage;
+				const [newPageComponent, newPageKey = newPageComponent] = newPageInfo;
+
+				if (newPageInfo == null || Object.isString(newPageInfo) || newPageKey !== this.page?.[1]) {
+					this.page = newPageInfo;
 				}
 
 			}, group);

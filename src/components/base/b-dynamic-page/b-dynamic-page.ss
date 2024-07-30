@@ -29,7 +29,8 @@
 				v-if = !pageTakenFromCache |
 				ref = component |
 
-				:is = page |
+				:is = field.get('page.0') |
+				:key = field.get('page.1') |
 				:dispatching = true |
 				:canFunctional = false |
 
