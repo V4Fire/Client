@@ -6,9 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { createCookieStore } from 'core/cookies/stores';
-
-const rawCookieRegExp = /([^;]+)=[^;]+/;
+import { createCookieStore, rawCookieRegExp } from 'core/cookies/stores';
 
 /**
  * Enhances the createStore function with an additional check for SSR

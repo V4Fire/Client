@@ -6,4 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export const cookieSeparator = /\s*;\s*/;
+export const
+	cookieSeparator = /\s*;\s*/,
+	rawCookieRegExp = /([^;]+)=[^;]+/;
