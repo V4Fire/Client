@@ -86,15 +86,38 @@ export default class bDynamicPage extends iDynamicPage {
 	 * The name of the active page to load
 	 * {@link bDynamicPage.pageProp}
 	 */
-	@system<bDynamicPage>((o) => o.sync.link((val) => val ?? o.pageGetter(o.route, Object.cast(o))))
+	@system<bDynamicPage>((o) => o.sync.link((val) => {
+		if (val != null) {
+			return val;
+		}
+
+		const pageInfo = o.pageGetter(o.route, Object.cast(o));
+
+		if (Object.isString(pageInfo)) {
+			return pageInfo;
+		}
+
+		return pageInfo?.[0];
+	}))
 	page?: string;
 
 	/**
-	 * A function that takes a route object and returns the name of the page component to load
+	 * Active page unique key.
+	 * It is used to determine whether to reuse current page component or create a new one when switching between routes
+	 * with the same page component.
+	 */
+	@system()
+	pageKey?: CanUndef<string>;
+
+	/**
+	 * A function that takes a route object and returns the name of the page component to load.
+	 * Also, this function can return a tuple consisting of component name and unique key for the passed route. The key
+	 * will be used to determine whether to reuse current page component or create a new one
+	 * when switching between routes with the same page component.
 	 */
 	@prop({
 		type: Function,
-		default: (e: bDynamicPage['route']) => e?.meta.component ?? e?.name,
+		default: (route: bDynamicPage['route']) => route != null ? (route.meta.component ?? route.name) : undefined,
 		forceDefault: true
 	})
 
@@ -357,7 +380,7 @@ export default class bDynamicPage extends iDynamicPage {
 			resolve: (status: boolean) => void,
 			currentRoute: typeof route
 		): AnyFunction {
-			return (newPage: CanUndef<string>, currentPage: CanUndef<string>) => {
+			return (newPageInfo: CanUndef<string>, currentPageInfo: CanUndef<string>) => {
 				unsafe.pageTakenFromCache = false;
 
 				const componentRef = unsafe.$refs[unsafe.$resolveRef('component')];
@@ -372,7 +395,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 					if (currentPageComponent != null) {
 						const
-							currentPageStrategy = unsafe.getKeepAliveStrategy(currentPage, currentRoute);
+							currentPageStrategy = unsafe.getKeepAliveStrategy(currentPageInfo, currentRoute);
 
 						if (currentPageStrategy.isLoopback) {
 							currentPageComponent.$destroy();
@@ -387,7 +410,7 @@ export default class bDynamicPage extends iDynamicPage {
 				}
 
 				const
-					newPageStrategy = unsafe.getKeepAliveStrategy(newPage),
+					newPageStrategy = unsafe.getKeepAliveStrategy(newPageInfo),
 					pageElFromCache = newPageStrategy.get();
 
 				if (pageElFromCache == null) {
@@ -578,16 +601,26 @@ export default class bDynamicPage extends iDynamicPage {
 		$a.clearAll(group);
 
 		if (this.event != null) {
-			$a.on(this.emitter ?? this.r, this.event, (component, e) => {
+			$a.on(this.emitter ?? this.r, this.event, (component, route) => {
 				if (component != null && !((<Dictionary>component).instance instanceof iBlock)) {
-					e = component;
+					route = component;
 				}
 
 				const
-					newPage = this.pageGetter(e, this) ?? e;
+					newPageInfo = this.pageGetter(route, this),
+					[newPageComponentName, newPageKey] = Object.isString(newPageInfo) ? [newPageInfo] : (newPageInfo ?? []);
 
-				if (newPage == null || Object.isString(newPage)) {
-					this.page = newPage;
+				const
+					pageChanged = newPageComponentName !== this.page,
+					oldPageKey = this.pageKey;
+
+				if (newPageComponentName == null || Object.isString(newPageComponentName)) {
+					this.page = newPageComponentName;
+					this.pageKey = newPageKey;
+
+					if (!pageChanged && newPageKey !== oldPageKey) {
+						this.syncPageWatcher(newPageComponentName, this.page);
+					}
 				}
 
 			}, group);
