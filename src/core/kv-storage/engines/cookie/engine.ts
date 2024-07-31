@@ -58,7 +58,12 @@ export default class CookieEngine extends StringEngine {
 	}
 
 	/**
-	 * Actualize setting options
+	 * Actualize setting options, particularly maxAge parameter.
+	 * When setting cookie options, especially the maxAge parameter, it is important to ensure that they are up-to-date.
+	 * The issue arises because the current module treats a cookie as a storage that can hold one or more fields with their respective values.
+	 * During initialization, the module applies the provided parameters to the entire storage.
+	 * When a storage field is updated, the cookie is re-applied with all the provided parameters, including maxAge.
+	 * This means that each time the storage is modified, the maxAge parameter is refreshed with a new value, effectively resetting the expiration timer.
 	 */
 	protected actualizeOptions(): SetOptions {
 		if (this.setOptions.maxAge == null) {
