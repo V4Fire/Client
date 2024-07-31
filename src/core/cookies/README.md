@@ -54,12 +54,6 @@ cookieStore.cookie = 'age=25';
 console.log(cookieStore.cookie); // id=1; name=bob; age=25
 ```
 
-Additionally, there is a `preventRedundantUpdate` decorator for a cookie store and the decorated versions of `createCookieStore`.
-This decorator adds an extra layer of protection to the cookie store by checking for existing cookies with the same name and value,
-ensuring they are not unnecessarily overwritten.
-This feature is particularly useful in applications utilizing Server-Side Rendering (SSR),
-where cookies set on the server should be preserved and not overwritten by the client.
-
 ### from
 
 Returns an API for managing the cookie of the specified store.
@@ -202,3 +196,4 @@ cookies.remove('foo', {
   domain: 'my-site.com'
 });
 ```
+

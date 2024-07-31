@@ -12,12 +12,12 @@ const
 	rawCookieRegExp = /([^;]+)=[^;]+/;
 
 /**
- * Enhances the CookieStore with an additional check
- * to prevent overwriting a previously added cookie with the same name and value.
+ * Adds idempotent behavior to the CookieStore,
+ * ensuring that a cookie is not overwritten if it already exists with the same name and value.
  *
  * @param store
  */
-export function preventRedundantUpdate(store: CookieStore): CookieStore {
+export function withIdempotency(store: CookieStore): CookieStore {
 	return {
 		get cookie() {
 			return store.cookie;

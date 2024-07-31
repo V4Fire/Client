@@ -8,7 +8,7 @@
 
 import type { CookieStore } from 'core/cookies/interface';
 import { cookieSeparator } from 'core/cookies/stores/const';
-import { preventRedundantUpdate } from 'core/cookies/decorators';
+import { withIdempotency } from 'core/cookies/decorators/with-idempotency';
 
 /**
  * Creates a cookie store with a browser-like interface based on a cookie string
@@ -23,14 +23,14 @@ export function createCookieStore(cookie: CanArray<string>): CookieStore {
 }
 
 /**
- * Creates a decorated cookie store with prevention of overwriting a previously added cookie with the same name and value
+ * Creates an idempotent cookie store that do not overwrite a previously added cookie with the same name and value
  * {@link createCookieStore}
- * {@link preventRedundantUpdate}
+ * {@link withIdempotency}
  *
  * @param cookie
  */
-export function createDecoratedCookieStore(cookie: CanArray<string>): CookieStore {
-	return preventRedundantUpdate(
+export function createIdempotentCookieStore(cookie: CanArray<string>): CookieStore {
+	return withIdempotency(
 		createCookieStore(cookie)
 	);
 }
