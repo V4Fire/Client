@@ -6,4 +6,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export const cookieSeparator = /\s*;\s*/;
+export * from 'core/cookies/decorators/prevent-redundant-update';

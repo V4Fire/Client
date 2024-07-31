@@ -6,16 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { rawCookieRegExp } from 'core/cookies/stores';
 import type { CookieStore } from 'core/cookies';
 
+const
+	rawCookieRegExp = /([^;]+)=[^;]+/;
+
 /**
- * Enhances the CookieStore with an additional check for SSR
+ * Enhances the CookieStore with an additional check
  * to prevent overwriting a previously added cookie with the same name and value.
  *
  * @param store
  */
-export function ssrStoreDecorator(store: CookieStore): CookieStore {
+export function preventRedundantUpdate(store: CookieStore): CookieStore {
 	return {
 		get cookie() {
 			return store.cookie;

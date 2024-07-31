@@ -16,4 +16,3 @@ export * from 'core/cookies/stores/browser';
 //#endunless
 
 export * from 'core/cookies/stores/const';
-export * from 'core/cookies/stores/ssr-store-decorator';
