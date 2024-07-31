@@ -12,5 +12,10 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
-		< template v-if = stage === 'teleports'
-			< b-bottom-slide
+		< b-router :routes = {main: {path: '/'}}
+
+		< . @click = onClick(0)
+			page 0
+
+		< . @click = onClick(1)
+			page 1

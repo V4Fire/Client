@@ -21,7 +21,8 @@ const
 	$$ = symbolGenerator();
 
 const transitionLabel = {
-	label: $$.transition
+	label: $$.transition,
+	//join: 'replace'
 };
 
 export default class Transition {
