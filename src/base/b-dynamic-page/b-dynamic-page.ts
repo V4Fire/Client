@@ -256,7 +256,7 @@ export default class bDynamicPage extends iDynamicPage {
 			resolve: Function,
 			currentRoute: typeof route
 		): AnyFunction {
-			return (newPageInfo: CanUndef<[string, string?]>, currentPageInfo: CanUndef<[string, string?]>) => {
+			return (newPageInfo: CanUndef<PageInfo>, currentPageInfo: CanUndef<PageInfo>) => {
 				if (newPageInfo?.[0] === currentPageInfo?.[0] && newPageInfo?.[1] === currentPageInfo?.[1]) {
 					return;
 				}
