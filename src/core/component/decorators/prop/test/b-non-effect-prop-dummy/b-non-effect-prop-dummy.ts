@@ -8,7 +8,7 @@
 
 /* eslint-disable @v4fire/require-jsdoc */
 
-import bDummy, { component, prop, system, computed } from 'components/dummies/b-dummy/b-dummy';
+import bDummy, { component, prop, system, computed, watch } from 'components/dummies/b-dummy/b-dummy';
 
 export * from 'components/dummies/b-dummy/b-dummy';
 
@@ -26,5 +26,10 @@ export default class bNonEffectPropDummy extends bDummy {
 	@computed({dependencies: ['data']})
 	get dataGetter(): CanUndef<object> {
 		return this.data;
+	}
+
+	@watch('data')
+	onDataChange(value: object, oldValue: object): void {
+		this.console.log(this.componentId, 'data has changed', 'new', value, 'old', oldValue);
 	}
 }

@@ -12,5 +12,11 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
+		< b-non-effect-prop-dummy :data = computedData
+
+		< b-non-effect-prop-dummy :data = someField
+
+		< button @click = onClick
+			Change state
 		< template v-if = stage === 'teleports'
 			< b-bottom-slide

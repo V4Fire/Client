@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import iStaticPage, { component, prop, field, system, hook } from 'components/super/i-static-page/i-static-page';
+import iStaticPage, { component, prop, field, system, hook, computed } from 'components/super/i-static-page/i-static-page';
 import VDOM, * as VDOMAPI from 'components/friends/vdom';
 
 export * from 'components/super/i-static-page/i-static-page';
@@ -42,6 +42,18 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	 */
 	@field()
 	someField: unknown = 'foo';
+
+	@computed({dependencies: ['someField']})
+	computedData(): Dictionary {
+		const {someField} = this;
+		const data = {someField};
+
+		return data;
+	}
+
+	onClick(): void {
+		this.someField = this.someField === 'foo' ? 'bar' : 'foo';
+	}
 
 	@hook('beforeCreate')
 	setStageFromLocation(): void {

@@ -1,5 +1,5 @@
 {
-  "hash": "cf42b6d3305a7aa82f03a6a2e1777d6f80d56f444952b156ab1c06a1a331a112",
+  "hash": "9694de1d9aa7b904854e87faa622bb8dbe716af441b2cf8f2cb4568565418548",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2851,7 +2851,8 @@
               "b-select-date",
               "p-v4-dynamic-page1",
               "p-v4-dynamic-page2",
-              "p-v4-dynamic-page3"
+              "p-v4-dynamic-page3",
+              "b-non-effect-prop-dummy"
             ],
             "libs": [
               "components/directives/bind-with",
@@ -2899,7 +2900,8 @@
             "b-select-date",
             "p-v4-dynamic-page1",
             "p-v4-dynamic-page2",
-            "p-v4-dynamic-page3"
+            "p-v4-dynamic-page3",
+            "b-non-effect-prop-dummy"
           ],
           "libs": [
             "components/directives/bind-with",
