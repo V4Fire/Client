@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-08-??)
+
+#### :bug: Bug Fix
+
+* Added `join: 'replace'` for router transitions. It allows to avoid collisions during calls of `push` and `replace` `b-router`
+
 ## v4.0.0-beta.117 (2024-07-31)
 
 #### :house: Internal
