@@ -62,6 +62,8 @@ export function initMods(component: iBlock): ModsDict {
 		}
 	});
 
+	return Object.cast(ctx.sync.link(link));
+
 	function link(propMods: CanUndef<ModsProp>): ModsDict {
 		const mods = Object.isDictionary(ctx.mods) ? ctx.mods : {...declMods};
 
@@ -106,8 +108,6 @@ export function initMods(component: iBlock): ModsDict {
 
 		return mods;
 	}
-
-	return Object.cast(ctx.sync.link(link));
 }
 
 /**
