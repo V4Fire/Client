@@ -12,4 +12,9 @@
 
 - template index() extends ['b-dummy'].index
 	- block body
-		< b-dummy ref = dummy | :mods = modsToProvide
+		< template v-if = stage === 'providing mods using modsProp'
+			< b-dummy ref = dummy | :mods = modsToProvide
+
+		< template v-if = stage === 'providing mods using modsProp, provide.mods and attributes'
+			{{ console.log(provide.mods(modsToProvide)) }}
+			< b-checkbox ref = dummy | :checked = checked | :mods = provide.mods(modsToProvide)
