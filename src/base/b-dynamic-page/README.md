@@ -185,8 +185,9 @@ By default, `bDynamicPage` dispatches all events from an internal page component
 When switching between routes that use the same page component but have different path or query parameters,
 it can be beneficial to recreate the page component to avoid considering the previous state and current prop values.
 
-To achieve this, you can specify a unique key for each route. You can do this by using the second element
-of the page prop array. This value helps determine whether a new page component should be used to render the next page.
+To achieve this, you can specify a unique key for each route. You can do this by returning a tuple from the `eventConverter` function.
+The second element of the tuple should be a unique key. This value helps determine whether a new page component
+should be used to render the next page.
 
 For example, this approach ensures that every page with the same route but different path parameters
 will be tied to separate component instances:
@@ -203,7 +204,7 @@ Also, you can see the implemented traits or the parent component.
 
 #### [pageProp]
 
-An initial component name to load and its key.
+An initial component name to load.
 
 #### [keepAlive = `false`]
 
@@ -249,19 +250,24 @@ An event name of the page switching.
 < b-dynamic-page :emitter = router | :event = 'transition'
 ```
 
-#### [eventConverter = `(e) => [e?.meta.component ?? e?.name]`]
+#### [eventConverter = `(e) => e?.meta.component ?? e?.name`]
 
 A function to extract a component name to load from the caught event object.
 
 ```
-< b-dynamic-page :emitter = router | :event = 'transition' | :eventConverter = (e) => [e.meta.pageComponent]
+< b-dynamic-page :emitter = router | :event = 'transition' | :eventConverter = (e) => e.meta.pageComponent
 ```
 
 ### Fields
 
 #### page
 
-An active component name to load and its key.
+An active component name to load.
+
+#### pageKey
+
+Active page unique key. It is used to determine whether to reuse current page component or create a new one
+when switching between routes with the same page component.
 
 #### keepAliveCache
 

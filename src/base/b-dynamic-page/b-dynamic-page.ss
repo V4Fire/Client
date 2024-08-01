@@ -25,8 +25,7 @@
 				v-if = !pageTakenFromCache |
 				ref = component |
 				:instanceOf = iDynamicPage |
-				:is = field.get('page.0') |
-				:key = field.get('page.1') |
+				:is = page |
 				:dispatching = true |
 				${attrs}
 			.

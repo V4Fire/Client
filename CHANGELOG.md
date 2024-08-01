@@ -11,11 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.75.0 (2024-07-28)
+## v3.74.4 (2024-08-02)
 
-#### :boom: Breaking Change
+#### :rocket: New Feature
 
-* The `page` and `eventConverter` props now accept arrays consisting of the page component name and page component key, instead of just a string representing the page component name `base/b-dynamic-page`
+* The `eventConverter` function can now return a tuple consisting of the page component name and page component key, instead of just a string representing the page component name `base/b-dynamic-page`
 
 #### :bug: Bug Fix
 
