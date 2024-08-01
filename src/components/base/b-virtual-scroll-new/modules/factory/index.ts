@@ -6,6 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { components } from 'core/component/const';
+import { registerComponent } from 'core/component/init';
+
 import Friend from 'components/friends/friend';
 import type { VNodeDescriptor } from 'components/friends/vdom';
 
@@ -28,9 +31,11 @@ export class ComponentFactory extends Friend {
 	 */
 	produceComponentItems(): ComponentItem[] {
 		const
-			{ctx} = this;
+			{ctx} = this,
+			normalize = this.normalizeComponentItem.bind(this),
+			componentItems = ctx.itemsFactory(ctx.getVirtualScrollState(), ctx);
 
-		return this.itemsProcessor(ctx.itemsFactory(ctx.getVirtualScrollState(), ctx));
+		return this.itemsProcessor(componentItems).map(normalize);
 	}
 
 	/**
@@ -111,6 +116,49 @@ export class ComponentFactory extends Friend {
 		});
 
 		return items;
+	}
+
+	/**
+	 * Performs normalization of the ComponentItem object
+	 *
+	 * @param componentItem
+	 */
+	protected normalizeComponentItem(componentItem: ComponentItem): ComponentItem {
+		const
+			{item, props} = componentItem;
+
+		componentItem.props = props ?
+			this.normalizeComponentItemProps(item, props) :
+			props;
+
+		return componentItem;
+	}
+
+	/**
+	 * Normalizes the attributes of the given props
+	 *
+	 * @param componentName
+	 * @param props
+	 */
+	protected normalizeComponentItemProps(componentName: string, props: Dictionary): Dictionary {
+		const
+			meta = components.get(componentName) ?? registerComponent(componentName);
+
+		if (meta == null) {
+			return props;
+		}
+
+		return Object.entries(props).reduce((acc, [key, value]) => {
+			const
+				noUpdate = meta.props[key]?.forceUpdate === false,
+				normalizedKey = noUpdate ? `@:${key}` : key;
+
+			acc[normalizedKey] = noUpdate ?
+				this.ctx.createPropAccessors(() => value) :
+				value;
+
+			return acc;
+		}, {});
 	}
 
 	/**
