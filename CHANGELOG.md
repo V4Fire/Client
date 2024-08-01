@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-08-??)
+
+#### :rocket: New Feature
+
+* Enhanced filesystem cache invalidation criteria by including the current branch name and the most recent merge `build/webpack`
+
 ## v4.0.0-beta.117 (2024-07-31)
 
 #### :house: Internal
