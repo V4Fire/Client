@@ -154,7 +154,7 @@ export class ComponentFactory extends Friend {
 				normalizedKey = noUpdate ? `@:${key}` : key;
 
 			acc[normalizedKey] = noUpdate ?
-				this.ctx.createPropAccessors(() => value) :
+				this.ctx.createPropAccessors(() => <object>value) :
 				value;
 
 			return acc;
