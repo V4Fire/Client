@@ -144,7 +144,7 @@ export default class Component {
 				const parsed: RenderComponentsVnodeParams = globalThis.expandedParse(props);
 
 				ctx.testComponentAttrs = mixInitialProps ?
-					Object.assign(ctx.testComponentAttrs, parsed.attrs) :
+					{...ctx.testComponentAttrs, ...parsed.attrs} :
 					parsed.attrs ?? {};
 
 				const shouldSetSlots = !Object.isEmpty(parsed.children) ||
