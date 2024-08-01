@@ -66,8 +66,8 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 		});
 
 		if (propValuesToUpdate.length > 0) {
-			nonFunctionalParent.$on('[[RENDER]]', updatePropsValues);
-			unsafe.$async.worker(() => nonFunctionalParent.$off('[[RENDER]]', updatePropsValues));
+			nonFunctionalParent.$on('hook:beforeUpdate', updatePropsValues);
+			unsafe.$async.worker(() => nonFunctionalParent.$off('hook:beforeUpdate', updatePropsValues));
 		}
 
 		async function updatePropsValues() {
