@@ -145,6 +145,17 @@ test.describe('contracts for props effects', () => {
 				await test.expect(target.evaluate(({unsafe: ctx}) => ctx.tmp.isExecuted))
 					.resolves.toBe(true);
 			});
+
+			test('passing the `request` prop as `undefined` should be ignored', async ({page}) => {
+				const target = await Component.createComponent<bEffectPropWrapperDummy>(page, 'b-effect-prop-wrapper-dummy', {
+					stage: 'passing prop without effect as undefined'
+				});
+
+				const res = await target.evaluate(({unsafe: ctx}) =>
+					ctx.child.$el!.attributes.getNamedItem('request'));
+
+				test.expect(res).toBe(null);
+			});
 		});
 	});
 

@@ -44,3 +44,10 @@
 				:is = 'b-effect-prop-dummy' |
 				v-attrs = {dataProvider: 'Provider', '@:request': createPropAccessors(() => requestField)}
 			.
+
+		< template v-else-if = stage === 'passing prop without effect as undefined'
+			< component &
+				ref = child |
+				:is = 'b-effect-prop-dummy' |
+				v-attrs = {request: undefined}
+			.
