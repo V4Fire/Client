@@ -173,8 +173,8 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 		attrs[':componentIdProp'] = [`componentId + ${JSON.stringify(id)}`];
 	}
 
-	if (component.inheritMods !== false && !attrs[':modsProp']) {
-		attrs[':modsProp'] = ['provide.mods()'];
+	if (component.inheritMods !== false && !attrs[':mods'] && !attrs[':modsProp']) {
+		attrs[':mods'] = ['provide.mods()'];
 	}
 
 	Object.entries(attrs).forEach(([name, val]) => {
