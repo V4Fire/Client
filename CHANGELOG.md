@@ -19,6 +19,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Removed the `renderedOnce` field
   * The `$renderCounter` field is now public and updates after each call to the render function
 
+
 #### :rocket: New Feature
 
 * Added the `createPropAccessors` method for creating accessors
@@ -31,6 +32,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed a bug where adding refs to components could cause them to re-render `core/component/directives/ref`
 * Fixed a bug where adding `v-attrs` to components could cause them to re-render `core/component/directives/attrs`
+* Fixed an issue with updating modifier values `iBlock`
 
 ## v4.0.0-beta.115.the-force-awakens (2024-07-26)
 

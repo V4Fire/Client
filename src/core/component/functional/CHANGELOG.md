@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with updating modifier values
+
 ## v4.0.0-beta.22 (2023-09-15)
 
 #### :bug: Bug Fix
