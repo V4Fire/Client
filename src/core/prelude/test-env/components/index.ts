@@ -74,14 +74,18 @@ globalThis.renderComponents = (
 			return attrs;
 		}
 
+		const normalized = {};
+
 		Object.keys(attrs).forEach((key) => {
 			if (componentMeta.props[key]?.forceUpdate === false) {
-				attrs[`@:${key}`] = ctx!.createPropAccessors(() => attrs[key]!);
-				delete attrs[key];
+				normalized[`@:${key}`] = ctx!.createPropAccessors(() => <object>attrs[key]!);
+
+			} else {
+				normalized[key] = attrs[key];
 			}
 		});
 
-		return attrs;
+		return normalized;
 	}
 };
 

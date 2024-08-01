@@ -44,6 +44,18 @@ export default class bDummy extends iData {
 	@field()
 	testComponentSlots?: CanArray<VNode>;
 
+	/**
+	 * A proxy to modify property values that will be passed to a child component
+	 */
+	@field()
+	storedProps: Dictionary = {};
+
+	/**
+	 * Cached accessors that will be provided as props to the child component
+	 */
+	@field()
+	storedAccessors: Dictionary = {};
+
 	protected override readonly $refs!: iData['$refs'] & {
 		testComponent?: iBlock;
 	};
@@ -66,7 +78,20 @@ export default class bDummy extends iData {
 			const value = this.testComponentAttrs[key];
 
 			if (meta.props[key]?.forceUpdate === false) {
-				attrs[`@:${key}`] = this.createPropAccessors(() => <object>value);
+				if (key in this.storedProps) {
+					this.storedProps[key] = value;
+					attrs[`@:${key}`] = this.storedAccessors[key];
+
+				} else {
+					this.storedProps[key] = value;
+
+					const
+						accessor = this.createPropAccessors(() => <object>this.storedProps[key]),
+						normalizedKey = `@:${key}`;
+
+					this.storedAccessors[key] = accessor;
+					attrs[normalizedKey] = accessor;
+				}
 
 			} else {
 				attrs[key] = value;
