@@ -315,6 +315,9 @@ you may be required to explicitly set accessors for this prop.
 < component :is = 'b-example' | :value = someValue | @:value = createPropAccessors(() => someValue)()
 ```
 
+__Note that you need to explicitly pass both the prop and the accessor.
+This is necessary for the correct functioning of the reactive effect on the parent component.__
+
 The `createPropAccessors` function generates accessor functions for `someValue`,
 effectively allowing you to manage how prop changes affect component re-rendering.
 By doing this, you can ensure that updates to `someValue` do not automatically
