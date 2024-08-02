@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.120 (2024-08-02)
+
+* #### :nail_care: Polish
+
+* Now, if an external link is passed to `initLibs()`, `PUBLIC_PATH` won't be added to it.
+
 ## v4.0.0-beta.119 (2024-08-02)
 
 #### :rocket: New Feature
