@@ -33,6 +33,22 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed a bug where adding `v-attrs` to components could cause them to re-render `core/component/directives/attrs`
 * Fixed an issue with updating modifier values `iBlock`
 
+## v4.0.0-beta.119 (2024-08-02)
+
+#### :rocket: New Feature
+
+* Added decorator for cookie store `core/cookies`
+
+#### :bug: Bug Fix
+
+* Fixed a bug of re-applying `maxAge` parameter on storage update `core/kv-storage/engines/cookie`
+
+## v4.0.0-beta.118 (2024-08-01)
+
+#### :bug: Bug Fix
+
+* Added `join: 'replace'` for router transitions. It allows to avoid collisions during calls of `push` and `replace` `b-router`
+
 ## v4.0.0-beta.117 (2024-07-31)
 
 #### :house: Internal
