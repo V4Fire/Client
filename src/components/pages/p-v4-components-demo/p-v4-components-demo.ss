@@ -12,5 +12,11 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
+		< b-button :opened = undefined
+			regular
+
+		< b-button v-attrs = {opened: undefined}
+			v-attrs
+
 		< template v-if = stage === 'teleports'
 			< b-bottom-slide

@@ -51,4 +51,9 @@ export default class pV4ComponentsDemo extends iStaticPage {
 			this.stage = decodeURIComponent(matches[1]);
 		}
 	}
+
+	mounted(): void {
+		const vnode = this.vdom.create('b-button', {attrs: {opened: undefined}, children: {default: 'vdom'}});
+		this.dom.appendChild('root-wrapper', this.vdom.render(vnode));
+	}
 }
