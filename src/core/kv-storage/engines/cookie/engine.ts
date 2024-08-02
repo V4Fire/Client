@@ -18,7 +18,7 @@ export default class CookieEngine extends StringEngine {
 
 	protected override set serializedData(value: string) {
 		if (this.date == null) {
-			this.date	= Date.now();
+			this.date = Date.now();
 		}
 
 		if (value.length === 0) {
