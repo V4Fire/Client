@@ -260,6 +260,7 @@ const deps = {
  *   1. `lib` - external library, i.e, something from `node_modules`
  *   2. `src` - internal resource, i.e, something that builds from the `/src` folder
  *   3. `output` - output library, i.e, something that builds to the `/dist/client` folder
+ *   4. `external` - externally hosted library, i.e. from a CDN
  *
  * @typedef {('lib'|'src'|'output')}
  */
