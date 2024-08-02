@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.1?? (2024-07-??)
+## v4.0.0-beta.119 (2024-08-02)
 
 #### :rocket: New Feature
 
@@ -20,6 +20,24 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed a bug of re-applying `maxAge` parameter on storage update `core/kv-storage/engines/cookie`
+
+## v4.0.0-beta.118 (2024-08-01)
+
+#### :bug: Bug Fix
+
+* Added `join: 'replace'` for router transitions. It allows to avoid collisions during calls of `push` and `replace` `b-router`
+
+## v4.0.0-beta.117 (2024-07-31)
+
+#### :house: Internal
+
+* Added a new `rootContent` layout wrapper block `iBlock`
+
+## v4.0.0-beta.116 (2024-07-29)
+
+#### :house: Internal
+
+* Now JSDOM used as singleton in server render `core/const/browser`
 
 ## v4.0.0-beta.115.the-force-awakens (2024-07-26)
 
