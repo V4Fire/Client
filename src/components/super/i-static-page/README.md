@@ -262,7 +262,7 @@ const deps = {
  *   3. `output` - the output library, i.e, something that builds to the `/dist/client` folder
  *   4. `external` - externally hosted library, i.e. from a CDN
  *
- * @typedef {('lib'|'src'|'output')}
+ * @typedef {('lib'|'src'|'output'|'external')}
  */
 const LibSource = 'lib';
 exports.LibSource = LibSource;
