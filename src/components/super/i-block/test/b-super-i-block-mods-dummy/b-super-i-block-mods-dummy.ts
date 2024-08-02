@@ -8,7 +8,7 @@
 
 /* eslint-disable @v4fire/require-jsdoc */
 
-import bDummy, { component, prop, field, ModsProp, ModsDict } from 'components/dummies/b-dummy/b-dummy';
+import bDummy, { component, prop, field, ModsProp, ModsDict, ModsDecl } from 'components/dummies/b-dummy/b-dummy';
 
 export * from 'components/dummies/b-dummy/b-dummy';
 

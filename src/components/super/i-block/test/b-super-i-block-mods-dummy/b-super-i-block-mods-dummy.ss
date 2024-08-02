@@ -17,3 +17,6 @@
 
 		< template v-if = stage === 'providing mods using modsProp, provide.mods and attributes'
 			< b-checkbox ref = dummy | :checked = checked | :mods = provide.mods(modsToProvide)
+
+		< template v-if = stage === 'passing mods as undefined'
+			< b-checkbox ref = dummy | :size = undefined | v-attrs = {checked: undefined}

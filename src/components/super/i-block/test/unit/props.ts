@@ -125,6 +125,25 @@ test.describe('<i-block> props', () => {
 				theme: LIGHT
 			});
 		});
+
+		test('modifiers passed as `undefined` should use the default value, if it is set', async ({page}) => {
+			const target = await renderModsDummy(page, {
+				stage: 'passing mods as undefined'
+			});
+
+			await test.expect(
+				target.evaluate((ctx) => Object.fastClone(ctx.providedMods))
+
+			).resolves.toEqual({
+				checked: 'false',
+				form: 'true',
+				hidden: 'false',
+				showError: 'false',
+				showInfo: 'false',
+				size: 'm',
+				theme: LIGHT
+			});
+		});
 	});
 
 	test('`stage` should set the stage of the component', async ({page}) => {

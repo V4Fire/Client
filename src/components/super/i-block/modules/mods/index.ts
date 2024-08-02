@@ -65,7 +65,9 @@ export function initMods(component: iBlock): ModsDict {
 	return Object.cast(ctx.sync.link(link));
 
 	function link(propMods: CanUndef<ModsProp>): ModsDict {
-		const mods = Object.isDictionary(ctx.mods) ? ctx.mods : {...declMods};
+		const
+			isModsInitialized = Object.isDictionary(ctx.mods),
+			mods = isModsInitialized ? ctx.mods : {...declMods};
 
 		if (propMods != null) {
 			Object.entries(propMods).forEach(([key, val]) => {
@@ -76,7 +78,11 @@ export function initMods(component: iBlock): ModsDict {
 		}
 
 		attrMods.forEach(([name, getter]) => {
-			mods[name] = getter();
+			const val = getter();
+
+			if (isModsInitialized || val != null) {
+				mods[name] = val;
+			}
 		});
 
 		const {experiments} = ctx.r.remoteState;
