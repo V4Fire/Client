@@ -188,7 +188,7 @@ function initLibs(libs, assets) {
 				throw new Error(`The asset for inline ${p} cannot be found`);
 			}
 
-		} else {
+		} else if (p.source !== 'external') {
 			p.src = addPublicPath(p.src);
 		}
 
