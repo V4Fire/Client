@@ -9,16 +9,30 @@
 import Async from 'core/async';
 
 /**
- * Destruction task queue
- */
-export const queue: Array<Iterator<void>> = [];
-
-/**
  * Garbage collection daemon
  */
 export const daemon = new Async();
 
 /**
- * Adds a task to the garbage collector queue
+ * Destruction task queue
  */
-export const add = queue.push.bind(queue);
+export const queue: Array<Iterator<void>> = [];
+
+/**
+ * Task addition handlers queue
+ */
+export const onAdd: Function[] = [];
+
+/**
+ * Adds a task to the garbage collector queue
+ * @param task
+ */
+export const add = (task: Iterator<void>): number => {
+	const l = queue.push(task);
+
+	onAdd.splice(0, onAdd.length).forEach((handler) => {
+		handler();
+	});
+
+	return l;
+};

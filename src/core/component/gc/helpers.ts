@@ -8,13 +8,18 @@
 
 import config from 'config';
 
-import { daemon } from 'core/component/gc/const';
+import { daemon, queue, onAdd } from 'core/component/gc/const';
 
 /**
  * Returns a promise that resolves after a specified number of milliseconds set in the `config.gc.delay` option
  */
 export function delay(): Promise<void> {
 	return daemon.promise(new Promise<void>((resolve) => {
+		if (queue.length === 0) {
+			onAdd.push(() => delay().then(resolve));
+			return;
+		}
+
 		if (typeof requestIdleCallback === 'function') {
 			requestIdleCallback(() => {
 				resolve();
