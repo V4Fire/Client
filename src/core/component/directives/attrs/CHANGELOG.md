@@ -15,8 +15,6 @@ Changelog
 
 * Fixed a bug where adding `v-attrs` to components could cause them to re-render
 
-## v4.0.0-beta.?? (2024-??-??)
-
 #### :house: Internal
 
 * Removed dead code
