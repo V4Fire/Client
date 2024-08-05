@@ -138,8 +138,8 @@ This property can be used to indicate different stages of a component.
 For example, let's say we have a component that implements an image upload form.
 And we have two options for this form: uploading from a link or uploading from a computer.
 
-In order to differentiate between these two options and render different markups accordingly,
-we can create two stage values: "link" and "file".
+To differentiate between these two options and render different markups accordingly,
+we can create two stage values: `link` and `file`.
 This way, we can modify the component's template based on the current stage value.
 
 ### [modsProp]
@@ -147,6 +147,16 @@ This way, we can modify the component's template based on the current stage valu
 Additional modifiers for the component.
 Modifiers allow binding the state properties of a component directly to CSS classes,
 without the need for unnecessary re-rendering.
+
+Note that this prop is declared with the `forceUpdate: false` option.
+This means it does not have a reactive effect and cannot be used in the component template.
+Remember about the peculiarity of passing such props with `v-attrs`.
+
+```
+< b-example v-attrs = {'@:mods': createPropAccessors(() => ({theme: 'dark', size: 'xl'}))}
+```
+
+For more details, refer to the description of the `@prop` decorator.
 
 ### [activatedProp = `true`]
 
@@ -534,7 +544,7 @@ whereas for templates that are rendered as a separate render function,
 rather than as a component, the value `'mono'` should be used.
 
 Also, if you are creating a template that you want to use separately of a component,
-you can simply inherit from `['i-block'].mono`.
+you can inherit from `['i-block'].mono`.
 
 ```
 - namespace [%fileName%]
@@ -579,7 +589,6 @@ Generates a slot declaration by the specified parameters.
     += self.slot('preIcon', {':item': 'el', ':icon': 'el.preIcon'})
       < component &
         v-if = el.preIconComponent |
-        :instanceOf = bIcon |
         :is = el.preIconComponent |
         :value = el.preIcon
       .

@@ -19,9 +19,6 @@ import type { ComponentInterface } from 'core/component/interface';
  */
 export function renderTriggeredState(component: ComponentInterface, ...args: unknown[]): void {
 	runHook('renderTriggered', component, ...args).then(() => {
-		const unsafe = Object.cast<Writable<ComponentInterface['unsafe']>>(component);
-		unsafe.$renderCounter++;
-
 		callMethodFromComponent(component, 'renderTriggered', ...args);
 	}).catch(stderr);
 }

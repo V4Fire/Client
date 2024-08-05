@@ -54,6 +54,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			'before:mounted': [],
 			mounted: [],
 			beforeUpdate: [],
+			'before:updated': [],
 			updated: [],
 			activated: [],
 			deactivated: [],
@@ -68,6 +69,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 
 			mods: {},
 			props: {},
+			attrs: {},
 
 			computed: {},
 			methods: {},
@@ -87,7 +89,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			unsafe = getComponentContext(ctx),
 			result = callRenderFunction();
 
-		Object.set(unsafe, 'renderedOnce', true);
+		Object.set(unsafe, '$renderCounter', unsafe.$renderCounter + 1);
 
 		return result;
 

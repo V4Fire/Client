@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added the `forceUpdate: false` property to designate props whose changes should not lead to a template re-render
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change

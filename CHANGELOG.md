@@ -11,6 +11,28 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :boom: Breaking Change
+
+* `core/component/interface`:
+  * Removed the `renderedOnce` field
+  * The `$renderCounter` field is now public and updates after each call to the render function
+
+#### :rocket: New Feature
+
+* Added the `createPropAccessors` method for creating accessors
+  for props marked as `forceUpdate: false` `core/component/interface`
+
+* Added the `forceUpdate: false` property to designate props whose changes
+  should not lead to a template re-render `core/component/decorators/prop`
+
+#### :bug: Bug Fix
+
+* Fixed a bug where adding refs to components could cause them to re-render `core/component/directives/ref`
+* Fixed a bug where adding `v-attrs` to components could cause them to re-render `core/component/directives/attrs`
+* Fixed an issue with updating modifier values `iBlock`
+
 ## v4.0.0-beta.120 (2024-09-05)
 
 #### :boom: Breaking Change

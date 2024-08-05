@@ -17,6 +17,6 @@ export const DEFAULT_WRAPPER = Symbol('This function is the generated default wr
 export const PARENT = {};
 
 /**
- * A symbol for extracting the unique ID of the async render task
+ * A symbol for extracting the unique identifier of the async render task
  */
-export const ASYNC_RENDER_ID = Symbol('Async render task ID');
+export const ASYNC_RENDER_ID = Symbol('Async render task identifier');

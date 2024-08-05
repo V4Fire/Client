@@ -11,6 +11,12 @@ Changelog
 
 ## v4.0.0-beta.111 (2024-07-18)
 
+#### :bug: Bug Fix
+
+* Fixed a bug where adding `v-attrs` to components could cause them to re-render
+
+## v4.0.0-beta.?? (2024-??-??)
+
 #### :house: Internal
 
 * Removed dead code

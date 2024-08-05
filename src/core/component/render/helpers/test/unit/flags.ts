@@ -25,14 +25,17 @@ test.describe('core/component/render/helpers/flags', () => {
 		await Component.waitForComponentTemplate(page, 'b-component-render-flags-dummy');
 	});
 
-	test('should add `props` to `patchFlag` if a node has an event handler', async ({page}) => {
-		await renderDummy(page);
-		const vnode = page.getByTestId('vnode');
-		const patchFlag = await vnode.evaluate(
-			(ctx) => (<{__vnode?: VNode}>ctx).__vnode?.patchFlag ?? 0
-		);
+	test.describe('with a functional component', () => {
+		test('should add `props` to `patchFlag` if a node has an event handler', async ({page}) => {
+			await renderDummy(page, true);
+			const vnode = page.getByTestId('vnode');
 
-		test.expect(patchFlag & flagValues.props).toEqual(flagValues.props);
+			const patchFlag = await vnode.evaluate(
+				(ctx) => (<{__vnode?: VNode}>ctx).__vnode?.patchFlag ?? 0
+			);
+
+			test.expect(patchFlag & flagValues.props).toEqual(flagValues.props);
+		});
 	});
 
 	['default', 'v-attrs'].forEach((stage) => {
@@ -57,7 +60,8 @@ test.describe('core/component/render/helpers/flags', () => {
 		});
 	});
 
-	async function renderDummy(page: Page, stage: string = 'default') {
-		await Component.createComponent(page, 'b-component-render-flags-dummy', {stage});
+	async function renderDummy(page: Page, functional: boolean = false) {
+		const component = `b-component-render-flags-dummy${functional ? '-functional' : ''}`;
+		await Component.createComponent(page, component, {stage: 'default'});
 	}
 });

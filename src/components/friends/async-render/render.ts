@@ -60,7 +60,7 @@ export function waitForceRender(
 	elementToDrop?: string | ((ctx: Friend['component']) => CanPromise<CanUndef<string | Element>>)
 ): () => CanPromise<boolean> {
 	return () => {
-		if (!this.ctx.renderedOnce) {
+		if (this.ctx.$renderCounter === 0) {
 			return true;
 		}
 

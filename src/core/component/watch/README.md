@@ -14,6 +14,12 @@ Implements watch API to the passed component instance.
 
 ### bindRemoteWatchers
 
-Binds watchers and event listeners that were registered as remote to the specified component instance.
-Basically, this function takes watchers from a meta property of the component,
-but you can provide the custom watchers to initialize by using the second parameter of the function.
+Binds watchers and event listeners,
+added through decorators during the class description, to a specific component instance.
+
+Fundamentally, this function retrieves watchers from the component’s `meta` property.
+Additionally, you can supply custom watchers as an initialization parameter
+through the second argument of the function.
+
+This method contains some "copy-paste" segments,
+which are intentionally used to enhance performance, as this is a frequently executed function.

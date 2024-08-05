@@ -81,22 +81,21 @@ export function inheritContext(
 
 	const
 		props = ctx.$props,
-		parentProps = parentCtx.$props;
-
-	const
+		parentProps = parentCtx.$props,
 		linkedFields = {};
 
 	Object.keys(parentProps).forEach((prop) => {
-		const
-			linked = parentCtx.$syncLinkCache.get(prop);
+		const linked = parentCtx.$syncLinkCache.get(prop);
 
-		if (linked != null) {
-			Object.values(linked).forEach((link) => {
-				if (link != null) {
-					linkedFields[link.path] = prop;
-				}
-			});
+		if (linked == null) {
+			return;
 		}
+
+		Object.values(linked).forEach((link) => {
+			if (link != null) {
+				linkedFields[link.path] = prop;
+			}
+		});
 	});
 
 	const fields = [
@@ -110,8 +109,7 @@ export function inheritContext(
 				return;
 			}
 
-			const
-				link = linkedFields[name];
+			const link = linkedFields[name];
 
 			const
 				val = ctx[name],
@@ -136,8 +134,7 @@ export function inheritContext(
 			if (needMerge) {
 				if (Object.isTruly(field.merge)) {
 					if (field.merge === true) {
-						let
-							newVal = oldVal;
+						let newVal = oldVal;
 
 						if (Object.isPlainObject(val) || Object.isPlainObject(oldVal)) {
 							// eslint-disable-next-line prefer-object-spread

@@ -15,8 +15,7 @@ const
 	Snakeskin = require('snakeskin'),
 	Typograf = require('typograf');
 
-let
-	tp;
+let tp;
 
 if (Typograf.hasLocale(config.typograf().locale)) {
 	tp = new Typograf(config.typograf());

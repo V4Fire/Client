@@ -21,6 +21,7 @@ import iBlockProviders from 'components/super/i-block/providers';
 
 //#if runtime has dummyComponents
 import('components/super/i-block/test/b-super-i-block-dummy');
+import('components/super/i-block/test/b-super-i-block-mods-dummy');
 import('components/super/i-block/test/b-super-i-block-watch-dummy');
 import('components/super/i-block/test/b-super-i-block-lfc-dummy');
 import('components/super/i-block/test/b-super-i-block-destructor-dummy');

@@ -18,7 +18,7 @@
 			< component &
 				ref = testComponent |
 				:is = testComponent |
-				v-attrs = testComponentAttrs |
+				v-attrs = testComponentAttrsNormalized |
 				v-render = testComponentSlots
 			.
 

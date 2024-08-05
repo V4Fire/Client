@@ -8,12 +8,14 @@
 
 import Async from 'core/async';
 
+import watch from 'core/object/watch';
 import { getComponentContext } from 'core/component/context';
 
 import { forkMeta } from 'core/component/meta';
 import { getPropertyInfo, PropertyInfo } from 'core/component/reflect';
 import { getNormalParent } from 'core/component/traverse';
 
+import { initProps, attachAttrPropsListeners } from 'core/component/prop';
 import { initFields } from 'core/component/field';
 import { attachAccessorsFromMeta } from 'core/component/accessor';
 import { attachMethodsFromMeta, callMethodFromComponent } from 'core/component/method';
@@ -247,7 +249,31 @@ export function beforeCreateState(
 		implementEventEmitterAPI(component);
 	}
 
+	Object.defineProperty(unsafe, 'createPropAccessors', {
+		configurable: true,
+		enumerable: false,
+		writable: true,
+		value: (getter: () => object) => {
+			// Explicit invocation of the effect
+			void getter();
+
+			return () => [
+				getter(),
+				(...args: any[]) => watch(getter(), ...args)
+			];
+		}
+	});
+
+	initProps(component, {
+		from: unsafe.$attrs,
+		store: unsafe,
+		saveToStore: true,
+		forceUpdate: false
+	});
+
+	attachAttrPropsListeners(component);
 	attachAccessorsFromMeta(component);
+
 	runHook('beforeRuntime', component).catch(stderr);
 
 	const {
@@ -263,20 +289,18 @@ export function beforeCreateState(
 
 	initFields(systemFields, component, unsafe);
 
-	const
-		fakeHandler = () => undefined;
+	const fakeHandler = () => undefined;
 
 	if (watchDependencies.size > 0) {
 		const
-			isFunctional = meta.params.functional === true;
-
-		const
+			isFunctional = meta.params.functional === true,
 			watchSet = new Set<PropertyInfo>();
 
 		watchDependencies.forEach((deps) => {
 			deps.forEach((dep) => {
 				const
-					info = getPropertyInfo(Object.isArray(dep) ? dep.join('.') : String(dep), component);
+					path = Object.isArray(dep) ? dep.join('.') : String(dep),
+					info = getPropertyInfo(path, component);
 
 				if (info.type === 'system' || isFunctional && info.type === 'field') {
 					watchSet.add(info);
