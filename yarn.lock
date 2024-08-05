@@ -5707,6 +5707,7 @@ __metadata:
     to-string-loader: "npm:1.2.0"
     ts-jest: "npm:29.1.0"
     ts-loader: "npm:9.5.1"
+    ts-node: "npm:10.7.0"
     tslib: "npm:2.4.1"
     typescript: "npm:4.6.2"
     typograf: "npm:6.14.0"
