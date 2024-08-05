@@ -5,8 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
-
-/* eslint-disable no-restricted-globals, @typescript-eslint/strict-boolean-expressions, @typescript-eslint/no-unnecessary-condition */
+/* eslint-disable no-restricted-globals, @typescript-eslint/strict-boolean-expressions */
+/* eslint-disable @typescript-eslint/no-invalid-this, @typescript-eslint/no-unnecessary-condition */
 
 const _global =
 	typeof globalThis === 'object' && isGlobal(globalThis) && globalThis ||
@@ -31,6 +31,6 @@ export default _global;
  *
  * @param obj
  */
-function isGlobal(obj) {
+function isGlobal(obj: typeof globalThis) {
 	return Boolean(obj) && obj.Math === Math;
 }
