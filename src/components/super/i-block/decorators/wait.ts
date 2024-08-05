@@ -161,7 +161,7 @@ export function wait(
 
 		if (Object.isPlainObject(componentStatusOrOpts)) {
 			opts = componentStatusOrOpts;
-			handler = opts!['fn'];
+			handler = opts['fn'];
 		}
 	}
 
