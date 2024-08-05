@@ -33,6 +33,18 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed a bug where adding `v-attrs` to components could cause them to re-render `core/component/directives/attrs`
 * Fixed an issue with updating modifier values `iBlock`
 
+## v4.0.0-beta.120 (2024-09-05)
+
+#### :boom: Breaking Change
+
+* Removed ES build option
+* Added `edition` build option for configuring environment support
+* Added browserslist support
+
+#### :house: Internal
+
+* Used SWC with support for browserslist
+
 ## v4.0.0-beta.119 (2024-08-02)
 
 #### :rocket: New Feature

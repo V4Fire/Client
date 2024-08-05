@@ -8,14 +8,13 @@
 
 'use strict';
 
-const {Libs, StyleLibs, Links} = require('./modules/interface');
-
 const
 	config = require('@config/config'),
-	runtime = config.runtime();
+	{Libs, StyleLibs, Links} = require('./modules/interface');
 
 const
-	{ssr} = config.webpack;
+	{ssr} = config.webpack,
+	runtime = config.runtime();
 
 const deps = {
 	/**
@@ -23,13 +22,10 @@ const deps = {
 	 * @type {Libs}
 	 */
 	scripts: new Map(
-		ssr ?
-			[] :
-
-			[
-				['requestidlecallback', {source: 'src', src: 'assets/lib/requestidlecallback.js'}],
-				['eventemitter2', {source: 'src', src: 'assets/lib/eventemitter2.js'}]
-			]
+		[
+			['requestidlecallback', {source: 'src', src: 'assets/lib/requestidlecallback.js'}],
+			['eventemitter2', {source: 'src', src: 'assets/lib/eventemitter2.js'}]
+		]
 	),
 
 	/**

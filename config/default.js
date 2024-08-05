@@ -21,6 +21,7 @@ const
 	o = require('@v4fire/config/options').option;
 
 const
+	browserslist = require('browserslist'),
 	{nanoid} = require('nanoid');
 
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
@@ -79,6 +80,17 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		testPort: o('test-port', {
 			env: true,
 			default: 8000
+		}),
+
+		/**
+		 * Option for configuring target environment for build, for example list of polyfills
+		 *
+		 * @cli build-edition
+		 * @env BUILD_EDITION
+		 */
+		edition: o('build-edition', {
+			env: true,
+			default: 'modern'
 		}),
 
 		/**
@@ -301,14 +313,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @param {string} [def] - default value
 		 * @returns {?string}
 		 */
-		target(
-			def = /ES[35]$/.test(this.config.es()) && !this.storybook() ?
-				'browserslist:ie 11' :
-				'web'
-		) {
+		target() {
 			return o('target', {
 				env: true,
-				default: this.ssr ? 'node' : def
+				default: this.ssr ? 'node' : 'web'
 			});
 		},
 
@@ -548,7 +556,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		aliases() {
 			const aliases = {
 				dompurify: this.config.es().toLowerCase() === 'es5' ? 'dompurify-v2' : 'dompurify-v3',
-				'vue/server-renderer': 'assets/lib/server-renderer.js'
+				'vue/server-renderer': 'assets/lib/server-renderer.js',
+				// Disable setImmedate polyfill from core-js in favor of our realisation `core/shims/set-immediate`
+				'core-js/modules/web.immediate.js': false
 			};
 
 			if (!this.config.webpack.ssr) {
@@ -839,6 +849,55 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				default: def,
 				type: 'number'
 			});
+		},
+
+		/**
+		 * SWC webpack loader configuration
+		 */
+		swc(env) {
+			if (env == null) {
+				const configEnv = this.config.environment;
+
+				if (this.ssr) {
+					env = 'ssr';
+
+				} else if (configEnv === 'production') {
+					env = this.config.build.edition;
+
+				} else {
+					env = 'development';
+				}
+			}
+
+			const
+				browsersListConfig = browserslist.findConfig('.'),
+				targets = browsersListConfig[env];
+
+			const base = {
+				jsc: {
+					externalHelpers: true
+				},
+				env: {
+					mode: 'entry',
+					targets,
+					coreJs: '3.37.0'
+				}
+			};
+
+			const ts = this.config.extend({}, base, {
+				jsc: {
+					parser: {
+						syntax: 'typescript',
+						decorators: true
+					}
+				}
+			});
+
+			const
+				js = this.config.extend({}, base),
+				ss = this.config.extend({}, base);
+
+			return {js, ts, ss};
 		}
 	},
 
@@ -905,7 +964,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		const client = this.extend({}, server, {
 			configFile,
 			compilerOptions: {
-				module: this.webpack.ssr ? 'commonjs' : module
+				module,
+				target: 'es2020'
+			}
+		});
+
+		this.extend(server, {
+			compilerOptions: {
+				module: 'commonjs',
+				target: 'es2020'
 			}
 		});
 
@@ -1448,7 +1515,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			// eslint-disable-next-line camelcase
 			node_js: this.webpack.target() === 'node',
-			es: this.es()
+			buildEdition: this.build.edition
 		};
 
 		return {
