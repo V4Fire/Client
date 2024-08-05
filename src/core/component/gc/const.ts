@@ -21,7 +21,7 @@ export const queue: Array<Iterator<void>> = [];
 /**
  * Task addition handlers queue
  */
-export const onAdd: Function[] = [];
+export const newTaskHandlersQueue: Function[] = [];
 
 /**
  * Adds a task to the garbage collector queue
@@ -30,9 +30,11 @@ export const onAdd: Function[] = [];
 export const add = (task: Iterator<void>): number => {
 	const l = queue.push(task);
 
-	onAdd.splice(0, onAdd.length).forEach((handler) => {
-		handler();
-	});
+	if (newTaskHandlersQueue.length > 0) {
+		newTaskHandlersQueue.splice(0, newTaskHandlersQueue.length).forEach((handler) => {
+			handler();
+		});
+	}
 
 	return l;
 };

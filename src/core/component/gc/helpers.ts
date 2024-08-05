@@ -8,7 +8,7 @@
 
 import config from 'config';
 
-import { daemon, queue, onAdd } from 'core/component/gc/const';
+import { daemon, queue, newTaskHandlersQueue } from 'core/component/gc/const';
 
 /**
  * Returns a promise that resolves after a specified number of milliseconds set in the `config.gc.delay` option
@@ -16,7 +16,7 @@ import { daemon, queue, onAdd } from 'core/component/gc/const';
 export function delay(): Promise<void> {
 	return daemon.promise(new Promise<void>((resolve) => {
 		if (queue.length === 0) {
-			onAdd.push(() => delay().then(resolve));
+			newTaskHandlersQueue.push(() => delay().then(resolve));
 			return;
 		}
 
