@@ -301,8 +301,8 @@ export default class bDynamicPage extends iDynamicPage {
 		return component.reload(params);
 	}
 
-	override canSelfDispatchEvent(_: string): boolean {
-		return true;
+	override canSelfDispatchEvent(event: string): boolean {
+		return !/^hook(?::\w+(-\w+)*|-change)$/.test(event.dasherize());
 	}
 
 	/**
@@ -422,6 +422,14 @@ export default class bDynamicPage extends iDynamicPage {
 						newPageStrategy.remove();
 					}
 				}
+
+				// The `onPageChange` callback is created during the `renderFilter` call.
+				// When this callback resolves, the asynchronous render starts rendering a new page
+				// and proceeds to the next iteration by calling `renderFilter` again.
+				// However, we can't guarantee that the next `renderFilter` call will occur before `syncPageWatcher`.
+				// If `syncPageWatcher` is called before the next `renderFilter`, it will execute
+				// the `onPageChange` callback, which is why we must clean it up here.
+				unsafe.onPageChange = undefined;
 
 				resolve(true);
 			};

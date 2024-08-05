@@ -15,3 +15,7 @@ export { default } from 'components/friends/data-provider/class';
 
 export * from 'components/friends/data-provider/api';
 export * from 'components/friends/data-provider/interface';
+
+//#if runtime has dummyComponents
+import('components/friends/data-provider/test/provider');
+//#endif

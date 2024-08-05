@@ -1,5 +1,5 @@
 {
-  "hash": "fe7fd65571047ea1d3345ab9972ffeff501edf1aa95b5b0174a5e6a39134a459",
+  "hash": "5ccda0c56681f6df98bcce9b5a48a424b09f104f6e403b75c7dd9ac02a30e93d",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -150,16 +150,16 @@
         }
       ],
       [
-        "b-component-directives-emitter-dummy",
+        "b-component-directives-attrs-dummy",
         {
-          "index": "src/core/component/directives/attrs/test/b-component-directives-emitter-dummy/index.js",
+          "index": "src/core/component/directives/attrs/test/b-component-directives-attrs-dummy/index.js",
           "declaration": {
-            "name": "b-component-directives-emitter-dummy",
+            "name": "b-component-directives-attrs-dummy",
             "parent": "i-block",
             "dependencies": [],
             "libs": []
           },
-          "name": "b-component-directives-emitter-dummy",
+          "name": "b-component-directives-attrs-dummy",
           "parent": "i-block",
           "dependencies": [],
           "libs": [],
@@ -173,11 +173,11 @@
           },
           "type": "block",
           "mixin": false,
-          "logic": "src/core/component/directives/attrs/test/b-component-directives-emitter-dummy/b-component-directives-emitter-dummy.ts",
+          "logic": "src/core/component/directives/attrs/test/b-component-directives-attrs-dummy/b-component-directives-attrs-dummy.ts",
           "styles": [
-            "src/core/component/directives/attrs/test/b-component-directives-emitter-dummy/b-component-directives-emitter-dummy.styl"
+            "src/core/component/directives/attrs/test/b-component-directives-attrs-dummy/b-component-directives-attrs-dummy.styl"
           ],
-          "tpl": "src/core/component/directives/attrs/test/b-component-directives-emitter-dummy/b-component-directives-emitter-dummy.ss",
+          "tpl": "src/core/component/directives/attrs/test/b-component-directives-attrs-dummy/b-component-directives-attrs-dummy.ss",
           "etpl": null
         }
       ],
@@ -1388,6 +1388,44 @@
         }
       ],
       [
+        "b-super-i-block-deactivation-dummy",
+        {
+          "index": "src/components/super/i-block/test/b-super-i-block-deactivation-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-deactivation-dummy",
+            "parent": "i-block",
+            "dependencies": [
+              "b-button",
+              "b-bottom-slide"
+            ],
+            "libs": []
+          },
+          "name": "b-super-i-block-deactivation-dummy",
+          "parent": "i-block",
+          "dependencies": [
+            "b-button",
+            "b-bottom-slide"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/test/b-super-i-block-deactivation-dummy/b-super-i-block-deactivation-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/test/b-super-i-block-deactivation-dummy/b-super-i-block-deactivation-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/test/b-super-i-block-deactivation-dummy/b-super-i-block-deactivation-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-super-i-block-decorators-dummy",
         {
           "index": "src/components/super/i-block/decorators/test/b-super-i-block-decorators-dummy/index.js",
@@ -1512,6 +1550,42 @@
             "src/components/super/i-block/test/b-super-i-block-lfc-dummy/b-super-i-block-lfc-dummy.styl"
           ],
           "tpl": "src/components/super/i-block/test/b-super-i-block-lfc-dummy/b-super-i-block-lfc-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-super-i-block-teleport-dummy",
+        {
+          "index": "src/components/super/i-block/test/b-super-i-block-teleport-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-teleport-dummy",
+            "parent": "i-block",
+            "dependencies": [
+              "b-bottom-slide"
+            ],
+            "libs": []
+          },
+          "name": "b-super-i-block-teleport-dummy",
+          "parent": "i-block",
+          "dependencies": [
+            "b-bottom-slide"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/test/b-super-i-block-teleport-dummy/b-super-i-block-teleport-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/test/b-super-i-block-teleport-dummy/b-super-i-block-teleport-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/test/b-super-i-block-teleport-dummy/b-super-i-block-teleport-dummy.ss",
           "etpl": null
         }
       ],

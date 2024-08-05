@@ -39,7 +39,7 @@ import type { ComponentInterface } from 'core/component/interface';
 import type { DirectiveParams } from 'core/component/directives/attrs/interface';
 
 //#if runtime has dummyComponents
-import('core/component/directives/attrs/test/b-component-directives-emitter-dummy');
+import('core/component/directives/attrs/test/b-component-directives-attrs-dummy');
 //#endif
 
 export * from 'core/component/directives/attrs/const';
@@ -259,20 +259,15 @@ ComponentEngine.directive('attrs', {
 		}
 
 		function parseEventListener(attrName: string, attrVal: unknown) {
-			let
-				isDOMEvent = true,
-				event = attrName.slice(1).camelize(false),
-				isOnceEvent = false;
+			let event = attrName.slice(1).camelize(false);
 
 			const
-				originalEvent = event,
 				eventChunks = event.split('.'),
 				flags = Object.createDict<boolean>();
 
 			// The first element is the event name; we need to slice only the part containing the event modifiers
 			eventChunks.slice(1).forEach((chunk) => flags[chunk] = true);
 			event = eventChunks[0];
-			isOnceEvent = Boolean(flags.once);
 
 			if (flags.right && !event.startsWith('key')) {
 				event = 'onContextmenu';
@@ -283,12 +278,10 @@ ComponentEngine.directive('attrs', {
 
 			} else {
 				event = `on${event.capitalize()}`;
-				isDOMEvent = false;
 			}
 
 			if (flags.capture) {
 				event += 'Capture';
-				isDOMEvent = true;
 				delete flags.capture;
 			}
 
@@ -299,7 +292,6 @@ ComponentEngine.directive('attrs', {
 
 			if (flags.passive) {
 				event += 'Passive';
-				isDOMEvent = true;
 				delete flags.passive;
 			}
 
@@ -317,23 +309,12 @@ ComponentEngine.directive('attrs', {
 				}
 			}
 
-			// FIXME: `componentCtx` is always undefined https://github.com/V4Fire/Client/issues/1336
-			if (componentCtx != null && !isDOMEvent && Object.isFunction(attrVal)) {
-				if (isOnceEvent) {
-					componentCtx.$once(originalEvent, attrVal);
+			props[event] = attrVal;
+			setVNodePatchFlags(vnode, 'events');
 
-				} else {
-					componentCtx.$on(originalEvent, attrVal);
-				}
-
-			} else {
-				props[event] = attrVal;
-				setVNodePatchFlags(vnode, 'events');
-
-				const dynamicProps = vnode.dynamicProps ?? [];
-				vnode.dynamicProps = dynamicProps;
-				dynamicProps.push(event);
-			}
+			const dynamicProps = vnode.dynamicProps ?? [];
+			vnode.dynamicProps = dynamicProps;
+			dynamicProps.push(event);
 		}
 
 		function getHandlerStore() {

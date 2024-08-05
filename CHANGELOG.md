@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.??? (2024-??-??)
+## v4.0.0-beta.120 (2024-09-05)
 
 #### :boom: Breaking Change
 
@@ -22,6 +22,79 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Used SWC with support for browserslist
+
+## v4.0.0-beta.119 (2024-08-02)
+
+#### :rocket: New Feature
+
+* Added decorator for cookie store `core/cookies`
+
+#### :bug: Bug Fix
+
+* Fixed a bug of re-applying `maxAge` parameter on storage update `core/kv-storage/engines/cookie`
+
+## v4.0.0-beta.118 (2024-08-01)
+
+#### :bug: Bug Fix
+
+* Added `join: 'replace'` for router transitions. It allows to avoid collisions during calls of `push` and `replace` `b-router`
+
+## v4.0.0-beta.117 (2024-07-31)
+
+#### :house: Internal
+
+* Added a new `rootContent` layout wrapper block `iBlock`
+
+## v4.0.0-beta.116 (2024-07-29)
+
+#### :house: Internal
+
+* Now JSDOM used as singleton in server render `core/const/browser`
+
+## v4.0.0-beta.115.the-force-awakens (2024-07-26)
+
+#### :bug: Bug Fix
+
+* `core/component/init`:
+  * Fixed a typo in the event name `hookChange` which is responsible for processing activation and deactivation in the component
+  * Amended the deactivation sequence within the component to ensure that children are deactivated first
+
+* Fixed an issue to prevent the `hookChange` event from bubbling up `bDynamicPage`
+* Fixed the `$el` property of the teleported component `iBlock`
+
+#### :house: Internal
+
+* Added unit tests that use synchronous rendering
+
+## v4.0.0-beta.114 (2024-07-24)
+
+#### :house: Internal
+
+* Removed unnecessary rerendering of container in case of `request` prop change;
+rerendering of the container and all nodes inside occurs only when `firstChunkRender` is changed. `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.113 (2024-07-24)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with canceling a request when resolving response data. `components/friends/data-provider`
+
+## v4.0.0-beta.112 (2024-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed a bug by ensuring the onPageChange callback is cleaned up in
+  renderFilter to prevent execution by syncPageWatcher before the next
+  renderFilter call, maintaining proper rendering sequence `bDynamicPage`
+* Resolved the issue with consecutive router calls and option merging during `replace(null)` `bRouter`
+* Fixed a bug in `core/component/engines/vue3/render`, when passing a `nullable` value to a directive would result in it not being bound to the vNode
+
+## v4.0.0-beta.111 (2024-07-18)
+
+#### :house: Internal
+
+* Removed dead code `core/component/attrs`
+* Updated `monic-loader` to version `3.0.4` to fix regression
 
 ## v4.0.0-beta.110 (2024-07-17)
 

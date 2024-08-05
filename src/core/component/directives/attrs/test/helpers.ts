@@ -12,39 +12,53 @@ import { Component } from 'tests/helpers';
 
 import type { Watcher } from 'components/directives/on-resize';
 
-import type bComponentDirectivesEmitterDummy from 'core/component/directives/attrs/test/b-component-directives-emitter-dummy/b-component-directives-emitter-dummy';
+import type iBlock from 'components/super/i-block/i-block';
 
-export function renderDummy(
-	page: Page,
-	attrs: RenderComponentsVnodeParams['attrs']
-): Promise<JSHandle<bComponentDirectivesEmitterDummy>> {
-	return Component.createComponent<bComponentDirectivesEmitterDummy>(page, 'b-component-directives-emitter-dummy', {
-		'data-testid': 'target',
-		'v-attrs': {
-			...attrs
-		}
-	});
-}
-
-export async function renderDirective(
+/**
+ * Renders a component by the specified name with the passed parameters using the `v-attrs` directive
+ *
+ * @param page
+ * @param componentName - the name of the component to be rendered
+ * @param attrs - attributes to be passed to the component
+ */
+export async function renderComponentWithVAttrs<C extends iBlock>(
 	page: Page,
 	componentName: string,
-	attrs: RenderComponentsVnodeParams['attrs']
-): Promise<Locator> {
-	const componentTestId = 'target';
-
-	await Component.createComponent(page, componentName, {
-		'data-testid': componentTestId,
+	attrs: Dictionary
+): Promise<JSHandle<C>> {
+	return Component.createComponent(page, componentName, {
+		'data-testid': 'target',
 		'data-counter': 0,
 		'v-attrs': {...attrs},
 		style: 'width: 100px; height: 100px'
 	});
-
-	return page.getByTestId(componentTestId);
 }
 
-export async function waitForWatcherCallsCount(page: Page, observedEl: Locator, expected: number): Promise<void> {
-	const handle = await observedEl.elementHandle();
+/**
+ * Renders an element with the passed parameters using the `v-attrs` directive
+ *
+ * @param page
+ * @param attrs - attributes to be passed to the element
+ * @param [functional] - if set to true, a functional component will be used to render the element
+ */
+export async function renderElementWithVAttrs(
+	page: Page,
+	attrs: Dictionary,
+	functional: boolean = false
+): Promise<Locator> {
+	await renderComponentWithVAttrs(page, `b-dummy${functional ? '-functional' : ''}`, attrs);
+	return page.getByTestId('target');
+}
+
+/**
+ * Waits for a specific attribute value on the specified element to match the expected count
+ *
+ * @param page
+ * @param observedElem
+ * @param expected
+ */
+export async function waitForWatcherCallsCount(page: Page, observedElem: Locator, expected: number): Promise<void> {
+	const handle = await observedElem.elementHandle();
 
 	await page
 		.waitForFunction(
@@ -56,6 +70,13 @@ export async function waitForWatcherCallsCount(page: Page, observedEl: Locator, 
 		);
 }
 
+/**
+ * Handles resize events on an element by incrementing a 'data-counter' attribute
+ *
+ * @param newRect
+ * @param oldRect
+ * @param watcher
+ */
 export function resizeHandler(newRect: DOMRect, oldRect: DOMRect, watcher: Watcher): void {
 	const {target} = watcher;
 
@@ -68,6 +89,10 @@ export function resizeHandler(newRect: DOMRect, oldRect: DOMRect, watcher: Watch
 	target.setAttribute('data-counter', nextValue.toString());
 }
 
+/**
+ * Handles click events on an element by incrementing a 'data-counter' attribute
+ * @param event
+ */
 export function clickHandler(event: MouseEvent): void {
 	const target = <Element>event.target;
 
@@ -78,8 +103,4 @@ export function clickHandler(event: MouseEvent): void {
 
 	const nextValue = previousValue + 1;
 	target.setAttribute('data-counter', nextValue.toString());
-}
-
-export function dummyDeleteHandler(target: bComponentDirectivesEmitterDummy): void {
-	target.counter++;
 }

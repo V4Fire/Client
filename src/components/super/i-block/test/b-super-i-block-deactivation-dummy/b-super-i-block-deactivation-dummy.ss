@@ -12,5 +12,7 @@
 
 - template index() extends ['i-block'].index
 	- block body
-		< button @click = () => onClick() | -testid = deleteButton
-			delete
+		< b-button.target v-func = false | ref = button1
+
+		< b-bottom-slide
+			< b-button.target v-func = false | ref = button2

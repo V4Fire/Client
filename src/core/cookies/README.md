@@ -196,3 +196,4 @@ cookies.remove('foo', {
   domain: 'my-site.com'
 });
 ```
+

@@ -6,5 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-component-directives-emitter-dummy')
+package('b-component-directives-attrs-dummy')
 	.extends('i-block');
