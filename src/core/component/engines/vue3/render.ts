@@ -351,8 +351,6 @@ export function destroy(node: VNode | Node): void {
 				vnode[key] = [];
 			});
 
-			yield;
-
 			['el', 'ctx', 'ref', 'virtualComponent', 'virtualContext'].forEach((key) => {
 				vnode[key] = null;
 			});

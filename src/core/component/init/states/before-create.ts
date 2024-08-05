@@ -227,6 +227,7 @@ export function beforeCreateState(
 	});
 
 	unsafe.$async.worker(() => {
+		// eslint-disable-next-line require-yield
 		gc.add(function* destructor() {
 			for (const key of ['$root', '$parent', '$normalParent', '$children']) {
 				Object.defineProperty(unsafe, key, {
@@ -235,8 +236,6 @@ export function beforeCreateState(
 					writable: false,
 					value: null
 				});
-
-				yield;
 			}
 		}());
 	});

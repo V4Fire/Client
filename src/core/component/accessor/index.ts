@@ -92,9 +92,9 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		});
 	});
 
-	const computedFields = Object.entries(meta.computedFields);
+	const cachedAccessors = new Set<Function>();
 
-	computedFields.forEach(([name, computed]) => {
+	Object.entries(meta.computedFields).forEach(([name, computed]) => {
 		const canSkip =
 			component[name] != null ||
 			computed == null || computed.cache === 'auto' ||
@@ -145,6 +145,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 			// we should not cache the computed value until the component is created
 			// @see https://github.com/V4Fire/Client/issues/1292
 			if (!SSR && (canUseCache || !isFunctional)) {
+				cachedAccessors.add(get);
 				get[cacheStatus] = value;
 			}
 
@@ -161,11 +162,13 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 	// Register a worker to clean up memory upon component destruction
 	$a.worker(() => {
+		// eslint-disable-next-line require-yield
 		gc.add(function* destructor() {
-			for (const [name] of computedFields) {
-				delete Object.getOwnPropertyDescriptor(component, name)?.get?.[cacheStatus];
-				yield;
-			}
+			cachedAccessors.forEach((getter) => {
+				delete getter[cacheStatus];
+			});
+
+			cachedAccessors.clear();
 		}());
 	});
 

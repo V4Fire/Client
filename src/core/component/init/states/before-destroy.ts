@@ -50,7 +50,6 @@ export function beforeDestroyState(component: ComponentInterface, opts: Componen
 	gc.add(function* destructor() {
 		if ($el != null && !$el.isConnected && $el.component == null) {
 			unsafe.$renderEngine.r.destroy($el);
-			yield;
 		}
 
 		const {componentName, componentId, hook} = unsafe;
@@ -78,15 +77,16 @@ export function beforeDestroyState(component: ComponentInterface, opts: Componen
 			}
 		};
 
-		for (const key of Object.getOwnPropertyNames(unsafe)) {
+		for (const [i, key] of Object.getOwnPropertyNames(unsafe).entries()) {
 			delete unsafe[key];
-			yield;
+
+			if (i % 10 === 0) {
+				yield;
+			}
 		}
 
 		Object.assign(unsafe, {componentId, componentName, hook});
 		Object.setPrototypeOf(unsafe, Object.create({}, destroyedDescriptors));
-
-		yield;
 
 		dropRawComponentContext(unsafe);
 	}());

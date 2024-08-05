@@ -129,10 +129,13 @@ export default class Friend {
 			const that = this;
 
 			// We are cleaning memory in a deferred way, because this API may be needed when processing the destroyed hook
+			// eslint-disable-next-line require-yield
 			gc.add(function* destructor() {
-				Object.delete(that, 'ctx');
-				Object.delete(that, 'component');
-				yield;
+				// @ts-ignore (unsafe)
+				delete that['ctx'];
+
+				// @ts-ignore (unsafe)
+				delete that['component'];
 			}());
 		});
 	}
