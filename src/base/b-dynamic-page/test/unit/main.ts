@@ -14,7 +14,7 @@ import { Component } from 'tests/helpers';
 test.describe('<b-dynamic-page>', () => {
 	test.beforeEach(({demoPage}) => demoPage.goto());
 
-	test('should reuse the page component instance when not using different keys for page components', async ({page}) => {
+	test('should reuse the page component instance if the page does not change and the page key is not specified', async ({page}) => {
 		const target = await renderDynamicPage(
 			page,
 			{
@@ -45,7 +45,7 @@ test.describe('<b-dynamic-page>', () => {
 		test.expect(isSamePageComponent).toBe(true);
 	});
 
-	test('should create a new page component when using different keys for page components', async ({page}) => {
+	test('should create a new page component if the page does not change but the page key changes', async ({page}) => {
 		const target = await renderDynamicPage(
 			page,
 			{

@@ -15,11 +15,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* The `eventConverter` function can now return a tuple consisting of the page component name and page component key, instead of just a string representing the page component name `base/b-dynamic-page`
+* The `eventConverter` function can now return a tuple consisting of the page component name and page component key, instead of just a string representing the page component name `bDynamicPage`
 
 #### :bug: Bug Fix
 
-* Fixed an issue where a new page component instance was not created when switching between routes that use the same page component `base/b-dynamic-page`
+* Fixed an issue where a new page component instance was not created when switching between routes that use the same page component `bDynamicPage`
 
 ## v3.74.3 (2024-07-18)
 
