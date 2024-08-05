@@ -63,5 +63,5 @@ function getComponentName(component: ComponentPublicInstance | ComponentInterfac
 		return ROOT_COMPONENT_NAME;
 	}
 
-	return component?.$options?.name ?? UNRECOGNIZED_COMPONENT_NAME;
+	return component.$options.name ?? UNRECOGNIZED_COMPONENT_NAME;
 }
