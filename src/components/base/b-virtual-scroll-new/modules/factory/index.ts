@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { components } from 'core/component/const';
 import { registerComponent } from 'core/component/init';
 
 import Friend from 'components/friends/friend';
