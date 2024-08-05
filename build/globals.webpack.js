@@ -36,6 +36,7 @@ module.exports = {
 
 	DEBUG: runtime.debug === true,
 	BUILD_MODE: s(build.mode()),
+	BUILD_EDITION: s(build.edition),
 
 	PUBLIC_PATH: s(webpack.publicPath()),
 	CSP_NONCE_STORE: s(csp.nonceStore()),

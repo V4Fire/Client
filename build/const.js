@@ -136,3 +136,8 @@ exports.isLayerCoreDep = new RegExp(
  * @type {string}
  */
 exports.commentModuleExpr = '\\s*(?:\\/\\*[\\s\\S]*?\\*\\/)?\\s*';
+
+/**
+ * RegExp to detect file paths that are used as polyfills (std / core.js)
+ */
+exports.isPolyfillRegExp = /(\/core\/(std.ts|shims))|(\/node_modules\/core-js\/)/;

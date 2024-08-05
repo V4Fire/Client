@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.120 (2024-09-05)
+
+#### :boom: Breaking Change
+
+* Removed ES build option
+* Added `edition` build option for configuring environment support
+* Added browserslist support
+
+#### :house: Internal
+
+* Used SWC with support for browserslist
+
 ## v4.0.0-beta.119 (2024-08-02)
 
 #### :rocket: New Feature

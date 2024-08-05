@@ -39,6 +39,11 @@ module.exports = function tsRules() {
 		exclude: isExternalDep,
 		use: [].concat(
 			{
+				loader: 'swc-loader',
+				options: webpack.swc().ts
+			},
+
+			{
 				loader: 'ts-loader',
 				options: {
 					...(webpack.ssr ? typescript.server : typescript.client),
