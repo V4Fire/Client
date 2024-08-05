@@ -6,6 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-'use strict';
-
-require('core/shims');
+package('b-non-effect-prop-dummy')
+	.extends('b-dummy');

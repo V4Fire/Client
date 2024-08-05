@@ -127,13 +127,12 @@ export interface ComponentMeta {
 	watchers: Dictionary<WatchObject[]>;
 
 	/**
-	 * A dictionary that contains the component dependencies to watch in order to invalidate the cache of computed fields
+	 * A dictionary that contains the component dependencies to watch to invalidate the cache of computed fields
 	 */
 	watchDependencies: ComponentWatchDependencies;
 
 	/**
-	 * A dictionary that contains the component prop dependencies to watch in order
-	 * to invalidate the cache of computed fields
+	 * A dictionary that contains the component prop dependencies to watch to invalidate the cache of computed fields
 	 */
 	watchPropDependencies: ComponentWatchPropDependencies;
 
@@ -154,9 +153,15 @@ export interface ComponentMeta {
 		name: string;
 
 		/**
-		 * A dictionary that contains the input properties (props) for the component
+		 * A dictionary with registered component props
 		 */
 		props: Dictionary<PropOptions>;
+
+		/**
+		 * A dictionary with registered component attributes.
+		 * Unlike props, changing attributes does not lead to re-rendering of the component template.
+		 */
+		attrs: Dictionary<PropOptions>;
 
 		/**
 		 * A dictionary that contains the default component modifiers

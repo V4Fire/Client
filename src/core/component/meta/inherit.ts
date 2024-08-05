@@ -7,7 +7,7 @@
  */
 
 import { metaPointers, PARENT } from 'core/component/const';
-import type { ComponentMeta, ModDeclVal } from 'core/component/interface';
+import type { ComponentMeta, ModDeclVal, FieldWatcher } from 'core/component/interface';
 
 /**
  * Inherits the specified metaobject from another one.
@@ -69,8 +69,8 @@ export function inheritMeta(
 			[meta.systemFields, pSystemFields]
 		];
 
-		list.forEach(([store, parentObj]) => {
-			Object.entries(parentObj).forEach(([key, parent]) => {
+		list.forEach(([store, parent]) => {
+			Object.entries(parent).forEach(([key, parent]) => {
 				if (parent == null) {
 					return;
 				}
@@ -81,16 +81,16 @@ export function inheritMeta(
 				}
 
 				let
-					after,
-					watchers;
+					after: CanUndef<Set<string>>,
+					watchers: CanUndef<Map<FieldWatcher['handler'], FieldWatcher>>;
 
-				parent.watchers?.forEach((val) => {
+				parent.watchers?.forEach((watcher: FieldWatcher) => {
 					watchers ??= new Map();
-					watchers.set(val.handler, {...val});
+					watchers.set(watcher.handler, {...watcher});
 				});
 
 				if ('after' in parent) {
-					parent.after?.forEach((name) => {
+					parent.after?.forEach((name: string) => {
 						after ??= new Set();
 						after.add(name);
 					});

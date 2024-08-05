@@ -8,6 +8,9 @@
 
 /* eslint-disable @typescript-eslint/unified-signatures */
 
+import type watch from 'core/object/watch';
+import type { Watcher } from 'core/object/watch';
+
 import type Async from 'core/async';
 import type { BoundFn, ProxyCb, EventId } from 'core/async';
 import type { AbstractCache } from 'core/cache';
@@ -82,11 +85,6 @@ export abstract class ComponentInterface {
 	readonly instance!: this;
 
 	/**
-	 * True if the component has been rendered at least once
-	 */
-	readonly renderedOnce: boolean = false;
-
-	/**
 	 * Additional modifiers for the component.
 	 * Modifiers allow binding the state properties of a component directly to CSS classes,
 	 * without the need for unnecessary re-rendering.
@@ -106,7 +104,7 @@ export abstract class ComponentInterface {
 	 * and you give the outer component some theme modifier. This modifier will be recursively provided to
 	 * all child components.
 	 */
-	abstract get sharedMods(): CanNull<Readonly<ModsDict>>;
+	abstract get sharedMods(): CanNull<ModsDict>;
 
 	/**
 	 * Additional classes for the component elements.
@@ -228,6 +226,11 @@ export abstract class ComponentInterface {
 	readonly $renderEngine!: RenderEngine<any>;
 
 	/**
+	 * A number that increments every time the component is rendered
+	 */
+	readonly $renderCounter!: number;
+
+	/**
 	 * A link to the component metaobject.
 	 * This object contains all information of the component properties, methods, etc.
 	 */
@@ -259,11 +262,6 @@ export abstract class ComponentInterface {
 	 * The name of the component's field being initialized at the current moment
 	 */
 	protected readonly $activeField?: string;
-
-	/**
-	 * A number that increments every time the component is re-rendered
-	 */
-	protected readonly $renderCounter!: number;
 
 	/**
 	 * A dictionary containing references to component elements with the "ref" attribute
@@ -370,6 +368,21 @@ export abstract class ComponentInterface {
 	 * @param ctx
 	 */
 	protected abstract setup(props: Dictionary, ctx: SetupContext): CanPromise<CanUndef<Dictionary>>;
+
+	/**
+	 * Creates a tuple of accessors for a value defined by a getter function.
+	 * This function is used to pass the value as a prop
+	 * to a child component without creating a contract for reactive template updates.
+	 * This is necessary to optimize situations where a change in a component's prop triggers
+	 * a re-render of the entire component, even if this prop is not used in the template.
+	 *
+	 * @param _getter
+	 */
+	protected createPropAccessors<T extends object>(
+		_getter: () => T
+	): () => [T, (...args: Parameters<typeof watch> extends [any, ...infer A] ? A : never) => Watcher<T>] {
+		return Object.throw();
+	}
 
 	/**
 	 * Destroys the component

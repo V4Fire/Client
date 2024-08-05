@@ -126,4 +126,7 @@ export interface UnsafeIBlock<CTX extends iBlock = iBlock> extends UnsafeCompone
 
 	// @ts-ignore (access)
 	waitRef: CTX['waitRef'];
+
+	// @ts-ignore (access)
+	createPropAccessors: CTX['createPropAccessors'];
 }

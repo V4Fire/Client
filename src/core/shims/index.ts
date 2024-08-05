@@ -6,4 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import '../core/std';
+import 'core/shims/set-immediate';
+import 'core/shims/ssr';

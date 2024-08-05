@@ -13,10 +13,11 @@ Please check out `core/data` before reading this documentation.
 
 * The component implements the [[iDataProvider]] trait.
 
-## Basic concepts
+## Basic Concepts
 
 To set a data provider for a component, you need to specify the `dataProviderProp` prop or set its default value.
-You can set a date provider by its name from the global pool of providers or by explicitly specifying a constructor or provider instance.
+You can assign a data provider by its name from the global pool of providers
+or by explicitly specifying a constructor or provider instance.
 To register a data provider within the global pool, you need to use the `@provider` decorator.
 
 __models/user.ts__
@@ -68,8 +69,10 @@ After loading, the data is stored in the `db` field.
   {{ db.someValue }}
 ```
 
-Each child instance of `iData` can have at most one data provider, i.e., you must decompose the data logic between different components,
-but not combine everything in one component. This approach produces a stricter code structure that is easy to maintain and debug.
+Each child instance of `iData` can have at most one data provider;
+therefore, you must decompose the data logic between different components rather than consolidating everything into one.
+
+This approach produces a stricter code structure that is straightforward to maintain and debug.
 Also, all pending requests with the same hash are merged and the final result is distributed among the consumers.
 Don't be afraid of performance degradation.
 
@@ -80,7 +83,7 @@ Don't be afraid of performance degradation.
 < b-example :dataProvider = 'User' | :request = {get: {uuid: '2'}}
 ```
 
-To optimize data loading, you can specify provider data caching.
+To optimize data loading, you can enable provider data caching.
 
 ```typescript
 import { provider, Provider } from 'core/data';
@@ -88,8 +91,8 @@ import RestrictedCache from 'core/cache/restricted';
 
 @provider
 export default class User extends Provider {
-  // Each get request will be cached for 10 minutes,
-  // but there can be no more than 15 values in the cache
+  // Each GET request will be cached for 10 minutes,
+  // but the cache can hold no more than 15 values
   static request = Provider.request({
     cacheTTL: (10).minutes(),
     cacheStrategy: new RestrictedCache(15)
@@ -99,15 +102,15 @@ export default class User extends Provider {
 }
 ```
 
-### Composition of data providers
+### Composition of Data Providers
 
 To get around the limitation of one provider instance per component, you can use special "extra providers" API calls.
 [See more](https://v4fire.github.io/Core/modules/src_core_data_index.html#composition-of-providers).
 
-#### Remote providers
+#### Remote Providers
 
-You can use another component as a data provider, pass the `remoteProvider` property to it.
-After that, the parent component will wait for loading.
+You can use another component as a data provider by passing the `remoteProvider` property to it.
+After this, the parent component will wait for the data to load (is not supported in SSR).
 
 ```
 < b-example :remoteProvider = true | @someEventWithData = onData
@@ -121,13 +124,18 @@ The component has no UI view and provides a flexible API for use as a remote pro
 < b-remote-provider :dataProvider = 'myData' | :field = 'fieldWhenWillBeStoredData'
 ```
 
-This method is useful when you use it with a `v-if` directive, but be careful if you want to periodically update data from remote providers:
-you can emit a bunch of redundant re-renders. Keep in mind that `bRemoteProvider` is a regular component, and it takes extra time to initialize.
-A valid use case for this type of provider is to send some data without receiving a response, such as analytic events.
+This method proves beneficial when used with a `v-if` directive; however, exercise caution if you intend
+to periodically update data from remote providers—this can lead to many unnecessary re-renders.
+It's important to note that `bRemoteProvider` is a standard component which requires additional time to initialize.
 
-#### Manual use of data providers
+A practical application for this type of provider is transmitting data without expecting a response,
+such as in the case of sending analytic events.
 
-You are free to use data providers that are not related to your component, but be aware of the asynchronous wrapper.
+#### Manual Use of Data Providers
+
+You are also free to use data providers manually, not just those associated with your component,
+but be sure to use the createDataProviderInstance factory to create instances of data providers.
+This factory takes into account nuances with SSR, memory cleanup, etc.
 
 ```typescript
 import User, { UserData } from 'models/user';
@@ -135,7 +143,7 @@ import iData, { component, system } from 'components/super/i-data/i-data';
 
 @component()
 export default class bExample extends iData {
-  @system((o) => o.async.wrapDataProvider(new User()))
+  @system((o) => o.createDataProviderInstance(User))
   user!: User;
 
   getUser(): Promise<UserData> {
@@ -146,9 +154,10 @@ export default class bExample extends iData {
 
 However, it is best to avoid this approach as it can make the code confusing.
 
-## Provider data
+## Provider Data
 
-The provider data will be stored in the `db` field. By default, it has an object type, but you can specify it explicitly.
+The provider data will be stored in the `db` field.
+By default, it has an object type, but you can specify it explicitly.
 
 ```typescript
 import 'models/user';
@@ -180,23 +189,25 @@ export default class bExample extends iData {
 
 ### Changing of `db`
 
-Before setting a new `db` value, it will be compared with the previous one. The new data will only be applied if it is
-not equal to the previous one. The default comparison is `Object.fastClone`. This behavior can be overridden by
-switching the `checkDBEquality` prop to false. Or you can provide a function to compare in this prop.
+Before setting a new `db` value, it will be compared with the previous one.
+The new data will only be applied if it is not equal to the previous one.
+The default comparison method is `Object.fastClone`.
+This behavior can be overridden by setting the `checkDBEquality` prop to false,
+or you can provide a custom function for comparison in this prop.
 
-### Converting provider data
+### Converting Provider Data
 
-By default, all providers create immutable data, which helps optimize memory usage because all components with
-the same provider share the same instance of data.
+By default, all providers create immutable data,
+which helps optimize memory usage because all components with the same provider share the same instance of data.
 
-If a component wants to modify data within `db`, it has to clone the original object.
-You can easily do it by calling the `db.valueOf` method.
+If a component wants to modify data within the database, it must clone the original object.
+You can do this by calling the `db.valueOf` method:
 
 ```
 this.db = transform(this.db?.valueOf());
 ```
 
-This works because all providers override the default `valueOf` method for data objects.
+This approach works because all providers override the default `valueOf` method for data objects.
 
 #### `dbConverter`
 
@@ -210,12 +221,15 @@ You can pass a function or an iterable of functions to be applied to the provide
 
 #### `initRemoteData` and `componentConverter`
 
-Sometimes you need to create a component that can receive data directly from a prop or by loading it from a data provider.
-You can handle this situation using `sync.link` and `initRemoteData`. See the [[Sync]] class for more information.
+Sometimes you need to create a component that can receive data directly
+from a prop or by loading it from a data provider.
+You can handle this situation using `sync.link` and `initRemoteData`.
+See the [[Sync]] class for more information.
 
 The `initRemoteData` method is called every time `db` is changed.
 You can override it in your component to apply the `db` data to the component field.
-Finally, each descendant of `iData` has a property that can convert data from the `db` format to a more appropriate component field format.
+Finally, each descendant of `iData` has a property that can convert data from the `db` format
+to a more appropriate component field format.
 You can pass a function or an iterable of functions that will be applied to `db`.
 
 ```typescript
@@ -245,12 +259,13 @@ export default class bExample extends iData {
 < b-example :dataProvider = 'myData' | :componentConverter = [convertToData, convertMore]
 ```
 
-## Component initializing
+## Component Initializing
 
 If a component has a data provider, it will request data during the initialization phase with `initLoad`.
 
 Until the data is loaded, the component will have a loading status (`componentStatus`).
-After the main provider is loaded, and if any other external providers are loaded, the component will be placed in the `ready` status.
+After the main provider is loaded, and if any other external providers are loaded,
+the component will be placed in the `ready` status.
 
 You can use the `isReady` getter to avoid rendering template data fragments before it is loaded.
 
@@ -276,25 +291,26 @@ export default class bExample extends iData {
 }
 ```
 
-### Initialization events
+### Initialization Events
 
 | Name            | Description                                | Payload description                     | Payload                                   |
 |-----------------|--------------------------------------------|-----------------------------------------|-------------------------------------------|
 | `initLoadStart` | The component starts initial loading       | Options of the loading                  | `InitLoadOptions`                         |
 | `initLoad`      | The component has finished initial loading | The loaded data; Options of the loading | `CanUndef<this['DB']>`; `InitLoadOptions` |
 
-### Preventing initial data loading
+### Preventing Initial Data Loading
 
-By default, if a component has a data provider, it will request data on initial load.
-But sometimes you have to manage this process manually. You can use `defaultRequestFilter` to provide a function that can filter any
-implicit requests such as initial loading: if the function returns a negative value, the request will be aborted.
-If the attribute is set to true, then all requests with no payload will be aborted.
+By default, if a component has a data provider, it will request data on the initial load.
+However, sometimes you need to manage this process manually.
+You can use the `defaultRequestFilter` to provide a function that can filter any implicit requests,
+such as initial loading: if the function returns a negative value, the request will be aborted.
+If the attribute is set to true, then all requests without a payload will be aborted.
 
 ```
 < b-example :dataProvider = 'myData' | :defaultRequestFilter = filterRequests
 ```
 
-### Suspending initial data loading
+### Suspending Initial Data Loading
 
 You can use `suspendedRequestsProp` and `unsuspendRequests` to lazy load components.
 For example, you can only load components in the viewport.
@@ -310,18 +326,28 @@ For example, you can only load components in the viewport.
 .
 ```
 
-## Providing request parameters
+## Providing Request Parameters
 
 You can provide the `request` prop with data to be requested by various provider methods to any child `iData` component.
 
 ```
+// The `get` data is used for the initial request
 < b-example :dataProvider = 'MyData' | :request = {get: {id: 1}, update: [{id: 1, name: newName}, {responseType: 'blob'}]}
 ```
 
-The `get` data is used for the initial request.
+Note that this prop is declared with the `forceUpdate: false` option.
+This means it does not have a reactive effect and cannot be used in the component template.
+Remember about the peculiarity of passing such props with `v-attrs`.
+
+```
+< b-example v-attrs = {'@:request': createPropAccessors(() => ({get: {id: 1}, update: [{id: 1, name: newName}, {responseType: 'blob'}]))}
+```
+
+For more details, refer to the description of the `@prop` decorator.
 
 You can also set up a component that will generate a provider request when the specified properties change.
-Just use `sync.object` and `requestParams`. See the [[Sync]] class for additional information.
+Just use `sync.object` and `requestParams`.
+See the [[Sync]] class for additional information.
 
 ```typescript
 import 'models/api/user';
@@ -341,9 +367,10 @@ export default class bExample extends iData {
   @field()
   show: boolean = true;
 
-  // There will be created an object:
-  // {get: {id: 'bill', show: true, wait: function}}
-  // Each time at least one of the specified fields is updated, there will be a new request to the provider `get` method.
+  // An object will be created with the following structure:
+  // { id: 'bill', show: true, wait: function() {} }
+  // Each time at least one of the specified fields (id, show, or wait) is updated,
+  // a new request will be made to the provider's get method.
   @field((o) => o.sync.object('get', [
     // `name` will send to the provider as `id`
     ['id', 'name', (v) => v.toLowerCase()],
@@ -390,16 +417,19 @@ export default class bExample extends iData {
 }
 ```
 
-### Data handlers
+### Data Handlers
 
-`iData` provides a set of provider/request event handlers: `onAddData`, `onUpdateData`, `onDeleteData`, `onRefreshData` and `onRequestError`.
-You can override these handlers in your components. By default, a component will update `db` if it receives new data from its provider.
+`iData` provides a set of provider/request event handlers:
+`onAddData`, `onUpdateData`, `onDeleteData`, `onRefreshData` and `onRequestError`.
+You can override these handlers in your components.
+By default, a component will update `db` if it receives new data from its provider.
 
-## Offline reloading
+## Offline Reloading
 
-By default, a component will not reload data without the Internet, but you can change this behavior by setting the `offlineReload` parameter to `true`.
+By default, a component will not reload data without the Internet,
+but you can change this behavior by setting the `offlineReload` parameter to `true`.
 
-## Error handling
+## Error Handling
 
 | Name           | Description                                     | Payload description                                | Payload                                  |
 |----------------|-------------------------------------------------|----------------------------------------------------|------------------------------------------|

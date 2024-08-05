@@ -8,6 +8,8 @@
 
 export const
 	propRgxp = /Prop$|^\$props/,
+	propGetterRgxp = /^(?:@|on):/,
+	privateFieldRgxp = /^\[\[(.*)]]$/,
 	storeRgxp = /Store$/,
 	attrRgxp = /^\$attrs/,
 	bindingRgxp = /(?:Prop|Store)$/,

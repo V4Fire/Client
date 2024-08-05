@@ -18,6 +18,62 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added settings for the component garbage collector `config`
 * Added a new module with an implementation of the garbage collector for components `core/component/gc`
 
+## v4.0.0-beta.121.the-phantom-menace (2024-08-05)
+
+#### :boom: Breaking Change
+
+* `core/component/interface`:
+  * Removed the `renderedOnce` field
+  * The `$renderCounter` field is now public and updates after each call to the render function
+
+#### :rocket: New Feature
+
+* Added the `createPropAccessors` method for creating accessors
+  for props marked as `forceUpdate: false` `core/component/interface`
+
+* Added the `forceUpdate: false` property to designate props whose changes
+  should not lead to a template re-render `core/component/decorators/prop`
+
+#### :bug: Bug Fix
+
+* Fixed a bug where adding refs to components could cause them to re-render `core/component/directives/ref`
+* Fixed a bug where adding `v-attrs` to components could cause them to re-render `core/component/directives/attrs`
+* Fixed an issue with updating modifier values `iBlock`
+
+## v4.0.0-beta.120 (2024-09-05)
+
+#### :boom: Breaking Change
+
+* Removed ES build option
+* Added `edition` build option for configuring environment support
+* Added browserslist support
+
+#### :house: Internal
+
+* Used SWC with support for browserslist
+
+## v4.0.0-beta.119 (2024-08-02)
+
+#### :rocket: New Feature
+
+* Added decorator for cookie store `core/cookies`
+
+#### :bug: Bug Fix
+
+* Fixed a bug of re-applying `maxAge` parameter on storage update `core/kv-storage/engines/cookie`
+
+## v4.0.0-beta.118 (2024-08-01)
+
+#### :bug: Bug Fix
+
+* Added `join: 'replace'` for router transitions. It allows to avoid collisions during calls of `push` and `replace` `b-router`
+
+## v4.0.0-beta.117 (2024-07-31)
+
+#### :house: Internal
+
+* Added a new `rootContent` layout wrapper block `iBlock`
+
 ## v4.0.0-beta.116 (2024-07-29)
 
 #### :house: Internal

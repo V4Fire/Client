@@ -18,6 +18,7 @@ import type { CookieStore } from 'core/cookies/interface';
 export * from 'core/cookies/class';
 export * from 'core/cookies/stores';
 export * from 'core/cookies/interface';
+export * from 'core/cookies/decorators/with-idempotency';
 
 const globalCookies = new Cookies(createCookieStore(''));
 

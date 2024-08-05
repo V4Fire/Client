@@ -55,7 +55,8 @@ module.exports = [
 
 	/**
 	 * Expands the `:section` and `:/section` snippets.
-	 * These snippets help to use semantics HTML tags, like `article` or `section` and don't care about the `h` levels.
+	 * These snippets facilitate the use of semantic HTML tags, like `<article>` or `<section>`,
+	 * without worrying about heading levels.
 	 *
 	 * @param {object} params
 	 * @param {string} params.tag

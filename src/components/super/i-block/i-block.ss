@@ -303,14 +303,15 @@
 
 								- block bodyFooter
 
-						- block skeleton
+						- block rootContent
+							- block skeleton
 
-						- if SSR || HYDRATION
-							< template v-if = ssrRendering
+							- if SSR || HYDRATION
+								< template v-if = ssrRendering
+									+= self.renderRootContent()
+
+							- else
 								+= self.renderRootContent()
-
-						- else
-							+= self.renderRootContent()
 
 - template mono() extends ['i-block'].index
 	- renderMode = 'mono'
