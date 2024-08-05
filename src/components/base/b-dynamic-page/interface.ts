@@ -16,7 +16,7 @@ import type { ComponentElement, UnsafeIData } from 'components/super/i-dynamic-p
 export type Include = CanArray<string> | RegExp | IncludeFn;
 
 export interface PageGetter {
-	(route: iDynamicPage['route'], ctx: bDynamicPage): PageInfo;
+	(route: iDynamicPage['route'], ctx: bDynamicPage): CanUndef<PageComponentName | PageInfo>;
 }
 
 export interface IncludeFn {
