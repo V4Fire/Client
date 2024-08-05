@@ -142,7 +142,7 @@ export class ComponentFactory extends Friend {
 	 */
 	protected normalizeComponentItemProps(componentName: string, props: Dictionary): Dictionary {
 		const
-			meta = components.get(componentName) ?? registerComponent(componentName);
+			meta = registerComponent(componentName);
 
 		if (meta == null) {
 			return props;
