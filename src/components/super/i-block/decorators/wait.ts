@@ -153,7 +153,7 @@ export function wait(
 
 		if (Object.isPlainObject(optsOrCb)) {
 			opts = <typeof opts>optsOrCb;
-			handler = Object.get(opts, 'fn');
+			handler = opts?.['fn'];
 		}
 
 	} else {
@@ -161,7 +161,7 @@ export function wait(
 
 		if (Object.isPlainObject(componentStatusOrOpts)) {
 			opts = componentStatusOrOpts;
-			handler = Object.get(opts, 'fn');
+			handler = opts?.['fn'];
 		}
 	}
 

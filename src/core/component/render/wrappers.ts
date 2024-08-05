@@ -500,7 +500,8 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 		if (Object.isFunction(api.ssrRenderComponent)) {
 			const {ssrRenderComponent} = api;
 
-			Object.set(api, 'ssrRenderComponent', (
+			// @ts-ignore (unsafe)
+			api['ssrRenderComponent'] = (
 				component: {name: string},
 				props: Nullable<Dictionary>,
 				...args: unknown[]
@@ -513,13 +514,14 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 				}
 
 				return ssrRenderComponent(component, props, ...args);
-			});
+			};
 		}
 
 		if (Object.isFunction(api.ssrRenderSlot)) {
 			const {ssrRenderSlot} = api;
 
-			Object.set(api, 'ssrRenderSlot', (...args: Parameters<typeof ISSRRenderSlot>) => {
+			// @ts-ignore (unsafe)
+			api['ssrRenderSlot'] = (...args: Parameters<typeof ISSRRenderSlot>) => {
 				const
 					slotName = args[1],
 					cacheKey = `${this.globalName}-${slotName}`,
@@ -551,7 +553,7 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 				}
 
 				return ssrRenderSlot(...args);
-			});
+			};
 		}
 	}
 

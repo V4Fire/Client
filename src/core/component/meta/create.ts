@@ -87,7 +87,8 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			unsafe = getComponentContext(ctx),
 			result = callRenderFunction();
 
-		Object.set(unsafe, 'renderedOnce', true);
+		// @ts-ignore (unsafe)
+		unsafe['renderedOnce'] = true;
 
 		return result;
 

@@ -123,7 +123,8 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 				// For functional components, this problem does not exist, as no change in state can trigger their re-render.
 				if (!isFunctional && hook !== 'created') {
 					meta.watchDependencies.get(name)?.forEach((path) => {
-						Object.get(this, path);
+						// @ts-ignore (effect)
+						void this[path];
 					});
 
 					['Store', 'Prop'].forEach((postfix) => {
@@ -131,7 +132,8 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 							path = name + postfix;
 
 						if (path in this) {
-							Object.get(this, path);
+							// @ts-ignore (effect)
+							void this[path];
 						}
 					});
 				}

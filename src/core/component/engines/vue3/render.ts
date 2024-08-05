@@ -212,7 +212,8 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 					}
 				});
 
-				Object.set(root, 'remoteRootInstances', root.remoteRootInstances + 1);
+				// @ts-ignore (unsafe)
+				root['remoteRootInstances'] = root.remoteRootInstances + 1;
 
 				Object.defineProperty(this, 'unsafe', {
 					configurable: true,
@@ -256,7 +257,9 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 
 		beforeUnmount() {
 			const root = this.unsafe.r;
-			Object.set(root, 'remoteRootInstances', root.remoteRootInstances - 1);
+
+			// @ts-ignore (unsafe)
+			root['remoteRootInstances'] = root.remoteRootInstances - 1;
 		}
 	});
 

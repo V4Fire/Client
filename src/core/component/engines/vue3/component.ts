@@ -83,12 +83,13 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			const
 				ctx = getComponentContext(this);
 
-			Object.set(ctx, '$renderEngine', {
+			// @ts-ignore (unsafe)
+			ctx['$renderEngine'] = {
 				supports,
 				proxyGetters,
 				r,
 				wrapAPI
-			});
+			};
 
 			init.beforeCreateState(ctx, meta, {implementEventAPI: true});
 
