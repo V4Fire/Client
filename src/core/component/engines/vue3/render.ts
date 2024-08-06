@@ -202,7 +202,7 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 				// To safely extend the $root object with the properties we need,
 				// we create a new object with a prototype
 				const root = Object.create(parent.r, {
-					// This property is needed because the actual $parent
+					// This property is necessary because the actual $parent
 					// of this component refers to an App that is created higher up.
 					$remoteParent: {
 						configurable: true,
