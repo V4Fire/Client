@@ -9,7 +9,7 @@ then the module falls back to a different strategy.
 This fallback strategy is based on using the elements' heightmap
 and the [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver).
 
-## Why is This Module Needed?
+## Why is This Module Necessary?
 
 Often when working with IntersectionObserver, we simply want to register a handler on an element.
 However, the native API is based on classes, so we first need to create an instance of the class,

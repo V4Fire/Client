@@ -22,7 +22,7 @@ gc.add(function* destructor() {
 }());
 ```
 
-## Why is This Module Needed?
+## Why is This Module Necessary?
 
 When any component is destroyed, it often has to also free up associated resources that will no longer be used:
 detach event handlers, cancel requests and timers, etc.
