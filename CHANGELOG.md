@@ -44,13 +44,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Removed ES build option
+* Removed the ES build option
 * Added `edition` build option for configuring environment support
 * Added browserslist support
 
 #### :house: Internal
 
-* Used SWC with support for browserslist
+* Use SWC with support for browserslist
 
 ## v4.0.0-beta.119 (2024-08-02)
 
