@@ -97,10 +97,10 @@ export default abstract class iBlockEvent extends iBlockBase {
 
 			off: (eventOrLink: string | EventId, handler: Function) => {
 				if (Object.isString(eventOrLink)) {
-					return o.$off(normalizeEventName(eventOrLink), handler);
+					return o.$off(normalizeEventName(eventOrLink), handler, {rawEmitter: true});
 				}
 
-				return o.$off(eventOrLink);
+				return o.$off(eventOrLink, undefined, {rawEmitter: true});
 			},
 
 			emit: o.emit.bind(o),

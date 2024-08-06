@@ -26,6 +26,7 @@ import type { RenderEngine } from 'core/component/interface/engine';
 import type { ComponentApp, ComponentDestructorOptions, ComponentElement, ComponentEmitterOptions } from 'core/component/interface/component/types';
 import type { WatchPath, WatchOptions, RawWatchHandler } from 'core/component/interface/watch';
 import type { UnsafeGetter, UnsafeComponentInterface } from 'core/component/interface/component/unsafe';
+import type { ComponentEmitterCommonOptions } from 'components/super/i-data/i-data';
 
 /**
  * An abstract class that encapsulates the Vue-compatible component API
@@ -535,9 +536,18 @@ export abstract class ComponentInterface {
 
 	/**
 	 * Detaches the specified event listeners from the component
+	 *
 	 * @param [link]
 	 */
 	protected $off(link: CanArray<EventId>): this;
+
+	/**
+	 * Detaches the specified event listeners from the component
+	 *
+	 * @param [link]
+	 * @param [opts]
+	 */
+	protected $off(link: CanArray<EventId>, handler: undefined, opts?: ComponentEmitterCommonOptions): this;
 
 	/**
 	 * Detaches the specified event listeners from the component
@@ -547,7 +557,24 @@ export abstract class ComponentInterface {
 	 */
 	protected $off(event?: CanArray<string>, handler?: Function): this;
 
-	protected $off(_event?: CanArray<string | EventId>, _handler?: Function): this {
+	/**
+	 * Detaches the specified event listeners from the component
+	 *
+	 * @param [event]
+	 * @param [handler]
+	 * @param [opts]
+	 */
+	protected $off(
+		event?: CanArray<string>,
+		handler?: Function,
+		opts?: ComponentEmitterCommonOptions
+	): this;
+
+	protected $off(
+		_event?: CanArray<string | EventId>,
+		_handler?: Function | ComponentEmitterCommonOptions,
+		_opts?: ComponentEmitterCommonOptions
+	): this {
 		return Object.throw();
 	}
 

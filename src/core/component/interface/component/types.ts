@@ -32,13 +32,15 @@ export interface ComponentApp {
 	state: State;
 }
 
-export interface ComponentEmitterOptions {
+export interface ComponentEmitterOptions extends ComponentEmitterCommonOptions {
 	/**
 	 * If set to true, the handler will be added before all the other handlers
 	 * @default `false`
 	 */
 	prepend?: boolean;
+}
 
+export interface ComponentEmitterCommonOptions {
 	/**
 	 * A flag indicating that the handler should be added directly to the component's event emitter.
 	 * Otherwise, the handler is always added to the emitter wrapped in an Async container.
