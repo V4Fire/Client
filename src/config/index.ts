@@ -27,8 +27,8 @@ extend({
 	},
 
 	gc: {
-		quota: 25,
-		delay: 5000
+		quota: SSR ? 50 : 25,
+		delay: SSR ? 1000 : 5000
 	},
 
 	/**
