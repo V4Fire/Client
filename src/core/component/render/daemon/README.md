@@ -2,7 +2,7 @@
 
 This module provides an API that allows for the registration and management of asynchronous rendering tasks.
 
-## Why is This Module Needed?
+## Why is This Module Necessary?
 
 When using the [[AsyncRender]] API, developers can split the rendering of a component template into multiple chunks and
 execute them deferred, resulting in significantly optimized component rendering times.

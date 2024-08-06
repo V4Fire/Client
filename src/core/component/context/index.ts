@@ -54,7 +54,7 @@ export function saveRawComponentContext(ctx: object, rawCtx: object): void {
  */
 export function dropRawComponentContext(ctx: object): void {
 	if (toRaw in ctx) {
-		Object.delete(ctx, [toRaw, toWrapped]);
+		delete ctx[toRaw]?.[toWrapped];
 	}
 
 	delete ctx[toRaw];

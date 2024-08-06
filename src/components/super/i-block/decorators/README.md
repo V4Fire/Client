@@ -8,7 +8,7 @@ This module re-exports the base decorators from `core/component/decorators` and 
 * `@prop` to declare a component input property (aka "prop");
 * `@field` to declare a component field;
 * `@system` to declare a component system field (system field mutations never cause components to re-render);
-* `@computed` to attach meta information to a component computed field or accessor;
+* `@computed` to attach meta-information to a component computed field or accessor;
 * `@hook` to attach a hook listener;
 * `@watch` to attach a watcher.
 
@@ -18,9 +18,10 @@ For more information, please refer `core/component/decorators` documentation.
 
 ### wait
 
-This decorator solves the problem of calling component methods in a state when the component is not yet ready to do so.
-Imagine a situation where your component needs to load user data from the server and then store it as a property of the component.
-And you have a method that does something with the loaded data.
+This decorator addresses the issue of invoking component methods at a time when the component is not yet ready.
+Imagine a scenario where your component needs to load user data from a server
+and then store it as a property of the component.
+You might have a method that processes this loaded data.
 
 ```typescript
 import iBlock, { component, field } from 'components/super/i-block/i-block';
@@ -49,32 +50,40 @@ class bExample extends iBlock {
 }
 ```
 
-As you can see in the example, we deliberately violated the API contract and called the `getUserName` method before
-the component loaded the data. It is logical that the result of the method in this case is incorrect and can lead to errors.
+As demonstrated in the example, we intentionally breached the API contract by invoking the `getUserName` method
+before the data was loaded into the component.
+Logically, the result of this method in such cases is incorrect and can lead to errors.
 
-Despite the seeming far-fetched ness of this example, this situation arises in practice quite often when we work with a component
-not in the body of its class when describing it, but by calling its methods from outside. For example, from a directive or by reference.
+Despite the seemingly contrived nature of this example, such situations commonly occur in practice,
+especially when we interact with a component not within the body of its class during development,
+but by invoking its methods externally.
+This can happen, for example, through a directive or by reference.
 
-But how can this situation be improved so that we can call any method of the component and not think if it can be called or not?
-Solving this problem requires an integrated approach.
+But how can we improve this situation so that we can invoke any method of the component without worrying about
+whether it is safe to do so?
+Addressing this issue requires a holistic approach.
 
-First, we need to introduce a special status for components that displays their state: the component is loading, the component is ready,
-and so on. We already have a similar status - these are component lifecycle hooks, like `created` or `mounted`.
-But they don't reflect the component state in terms of loading. For example, a component can be mounted, but in fact
-show a spinner and load data. Therefore, all V4Fire components have the special `componentStatus` property.
-This property can take the following values:
+First, we need to introduce a special status for components that reflects their state—including whether the component
+is loading, ready, and so on.
+While we already have similar statuses in the form of component lifecycle hooks, like `created` or `mounted`,
+these do not specifically address the loading state of the component.
+For instance, a component can be mounted but still be displaying an indicator and loading data.
+Therefore, all V4Fire components feature a special `componentStatus` property, which can assume the following values:
 
 * `unloaded` - the component has just been created, but does not load any data;
-* `loading` - the component loads its data;
-* `beforeReady` - the component has loaded all the necessary data and is preparing to update its template;
-* `ready` - the component has loaded all the necessary data and started updating the template;
+* `loading` - the component is currently loading its data;
+* `beforeReady` - the component has loaded all necessary data and is preparing to update its template;
+* `ready` - the component has loaded all necessary data and has begun updating the template;
 * `inactive` - the component is deactivated (see `components/super/i-block/modules/activation`);
 * `destroyed` - the component is destroyed.
 
-The next step is to introduce a special protocol: when a component is created, it calls its `initLoad` method.
-This method, depending on the component parameters, can either immediately switch it to `ready` (nothing needs to be loaded),
-or initialize the loading of resources: switch the component to the `loading` status, and after all the resources are loaded,
-switch it to ` ready` and initialize re-rendering (if necessary). Let's rewrite our example to apply the described approach.
+The next step involves introducing a special protocol:
+when a component is created, it should invoke its `initLoad` method.
+Depending on the component's parameters, this method may immediately transition the component
+to the ready status if there is nothing to load.
+Alternatively, it can initiate the loading of resources, switch the component to the loading status,
+and upon completing the resource loading, transition it to the ready status and initiate re-rendering if necessary.
+Let's revise our example to incorporate this approach.
 
 ```typescript
 import iBlock, { component, field, wait } from 'components/super/i-block/i-block';
@@ -101,8 +110,8 @@ class bExample extends iBlock {
 
     const user = await (await fetch('//get-user').json());
 
-    // To reduce the number of asynchronous component state changes, we use a special synchronization method.
-    // It will execute the given function when all other requested resources (if any) have also been loaded.
+    // To minimize asynchronous state changes, a special synchronization method is used.
+    // This method executes the specified function only after all other requested resources have been loaded, if any.
     this.lfs.execCbAtTheRightTime(() => {
       this.user = user;
     });
@@ -112,9 +121,10 @@ class bExample extends iBlock {
 }
 ```
 
-Notice the `@wait` decorator. We explicitly declare that the method expects the component to be in the `ready` state.
-And if at the time of calling this method the component is in a different state, then the method will return a Promise,
-which will resolve with the result of the method when the component switches to the state we need.
+Take note of the `@wait` decorator.
+It explicitly indicates that the method expects the component to be in the `ready` state.
+If the method is called while the component is in a different state, it will return a Promise.
+This Promise resolves with the method's result once the component transitions to the required `ready` state.
 
 ```typescript
 import iBlock, { component, field, wait } from 'components/super/i-block/i-block';
@@ -148,10 +158,12 @@ class bExample extends iBlock {
 }
 ```
 
-As you can see, the use of the `wait` decorator introduces a clear contract for when which method can be called, and besides,
-it guarantees its execution. Please note that if the component is already in the required state, then the method will be called immediately and
-return the result without a promise wrapper. If this behavior is not suitable, then you can specify that the promise is always returned
-using the `deffer` option.
+As illustrated, the use of the `@wait` decorator establishes a clear contract indicating when a method can be called,
+and additionally, guarantees its execution.
+It is important to note that if the component is already in the required state when the method is called,
+the method will execute immediately and return the result directly, without wrapping it in a Promise.
+If consistent behavior is desired regardless of the component's state,
+you can specify that a Promise should always be returned by using the `defer` option.
 
 ```typescript
 import iBlock, { component, field, wait } from 'components/super/i-block/i-block';
@@ -174,9 +186,11 @@ class bExample extends iBlock {
 }
 ```
 
-It is also allowed to use `defer` without specifying a status to wait. This will make your method deferred, i.e., it won't start right away.
-And if you pass additional [[Async]] parameters, then you can make logic so that adjacent calls to such a method collapse.
-This is very handy when you have expensive methods and want to minimize their calls.
+The `defer` option can also be used without specifying a particular status to wait for.
+This setup makes the method deferred, meaning it will not execute immediately.
+Furthermore, if you include additional [[Async]] parameters,
+you can configure the method so that successive calls are consolidated.
+This feature is especially useful when dealing with expensive methods, as it helps minimize their execution.
 
 ```typescript
 import iBlock, { component, field, wait } from 'components/super/i-block/i-block';
@@ -199,5 +213,7 @@ class bExample extends iBlock {
 }
 ```
 
-You can specify `label`, `group` and `join` options. The default strategy is `replace` for `join` if the method has no arguments,
-or `true` if any.
+You can specify the `label`, `group`, and `join` options for method calls.
+The default `join` strategy varies based on the method's arguments:
+it defaults to `replace` if the method has no arguments, or 'true' if there are any arguments.
+This allows for more controlled behavior in managing concurrent method executions.

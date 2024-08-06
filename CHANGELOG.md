@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added settings for the component garbage collector `config`
+* Added a new module with an implementation of the garbage collector for components `core/component/gc`
+
 ## v4.0.0-beta.121.the-phantom-menace (2024-08-05)
 
 #### :boom: Breaking Change

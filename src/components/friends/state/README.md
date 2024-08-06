@@ -27,7 +27,7 @@ State.addToPrototype({initFromRouter, initFromStorage});
 export default class bExample extends iBlock {}
 ```
 
-## Why is This Module Needed?
+## Why is This Module Necessary?
 
 Any component can bind its state to the state of another external module.
 For example, a component might store some of its properties in local storage.

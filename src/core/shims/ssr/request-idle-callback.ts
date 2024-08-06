@@ -8,7 +8,7 @@
 
 import GLOBAL from 'core/shims/global';
 
-if (typeof process === 'object' && typeof GLOBAL['requestIdleCallback'] === 'undefined') {
+if (typeof GLOBAL['requestIdleCallback'] === 'undefined') {
 	(function requestIdleCallbackShim() {
 		GLOBAL['requestIdleCallback'] = function requestIdleCallback(cb: Function, options?: {timeout: CanUndef<number>}) {
 			const timeout = options?.timeout ?? Math.floor(Math.random() * 30) + 1;

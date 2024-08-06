@@ -13,10 +13,4 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added settings for the component garbage collector
-
-## v3.0.0-rc.85 (2020-10-09)
-
-#### :rocket: New Feature
-
-* Provided a graph of components to `components`
+* Initial release

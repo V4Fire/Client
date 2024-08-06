@@ -13,8 +13,7 @@ import Vue from 'core/component/engines/vue3/lib';
 
 import type { ComponentInterface } from 'core/component/interface';
 
-const
-	logger = log.namespace('vue');
+const logger = log.namespace('vue');
 
 Vue.config.errorHandler = (err, vm, info) => {
 	logger.error('errorHandler', err, info, getComponentInfo(vm));
@@ -64,5 +63,5 @@ function getComponentName(component: ComponentPublicInstance | ComponentInterfac
 		return ROOT_COMPONENT_NAME;
 	}
 
-	return Object.get(component, '$options.name') ?? UNRECOGNIZED_COMPONENT_NAME;
+	return component.$options.name ?? UNRECOGNIZED_COMPONENT_NAME;
 }

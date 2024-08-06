@@ -14,8 +14,7 @@ import { statuses } from 'components/super/i-block/const';
 
 import type { WaitStatuses, WaitDecoratorOptions, WaitOptions } from 'components/super/i-block/decorators/interface';
 
-const
-	waitCtxRgxp = /([^:]+):(\w+)/;
+const waitCtxRgxp = /([^:]+):(\w+)/;
 
 /**
  * Decorates the method so that when it is called, it does not execute immediately, but waits for the next tick.
@@ -115,96 +114,76 @@ export function wait(
 	optsOrCb?: WaitDecoratorOptions | WaitOptions | Function
 ): Function {
 	let
-		status: WaitStatuses,
+		ctx: CanUndef<string>,
+		handler: Nullable<Function>,
 		opts: CanUndef<WaitDecoratorOptions | WaitOptions>;
 
-	let
-		handler,
-		ctx;
-
 	if (Object.isFunction(optsOrCb)) {
-		if (Object.isString(componentStatusOrOpts)) {
-			if (RegExp.test(waitCtxRgxp, componentStatusOrOpts)) {
-				ctx = RegExp.$1;
-				status = statuses[RegExp.$2];
-
-			} else {
-				status = statuses[componentStatusOrOpts];
-			}
-
-		} else {
-			status = 0;
-
-			if (Object.isPlainObject(componentStatusOrOpts)) {
-				opts = componentStatusOrOpts;
-			}
-		}
-
 		handler = optsOrCb;
 
-	} else if (Object.isString(componentStatusOrOpts)) {
-		if (RegExp.test(waitCtxRgxp, componentStatusOrOpts)) {
-			ctx = RegExp.$1;
-			status = statuses[RegExp.$2];
-
-		} else {
-			status = statuses[componentStatusOrOpts];
-		}
-
-		if (Object.isPlainObject(optsOrCb)) {
-			opts = <typeof opts>optsOrCb;
-			handler = Object.get(opts, 'fn');
-		}
-
 	} else {
-		status = 0;
-
-		if (Object.isPlainObject(componentStatusOrOpts)) {
-			opts = componentStatusOrOpts;
-			handler = Object.get(opts, 'fn');
-		}
+		opts = parseOptions(optsOrCb);
 	}
 
-	opts ??= {};
+	opts = parseOptions(componentStatusOrOpts) ?? {};
 
-	let {
-		join,
-		label,
-		group,
-		defer
-	} = opts;
+	let {join, label, group, defer} = opts;
 
 	const
-		isDecorator = !Object.isFunction(handler);
+		isDecorator = !Object.isFunction(handler),
+		waitStatus = parseWaitStatus(componentStatusOrOpts) ?? statuses.inactive;
+
+	if (isDecorator) {
+		return ((_target: object, _key: PropertyKey, descriptors: PropertyDescriptor) => {
+			handler = descriptors.value;
+			descriptors.value = wrapper;
+		});
+	}
+
+	return wrapper;
 
 	function wrapper(this: iBlock['unsafe'], ...args: unknown[]): CanUndef<CanPromise<unknown>> {
-		const
-			{async: $a} = this;
+		if (handler == null) {
+			throw new ReferenceError('The handler is not specified');
+		}
+
+		const {async: $a} = this;
 
 		const
-			getRoot = () => ctx != null ? this.field.get(ctx) : this,
+			that = this,
+			resolvedHandler = handler;
+
+		const
+			getRoot = () => ctx != null ? this.field.get<iBlock>(ctx) : this,
 			root = getRoot();
 
 		if (join === undefined) {
-			join = handler.length > 0 ? 'replace' : true;
+			join = resolvedHandler.length > 0 ? 'replace' : true;
 		}
 
-		const p = {
-			join,
-			label,
-			group
-		};
+		const p = {join, label, group};
 
-		const exec = (ctx) => {
-			const
-				componentStatus = Number(statuses[this.componentStatus]);
+		if (root != null) {
+			return exec(root);
+		}
+
+		const res = $a.promise($a.wait(getRoot)).then(() => exec(getRoot()));
+
+		if (isDecorator) {
+			return res.catch(stderr);
+		}
+
+		return res;
+
+		function exec(ctx: CanUndef<iBlock>) {
+			const componentStatus = Number(statuses[that.componentStatus]);
 
 			let
-				res,
+				res: unknown,
 				init = false;
 
-			if (componentStatus < 0 && status > componentStatus) {
-				this.log({
+			if (componentStatus < 0 && waitStatus > componentStatus) {
+				that.log({
 					context: 'watcher',
 					logLevel: 'warn'
 				}, 'Component status watcher abort', () => handler);
@@ -214,18 +193,22 @@ export function wait(
 				});
 			}
 
-			if (componentStatus >= status) {
+			if (componentStatus >= waitStatus) {
 				init = true;
 
 				res = defer ?
-					$a.promise($a.nextTick().then(() => handler.apply(this, args)), p) :
-					handler.apply(this, args);
+					$a.promise($a.nextTick().then(() => resolvedHandler.apply(that, args)), p) :
+					resolvedHandler.apply(that, args);
 			}
 
 			if (!init) {
-				res = $a.promisifyOnce(ctx, `componentStatus:${statuses[status]}`, {
+				if (ctx == null) {
+					throw new ReferenceError('The context is not specified');
+				}
+
+				res = $a.promisifyOnce(ctx, `componentStatus:${statuses[waitStatus]}`, {
 					...p,
-					handler: () => handler.apply(this, args)
+					handler: () => resolvedHandler.apply(that, args)
 				});
 			}
 
@@ -234,28 +217,32 @@ export function wait(
 			}
 
 			return res;
-		};
-
-		if (root != null) {
-			return exec(root);
 		}
-
-		const
-			res = $a.promise($a.wait(getRoot)).then(() => exec(getRoot()));
-
-		if (isDecorator) {
-			return res.catch(stderr);
-		}
-
-		return res;
 	}
 
-	if (isDecorator) {
-		return ((target, key, descriptors) => {
-			handler = descriptors.value;
-			descriptors.value = wrapper;
-		});
+	function parseOptions(value: Nullable<WaitStatuses | WaitDecoratorOptions | WaitOptions | Function>) {
+		if (Object.isPlainObject(value)) {
+			opts ??= Object.cast(value);
+			handler ??= 'fn' in value ? value.fn : null;
+		}
+
+		return opts;
 	}
 
-	return wrapper;
+	function parseWaitStatus(value: WaitStatuses | object): CanUndef<number> {
+		if (Object.isNumber(value)) {
+			return value;
+		}
+
+		if (Object.isString(value)) {
+			const test = waitCtxRgxp.exec(value);
+
+			if (test != null) {
+				ctx = test[1];
+				return statuses[test[2]];
+			}
+
+			return statuses[value];
+		}
+	}
 }

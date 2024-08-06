@@ -89,7 +89,8 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			unsafe = getComponentContext(ctx),
 			result = callRenderFunction();
 
-		Object.set(unsafe, '$renderCounter', unsafe.$renderCounter + 1);
+		// @ts-ignore (unsafe)
+		unsafe['$renderCounter'] = unsafe.$renderCounter + 1;
 
 		return result;
 
