@@ -20,22 +20,22 @@ test.describe('<i-block> decorators', () => {
 	});
 
 	// Refer to the `b-super-i-block-decorators-dummy` component
-	// and check it's decorators to understand this test
+	// and check its decorators to understand this test
 	test.describe('initial values should be correct and all their changes should be registered', () => {
-		test('when component is regular', async ({page}) => {
+		test('when the component is regular', async ({page}) => {
 			const target = await renderDummy(page);
 
 			await runTest(target);
 		});
 
-		test('when component is functional', async ({page}) => {
+		test('when the component is functional', async ({page}) => {
 			const target = await renderDummy(page, true);
 
 			await runTest(target);
 		});
 
 		/**
-		 * Runs a decorators test for the specified target
+		 * Runs a decorator tests for the specified target
 		 * @param target
 		 */
 		async function runTest(target: JSHandle<bSuperIBlockDecoratorsDummy>) {
@@ -66,14 +66,9 @@ test.describe('<i-block> decorators', () => {
 		}
 	});
 
-	/**
-	 * Returns the rendered dummy component. It can be a regular or a functional component.s
-	 *
-	 * @param page
-	 * @param functional
-	 */
 	async function renderDummy(
-		page: Page, functional: boolean = false
+		page: Page,
+		functional: boolean = false
 	): Promise<JSHandle<bSuperIBlockDecoratorsDummy>> {
 		return Component.createComponent(
 			page, `b-super-i-block-decorators-dummy${functional ? '-functional' : ''}`
