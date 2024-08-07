@@ -11,6 +11,30 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.74.4 (2024-08-02)
+
+#### :nail_care: Polish
+
+* Now, if an external link is passed to `initLibs()`, `PUBLIC_PATH` won't be added to it.
+
+## v3.74.3 (2024-07-18)
+
+#### :house: Internal
+
+* Updated `monic-loader` to version `3.0.4` to fix regression
+
+## v3.74.2 (2024-07-16)
+
+#### :house: Internal
+
+* Updated `monic-loader` to version `3.0.3` to fix memory leak on rebuild in watch mode
+
+## v3.74.1 (2024-06-14)
+
+#### :house: Internal
+
+* Updated `terser` to version `5.31.0` to include [bug fix](https://github.com/terser/terser/issues/1432)
+
 ## v3.74.0 (2024-05-23)
 
 #### :rocket: New Feature

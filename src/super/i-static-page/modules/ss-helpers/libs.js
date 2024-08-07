@@ -176,7 +176,7 @@ async function initLibs(libs, assets) {
 				await delay((1).second());
 			}
 
-		} else {
+		} else if (p.source !== 'external') {
 			p.src = addPublicPath(p.src);
 		}
 
