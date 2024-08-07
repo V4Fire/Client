@@ -17,10 +17,6 @@ import type { ComponentMeta } from 'core/component/interface';
  * @param [constructor]
  */
 export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = meta.constructor): void {
-	const
-		proto = constructor.prototype,
-		ownProps = Object.getOwnPropertyNames(proto);
-
 	const {
 		componentName: src,
 		props,
@@ -31,22 +27,18 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 		methods
 	} = meta;
 
-	ownProps.forEach((name) => {
+	const
+		proto = constructor.prototype,
+		descriptors = Object.getOwnPropertyDescriptors(proto);
+
+	Object.entries(descriptors).forEach(([name, desc]) => {
 		if (name === 'constructor') {
-			return;
-		}
-
-		const
-			desc = Object.getOwnPropertyDescriptor(proto, name);
-
-		if (desc == null) {
 			return;
 		}
 
 		// Methods
 		if ('value' in desc) {
-			const
-				fn = desc.value;
+			const fn = desc.value;
 
 			if (!Object.isFunction(fn)) {
 				return;
@@ -60,13 +52,12 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				propKey = `${name}Prop`,
 				storeKey = `${name}Store`;
 
-			let
-				metaKey: string;
+			let metaKey: string;
 
 			// Computed fields are cached by default
 			if (
 				name in computedFields ||
-				!(name in accessors) && (props[propKey] || fields[storeKey] || systemFields[storeKey])
+				!(name in accessors) && (props[propKey] ?? fields[storeKey] ?? systemFields[storeKey])
 			) {
 				metaKey = 'computedFields';
 
@@ -74,8 +65,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				metaKey = 'accessors';
 			}
 
-			let
-				field: Dictionary;
+			let field: Dictionary;
 
 			if (props[name] != null) {
 				field = props;
