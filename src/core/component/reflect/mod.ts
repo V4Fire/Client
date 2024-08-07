@@ -61,8 +61,7 @@ export function getComponentMods(component: ComponentConstructorInfo): ModsDecl 
 		if (modDecl != null && modDecl.length > 0) {
 			const cache = new Map();
 
-			let
-				active: CanUndef<string>;
+			let active: CanUndef<string>;
 
 			modDecl.forEach((modVal) => {
 				if (Object.isArray(modVal)) {
@@ -74,7 +73,7 @@ export function getComponentMods(component: ComponentConstructorInfo): ModsDecl 
 					cache.set(active, [active]);
 
 				} else {
-					const normalizedModVal = Object.isPlainObject(modVal) ?
+					const normalizedModVal = Object.isDictionary(modVal) ?
 						modVal :
 						String(modVal);
 

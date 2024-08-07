@@ -12,7 +12,7 @@
  */
 
 import { components } from 'core/component/const';
-import { propGetterRgxp } from 'core/component/reflect';
+import { isPropGetter } from 'core/component/reflect';
 import { ComponentEngine, DirectiveBinding, VNode } from 'core/component/engines';
 
 import { setVNodePatchFlags, normalizeComponentAttrs } from 'core/component/render';
@@ -314,7 +314,7 @@ ComponentEngine.directive('attrs', {
 			// For example, `@:value = createPropAccessors(() => someValue)`.
 			// A distinctive feature of such events is the prefix `@:` or `on:`.
 			// Such events are processed in a special way.
-			const isSystemGetter = propGetterRgxp.test(event);
+			const isSystemGetter = isPropGetter.test(event);
 			props[event] = attrVal;
 
 			if (!isSystemGetter) {

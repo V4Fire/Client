@@ -7,7 +7,7 @@
  */
 
 import { isProxy } from 'core/object/watch';
-import { bindingRgxp, customWatcherRgxp, getPropertyInfo } from 'core/component';
+import { getPropertyInfo, isBinding, customWatcherRgxp } from 'core/component';
 
 import type iBlock from 'components/super/i-block/i-block';
 import type Sync from 'components/friends/sync/class';
@@ -279,7 +279,7 @@ export function link<D = unknown, R = D>(
 		resolvedOpts: AsyncWatchOptions = {};
 
 	if (path == null) {
-		resolvedPath = `${destPath.replace(bindingRgxp, '')}Prop`;
+		resolvedPath = `${isBinding.test(destPath) ? isBinding.replace(destPath) : destPath}Prop`;
 
 	} else if (Object.isString(path) || isProxy(path) || 'ctx' in path) {
 		resolvedPath = path;

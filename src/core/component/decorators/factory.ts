@@ -8,7 +8,7 @@
 
 import { defProp } from 'core/const/props';
 
-import { storeRgxp } from 'core/component/reflect';
+import { isStore } from 'core/component/reflect';
 import { initEmitter } from 'core/component/event';
 
 import { metaPointers } from 'core/component/const';
@@ -258,8 +258,8 @@ export function paramsFactory<T = object>(
 					};
 				}
 
-				if (tiedFieldMap[metaKey] != null && RegExp.test(storeRgxp, key)) {
-					meta.tiedFields[key] = key.replace(storeRgxp, '');
+				if (tiedFieldMap[metaKey] != null && isStore.test(key)) {
+					meta.tiedFields[key] = isStore.replace(key);
 				}
 
 				function inheritFromParent() {

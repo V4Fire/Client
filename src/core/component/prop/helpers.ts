@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { propGetterRgxp } from 'core/component/reflect';
+import { isPropGetter } from 'core/component/reflect';
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
@@ -50,11 +50,11 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 				}
 			}
 
-			if (!attrName.startsWith(propPrefix)) {
+			if (!isPropGetter.test(attrName)) {
 				return;
 			}
 
-			const propName = attrName.replace(propGetterRgxp, '');
+			const propName = isPropGetter.replace(attrName);
 
 			if (meta.props[propName]?.forceUpdate === false) {
 				propValuesToUpdate.push([propName, attrName]);

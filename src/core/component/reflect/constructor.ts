@@ -28,8 +28,7 @@ import type { ComponentConstructorInfo } from 'core/component/reflect/interface'
  * ```
  */
 export function getComponentName(constructor: Function): string {
-	const
-		nm = constructor.name;
+	const nm = constructor.name;
 
 	if (Object.isString(nm)) {
 		return nm.dasherize();
@@ -95,10 +94,9 @@ export function getInfoFromConstructor(
 
 	// Mix the "functional" parameter from the parent @component declaration
 	if (parentParams) {
-		let
-			functional: typeof params.functional;
+		let functional: typeof params.functional;
 
-		if (Object.isPlainObject(params.functional) && Object.isPlainObject(parentParams.functional)) {
+		if (Object.isDictionary(params.functional) && Object.isDictionary(parentParams.functional)) {
 			functional = {...parentParams.functional, ...params.functional};
 
 		} else {
@@ -114,16 +112,18 @@ export function getInfoFromConstructor(
 		componentParams.set(name, params);
 	}
 
+	const isSmart = name.endsWith('-functional');
+
 	return {
 		name,
 		layer,
 
-		componentName: name.replace(isSmartComponent, ''),
+		componentName: isSmart ? isSmartComponent.replace(name) : name,
 		constructor,
 		params,
 
 		isAbstract: isAbstractComponent.test(name),
-		isSmart: isSmartComponent.test(name),
+		isSmart,
 
 		parent,
 		parentParams,

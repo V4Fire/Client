@@ -9,7 +9,7 @@
 /* eslint-disable max-lines-per-function */
 
 import watch, { mute, unmute, unwrap, getProxyType, isProxy, WatchHandlerParams } from 'core/object/watch';
-import { getPropertyInfo, privateFieldRgxp, PropertyInfo } from 'core/component/reflect';
+import { getPropertyInfo, isPrivateField, PropertyInfo } from 'core/component/reflect';
 
 import { tiedWatchers, watcherInitializer } from 'core/component/watch/const';
 import { cloneWatchValue } from 'core/component/watch/clone';
@@ -453,14 +453,14 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 					};
 
 					const externalWatchHandler = (value: unknown, oldValue: unknown, i?: WatchHandlerParams) => {
-						const fromSystem = i != null && Object.isString(i.path[0]) && i.path[0].startsWith('[[');
+						const fromSystem = i != null && Object.isString(i.path[0]) && isPrivateField.test(i.path[0]);
 
 						// This situation occurs when the root observable object has changed,
 						// and we need to remove the watchers of all its "nested parts", but leave the root watcher intact
 						destructors.splice(1, destructors.length).forEach((destroy) => destroy());
 
 						if (fromSystem) {
-							i.path = [String(i.path[0]).replace(privateFieldRgxp, '$1'), ...i.path.slice(1)];
+							i.path = [isPrivateField.replace(String(i.path[0])), ...i.path.slice(1)];
 							attachDeepProxy(false);
 
 						} else {

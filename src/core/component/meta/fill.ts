@@ -9,7 +9,7 @@
 import { DEFAULT_WRAPPER } from 'core/component/const';
 
 import { getComponentContext } from 'core/component/context';
-import { isAbstractComponent, bindingRgxp } from 'core/component/reflect';
+import { isAbstractComponent, isBinding } from 'core/component/reflect';
 
 import { isTypeCanBeFunc } from 'core/component/prop';
 import { addMethodsToMeta } from 'core/component/meta/method';
@@ -22,11 +22,12 @@ import type { ComponentConstructor, ComponentMeta, ModVal } from 'core/component
  * @param meta
  * @param [constructor] - the component constructor
  */
-export function fillMeta(
-	meta: ComponentMeta,
-	constructor: ComponentConstructor = meta.constructor
-): ComponentMeta {
+export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor = meta.constructor): ComponentMeta {
 	addMethodsToMeta(meta, constructor);
+
+	if (isAbstractComponent.test(meta.componentName)) {
+		return meta;
+	}
 
 	const {
 		component,
@@ -43,12 +44,17 @@ export function fillMeta(
 		watchPropDependencies
 	} = meta;
 
-	const instance = Object.cast<Dictionary>(new constructor());
-	meta.instance = instance;
+	let instance: unknown = null;
 
-	if (isAbstractComponent.test(meta.componentName)) {
-		return meta;
-	}
+	Object.defineProperty(meta, 'instance', {
+		enumerable: true,
+		configurable: true,
+
+		get() {
+			instance ??= new constructor();
+			return instance;
+		}
+	});
 
 	const
 		isRoot = params.root === true,
@@ -70,7 +76,7 @@ export function fillMeta(
 			skipDefault = true;
 
 		if (defaultProps || prop.forceDefault) {
-			const defaultInstanceValue = instance[name];
+			const defaultInstanceValue = meta.instance[name];
 
 			skipDefault = false;
 			getDefault = defaultInstanceValue;
@@ -123,31 +129,28 @@ export function fillMeta(
 		}
 
 		if (canWatchProps) {
-			const
-				normalizedKey = name.replace(bindingRgxp, '');
+			const normalizedName = isBinding.test(name) ? isBinding.replace(name) : name;
 
-			if ((computedFields[normalizedKey] ?? accessors[normalizedKey]) != null) {
-				const
-					props = watchPropDependencies.get(normalizedKey) ?? new Set();
+			if ((computedFields[normalizedName] ?? accessors[normalizedName]) != null) {
+				const props = watchPropDependencies.get(normalizedName) ?? new Set();
 
 				props.add(name);
-				watchPropDependencies.set(normalizedKey, props);
+				watchPropDependencies.set(normalizedName, props);
 
 			} else {
 				watchDependencies.forEach((deps, path) => {
-					for (let i = 0; i < deps.length; i++) {
-						const
-							dep = deps[i];
-
-						if ((Object.isArray(dep) ? dep : dep.split('.'))[0] === name) {
-							const
-								props = watchPropDependencies.get(path) ?? new Set();
+					deps.some((dep) => {
+						if ((Object.isArray(dep) ? dep : dep.split('.', 1))[0] === name) {
+							const props = watchPropDependencies.get(path) ?? new Set();
 
 							props.add(name);
 							watchPropDependencies.set(path, props);
-							break;
+
+							return true;
 						}
-					}
+
+						return false;
+					});
 				});
 			}
 		}
@@ -156,16 +159,15 @@ export function fillMeta(
 	// Fields
 
 	[meta.systemFields, meta.fields].forEach((field) => {
-		Object.entries(field).forEach(([key, field]) => {
+		Object.entries(field).forEach(([name, field]) => {
 			field?.watchers?.forEach((watcher) => {
 				if (isFunctional && watcher.functional === false) {
 					return;
 				}
 
-				const
-					watcherListeners = watchers[key] ?? [];
+				const watcherListeners = watchers[name] ?? [];
 
-				watchers[key] = watcherListeners;
+				watchers[name] = watcherListeners;
 				watcherListeners.push(watcher);
 			});
 		});
@@ -192,21 +194,19 @@ export function fillMeta(
 		}
 
 		component.methods[name] = wrapper;
-		Object.defineProperty(wrapper, 'length', {get: () => method.fn.length});
 
-		function wrapper(this: object) {
-			// eslint-disable-next-line prefer-rest-params
-			return method!.fn.apply(getComponentContext(this), arguments);
+		if (wrapper.length !== method.fn.length) {
+			Object.defineProperty(wrapper, 'length', {get: () => method.fn.length});
 		}
 
 		if (method.watchers != null) {
-			Object.entries(method.watchers).forEach(([key, watcher]) => {
+			Object.entries(method.watchers).forEach(([name, watcher]) => {
 				if (watcher == null || isFunctional && watcher.functional === false) {
 					return;
 				}
 
-				const watcherListeners = watchers[key] ?? [];
-				watchers[key] = watcherListeners;
+				const watcherListeners = watchers[name] ?? [];
+				watchers[name] = watcherListeners;
 
 				watcherListeners.push({
 					...watcher,
@@ -220,36 +220,38 @@ export function fillMeta(
 		// Method hooks
 
 		if (method.hooks) {
-			Object.entries(method.hooks).forEach(([key, hook]) => {
+			Object.entries(method.hooks).forEach(([name, hook]) => {
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (hook == null || isFunctional && hook.functional === false) {
 					return;
 				}
 
-				hooks[key].push({...hook, fn: method.fn});
+				hooks[name].push({...hook, fn: method.fn});
 			});
+		}
+
+		function wrapper(this: object) {
+			// eslint-disable-next-line prefer-rest-params
+			return method!.fn.apply(getComponentContext(this), arguments);
 		}
 	});
 
 	// Modifiers
 
-	const
-		{mods} = component;
+	const {mods} = component;
 
 	Object.entries(meta.mods).forEach(([key, mod]) => {
-		let
-			defaultValue: CanUndef<ModVal[]>;
+		let defaultValue: CanUndef<ModVal[]>;
 
 		if (mod != null) {
-			for (let i = 0; i < mod.length; i++) {
-				const
-					el = mod[i];
-
-				if (Object.isArray(el)) {
-					defaultValue = el;
-					break;
+			mod.some((val) => {
+				if (Object.isArray(val)) {
+					defaultValue = val;
+					return true;
 				}
-			}
+
+				return false;
+			});
 
 			mods[key] = defaultValue !== undefined ? String(defaultValue[0]) : undefined;
 		}

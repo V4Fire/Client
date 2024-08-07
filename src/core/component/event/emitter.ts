@@ -52,17 +52,15 @@ export const initEmitter = new EventEmitter({
 		listener: ListenerFn,
 		opts?: true | OnOptions
 	): EventEmitter {
-		Array.concat([], event).forEach((event) => {
-			const
-				chunks = event.split('.', 2);
+		(Object.isArray(event) ? event : [event]).forEach((event) => {
+			const chunks = event.split('.', 2);
 
 			if (chunks[0] === 'constructor') {
 				initEventOnce(event, listener, opts);
 
-				const
-					p = componentParams.get(chunks[1]);
+				const p = componentParams.get(chunks[1]);
 
-				if (p && Object.isPlainObject(p.functional)) {
+				if (p != null && Object.isDictionary(p.functional)) {
 					initEventOnce(`${event}-functional`, listener, opts);
 				}
 
