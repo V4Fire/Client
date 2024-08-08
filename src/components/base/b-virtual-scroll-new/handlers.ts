@@ -24,7 +24,7 @@ const $$ = symbolGenerator();
  * A class that provides an API to handle events emitted by the {@link bVirtualScrollNew} component.
  * This class is designed to work in conjunction with {@link bVirtualScrollNew}.
  */
-@component()
+@component({partial: 'b-virtual-scroll-new'})
 export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	/**
 	 * Handler: component reset event.

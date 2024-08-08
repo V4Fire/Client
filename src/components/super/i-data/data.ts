@@ -43,7 +43,11 @@ const
 
 interface iDataData extends Trait<typeof iDataProvider> {}
 
-@component({functional: null})
+@component({
+	partial: 'i-data',
+	functional: null
+})
+
 @derive(iDataProvider)
 abstract class iDataData extends iBlock implements iDataProvider {
 	/**

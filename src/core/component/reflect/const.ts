@@ -12,7 +12,11 @@ export const isPropGetter = {
 	},
 
 	replace(name: string): string {
-		return name.startsWith('@') ? name.slice('@:'.length) : name.slice('on:'.length);
+		if (isPropGetter.test(name)) {
+			return name.startsWith('@') ? name.slice('@:'.length) : name.slice('on:'.length);
+		}
+
+		return name;
 	}
 };
 
@@ -42,7 +46,7 @@ export const isBinding = {
 	},
 
 	replace(name: string): string {
-		return name.startsWith('p') ? name.slice('Prop'.length) : name.slice('Store'.length);
+		return name.endsWith('p') ? name.slice(0, name.length - 'Prop'.length) : isStore.replace(name);
 	}
 };
 

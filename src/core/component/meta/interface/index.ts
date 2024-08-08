@@ -67,7 +67,7 @@ export interface ComponentMeta {
 	/**
 	 * A link to the metaobject of the parent component
 	 */
-	parentMeta?: ComponentMeta;
+	parentMeta: CanNull<ComponentMeta>;
 
 	/**
 	 * A dictionary that contains the input properties (props) for the component

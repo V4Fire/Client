@@ -36,7 +36,7 @@ export * from 'components/super/i-block/event/interface';
 const
 	$$ = symbolGenerator();
 
-@component()
+@component({partial: 'i-block'})
 export default abstract class iBlockEvent extends iBlockBase {
 	/**
 	 * Associative type for typing events emitted by the component.

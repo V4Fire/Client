@@ -13,7 +13,7 @@ import { component, ModEvent } from 'components/super/i-data/i-data';
 
 import iInputFields from 'components/super/i-input/fields';
 
-@component()
+@component({partial: 'i-input'})
 export default abstract class iInputHandlers extends iInputFields {
 	protected override initRemoteData(): CanUndef<CanPromise<unknown | Dictionary>> {
 		if (this.db == null) {

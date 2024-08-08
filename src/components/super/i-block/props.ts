@@ -16,7 +16,7 @@ import type { ModsProp } from 'components/super/i-block/modules/mods';
 import { prop, DecoratorMethodWatcher } from 'components/super/i-block/decorators';
 import type { TransitionMethod } from 'components/base/b-router/interface';
 
-@component()
+@component({partial: 'i-block'})
 export default abstract class iBlockProps extends ComponentInterface {
 	@prop({type: String, required: false})
 	override readonly componentIdProp?: string;

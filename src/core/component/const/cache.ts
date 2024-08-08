@@ -17,6 +17,7 @@ import type {
 
 	ComponentMeta,
 	ComponentOptions,
+	ComponentConstructorInfo,
 
 	RenderFactory,
 	App
@@ -27,6 +28,11 @@ import type {
  * A dictionary with the component declaration parameters
  */
 export const componentParams = new Map<Function | string, ComponentOptions>();
+
+/**
+ * A dictionary with the component declaration parameters
+ */
+export const partialInfo = new Map<string, ComponentConstructorInfo>();
 
 /**
  * A dictionary with the registered root components

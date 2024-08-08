@@ -21,8 +21,7 @@ import type { ComponentConstructorInfo } from 'core/component/reflect';
  * @param component - the component information object
  */
 export function registerParentComponents(component: ComponentConstructorInfo): boolean {
-	const
-		{name} = component;
+	const {name} = component;
 
 	let
 		parentName = component.parentParams?.name,
@@ -44,8 +43,7 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
 	if (Object.isTruly(parentName)) {
 		parentName = <string>parentName;
 
-		const
-			regParentComponent = componentRegInitializers[parentName];
+		const regParentComponent = componentRegInitializers[parentName];
 
 		if (regParentComponent != null) {
 			regParentComponent.forEach((reg) => reg());
@@ -72,8 +70,7 @@ export function registerComponent(name: CanUndef<string>): CanNull<ComponentMeta
 		return null;
 	}
 
-	const
-		regComponent = componentRegInitializers[name];
+	const regComponent = componentRegInitializers[name];
 
 	if (regComponent != null) {
 		regComponent.forEach((reg) => reg());

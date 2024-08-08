@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { componentParams, components } from 'core/component/const';
+import { components, componentParams, partialInfo } from 'core/component/const';
 import { isAbstractComponent, isSmartComponent } from 'core/component/reflect/validators';
 
 import type { ComponentOptions, ComponentMeta, ComponentConstructor } from 'core/component/interface';
@@ -63,29 +63,69 @@ export function getInfoFromConstructor(
 	constructor: ComponentConstructor,
 	declParams?: ComponentOptions
 ): ComponentConstructorInfo {
+	const partial = declParams?.partial?.dasherize();
+
+	if (partial != null) {
+		let info = partialInfo.get(partial);
+
+		if (info == null) {
+			const {parent, parentParams} = getParent();
+
+			info = {
+				name: partial,
+				componentName: partial,
+
+				constructor,
+				params: {...declParams, partial},
+
+				isAbstract: true,
+				isSmart: false,
+
+				parent,
+				parentParams,
+
+				get parentMeta() {
+					return components.get(parent) ?? null;
+				}
+			};
+
+			partialInfo.set(partial, info);
+		}
+
+		componentParams.set(constructor, info.params);
+		return info;
+	}
+
 	const
 		name = declParams?.name ?? getComponentName(constructor),
 		layer = declParams?.layer;
 
-	const
-		parent = Object.getPrototypeOf(constructor),
-		parentParams = parent != null ? componentParams.get(parent) : undefined;
+	let {parent, parentParams} = getParent();
+
+	if (parentParams?.partial != null) {
+		({parent, parentParams} = partialInfo.get(parentParams.partial)!);
+	}
 
 	// Create an object with the component parameters
 	const params = parentParams != null ?
 		{
 			root: parentParams.root,
 			...declParams,
-			name
+
+			name,
+			partial: undefined
 		} :
 
 		{
-			root: false,
 			tpl: true,
+			root: false,
+
 			inheritAttrs: true,
 			functional: false,
 			...declParams,
-			name
+
+			name,
+			partial: undefined
 		};
 
 	if (SSR) {
@@ -128,8 +168,16 @@ export function getInfoFromConstructor(
 		parent,
 		parentParams,
 
-		get parentMeta(): CanUndef<ComponentMeta> {
-			return parent != null ? components.get(parent) : undefined;
+		get parentMeta(): CanNull<ComponentMeta> {
+			return components.get(parent) ?? null;
 		}
 	};
+
+	function getParent() {
+		const
+			parent = Object.getPrototypeOf(constructor),
+			parentParams = componentParams.get(parent) ?? null;
+
+		return {parent, parentParams};
+	}
 }

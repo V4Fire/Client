@@ -28,11 +28,9 @@ import * as r from 'core/component/engines/vue3/render';
  * @param meta
  */
 export function getComponent(meta: ComponentMeta): ComponentOptions<typeof ComponentEngine> {
-	const
-		{component} = fillMeta(meta);
+	const {component} = fillMeta(meta);
 
-	const
-		p = meta.params;
+	const p = meta.params;
 
 	return {
 		...Object.cast(component),

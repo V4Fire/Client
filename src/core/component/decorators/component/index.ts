@@ -25,11 +25,11 @@ import {
 } from 'core/component/const';
 
 import { initEmitter } from 'core/component/event';
-import { createMeta, fillMeta, attachTemplatesToMeta } from 'core/component/meta';
+import { createMeta, fillMeta, attachTemplatesToMeta, addMethodsToMeta } from 'core/component/meta';
 import { getInfoFromConstructor } from 'core/component/reflect';
 
 import { getComponent, ComponentEngine } from 'core/component/engines';
-import { registerParentComponents } from 'core/component/init';
+import { registerComponent, registerParentComponents } from 'core/component/init';
 
 import type { ComponentConstructor, ComponentOptions } from 'core/component/interface';
 
@@ -65,30 +65,48 @@ export function component(opts?: ComponentOptions): Function {
 	return (target: ComponentConstructor) => {
 		const
 			componentInfo = getInfoFromConstructor(target, opts),
-			componentParams = componentInfo.params;
+			componentParams = componentInfo.params,
+			partOf = componentParams.partial != null;
 
-		if (componentInfo.name === componentInfo.parentParams?.name) {
+		const
+			componentName = componentInfo.name,
+			hasSameName = !partOf && componentName === componentInfo.parentParams?.name;
+
+		if (hasSameName) {
 			Object.defineProperty(componentInfo.parent!, OVERRIDDEN, {value: true});
 		}
 
-		initEmitter
-			.emit('bindConstructor', componentInfo.name);
+		initEmitter.emit('bindConstructor', componentName);
 
-		if (!Object.isTruly(componentInfo.name) || componentParams.root || componentInfo.isAbstract) {
+		if (partOf) {
+			let meta = components.get(componentName);
+
+			if (meta == null) {
+				meta = createMeta(componentInfo);
+				components.set(componentName, meta);
+			}
+
+			addMethodsToMeta(meta, target);
+			return;
+		}
+
+		if (!Object.isTruly(componentName) || componentParams.root === true || componentInfo.isAbstract) {
 			regComponent();
 
 		} else {
-			const initList = componentRegInitializers[componentInfo.name] ?? [];
-			componentRegInitializers[componentInfo.name] = initList;
+			const initList = componentRegInitializers[componentName] ?? [];
+			componentRegInitializers[componentName] = initList;
 			initList.push(regComponent);
+
+			requestIdleCallback(() => registerComponent(componentName));
 		}
 
 		// If we have a smart component,
-		// we need to compile two components in the runtime
+		// we need to compile two components at runtime
 		if (Object.isPlainObject(componentParams.functional)) {
 			component({
 				...opts,
-				name: `${componentInfo.name}-functional`,
+				name: `${componentName}-functional`,
 				functional: true
 			})(target);
 		}
@@ -96,23 +114,30 @@ export function component(opts?: ComponentOptions): Function {
 		function regComponent(): void {
 			registerParentComponents(componentInfo);
 
-			const
-				{parentMeta} = componentInfo;
+			let rawMeta = components.get(componentName);
 
-			const
-				meta = createMeta(componentInfo),
-				componentName = componentInfo.name;
+			if (rawMeta == null) {
+				rawMeta = createMeta(componentInfo);
+				components.set(componentName, rawMeta);
 
-			if (componentInfo.params.name == null || !componentInfo.isSmart) {
+			} else {
+				rawMeta.constructor = target;
+			}
+
+			const meta = rawMeta;
+
+			if (componentParams.name == null || !componentInfo.isSmart) {
 				components.set(target, meta);
 			}
 
-			components.set(componentName, meta);
-			initEmitter.emit(`constructor.${componentName}`, {meta, parentMeta});
+			initEmitter.emit(`constructor.${componentName}`, {
+				meta,
+				parentMeta: componentInfo.parentMeta
+			});
 
 			const noNeedToRegisterAsComponent =
-				target.hasOwnProperty(OVERRIDDEN) ||
 				componentInfo.isAbstract ||
+				target.hasOwnProperty(OVERRIDDEN) ||
 				!SSR && meta.params.functional === true;
 
 			if (noNeedToRegisterAsComponent) {
@@ -139,8 +164,7 @@ export function component(opts?: ComponentOptions): Function {
 				return meta.params.tpl === false ? attachTemplatesAndResolve() : waitComponentTemplates();
 
 				function waitComponentTemplates() {
-					const
-						fns = TPLS[meta.componentName];
+					const fns = TPLS[meta.componentName];
 
 					if (fns != null) {
 						return attachTemplatesAndResolve(fns);

@@ -26,7 +26,7 @@ import type {
 
 } from 'components/super/i-input/interface';
 
-@component()
+@component({partial: 'i-input'})
 export default abstract class iInputFields extends iInputProps {
 	/**
 	 * A list of component value(s) that cannot be submitted via the associated form

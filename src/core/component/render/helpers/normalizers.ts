@@ -168,7 +168,7 @@ export function normalizeComponentAttrs(
 			dynamicProps.push(tiedPropName);
 		}
 
-		if (propName in props || isPropGetter.test(attrName) && isPropGetter.replace(attrName) in props) {
+		if (propName in props || isPropGetter.replace(propName) in props) {
 			changeAttrName(attrName, propName);
 
 		} else {

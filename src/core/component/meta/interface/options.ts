@@ -32,6 +32,8 @@ export interface ComponentOptions {
 	 */
 	name?: string;
 
+	partial?: string;
+
 	/**
 	 * If set to true, the component is registered as the root component.
 	 * The root component sits at the top of the component hierarchy and contains all components in the application.

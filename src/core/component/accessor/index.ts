@@ -128,8 +128,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 					});
 
 					['Store', 'Prop'].forEach((postfix) => {
-						const
-							path = name + postfix;
+						const path = name + postfix;
 
 						if (path in this) {
 							// @ts-ignore (effect)

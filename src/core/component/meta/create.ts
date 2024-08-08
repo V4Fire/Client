@@ -122,7 +122,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		}
 	});
 
-	if (component.parentMeta) {
+	if (component.parentMeta != null) {
 		inheritMeta(meta, component.parentMeta);
 	}
 

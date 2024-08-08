@@ -22,7 +22,10 @@ import type { ComponentConstructor, ComponentMeta, ModVal } from 'core/component
  * @param meta
  * @param [constructor] - the component constructor
  */
-export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor = meta.constructor): ComponentMeta {
+export function fillMeta(
+	meta: ComponentMeta,
+	constructor: ComponentConstructor = meta.constructor
+): ComponentMeta {
 	addMethodsToMeta(meta, constructor);
 
 	if (isAbstractComponent.test(meta.componentName)) {
@@ -194,6 +197,10 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 		}
 
 		component.methods[name] = wrapper;
+
+		if (method.fn == null) {
+			console.log(constructor.name, name);
+		}
 
 		if (wrapper.length !== method.fn.length) {
 			Object.defineProperty(wrapper, 'length', {get: () => method.fn.length});

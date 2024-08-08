@@ -22,7 +22,7 @@ import iData, {
 
 import type { ActionFn } from 'components/form/b-form/interface';
 
-@component()
+@component({partial: 'b-form'})
 export default abstract class iFormProps extends iData {
 	override readonly dataProviderProp: DataProviderProp = 'Provider';
 	override readonly defaultRequestFilter: RequestFilter = true;
