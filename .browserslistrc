@@ -5,7 +5,7 @@ chrome >= 51, firefox >= 54, ios >= 10, safari >= 10, opera >= 38
 chrome >= 62, firefox >= 79, ios >= 11.3, safari >= 11.1, opera >= 49
 
 [development]
-last 1 chrome version
+defaults
 
 [ssr]
 node 18
