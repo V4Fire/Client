@@ -9,6 +9,9 @@
 import { defProp } from 'core/const/props';
 import type { ComponentMeta } from 'core/component/interface';
 
+const
+	ALREADY_PASSED = Symbol('This target is passed');
+
 /**
  * Loops through the prototype of the passed component constructor and
  * adds methods and accessors to the specified metaobject
@@ -17,6 +20,13 @@ import type { ComponentMeta } from 'core/component/interface';
  * @param [constructor]
  */
 export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = meta.constructor): void {
+	// For smart components, this method can be called more than once
+	if (constructor.hasOwnProperty(ALREADY_PASSED)) {
+		return;
+	}
+
+	Object.defineProperty(constructor, ALREADY_PASSED, {value: true});
+
 	const {
 		componentName: src,
 		props,

@@ -16,6 +16,10 @@ import { addMethodsToMeta } from 'core/component/meta/method';
 
 import type { ComponentConstructor, ComponentMeta, ModVal } from 'core/component/interface';
 
+const
+	ALREADY_PASSED = Symbol('This target is passed'),
+	INSTANCE = Symbol('The component instance');
+
 /**
  * Populates the passed metaobject with methods and properties from the specified component class constructor
  *
@@ -32,6 +36,9 @@ export function fillMeta(
 		return meta;
 	}
 
+	// For smart components, this method can be called more than once
+	const isFirstFill = !constructor.hasOwnProperty(ALREADY_PASSED);
+
 	const {
 		component,
 		params,
@@ -47,15 +54,16 @@ export function fillMeta(
 		watchPropDependencies
 	} = meta;
 
-	let instance: unknown = null;
-
 	Object.defineProperty(meta, 'instance', {
 		enumerable: true,
 		configurable: true,
 
 		get() {
-			instance ??= new constructor();
-			return instance;
+			if (!constructor.hasOwnProperty(INSTANCE)) {
+				Object.defineProperty(constructor, INSTANCE, {value: new constructor()});
+			}
+
+			return constructor[INSTANCE];
 		}
 	});
 
@@ -74,45 +82,47 @@ export function fillMeta(
 			return;
 		}
 
-		let
-			getDefault: unknown,
-			skipDefault = true;
+		if (isFirstFill) {
+			let
+				getDefault: unknown,
+				skipDefault = true;
 
-		if (defaultProps || prop.forceDefault) {
-			const defaultInstanceValue = meta.instance[name];
+			if (defaultProps || prop.forceDefault) {
+				const defaultInstanceValue = meta.instance[name];
 
-			skipDefault = false;
-			getDefault = defaultInstanceValue;
+				skipDefault = false;
+				getDefault = defaultInstanceValue;
 
-			// If the default value of a field is set through default values for a class property,
-			// then we need to clone it for each new component instance to ensure that they do not use a shared value
-			const needCloneDefValue =
-				defaultInstanceValue != null && typeof defaultInstanceValue === 'object' &&
-				(!isTypeCanBeFunc(prop.type) || !Object.isFunction(defaultInstanceValue));
+				// If the default value of a field is set through default values for a class property,
+				// then we need to clone it for each new component instance to ensure that they do not use a shared value
+				const needCloneDefValue =
+					defaultInstanceValue != null && typeof defaultInstanceValue === 'object' &&
+					(!isTypeCanBeFunc(prop.type) || !Object.isFunction(defaultInstanceValue));
 
-			if (needCloneDefValue) {
-				getDefault = () => Object.fastClone(defaultInstanceValue);
-				(<object>getDefault)[DEFAULT_WRAPPER] = true;
+				if (needCloneDefValue) {
+					getDefault = () => Object.fastClone(defaultInstanceValue);
+					(<object>getDefault)[DEFAULT_WRAPPER] = true;
+				}
 			}
-		}
 
-		let defaultValue: unknown;
+			let defaultValue: unknown;
 
-		if (!skipDefault) {
-			defaultValue = prop.default !== undefined ? prop.default : getDefault;
-		}
+			if (!skipDefault) {
+				defaultValue = prop.default !== undefined ? prop.default : getDefault;
+			}
 
-		if (!isRoot || defaultValue !== undefined) {
-			(prop.forceUpdate ? component.props : component.attrs)[name] = {
-				type: prop.type,
-				required: prop.required !== false && defaultProps && defaultValue === undefined,
+			if (!isRoot || defaultValue !== undefined) {
+				(prop.forceUpdate ? component.props : component.attrs)[name] = {
+					type: prop.type,
+					required: prop.required !== false && defaultProps && defaultValue === undefined,
 
-				default: defaultValue,
-				functional: prop.functional,
+					default: defaultValue,
+					functional: prop.functional,
 
-				// eslint-disable-next-line @v4fire/unbound-method
-				validator: prop.validator
-			};
+					// eslint-disable-next-line @v4fire/unbound-method
+					validator: prop.validator
+				};
+			}
 		}
 
 		if (Object.size(prop.watchers) > 0) {
@@ -178,16 +188,18 @@ export function fillMeta(
 
 	// Computed fields
 
-	Object.entries(computedFields).forEach(([name, computed]) => {
-		if (computed == null || computed.cache !== 'auto') {
-			return;
-		}
+	if (isFirstFill) {
+		Object.entries(computedFields).forEach(([name, computed]) => {
+			if (computed == null || computed.cache !== 'auto') {
+				return;
+			}
 
-		component.computed[name] = {
-			get: computed.get,
-			set: computed.set
-		};
-	});
+			component.computed[name] = {
+				get: computed.get,
+				set: computed.set
+			};
+		});
+	}
 
 	// Methods
 
@@ -196,14 +208,12 @@ export function fillMeta(
 			return;
 		}
 
-		component.methods[name] = wrapper;
+		if (isFirstFill) {
+			component.methods[name] = wrapper;
 
-		if (method.fn == null) {
-			console.log(constructor.name, name);
-		}
-
-		if (wrapper.length !== method.fn.length) {
-			Object.defineProperty(wrapper, 'length', {get: () => method.fn.length});
+			if (wrapper.length !== method.fn.length) {
+				Object.defineProperty(wrapper, 'length', {get: () => method.fn.length});
+			}
 		}
 
 		if (method.watchers != null) {
@@ -245,24 +255,28 @@ export function fillMeta(
 
 	// Modifiers
 
-	const {mods} = component;
+	if (isFirstFill) {
+		const {mods} = component;
 
-	Object.entries(meta.mods).forEach(([key, mod]) => {
-		let defaultValue: CanUndef<ModVal[]>;
+		Object.entries(meta.mods).forEach(([key, mod]) => {
+			let defaultValue: CanUndef<ModVal[]>;
 
-		if (mod != null) {
-			mod.some((val) => {
-				if (Object.isArray(val)) {
-					defaultValue = val;
-					return true;
-				}
+			if (mod != null) {
+				mod.some((val) => {
+					if (Object.isArray(val)) {
+						defaultValue = val;
+						return true;
+					}
 
-				return false;
-			});
+					return false;
+				});
 
-			mods[key] = defaultValue !== undefined ? String(defaultValue[0]) : undefined;
-		}
-	});
+				mods[key] = defaultValue !== undefined ? String(defaultValue[0]) : undefined;
+			}
+		});
+	}
+
+	Object.defineProperty(constructor, ALREADY_PASSED, {value: true});
 
 	return meta;
 }

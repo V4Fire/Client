@@ -69,36 +69,38 @@ export function component(opts?: ComponentOptions): Function {
 			partOf = componentParams.partial != null;
 
 		const
-			componentName = componentInfo.name,
-			hasSameName = !partOf && componentName === componentInfo.parentParams?.name;
+			componentOriginName = componentInfo.name,
+			componentNormalizedName = componentInfo.componentName,
+			hasSameOrigin = !partOf && componentOriginName === componentInfo.parentParams?.name;
 
-		if (hasSameName) {
+		if (hasSameOrigin) {
 			Object.defineProperty(componentInfo.parent!, OVERRIDDEN, {value: true});
 		}
 
-		initEmitter.emit('bindConstructor', componentName);
+		initEmitter.emit('bindConstructor', componentOriginName);
 
 		if (partOf) {
-			let meta = components.get(componentName);
+			pushToInitList(() => {
+				let meta = components.get(componentOriginName);
 
-			if (meta == null) {
-				meta = createMeta(componentInfo);
-				components.set(componentName, meta);
-			}
+				if (meta == null) {
+					meta = createMeta(componentInfo);
+					components.set(componentOriginName, meta);
+				}
 
-			addMethodsToMeta(meta, target);
+				addMethodsToMeta(meta, target);
+			});
+
 			return;
 		}
 
-		if (!Object.isTruly(componentName) || componentParams.root === true || componentInfo.isAbstract) {
-			regComponent();
+		pushToInitList(regComponent);
+
+		if (!Object.isTruly(componentOriginName) || componentParams.root === true || componentInfo.isAbstract) {
+			registerComponent(componentOriginName);
 
 		} else {
-			const initList = componentRegInitializers[componentName] ?? [];
-			componentRegInitializers[componentName] = initList;
-			initList.push(regComponent);
-
-			requestIdleCallback(() => registerComponent(componentName));
+			requestIdleCallback(() => registerComponent(componentOriginName));
 		}
 
 		// If we have a smart component,
@@ -106,22 +108,28 @@ export function component(opts?: ComponentOptions): Function {
 		if (Object.isPlainObject(componentParams.functional)) {
 			component({
 				...opts,
-				name: `${componentName}-functional`,
+				name: `${componentOriginName}-functional`,
 				functional: true
 			})(target);
+		}
+
+		function pushToInitList(init: Function) {
+			const initList = componentRegInitializers[componentOriginName] ?? [];
+			componentRegInitializers[componentOriginName] = initList;
+			initList.push(init);
 		}
 
 		function regComponent(): void {
 			registerParentComponents(componentInfo);
 
-			let rawMeta = components.get(componentName);
+			let rawMeta = components.get(componentNormalizedName);
 
 			if (rawMeta == null) {
 				rawMeta = createMeta(componentInfo);
-				components.set(componentName, rawMeta);
+				components.set(componentNormalizedName, rawMeta);
 
 			} else {
-				rawMeta.constructor = target;
+				rawMeta = {...rawMeta, watchers: {}, constructor: target};
 			}
 
 			const meta = rawMeta;
@@ -130,7 +138,7 @@ export function component(opts?: ComponentOptions): Function {
 				components.set(target, meta);
 			}
 
-			initEmitter.emit(`constructor.${componentName}`, {
+			initEmitter.emit(`constructor.${componentInfo.componentName}`, {
 				meta,
 				parentMeta: componentInfo.parentMeta
 			});
@@ -148,13 +156,13 @@ export function component(opts?: ComponentOptions): Function {
 				}
 
 			} else if (meta.params.root) {
-				rootComponents[componentName] = loadTemplate(getComponent(meta));
+				rootComponents[componentOriginName] = loadTemplate(getComponent(meta));
 
 			} else {
-				const componentDeclArgs = <const>[componentName, loadTemplate(getComponent(meta))];
+				const componentDeclArgs = <const>[componentOriginName, loadTemplate(getComponent(meta))];
 				ComponentEngine.component(...componentDeclArgs);
 
-				if (app.context != null && app.context.component(componentName) == null) {
+				if (app.context != null && app.context.component(componentOriginName) == null) {
 					app.context.component(...componentDeclArgs);
 				}
 			}

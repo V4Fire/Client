@@ -262,7 +262,7 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 ): T {
 	return Object.cast(function resolveComponent(this: ComponentInterface, name: string) {
 		if (SSR) {
-			name = name.replace(isSmartComponent, '');
+			name = isSmartComponent.test(name) ? isSmartComponent.replace(name) : name;
 		}
 
 		const
