@@ -130,9 +130,18 @@ export function component(opts?: ComponentOptions): Function {
 
 			} else {
 				rawMeta = {...rawMeta, watchers: {}, constructor: target};
+
+				rawMeta.params = {
+					...componentInfo.parentParams,
+					...componentInfo.params,
+					// eslint-disable-next-line deprecation/deprecation
+					deprecatedProps: {...componentInfo.parentParams?.deprecatedProps, ...componentInfo.params.deprecatedProps}
+				};
 			}
 
 			const meta = rawMeta;
+
+			components.set(componentOriginName, meta);
 
 			if (componentParams.name == null || !componentInfo.isSmart) {
 				components.set(target, meta);
