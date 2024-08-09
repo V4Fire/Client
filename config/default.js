@@ -44,6 +44,31 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		});
 	},
 
+	/**
+	 * Returns browserslist targets
+	 * @param {string} env - custom environment
+	 */
+	browserslist(env) {
+		if (env == null) {
+			const configEnv = this.environment;
+
+			if (this.webpack.ssr) {
+				env = 'ssr';
+
+			} else if (configEnv === 'production') {
+				env = this.config.build.edition;
+
+			} else {
+				env = 'development';
+			}
+		}
+
+		const
+			browsersListConfig = browserslist.findConfig('.');
+
+		return browsersListConfig[env];
+	},
+
 	src: {
 		/**
 		 * Returns a path to the application dist directory for client scripts
@@ -855,23 +880,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * SWC webpack loader configuration
 		 */
 		swc(env) {
-			if (env == null) {
-				const configEnv = this.config.environment;
-
-				if (this.ssr) {
-					env = 'ssr';
-
-				} else if (configEnv === 'production') {
-					env = this.config.build.edition;
-
-				} else {
-					env = 'development';
-				}
-			}
-
 			const
-				browsersListConfig = browserslist.findConfig('.'),
-				targets = browsersListConfig[env];
+				targets = this.config.browserslist(env);
 
 			const base = {
 				jsc: {
@@ -1101,7 +1111,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @returns {object}
 	 */
 	autoprefixer() {
-		return {remove: false};
+		return {remove: false, env: this.browserslist()};
 	},
 
 	/**
