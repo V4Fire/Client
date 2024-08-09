@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.123 (2024-08-09)
+
+#### :bug: Bug Fix
+
+* Fix the browserslist for correct CSS autoprefixer work
+
 ## v4.0.0-beta.33 (2023-10-18)
 
 #### :rocket: New Feature
