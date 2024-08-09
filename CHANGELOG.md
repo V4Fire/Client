@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.123 (2024-08-09)
+
+#### :bug: Bug Fix
+
+* Fix the browserslist for correct CSS autoprefixer work
+
 ## v4.0.0-beta.122 (2024-08-06)
 
 #### :rocket: New Feature
