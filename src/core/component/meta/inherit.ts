@@ -25,9 +25,7 @@ export function inheritMeta(
 
 	const {
 		params: pParams,
-
 		props: pProps,
-		mods: pMods,
 
 		fields: pFields,
 		tiedFields: pTiedFields,
@@ -155,8 +153,17 @@ export function inheritMeta(
 
 	// Modifiers inheritance
 
-	const
-		{mods} = meta;
+	if (meta.params.partial != null) {
+		inheritMods(meta, parentMeta);
+	}
+
+	return meta;
+}
+
+export function inheritMods(meta: ComponentMeta, parentMeta: ComponentMeta): void {
+	const {mods: pMods} = parentMeta;
+
+	const {mods} = meta;
 
 	Object.keys(pMods).forEach((name) => {
 		const
@@ -220,6 +227,4 @@ export function inheritMeta(
 			mods[name] = parentMods;
 		}
 	});
-
-	return meta;
 }

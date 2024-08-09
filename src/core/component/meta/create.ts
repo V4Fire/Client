@@ -29,7 +29,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		params: component.params,
 
 		props: {},
-		mods: getComponentMods(component),
+		mods: component.params.partial == null ? getComponentMods(component) : {},
 
 		fields: {},
 		tiedFields: {},

@@ -258,7 +258,7 @@ export function fillMeta(
 	if (isFirstFill) {
 		const {mods} = component;
 
-		Object.entries(meta.mods).forEach(([key, mod]) => {
+		Object.entries(meta.mods).forEach(([name, mod]) => {
 			let defaultValue: CanUndef<ModVal[]>;
 
 			if (mod != null) {
@@ -271,7 +271,7 @@ export function fillMeta(
 					return false;
 				});
 
-				mods[key] = defaultValue !== undefined ? String(defaultValue[0]) : undefined;
+				mods[name] = defaultValue !== undefined ? String(defaultValue[0]) : undefined;
 			}
 		});
 	}

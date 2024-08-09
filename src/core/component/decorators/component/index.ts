@@ -25,8 +25,8 @@ import {
 } from 'core/component/const';
 
 import { initEmitter } from 'core/component/event';
-import { createMeta, fillMeta, attachTemplatesToMeta, addMethodsToMeta } from 'core/component/meta';
-import { getInfoFromConstructor } from 'core/component/reflect';
+import { createMeta, fillMeta, inheritMods, attachTemplatesToMeta, addMethodsToMeta } from 'core/component/meta';
+import { getComponentMods, getInfoFromConstructor } from 'core/component/reflect';
 
 import { getComponent, ComponentEngine } from 'core/component/engines';
 import { registerComponent, registerParentComponents } from 'core/component/init';
@@ -129,7 +129,14 @@ export function component(opts?: ComponentOptions): Function {
 				components.set(componentNormalizedName, rawMeta);
 
 			} else {
-				rawMeta = {...rawMeta, watchers: {}, constructor: target};
+				const newTarget = target !== rawMeta.constructor;
+
+				rawMeta = {
+					...rawMeta,
+					watchers: {},
+					constructor: target,
+					mods: newTarget ? getComponentMods(componentInfo) : rawMeta.mods
+				};
 
 				rawMeta.params = {
 					...componentInfo.parentParams,
@@ -137,6 +144,10 @@ export function component(opts?: ComponentOptions): Function {
 					// eslint-disable-next-line deprecation/deprecation
 					deprecatedProps: {...componentInfo.parentParams?.deprecatedProps, ...componentInfo.params.deprecatedProps}
 				};
+
+				if (newTarget && componentInfo.parentMeta != null) {
+					inheritMods(rawMeta, componentInfo.parentMeta);
+				}
 			}
 
 			const meta = rawMeta;
