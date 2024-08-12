@@ -22,7 +22,7 @@ const importRgxp = new RegExp(
 
 const
 	hasImport = importRgxp.removeFlags('g'),
-	isESImport = typescript().client.compilerOptions.module === 'ES2020',
+	isESImport = !ssr && typescript().client.compilerOptions.module === 'ES2020',
 	fatHTML = webpack.fatHTML();
 
 /**

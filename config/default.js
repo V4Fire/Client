@@ -981,7 +981,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		this.extend(server, {
 			compilerOptions: {
-				module: 'commonjs',
+				module,
+				esModuleInterop: false,
 				target: 'es2020'
 			}
 		});

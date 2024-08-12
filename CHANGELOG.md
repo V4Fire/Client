@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fix dynamic component import transformer for ssr build `build/monic`
+* Fix typescript config for ssr build with swc
+
 ## v4.0.0-beta.124 (2024-08-12)
 
 #### :house: Internal
