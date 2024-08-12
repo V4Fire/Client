@@ -18,6 +18,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fix dynamic component import transformer for ssr build `build/monic`
 * Fix typescript config for ssr build with swc
 
+## v4.0.0-beta.124 (2024-08-12)
+
+#### :house: Internal
+
+* Updated `monic-loader` to version `3.0.5` to include a fix for the rebuild speed regression
+
 ## v4.0.0-beta.123 (2024-08-09)
 
 #### :bug: Bug Fix
