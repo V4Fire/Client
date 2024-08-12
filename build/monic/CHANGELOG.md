@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.125 (2024-08-12)
+
+#### :bug: Bug Fix
+
+* Fixed the dynamic component import transformer for the SSR build
+
 ## v4.0.0-beta.97 (2024-05-21)
 
 #### :bug: Bug Fix

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.125 (2024-08-12)
+
+#### :bug: Bug Fix
+
+* Fixed the TypeScript configuration for SSR builds using SWC
+
 ## v4.0.0-beta.123 (2024-08-09)
 
 #### :bug: Bug Fix
