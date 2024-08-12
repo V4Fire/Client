@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-08-??)
+
+#### :house: Internal
+
+* Updated `monic-loader` to version `3.0.5` to include a fix for the rebuild speed regression
+
 ## v4.0.0-beta.123 (2024-08-09)
 
 #### :bug: Bug Fix
