@@ -88,7 +88,9 @@ export function component(opts?: ComponentOptions): Function {
 					components.set(componentOriginName, meta);
 				}
 
-				addMethodsToMeta(meta, target);
+				initEmitter.once(`constructor.${componentInfo.componentName}`, () => {
+					addMethodsToMeta(meta!, target);
+				});
 			});
 
 			return;
@@ -131,26 +133,40 @@ export function component(opts?: ComponentOptions): Function {
 			} else {
 				const newTarget = target !== rawMeta.constructor;
 
-				rawMeta = {
-					...rawMeta,
-					watchers: {},
-					constructor: target,
-					mods: newTarget ? getComponentMods(componentInfo) : rawMeta.mods
-				};
+				rawMeta = Object.create(rawMeta, {
+					constructor: {
+						enumerable: true,
+						writable: true,
+						configurable: true,
+						value: target
+					},
 
-				rawMeta.params = {
-					...componentInfo.parentParams,
-					...componentInfo.params,
-					// eslint-disable-next-line deprecation/deprecation
-					deprecatedProps: {...componentInfo.parentParams?.deprecatedProps, ...componentInfo.params.deprecatedProps}
-				};
+					mods: {
+						enumerable: true,
+						writable: true,
+						configurable: true,
+						value: newTarget ? getComponentMods(componentInfo) : rawMeta.mods
+					},
+
+					params: {
+						enumerable: true,
+						writable: true,
+						configurable: true,
+						value: {
+							...componentInfo.parentParams,
+							...componentInfo.params,
+							// eslint-disable-next-line deprecation/deprecation
+							deprecatedProps: {...componentInfo.parentParams?.deprecatedProps, ...componentInfo.params.deprecatedProps}
+						}
+					}
+				});
 
 				if (newTarget && componentInfo.parentMeta != null) {
-					inheritMods(rawMeta, componentInfo.parentMeta);
+					inheritMods(rawMeta!, componentInfo.parentMeta);
 				}
 			}
 
-			const meta = rawMeta;
+			const meta = rawMeta!;
 
 			components.set(componentOriginName, meta);
 

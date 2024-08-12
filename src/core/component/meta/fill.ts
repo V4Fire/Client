@@ -18,6 +18,7 @@ import type { ComponentConstructor, ComponentMeta, ModVal } from 'core/component
 
 const
 	ALREADY_PASSED = Symbol('This target is passed'),
+	BLUEPRINT = Symbol('This is a meta blueprint'),
 	INSTANCE = Symbol('The component instance');
 
 /**
@@ -38,6 +39,27 @@ export function fillMeta(
 
 	// For smart components, this method can be called more than once
 	const isFirstFill = !constructor.hasOwnProperty(ALREADY_PASSED);
+
+	if (meta[BLUEPRINT] == null) {
+		Object.defineProperty(meta, BLUEPRINT, {
+			value: {
+				watchers: meta.watchers,
+				hooks: meta.hooks
+			}
+		});
+	}
+
+	const blueprint: Pick<
+		ComponentMeta,
+		'watchers' | 'hooks'
+	> = meta[BLUEPRINT];
+
+	Object.assign(meta, {
+		watchers: {...blueprint.watchers},
+		hooks: Object.fromEntries(
+			Object.entries(blueprint.hooks).map(([key, val]) => [key, val.slice()])
+		)
+	});
 
 	const {
 		component,
