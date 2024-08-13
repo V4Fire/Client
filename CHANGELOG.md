@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :house: Internal
+
+* [The performance option is enabled in the Vue3 config](https://github.com/V4Fire/Client/issues/1389)
+
 ## v4.0.0-beta.125 (2024-08-12)
 
 #### :bug: Bug Fix
