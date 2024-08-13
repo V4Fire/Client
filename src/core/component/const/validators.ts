@@ -23,7 +23,11 @@ const componentPrefixes = new Set([
  * ```
  */
 export const isComponent = {
-	test(name: string): boolean {
+	test(name: Nullable<string>): boolean {
+		if (name == null) {
+			return false;
+		}
+
 		return componentPrefixes.has(name.slice(0, 2)) && !name.includes(' ', 2);
 	}
 };

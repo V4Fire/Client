@@ -153,7 +153,7 @@ export function inheritMeta(
 
 	// Modifiers inheritance
 
-	if (meta.params.partial != null) {
+	if (meta.params.partial == null) {
 		inheritMods(meta, parentMeta);
 	}
 

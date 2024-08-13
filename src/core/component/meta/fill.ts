@@ -99,7 +99,7 @@ export function fillMeta(
 		defaultProps = params.defaultProps !== false,
 		canWatchProps = !SSR && !isRoot && !isFunctional;
 
-	Object.entries(meta.props).forEach(([name, prop]) => {
+	Object.entries(meta.props).forEach(([propName, prop]) => {
 		if (prop == null) {
 			return;
 		}
@@ -110,7 +110,7 @@ export function fillMeta(
 				skipDefault = true;
 
 			if (defaultProps || prop.forceDefault) {
-				const defaultInstanceValue = meta.instance[name];
+				const defaultInstanceValue = meta.instance[propName];
 
 				skipDefault = false;
 				getDefault = defaultInstanceValue;
@@ -134,7 +134,7 @@ export function fillMeta(
 			}
 
 			if (!isRoot || defaultValue !== undefined) {
-				(prop.forceUpdate ? component.props : component.attrs)[name] = {
+				(prop.forceUpdate ? component.props : component.attrs)[propName] = {
 					type: prop.type,
 					required: prop.required !== false && defaultProps && defaultValue === undefined,
 
@@ -148,8 +148,8 @@ export function fillMeta(
 		}
 
 		if (Object.size(prop.watchers) > 0) {
-			const watcherListeners = watchers[name] ?? [];
-			watchers[name] = watcherListeners;
+			const watcherListeners = watchers[propName] ?? [];
+			watchers[propName] = watcherListeners;
 
 			prop.watchers.forEach((watcher) => {
 				if (
@@ -164,21 +164,21 @@ export function fillMeta(
 		}
 
 		if (canWatchProps) {
-			const normalizedName = isBinding.test(name) ? isBinding.replace(name) : name;
+			const normalizedName = isBinding.test(propName) ? isBinding.replace(propName) : propName;
 
 			if ((computedFields[normalizedName] ?? accessors[normalizedName]) != null) {
 				const props = watchPropDependencies.get(normalizedName) ?? new Set();
 
-				props.add(name);
+				props.add(propName);
 				watchPropDependencies.set(normalizedName, props);
 
 			} else {
 				watchDependencies.forEach((deps, path) => {
 					deps.some((dep) => {
-						if ((Object.isArray(dep) ? dep : dep.split('.', 1))[0] === name) {
+						if ((Object.isArray(dep) ? dep : dep.split('.', 1))[0] === propName) {
 							const props = watchPropDependencies.get(path) ?? new Set();
 
-							props.add(name);
+							props.add(propName);
 							watchPropDependencies.set(path, props);
 
 							return true;
@@ -194,15 +194,15 @@ export function fillMeta(
 	// Fields
 
 	[meta.systemFields, meta.fields].forEach((field) => {
-		Object.entries(field).forEach(([name, field]) => {
+		Object.entries(field).forEach(([fieldName, field]) => {
 			field?.watchers?.forEach((watcher) => {
 				if (isFunctional && watcher.functional === false) {
 					return;
 				}
 
-				const watcherListeners = watchers[name] ?? [];
+				const watcherListeners = watchers[fieldName] ?? [];
 
-				watchers[name] = watcherListeners;
+				watchers[fieldName] = watcherListeners;
 				watcherListeners.push(watcher);
 			});
 		});
@@ -225,13 +225,13 @@ export function fillMeta(
 
 	// Methods
 
-	Object.entries(methods).forEach(([name, method]) => {
+	Object.entries(methods).forEach(([methodName, method]) => {
 		if (method == null) {
 			return;
 		}
 
 		if (isFirstFill) {
-			component.methods[name] = wrapper;
+			component.methods[methodName] = wrapper;
 
 			if (wrapper.length !== method.fn.length) {
 				Object.defineProperty(wrapper, 'length', {get: () => method.fn.length});
@@ -239,17 +239,17 @@ export function fillMeta(
 		}
 
 		if (method.watchers != null) {
-			Object.entries(method.watchers).forEach(([name, watcher]) => {
+			Object.entries(method.watchers).forEach(([watcherName, watcher]) => {
 				if (watcher == null || isFunctional && watcher.functional === false) {
 					return;
 				}
 
-				const watcherListeners = watchers[name] ?? [];
-				watchers[name] = watcherListeners;
+				const watcherListeners = watchers[watcherName] ?? [];
+				watchers[watcherName] = watcherListeners;
 
 				watcherListeners.push({
 					...watcher,
-					method: name,
+					method: methodName,
 					args: Array.concat([], watcher.args),
 					handler: Object.cast(method.fn)
 				});
@@ -259,13 +259,13 @@ export function fillMeta(
 		// Method hooks
 
 		if (method.hooks) {
-			Object.entries(method.hooks).forEach(([name, hook]) => {
+			Object.entries(method.hooks).forEach(([hookName, hook]) => {
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (hook == null || isFunctional && hook.functional === false) {
 					return;
 				}
 
-				hooks[name].push({...hook, fn: method.fn});
+				hooks[hookName].push({...hook, fn: method.fn});
 			});
 		}
 
@@ -280,7 +280,7 @@ export function fillMeta(
 	if (isFirstFill) {
 		const {mods} = component;
 
-		Object.entries(meta.mods).forEach(([name, mod]) => {
+		Object.entries(meta.mods).forEach(([modsName, mod]) => {
 			let defaultValue: CanUndef<ModVal[]>;
 
 			if (mod != null) {
@@ -293,7 +293,7 @@ export function fillMeta(
 					return false;
 				});
 
-				mods[name] = defaultValue !== undefined ? String(defaultValue[0]) : undefined;
+				mods[modsName] = defaultValue !== undefined ? String(defaultValue[0]) : undefined;
 			}
 		});
 	}
