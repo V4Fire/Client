@@ -29,7 +29,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 	});
 
 	test.describe('`request` prop was changed', () => {
-		test('should reset state and reload the component data', async ({page}) => {
+		test('should reset state and reload the component data', async () => {
 			const
 				chunkSize = [12, 20];
 
@@ -95,7 +95,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 		});
 	});
 
-	['reset', 'reset.silence', 'reset.load', 'reset.load.silence'].forEach((event, i) => {
+	['reset', 'reset.silence', 'reset.load', 'reset.load.silence'].forEach((event) => {
 		test.describe(`${event} fired`, () => {
 			test('should reset state and reload the component data', async () => {
 				const
