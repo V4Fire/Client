@@ -25,7 +25,7 @@ import {
 } from 'core/component/const';
 
 import { initEmitter } from 'core/component/event';
-import { createMeta, fillMeta, inheritMods, attachTemplatesToMeta, addMethodsToMeta } from 'core/component/meta';
+import { createMeta, fillMeta, inheritMods, inheritParams, attachTemplatesToMeta, addMethodsToMeta } from 'core/component/meta';
 import { getComponentMods, getInfoFromConstructor } from 'core/component/reflect';
 
 import { getComponent, ComponentEngine } from 'core/component/engines';
@@ -33,8 +33,7 @@ import { registerComponent, registerParentComponents } from 'core/component/init
 
 import type { ComponentConstructor, ComponentOptions } from 'core/component/interface';
 
-const
-	OVERRIDDEN = Symbol('This class is overridden');
+const OVERRIDDEN = Symbol('This class is overridden in the child layer');
 
 /**
  * Registers a new component based on the tied class
@@ -66,20 +65,20 @@ export function component(opts?: ComponentOptions): Function {
 		const
 			componentInfo = getInfoFromConstructor(target, opts),
 			componentParams = componentInfo.params,
-			partOf = componentParams.partial != null;
+			isPartial = componentParams.partial != null;
 
 		const
 			componentOriginName = componentInfo.name,
 			componentNormalizedName = componentInfo.componentName,
-			hasSameOrigin = !partOf && componentOriginName === componentInfo.parentParams?.name;
+			hasSameOrigin = !isPartial && componentOriginName === componentInfo.parentParams?.name;
 
 		if (hasSameOrigin) {
-			Object.defineProperty(componentInfo.parent!, OVERRIDDEN, {value: true});
+			Object.defineProperty(componentInfo.parent, OVERRIDDEN, {value: true});
 		}
 
 		initEmitter.emit('bindConstructor', componentOriginName);
 
-		if (partOf) {
+		if (isPartial) {
 			pushToInitList(() => {
 				let meta = components.get(componentOriginName);
 
@@ -88,9 +87,7 @@ export function component(opts?: ComponentOptions): Function {
 					components.set(componentOriginName, meta);
 				}
 
-				initEmitter.once(`constructor.${componentInfo.componentName}`, () => {
-					addMethodsToMeta(meta!, target);
-				});
+				initEmitter.once(`constructor.${componentOriginName}`, addMethodsToMeta.bind(null, meta, target));
 			});
 
 			return;
@@ -98,11 +95,16 @@ export function component(opts?: ComponentOptions): Function {
 
 		pushToInitList(regComponent);
 
-		if (!Object.isTruly(componentOriginName) || componentParams.root === true || componentInfo.isAbstract) {
+		const needRegisterImmediate =
+			componentInfo.isAbstract ||
+			componentParams.root === true ||
+			!Object.isTruly(componentOriginName);
+
+		if (needRegisterImmediate) {
 			registerComponent(componentOriginName);
 
 		} else {
-			requestIdleCallback(() => registerComponent(componentOriginName));
+			requestIdleCallback(registerComponent.bind(null, componentOriginName));
 		}
 
 		// If we have a smart component,
@@ -115,13 +117,7 @@ export function component(opts?: ComponentOptions): Function {
 			})(target);
 		}
 
-		function pushToInitList(init: Function) {
-			const initList = componentRegInitializers[componentOriginName] ?? [];
-			componentRegInitializers[componentOriginName] = initList;
-			initList.push(init);
-		}
-
-		function regComponent(): void {
+		function regComponent() {
 			registerParentComponents(componentInfo);
 
 			let rawMeta = components.get(componentNormalizedName);
@@ -135,46 +131,44 @@ export function component(opts?: ComponentOptions): Function {
 
 				rawMeta = Object.create(rawMeta, {
 					constructor: {
+						configurable: true,
 						enumerable: true,
 						writable: true,
-						configurable: true,
 						value: target
 					},
 
 					mods: {
+						configurable: true,
 						enumerable: true,
 						writable: true,
-						configurable: true,
 						value: newTarget ? getComponentMods(componentInfo) : rawMeta.mods
 					},
 
 					params: {
+						configurable: true,
 						enumerable: true,
 						writable: true,
-						configurable: true,
-						value: {
-							...componentInfo.parentParams,
-							...componentInfo.params,
-							// eslint-disable-next-line deprecation/deprecation
-							deprecatedProps: {...componentInfo.parentParams?.deprecatedProps, ...componentInfo.params.deprecatedProps}
-						}
+						value: componentInfo.params
 					}
 				});
 
-				if (newTarget && componentInfo.parentMeta != null) {
-					inheritMods(rawMeta!, componentInfo.parentMeta);
+				if (rawMeta != null && componentInfo.parentMeta != null) {
+					inheritParams(rawMeta, componentInfo.parentMeta);
+
+					if (newTarget) {
+						inheritMods(rawMeta, componentInfo.parentMeta);
+					}
 				}
 			}
 
 			const meta = rawMeta!;
-
 			components.set(componentOriginName, meta);
 
 			if (componentParams.name == null || !componentInfo.isSmart) {
 				components.set(target, meta);
 			}
 
-			initEmitter.emit(`constructor.${componentInfo.componentName}`, {
+			initEmitter.emit(`constructor.${componentNormalizedName}`, {
 				meta,
 				parentMeta: componentInfo.parentMeta
 			});
@@ -238,6 +232,12 @@ export function component(opts?: ComponentOptions): Function {
 					return resolve(component);
 				}
 			}
+		}
+
+		function pushToInitList(init: Function) {
+			const initList = componentRegInitializers[componentOriginName] ?? [];
+			componentRegInitializers[componentOriginName] = initList;
+			initList.push(init);
 		}
 	};
 }

@@ -24,7 +24,6 @@ export function inheritMeta(
 		metaPointer = metaPointers[meta.componentName];
 
 	const {
-		params: pParams,
 		props: pProps,
 
 		fields: pFields,
@@ -39,13 +38,7 @@ export function inheritMeta(
 
 	// Component parameters inheritance
 
-	meta.params = {
-		...pParams,
-		...meta.params,
-		name: meta.params.name,
-		// eslint-disable-next-line deprecation/deprecation
-		deprecatedProps: {...pParams.deprecatedProps, ...meta.params.deprecatedProps}
-	};
+	inheritParams(meta, parentMeta);
 
 	// Watcher dependencies inheritance
 
@@ -158,6 +151,17 @@ export function inheritMeta(
 	}
 
 	return meta;
+}
+
+export function inheritParams(meta: ComponentMeta, parentMeta: ComponentMeta): void {
+	meta.params = {
+		...parentMeta.params,
+		...meta.params,
+		name: meta.params.name,
+
+		// eslint-disable-next-line deprecation/deprecation
+		deprecatedProps: {...parentMeta.params.deprecatedProps, ...meta.params.deprecatedProps}
+	};
 }
 
 export function inheritMods(meta: ComponentMeta, parentMeta: ComponentMeta): void {
