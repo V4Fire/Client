@@ -9,8 +9,7 @@
 import { defProp } from 'core/const/props';
 import type { ComponentMeta } from 'core/component/interface';
 
-const
-	ALREADY_PASSED = Symbol('This target is passed');
+const ALREADY_PASSED = Symbol('This target is passed');
 
 /**
  * Loops through the prototype of the passed component constructor and

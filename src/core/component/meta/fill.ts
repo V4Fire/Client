@@ -49,11 +49,15 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 	const blueprint: CanNull<Pick<ComponentMeta, 'watchers' | 'hooks'>> = meta[BLUEPRINT];
 
 	if (blueprint != null) {
+		const hooks = {};
+
+		Object.entries(blueprint.hooks).forEach(([name, handlers]) => {
+			hooks[name] = handlers.slice();
+		});
+
 		Object.assign(meta, {
-			watchers: {...blueprint.watchers},
-			hooks: Object.fromEntries(
-				Object.entries(blueprint.hooks).map(([key, val]) => [key, val.slice()])
-			)
+			hooks,
+			watchers: {...blueprint.watchers}
 		});
 	}
 
