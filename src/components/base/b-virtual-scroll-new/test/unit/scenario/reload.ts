@@ -148,13 +148,6 @@ test.describe('<b-virtual-scroll-new>', () => {
 					'renderDone'
 				]);
 
-				const initLoadArgs = [
-					[[], []],
-					[[], [undefined, {silent: true}]],
-					[[], []],
-					[[], [undefined, {silent: true}]]
-				];
-
 				await test.expect(component.waitForChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
 			});
 		});
