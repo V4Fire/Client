@@ -144,7 +144,7 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 			}
 		}
 
-		if (Object.size(prop.watchers) > 0) {
+		if (prop.watchers != null && Object.size(prop.watchers) > 0) {
 			const watcherListeners = watchers[propName] ?? [];
 			watchers[propName] = watcherListeners;
 
