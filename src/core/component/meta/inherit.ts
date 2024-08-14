@@ -183,7 +183,7 @@ export function inheritMods(meta: ComponentMeta, parentMeta: ComponentMeta): voi
 		if (currentModValues != null) {
 			const values = Object.createDict<ModDeclVal>();
 
-			currentModValues.forEach((modVal, i) => {
+			currentModValues.slice().forEach((modVal, i) => {
 				if (modVal !== PARENT) {
 					const modName = String(modVal);
 
