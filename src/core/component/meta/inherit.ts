@@ -7,7 +7,9 @@
  */
 
 import { metaPointers, PARENT } from 'core/component/const';
-import type { ComponentMeta, ModDeclVal, FieldWatcher } from 'core/component/interface';
+
+import type { ModDeclVal, FieldWatcher } from 'core/component/interface';
+import type { ComponentMeta } from 'core/component/meta/interface';
 
 /**
  * Inherits the specified metaobject from another one.
@@ -16,219 +18,208 @@ import type { ComponentMeta, ModDeclVal, FieldWatcher } from 'core/component/int
  * @param meta
  * @param parentMeta
  */
-export function inheritMeta(
-	meta: ComponentMeta,
-	parentMeta: ComponentMeta
-): ComponentMeta {
-	const
-		metaPointer = metaPointers[meta.componentName];
+export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): ComponentMeta {
+	const metaPointer = metaPointers[meta.componentName];
 
-	const {
-		props: pProps,
+	Object.assign(meta.tiedFields, parentMeta.tiedFields);
 
-		fields: pFields,
-		tiedFields: pTiedFields,
-		computedFields: pComputedFields,
-		systemFields: pSystemFields,
-
-		accessors: pAccessors,
-		methods: pMethods,
-		watchDependencies: pWatchDependencies
-	} = parentMeta;
-
-	// Component parameters inheritance
+	if (parentMeta.watchDependencies.size > 0) {
+		meta.watchDependencies = new Map(parentMeta.watchDependencies);
+	}
 
 	inheritParams(meta, parentMeta);
+	inheritProp(meta.props, parentMeta.props);
 
-	// Watcher dependencies inheritance
+	inheritField(meta.fields, parentMeta.fields);
+	inheritField(meta.systemFields, parentMeta.systemFields);
 
-	if (meta.watchDependencies.size > 0) {
-		pWatchDependencies.forEach((deps, path) => {
-			meta.watchDependencies.set(path, (meta.watchDependencies.get(path) ?? []).concat(deps));
-		});
+	inheritAccessors(meta.accessors, parentMeta.accessors);
+	inheritAccessors(meta.computedFields, parentMeta.computedFields);
 
-	} else {
-		meta.watchDependencies = new Map(pWatchDependencies);
-	}
-
-	// Props/fields inheritance
-
-	{
-		const list = [
-			[meta.props, pProps],
-			[meta.fields, pFields],
-			[meta.systemFields, pSystemFields]
-		];
-
-		list.forEach(([store, parent]) => {
-			Object.entries(parent).forEach(([key, parent]) => {
-				if (parent == null) {
-					return;
-				}
-
-				if (metaPointer == null || !metaPointer[key]) {
-					store[key] = parent;
-					return;
-				}
-
-				let
-					after: CanUndef<Set<string>>,
-					watchers: CanUndef<Map<FieldWatcher['handler'], FieldWatcher>>;
-
-				parent.watchers?.forEach((watcher: FieldWatcher) => {
-					watchers ??= new Map();
-					watchers.set(watcher.handler, {...watcher});
-				});
-
-				if ('after' in parent) {
-					parent.after?.forEach((name: string) => {
-						after ??= new Set();
-						after.add(name);
-					});
-				}
-
-				store[key] = {...parent, after, watchers};
-			});
-		});
-	}
-
-	// Tied fields inheritance
-
-	Object.assign(meta.tiedFields, pTiedFields);
-
-	// Accessors inheritance
-
-	{
-		const list = [
-			[meta.computedFields, pComputedFields],
-			[meta.accessors, pAccessors]
-		];
-
-		list.forEach(([store, parentObj]) => {
-			Object.entries(parentObj).forEach(([key, parent]) => store[key] = {...parent!});
-		});
-	}
-
-	// Methods inheritance
-
-	const
-		{methods} = meta;
-
-	Object.entries(pMethods).forEach(([key, parent]) => {
-		if (parent == null) {
-			return;
-		}
-
-		if (metaPointer == null || !metaPointer[key]) {
-			methods[key] = {...parent};
-			return;
-		}
-
-		const
-			watchers = {},
-			hooks = {};
-
-		if (parent.watchers != null) {
-			Object.entries(parent.watchers).forEach(([key, val]) => watchers[key] = {...val});
-		}
-
-		if (parent.hooks != null) {
-			Object.entries(parent.hooks).forEach(([key, hook]) => {
-				hooks[key] = {
-					...hook,
-					after: Object.size(hook.after) > 0 ? new Set(hook.after) : undefined
-				};
-			});
-		}
-
-		methods[key] = {...parent, watchers, hooks};
-	});
-
-	// Modifiers inheritance
+	inheritMethods(meta.methods, parentMeta.methods);
 
 	if (meta.params.partial == null) {
 		inheritMods(meta, parentMeta);
 	}
 
 	return meta;
+
+	function inheritProp(current: ComponentMeta['props'], parent: ComponentMeta['props']) {
+		Object.entries(parent).forEach(([propName, parent]) => {
+			if (parent == null) {
+				return;
+			}
+
+			if (metaPointer == null || !metaPointer[propName]) {
+				current[propName] = parent;
+				return;
+			}
+
+			let watchers: CanUndef<Map<FieldWatcher['handler'], FieldWatcher>>;
+
+			parent.watchers?.forEach((watcher: FieldWatcher) => {
+				watchers ??= new Map();
+				watchers.set(watcher.handler, {...watcher});
+			});
+
+			current[propName] = {...parent, watchers};
+		});
+	}
+
+	function inheritField(current: ComponentMeta['fields'], parent: ComponentMeta['fields']) {
+		Object.entries(parent).forEach(([fieldName, parent]) => {
+			if (parent == null) {
+				return;
+			}
+
+			if (metaPointer == null || !metaPointer[fieldName]) {
+				current[fieldName] = parent;
+				return;
+			}
+
+			let
+				after: CanUndef<Set<string>>,
+				watchers: CanUndef<Map<FieldWatcher['handler'], FieldWatcher>>;
+
+			parent.watchers?.forEach((watcher: FieldWatcher) => {
+				watchers ??= new Map();
+				watchers.set(watcher.handler, {...watcher});
+			});
+
+			parent.after?.forEach((name: string) => {
+				after ??= new Set();
+				after.add(name);
+			});
+
+			current[fieldName] = {...parent, after, watchers};
+		});
+	}
+
+	function inheritAccessors(current: ComponentMeta['accessors'], parent: ComponentMeta['accessors']) {
+		Object.entries(parent).forEach(([accessorName, parent]) => {
+			current[accessorName] = {...parent!};
+		});
+	}
+
+	function inheritMethods(current: ComponentMeta['methods'], parent: ComponentMeta['methods']) {
+		Object.entries(parent).forEach(([methodName, parent]) => {
+			if (parent == null) {
+				return;
+			}
+
+			if (metaPointer == null || !metaPointer[methodName]) {
+				current[methodName] = {...parent};
+				return;
+			}
+
+			const
+				watchers = {},
+				hooks = {};
+
+			if (parent.watchers != null) {
+				Object.entries(parent.watchers).forEach(([key, val]) => {
+					watchers[key] = {...val};
+				});
+			}
+
+			if (parent.hooks != null) {
+				Object.entries(parent.hooks).forEach(([key, hook]) => {
+					hooks[key] = {
+						...hook,
+						after: Object.size(hook.after) > 0 ? new Set(hook.after) : undefined
+					};
+				});
+			}
+
+			current[methodName] = {...parent, watchers, hooks};
+		});
+	}
 }
 
+/**
+ * Inherits the `params` property for a given metaobject based on the parent one.
+ * This function modifies the original object.
+ *
+ * @param meta
+ * @param parentMeta
+ */
 export function inheritParams(meta: ComponentMeta, parentMeta: ComponentMeta): void {
+	/* eslint-disable deprecation/deprecation */
+
+	const
+		deprecatedProps = meta.params.deprecatedProps ?? {},
+		parentDeprecatedProps = parentMeta.params.deprecatedProps;
+
 	meta.params = {
 		...parentMeta.params,
 		...meta.params,
-		name: meta.params.name,
 
-		// eslint-disable-next-line deprecation/deprecation
-		deprecatedProps: {...parentMeta.params.deprecatedProps, ...meta.params.deprecatedProps}
+		deprecatedProps,
+		name: meta.params.name
 	};
+
+	if (parentDeprecatedProps != null && Object.keys(parentDeprecatedProps).length > 0) {
+		meta.params.deprecatedProps = {...parentDeprecatedProps, ...deprecatedProps};
+	}
+
+	/* eslint-enable deprecation/deprecation */
 }
 
+/**
+ * Inherits the `mods` property for a given metaobject based on the parent one.
+ * This function modifies the original object.
+ *
+ * @param meta
+ * @param parentMeta
+ */
 export function inheritMods(meta: ComponentMeta, parentMeta: ComponentMeta): void {
-	const {mods: pMods} = parentMeta;
-
 	const {mods} = meta;
 
-	Object.keys(pMods).forEach((name) => {
+	Object.entries(parentMeta.mods).forEach(([modName, parentModValues]) => {
 		const
-			currentMods = mods[name],
-			parentMods = (pMods[name] ?? []).slice();
+			currentModValues = mods[modName],
+			forkedParentModValues = parentModValues?.slice() ?? [];
 
-		if (currentMods != null) {
+		if (currentModValues != null) {
 			const values = Object.createDict<ModDeclVal>();
 
-			currentMods.slice().forEach((val, i, mods) => {
-				if (val !== PARENT) {
-					if (Object.isArray(val) || !(<string>val in values)) {
-						values[String(val)] = Object.cast(val);
+			currentModValues.forEach((modVal, i) => {
+				if (modVal !== PARENT) {
+					const modName = String(modVal);
+
+					if (Object.isArray(modVal) || !(modName in values)) {
+						values[modName] = <Exclude<typeof modVal, {}>>modVal;
 					}
 
 					return;
 				}
 
-				let
-					hasDefault = false;
+				const hasDefault = currentModValues.some((el) => Object.isArray(el));
 
-				for (let i = 0; i < mods.length; i++) {
-					const
-						el = mods[i];
+				let appliedDefault = !hasDefault;
 
-					if (Object.isArray(el)) {
-						hasDefault = true;
-						break;
-					}
-				}
+				forkedParentModValues.forEach((modVal) => {
+					const modsName = String(modVal);
 
-				let
-					parentDef = !hasDefault;
-
-				parentMods.forEach((val) => {
-					if (!(<string>val in values)) {
-						values[String(val)] = Object.cast(val);
+					if (!(modsName in values)) {
+						values[modsName] = <Exclude<typeof modVal, {}>>modVal;
 					}
 
-					if (!parentDef && Object.isArray(val)) {
-						parentMods[i] = val[0];
-						parentDef = true;
+					if (!appliedDefault && Object.isArray(modVal)) {
+						forkedParentModValues[i] = modVal[0];
+						appliedDefault = true;
 					}
 				});
 
-				currentMods.splice(i, 1, ...parentMods);
+				currentModValues.splice(i, 1, ...forkedParentModValues);
 			});
 
-			const
-				valuesList: ModDeclVal[] = [];
+			mods[modName] = <ModDeclVal[]>Object
+				.values(values)
+				.filter((val) => val !== undefined);
 
-			Object.values(values).forEach((val) => {
-				if (val !== undefined) {
-					valuesList.push(val);
-				}
-			});
-
-			mods[name] = valuesList;
-
-		} else if (!(name in mods)) {
-			mods[name] = parentMods;
+		} else if (!(modName in mods)) {
+			mods[modName] = forkedParentModValues;
 		}
 	});
 }

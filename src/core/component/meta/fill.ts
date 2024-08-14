@@ -17,9 +17,9 @@ import { addMethodsToMeta } from 'core/component/meta/method';
 import type { ComponentConstructor, ComponentMeta, ModVal } from 'core/component/interface';
 
 const
-	ALREADY_PASSED = Symbol('This target is passed'),
-	BLUEPRINT = Symbol('This is a meta blueprint'),
-	INSTANCE = Symbol('The component instance');
+	BLUEPRINT = Symbol('The meta blueprint'),
+	INSTANCE = Symbol('The component instance'),
+	ALREADY_PASSED = Symbol('This constructor is already passed');
 
 /**
  * Populates the passed metaobject with methods and properties from the specified component class constructor
@@ -27,10 +27,7 @@ const
  * @param meta
  * @param [constructor] - the component constructor
  */
-export function fillMeta(
-	meta: ComponentMeta,
-	constructor: ComponentConstructor = meta.constructor
-): ComponentMeta {
+export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor = meta.constructor): ComponentMeta {
 	addMethodsToMeta(meta, constructor);
 
 	if (isAbstractComponent.test(meta.componentName)) {
@@ -40,7 +37,7 @@ export function fillMeta(
 	// For smart components, this method can be called more than once
 	const isFirstFill = !constructor.hasOwnProperty(ALREADY_PASSED);
 
-	if (meta[BLUEPRINT] == null) {
+	if (Object.isDictionary(meta.params.functional) && meta[BLUEPRINT] == null) {
 		Object.defineProperty(meta, BLUEPRINT, {
 			value: {
 				watchers: meta.watchers,
@@ -49,17 +46,16 @@ export function fillMeta(
 		});
 	}
 
-	const blueprint: Pick<
-		ComponentMeta,
-		'watchers' | 'hooks'
-	> = meta[BLUEPRINT];
+	const blueprint: CanNull<Pick<ComponentMeta, 'watchers' | 'hooks'>> = meta[BLUEPRINT];
 
-	Object.assign(meta, {
-		watchers: {...blueprint.watchers},
-		hooks: Object.fromEntries(
-			Object.entries(blueprint.hooks).map(([key, val]) => [key, val.slice()])
-		)
-	});
+	if (blueprint != null) {
+		Object.assign(meta, {
+			watchers: {...blueprint.watchers},
+			hooks: Object.fromEntries(
+				Object.entries(blueprint.hooks).map(([key, val]) => [key, val.slice()])
+			)
+		});
+	}
 
 	const {
 		component,
@@ -115,8 +111,9 @@ export function fillMeta(
 				skipDefault = false;
 				getDefault = defaultInstanceValue;
 
-				// If the default value of a field is set through default values for a class property,
-				// then we need to clone it for each new component instance to ensure that they do not use a shared value
+				// If the default value of a field is set via default values for a class property,
+				// it is necessary to clone this value for each new component instance
+				// to ensure that they do not share the same value
 				const needCloneDefValue =
 					defaultInstanceValue != null && typeof defaultInstanceValue === 'object' &&
 					(!isTypeCanBeFunc(prop.type) || !Object.isFunction(defaultInstanceValue));
@@ -152,10 +149,7 @@ export function fillMeta(
 			watchers[propName] = watcherListeners;
 
 			prop.watchers.forEach((watcher) => {
-				if (
-					isFunctional && watcher.functional === false ||
-					!canWatchProps && !watcher.immediate
-				) {
+				if (isFunctional && watcher.functional === false || !canWatchProps && !watcher.immediate) {
 					return;
 				}
 
@@ -175,7 +169,9 @@ export function fillMeta(
 			} else {
 				watchDependencies.forEach((deps, path) => {
 					deps.some((dep) => {
-						if ((Object.isArray(dep) ? dep : dep.split('.', 1))[0] === propName) {
+						const pathChunks = Object.isArray(dep) ? dep : dep.split('.', 1);
+
+						if (pathChunks[0] === propName) {
 							const props = watchPropDependencies.get(path) ?? new Set();
 
 							props.add(propName);

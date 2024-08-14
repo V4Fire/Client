@@ -13,9 +13,9 @@ import type { PropOptions, InitFieldFn, MergeFieldFn, UniqueFieldFn } from 'core
 import type { ComponentInterface, FieldWatcher, MethodWatcher, Hook } from 'core/component/interface';
 
 export interface ComponentProp extends PropOptions {
-	watchers: Map<string | Function, FieldWatcher>;
 	forceUpdate: boolean;
 	forceDefault?: boolean;
+	watchers?: Map<string | Function, FieldWatcher>;
 	default?: unknown;
 	meta: Dictionary;
 }
@@ -34,8 +34,8 @@ export interface ComponentSystemField<CTX extends ComponentInterface = Component
 }
 
 export interface ComponentField<CTX extends ComponentInterface = ComponentInterface> extends ComponentSystemField<CTX> {
-	watchers?: Map<string | Function, FieldWatcher>;
 	forceUpdate?: boolean;
+	watchers?: Map<string | Function, FieldWatcher>;
 }
 
 export type ComponentAccessorCacheType =
