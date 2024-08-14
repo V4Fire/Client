@@ -24,11 +24,23 @@ import {
 
 } from 'core/component/const';
 
-import { initEmitter } from 'core/component/event';
-import { createMeta, fillMeta, inheritMods, inheritParams, attachTemplatesToMeta, addMethodsToMeta } from 'core/component/meta';
-import { getComponentMods, getInfoFromConstructor } from 'core/component/reflect';
+import {
 
+	createMeta,
+	fillMeta,
+
+	inheritMods,
+	inheritParams,
+
+	attachTemplatesToMeta,
+	addMethodsToMeta
+
+} from 'core/component/meta';
+
+import { initEmitter } from 'core/component/event';
 import { getComponent, ComponentEngine } from 'core/component/engines';
+
+import { getComponentMods, getInfoFromConstructor } from 'core/component/reflect';
 import { registerComponent, registerParentComponents } from 'core/component/init';
 
 import type { ComponentConstructor, ComponentOptions } from 'core/component/interface';
