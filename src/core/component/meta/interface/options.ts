@@ -32,6 +32,27 @@ export interface ComponentOptions {
 	 */
 	name?: string;
 
+	/**
+	 * The name of the component to which this one belongs.
+	 * This option is used when we want to split the component into multiple classes.
+	 *
+	 * Please note that in partial classes,
+	 * there should be no conflicts in methods or properties with other partial classes of this component.
+	 *
+	 * @example
+	 * ```typescript
+	 * @component({partial: 'bExample'})
+	 * class bExampleProps extends iBlock {
+	 *   @prop({type: Number})
+	 *   value: number = 0;
+	 * }
+	 *
+	 * @component()
+	 * class bExample extends bExampleProps {
+	 *
+	 * }
+	 * ```
+	 */
 	partial?: string;
 
 	/**

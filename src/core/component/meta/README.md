@@ -97,12 +97,12 @@ export interface ComponentMeta {
   watchers: Dictionary<WatchObject[]>;
 
   /**
-   * A dictionary that contains the component dependencies to watch in order to invalidate the cache of computed fields
+   * A dictionary that contains the component dependencies to watch to invalidate the cache of computed fields
    */
   watchDependencies: ComponentWatchDependencies;
 
   /**
-   * A dictionary that contains the component prop dependencies to watch in order
+   * A dictionary that contains the component prop dependencies to watch
    * to invalidate the cache of computed fields
    */
   watchPropDependencies: ComponentWatchPropDependencies;
@@ -187,6 +187,16 @@ Forks the metaobject of the passed component and returns the copy.
 
 Inherits the specified metaobject from another one.
 This function modifies the original object and returns it.
+
+### inheritParams
+
+Inherits the `params` property for a given metaobject based on the parent one.
+This function modifies the original object.
+
+### inheritMods
+
+Inherits the `mods` property for a given metaobject based on the parent one.
+This function modifies the original object.
 
 ### fillMeta
 

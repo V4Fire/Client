@@ -18,7 +18,7 @@ export default class bUser extends iBlock {
 ## How to create a component?
 
 To register a new component, generate a simple JS/TS class and apply the `@component` decorator to it.
-You also have the option to pass additional parameters to this decorator.
+You can also pass additional parameters to this decorator.
 For instance, a component can be established as functional.
 
 ```typescript
@@ -38,8 +38,8 @@ export default class bUser extends iBlock {
 
 The `@component` decorator gathers information from other nested decorators within the class.
 Through the use of reflection, this decorator then constructs a unique structure of the [[ComponentMeta]] type.
-Following this, the formed structure is transferred to the utilized component library adapter,
-leading to the creation of an actual component.
+Following this, the constructed structure is transferred to the component library adapter in use,
+resulting in the creation of an actual component.
 
 ## Additional options
 
@@ -81,6 +81,29 @@ class pRoot extends iStaticPage {
 }
 ```
 
+### [partial]
+
+The name of the component to which this one belongs.
+This option is used when we want to split the component into multiple classes.
+
+Please note that in partial classes,
+there should be no conflicts in methods or properties with other partial classes of this component.
+
+```typescript
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
+
+@component({partial: 'bExample'})
+class bExampleProps extends iBlock {
+  @prop({type: Number})
+  value: number = 0;
+}
+
+@component()
+class bExample extends bExampleProps {
+
+}
+```
+
 ### [tpl = `true`]
 
 If set to false, the component uses the default loopback render function instead of loading its own template.
@@ -98,7 +121,7 @@ There are several options available for this parameter:
    depending on the values of its props:
 
    1. If an empty dictionary is passed, the component will always be created as a functional one.
-      However, you still have the option to create it like a regular component using the `v-func` directive.
+      However, you can still create it like a regular component using the `v-func` directive.
 
       ```
       < b-button v-func = false
