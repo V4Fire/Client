@@ -17,7 +17,7 @@ import type { Item, LazyRender, RenderFilter } from 'components/base/b-tree/inte
 import type AsyncRender from 'components/friends/async-render';
 import type { TaskFilter } from 'components/friends/async-render';
 
-@component({partial: 'b-tree'})
+@component({partial: 'bTree'})
 export default abstract class iTreeProps extends iData {
 	/** {@link iItems.Item} */
 	readonly Item!: Item;

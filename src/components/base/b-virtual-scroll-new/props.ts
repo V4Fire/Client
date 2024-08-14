@@ -32,7 +32,7 @@ import type { Observer } from 'components/base/b-virtual-scroll-new/modules/obse
 
 import iData, { component, prop } from 'components/super/i-data/i-data';
 
-@component({partial: 'b-virtual-scroll-new'})
+@component({partial: 'bVirtualScrollNew'})
 export default abstract class iVirtualScrollProps extends iData {
 	/** {@link iItems.item} */
 	readonly Item!: object;

@@ -39,7 +39,7 @@ export * from 'components/super/i-block/providers/interface';
 const
 	$$ = symbolGenerator();
 
-@component({partial: 'i-block'})
+@component({partial: 'iBlock'})
 export default abstract class iBlockProviders extends iBlockState {
 	/** {@link iBlock.dontWaitRemoteProvidersProp} */
 	@system((o) => o.sync.link((val) => {

@@ -14,7 +14,7 @@ import type { Value, FormValue, Validator } from 'components/super/i-input/inter
 
 import { unpackIf } from 'components/super/i-input/modules/helpers';
 
-@component({partial: 'i-input'})
+@component({partial: 'iInput'})
 export default abstract class iInputProps extends iData {
 	/**
 	 * Type: the value of the component

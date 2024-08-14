@@ -35,7 +35,7 @@ import { system, hook } from 'components/super/i-block/decorators';
 
 import iBlockProps from 'components/super/i-block/props';
 
-@component({partial: 'i-block'})
+@component({partial: 'iBlock'})
 export default abstract class iBlockFriends extends iBlockProps {
 	/**
 	 * A class with methods to provide component classes/styles to another component, etc

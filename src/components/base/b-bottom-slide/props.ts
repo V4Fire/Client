@@ -13,7 +13,7 @@ import iBlock, { component, prop } from 'components/super/i-block/i-block';
 import { heightMode } from 'components/base/b-bottom-slide/const';
 import type { HeightMode } from 'components/base/b-bottom-slide/interface';
 
-@component({partial: 'b-bottom-slide'})
+@component({partial: 'bBottomSlide'})
 export default abstract class iBottomSlideProps extends iBlock {
 	/**
 	 * Component height mode:

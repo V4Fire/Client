@@ -20,11 +20,7 @@ import type { RequestParams, RetryRequestFn } from 'components/super/i-data/inte
 const
 	$$ = symbolGenerator();
 
-@component({
-	partial: 'i-data',
-	functional: null
-})
-
+@component({partial: 'iData'})
 export default abstract class iDataHandlers extends iDataData {
 	protected override initGlobalEvents(resetListener?: boolean): void {
 		super.initGlobalEvents(resetListener != null ? resetListener : Boolean(this.dataProvider));

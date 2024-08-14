@@ -12,7 +12,7 @@ import iData, { component, prop } from 'components/super/i-data/i-data';
 import { sliderModes, alignTypes } from 'components/base/b-slider/const';
 import type { Mode, AlignType } from 'components/base/b-slider/interface';
 
-@component({partial: 'b-slider'})
+@component({partial: 'bSlider'})
 export default abstract class iSliderProps extends iData {
 	/** {@link iItems.Item} */
 	readonly Item!: object;

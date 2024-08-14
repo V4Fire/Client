@@ -25,7 +25,7 @@ import iData, {
 import type bButton from 'components/form/b-button/b-button';
 import type { ButtonType } from 'components/form/b-button/interface';
 
-@component({partial: 'b-button'})
+@component({partial: 'bButton'})
 export default abstract class iButtonProps extends iData {
 	override readonly dataProviderProp: DataProviderProp = 'Provider';
 	override readonly defaultRequestFilter: RequestFilter = true;

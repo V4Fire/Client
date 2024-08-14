@@ -59,7 +59,7 @@ import iBlockFriends from 'components/super/i-block/friends';
 const
 	$$ = symbolGenerator();
 
-@component({partial: 'i-block'})
+@component({partial: 'iBlock'})
 export default abstract class iBlockBase extends iBlockFriends {
 	override readonly Component!: iBlock;
 	override readonly Root!: iStaticPage;

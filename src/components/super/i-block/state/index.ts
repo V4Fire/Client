@@ -33,7 +33,7 @@ import type { Stage, ComponentStatus, ComponentStatuses } from 'components/super
 import iBlockMods from 'components/super/i-block/mods';
 import type { Theme } from 'core/theme-manager';
 
-@component({partial: 'i-block'})
+@component({partial: 'iBlock'})
 export default abstract class iBlockState extends iBlockMods {
 	/**
 	 * A list of additional dependencies to load during the component's initialization
