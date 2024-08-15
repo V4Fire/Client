@@ -12,12 +12,14 @@ import type { DecoratorFunctionalOptions } from 'core/component/decorators/inter
 export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
 	/**
 	 * If set to true, the accessor value will be cached after the first touch.
+	 *
 	 * The option is set to true by default if it also provided `dependencies` or the bound accessor matches
 	 * by the name with another prop or field.
+	 *
 	 * If the option value is passed as `auto` caching will be delegated to the used component library.
 	 *
 	 * Also, when an accessor has a logically related prop/field (using the naming convention
-	 * "${property} -> ${property}Prop | ${property}Store") we don't need to add additional dependencies.
+	 * "${property} → ${property}Prop | ${property}Store") we don't need to add additional dependencies.
 	 *
 	 * @example
 	 * ```typescript
@@ -83,10 +85,10 @@ export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
 
 	/**
 	 * A list of dependencies for the accessor.
-	 * The dependencies are needed to watch for the accessor mutations or to invalidate its cache.
+	 * The dependencies are necessary to watch for the accessor mutations or to invalidate its cache.
 	 *
 	 * Also, when an accessor has a logically related prop/field (using the naming convention
-	 * "${property} -> ${property}Prop | ${property}Store") we don't need to add additional dependencies.
+	 * "${property} → ${property}Prop | ${property}Store") we don't need to add additional dependencies.
 	 *
 	 * @example
 	 * ```typescript

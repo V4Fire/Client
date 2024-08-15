@@ -25,7 +25,7 @@ import type {
 } from 'core/component/decorators/interface';
 
 /**
- * Factory to create component property decorators
+ * Factory for creating component property decorators
  *
  * @param cluster - the property cluster to decorate, like `fields` or `systemFields`
  * @param [transformer] - a transformer for the passed decorator parameters
@@ -142,7 +142,7 @@ export function paramsFactory<T = object>(
 								});
 
 							} else {
-								hooks[<string>hook] = wrapOpts({name, hook});
+								hooks[hook] = wrapOpts({name, hook});
 							}
 						});
 					}
@@ -199,8 +199,7 @@ export function paramsFactory<T = object>(
 					p = transformer(p, metaKey);
 				}
 
-				const
-					info = metaCluster[key] ?? {src: meta.componentName};
+				const info = metaCluster[key] ?? {src: meta.componentName};
 
 				let {
 					watchers,
@@ -263,42 +262,38 @@ export function paramsFactory<T = object>(
 				}
 
 				function inheritFromParent() {
-					const
-						invertedMetaKeys = invertedFieldMap[metaKey];
+					const invertedMetaKeys: CanUndef<string[]> = invertedFieldMap[metaKey];
 
-					if (invertedMetaKeys != null) {
-						for (let i = 0; i < invertedMetaKeys.length; i++) {
-							const
-								invertedMetaKey = invertedMetaKeys[i],
-								invertedMetaCluster = meta[invertedMetaKey];
+					invertedMetaKeys?.some((invertedMetaKey) => {
+						const invertedMetaCluster = meta[invertedMetaKey];
 
-							if (key in invertedMetaCluster) {
-								const info = {...invertedMetaCluster[key]};
-								delete info.functional;
+						if (key in invertedMetaCluster) {
+							const info = {...invertedMetaCluster[key]};
+							delete info.functional;
 
-								if (invertedMetaKey === 'prop') {
-									if (Object.isFunction(info.default)) {
-										(<ComponentField>info).init = info.default;
-										delete info.default;
-									}
-
-								} else if (metaKey === 'prop') {
-									delete (<ComponentField>info).init;
+							if (invertedMetaKey === 'prop') {
+								if (Object.isFunction(info.default)) {
+									(<ComponentField>info).init = info.default;
+									delete info.default;
 								}
 
-								metaCluster[key] = info;
-								delete invertedMetaCluster[key];
-
-								break;
+							} else if (metaKey === 'prop') {
+								delete (<ComponentField>info).init;
 							}
+
+							metaCluster[key] = info;
+							delete invertedMetaCluster[key];
+
+							return true;
 						}
-					}
+
+						return false;
+					});
 				}
 			}
 
 			function wrapOpts<T extends Dictionary & DecoratorFunctionalOptions>(opts: T): T {
-				const
-					p = meta.params;
+				const p = meta.params;
 
 				// eslint-disable-next-line eqeqeq
 				if (opts.functional === undefined && p.functional === null) {

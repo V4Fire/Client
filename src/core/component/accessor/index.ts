@@ -96,8 +96,9 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 	Object.entries(meta.computedFields).forEach(([name, computed]) => {
 		const canSkip =
+			computed == null ||
 			component[name] != null ||
-			computed == null || computed.cache === 'auto' ||
+			computed.cache === 'auto' ||
 			!SSR && isFunctional && computed.functional === false;
 
 		if (canSkip) {
@@ -108,11 +109,15 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		const get = function get(this: typeof component): unknown {
 			const {hook} = this;
 
-			// We should not use the getter's cache until the component is fully created,
-			// because until that moment, we cannot track changes to dependent entities
-			// and reset the cache when they change.
+			// If an accessor is set with `cache: true` but dependencies are not explicitly or implicitly specified,
+			// then this field will be cached without the ability to reset the cache
+			const canUseForeverCache = computed.dependencies == null && computed.tiedWith == null;
+
+			// We should not use the getter's cache until the component is fully created.
+			// Because until that moment, we cannot track changes to dependent entities and reset the cache when they change.
 			// This can lead to hard-to-detect errors.
-			const canUseCache = beforeHooks[hook] == null;
+			// Please note that in case of forever caching, we cache immediately.
+			const canUseCache = canUseForeverCache || beforeHooks[hook] == null;
 
 			if (canUseCache && cacheStatus in get) {
 				// If a getter already has a cached result and is used inside a template,
@@ -121,7 +126,9 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 				// but the template is not.
 				// To avoid this problem, we explicitly touch all dependent entities.
 				// For functional components, this problem does not exist, as no change in state can trigger their re-render.
-				if (!isFunctional && hook !== 'created') {
+				const needEffect = !canUseForeverCache && !isFunctional && hook !== 'created';
+
+				if (needEffect) {
 					meta.watchDependencies.get(name)?.forEach((path) => {
 						// @ts-ignore (effect)
 						void this[path];
@@ -142,10 +149,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 			const value = computed.get!.call(this);
 
-			// Due-to-context inheritance in functional components,
-			// we should not cache the computed value until the component is created
-			// @see https://github.com/V4Fire/Client/issues/1292
-			if (!SSR && (canUseCache || !isFunctional)) {
+			if (canUseForeverCache || !SSR && (canUseCache || !isFunctional)) {
 				cachedAccessors.add(get);
 				get[cacheStatus] = value;
 			}

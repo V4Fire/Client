@@ -61,12 +61,14 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				propKey = `${name}Prop`,
 				storeKey = `${name}Store`;
 
-			let metaKey: string;
+			let
+				metaKey: string,
+				tiedWith: CanUndef<object>;
 
 			// Computed fields are cached by default
 			if (
 				name in computedFields ||
-				!(name in accessors) && (props[propKey] ?? fields[storeKey] ?? systemFields[storeKey])
+				!(name in accessors) && (tiedWith = props[propKey] ?? fields[storeKey] ?? systemFields[storeKey])
 			) {
 				metaKey = 'computedFields';
 
@@ -131,6 +133,10 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				get: desc.get ?? old?.get,
 				set
 			});
+
+			if (tiedWith != null) {
+				store[name].tiedWith = tiedWith;
+			}
 		}
 	});
 }
