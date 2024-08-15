@@ -109,9 +109,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		const get = function get(this: typeof component): unknown {
 			const {hook} = this;
 
-			// If an accessor is set with `cache: true` but dependencies are not explicitly or implicitly specified,
-			// then this field will be cached without the ability to reset the cache
-			const canUseForeverCache = computed.dependencies == null && computed.tiedWith == null;
+			const canUseForeverCache = computed.cache === 'forever';
 
 			// We should not use the getter's cache until the component is fully created.
 			// Because until that moment, we cannot track changes to dependent entities and reset the cache when they change.

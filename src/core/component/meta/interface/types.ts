@@ -45,6 +45,7 @@ export interface ComponentField<CTX extends ComponentInterface = ComponentInterf
 
 export type ComponentAccessorCacheType =
 	boolean |
+	'forever' |
 	'auto';
 
 export interface ComponentAccessor<T = unknown> extends Partial<WritableComputedOptions<T>> {
