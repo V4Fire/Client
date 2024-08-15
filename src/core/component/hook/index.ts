@@ -75,42 +75,59 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 		}
 
 		default: {
-			const
-				emitter = new QueueEmitter(),
-				filteredHooks: ComponentHook[] = [];
-
-			hooks.forEach((hook) => {
+			if (hooks.some((hook) => hook.after != null && hook.after.size > 0)) {
 				const
-					nm = hook.name;
+					emitter = new QueueEmitter(),
+					filteredHooks: ComponentHook[] = [];
 
-				if (!hook.once) {
-					filteredHooks.push(hook);
+				hooks.forEach((hook) => {
+					const nm = hook.name;
+
+					if (!hook.once) {
+						filteredHooks.push(hook);
+					}
+
+					emitter.on(hook.after, () => {
+						const res = args.length > 0 ? hook.fn.apply(component, args) : hook.fn.call(component);
+
+						if (Object.isPromise(res)) {
+							return res.then(() => nm != null ? emitter.emit(nm) : undefined);
+						}
+
+						const tasks = nm != null ? emitter.emit(nm) : null;
+
+						if (tasks != null) {
+							return tasks;
+						}
+					});
+				});
+
+				m.hooks[hook] = filteredHooks;
+
+				const tasks = emitter.drain();
+
+				if (Object.isPromise(tasks)) {
+					return tasks;
 				}
 
-				emitter.on(hook.after, () => {
-					const
-						res = args.length > 0 ? hook.fn.apply(component, args) : hook.fn.call(component);
+			} else {
+				const tasks: Array<Promise<unknown>> = [];
+
+				hooks.slice().forEach((hook) => {
+					const res = args.length > 0 ? hook.fn.apply(component, args) : hook.fn.call(component);
+
+					if (hook.once) {
+						hooks.pop();
+					}
 
 					if (Object.isPromise(res)) {
-						return res.then(() => nm != null ? emitter.emit(nm) : undefined);
-					}
-
-					const
-						tasks = nm != null ? emitter.emit(nm) : null;
-
-					if (tasks != null) {
-						return tasks;
+						tasks.push(res);
 					}
 				});
-			});
 
-			m.hooks[hook] = filteredHooks;
-
-			const
-				tasks = emitter.drain();
-
-			if (Object.isPromise(tasks)) {
-				return tasks;
+				if (tasks.length > 0) {
+					return Promise.all(tasks).then(() => undefined);
+				}
 			}
 		}
 	}

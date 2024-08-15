@@ -349,8 +349,7 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 				return;
 			}
 
-			const
-				rootKey = String(info.path[0]);
+			const rootKey = String(info.path[0]);
 
 			// If there has been changed properties that can affect memoized computed fields,
 			// then we need to invalidate these caches
