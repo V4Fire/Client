@@ -80,6 +80,7 @@ export function paramsFactory<T = object>(
 				} else if (
 					p.cache === true ||
 					p.cache === 'auto' ||
+					p.cache === 'forever' ||
 					p.cache !== false && (Object.isArray(p.dependencies) || key in meta.computedFields)
 				) {
 					metaKey = 'computedFields';
