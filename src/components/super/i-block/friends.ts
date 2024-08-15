@@ -7,8 +7,8 @@
  */
 
 import * as browser from 'core/browser';
-import * as presets from 'components/presets';
 import * as helpers from 'core/helpers';
+import * as presets from 'components/presets';
 
 import Daemons, { DaemonsDict } from 'components/friends/daemons';
 import Analytics from 'components/friends/analytics';
@@ -31,63 +31,35 @@ import State from 'components/friends/state';
 import Storage from 'components/friends/storage';
 
 import { component } from 'core/component';
-import { system, hook } from 'components/super/i-block/decorators';
+import { system, hook, computed } from 'components/super/i-block/decorators';
 
 import iBlockProps from 'components/super/i-block/props';
 
 @component({partial: 'iBlock'})
 export default abstract class iBlockFriends extends iBlockProps {
 	/**
-	 * A class with methods to provide component classes/styles to another component, etc
+	 * An API for providing component classes, styles and other related properties to another component
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx) => new Provide(Object.cast(ctx))
-	})
-
-	readonly provide!: Provide;
+	@computed({cache: 'forever'})
+	get provide(): Provide {
+		return new Provide(Object.cast(this));
+	}
 
 	/**
-	 * An API for collecting and rendering various component information
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx) => new InfoRender(ctx)
-	})
-
-	readonly infoRender!: InfoRender;
-
-	/**
-	 * A class with helper methods for safely accessing component/object properties
+	 * An API for safely accessing the component's properties or any other object
 	 *
 	 * @example
 	 * ```js
 	 * this.field.get('foo.bar.bla')
 	 * ```
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx) => new Field(Object.cast(ctx))
-	})
-
-	readonly field!: Field;
+	@computed({cache: 'forever'})
+	get field(): Field {
+		return new Field(Object.cast(this));
+	}
 
 	/**
-	 * A class to send component analytic events
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx) => new Analytics(Object.cast(ctx))
-	})
-
-	readonly analytics!: Analytics;
-
-	/**
-	 * An API to synchronize fields and props of the component
+	 * An API for synchronizing fields and props of the component
 	 *
 	 * @example
 	 * ```typescript
@@ -101,16 +73,13 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 * }
 	 * ```
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx) => new Sync(Object.cast(ctx))
-	})
-
-	readonly sync!: Sync;
+	@computed({cache: 'forever'})
+	get sync(): Sync {
+		return new Sync(Object.cast(this));
+	}
 
 	/**
-	 * A class to render component fragments asynchronously
+	 * An API for rendering component fragments asynchronously
 	 *
 	 * @example
 	 * ```
@@ -118,182 +87,147 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 *   {{ el }}
 	 * ```
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx) => new AsyncRender(Object.cast(ctx))
-	})
-
-	readonly asyncRender!: AsyncRender;
+	@computed({cache: 'forever'})
+	get asyncRender(): AsyncRender {
+		return new AsyncRender(Object.cast(this));
+	}
 
 	/**
-	 * A class for low-level working with a component VDOM tree
+	 * An API for low-level working with a component VDOM tree
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx) => new VDOM(Object.cast(ctx))
-	})
-
-	readonly vdom!: VDOM;
+	@computed({cache: 'forever'})
+	get vdom(): VDOM {
+		return new VDOM(Object.cast(this));
+	}
 
 	/**
-	 * A class with helper methods to work with the component life cycle
+	 * An API for collecting and rendering various component information
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx) => new Lfc(Object.cast(ctx))
-	})
-
-	readonly lfc!: Lfc;
+	@computed({cache: 'forever'})
+	get infoRender(): InfoRender {
+		return new InfoRender(Object.cast(this));
+	}
 
 	/**
-	 * A dictionary with component daemons
+	 * An API for sending component analytic events
+	 */
+	@computed({cache: 'forever'})
+	get analytics(): Analytics {
+		return new Analytics(Object.cast(this));
+	}
+
+	/**
+	 * An API for working with the component life cycle
+	 */
+	@computed({cache: 'forever'})
+	get lfc(): Lfc {
+		return new Lfc(Object.cast(this));
+	}
+
+	/**
+	 * A dictionary containing component daemons
 	 */
 	static readonly daemons: DaemonsDict = {};
 
 	/**
-	 * A class to create daemons associated with a component
+	 * An API for working with the component in terms of [BEM](https://en.bem.info/methodology/quick-start/)
 	 */
-	@system({
-		unique: true,
-		init: (ctx) => new Daemons(Object.cast(ctx))
-	})
-
-	protected readonly daemons!: Daemons;
-
-	/**
-	 * An API to work with a component in terms of [BEM](https://en.bem.info/methodology/quick-start/)
-	 */
-	@system({unique: true})
 	protected block?: Block;
 
 	/**
-	 * A class for low-level working with a component DOM tree
+	 * An API for low-level working with a component DOM tree
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx) => new DOM(Object.cast(ctx))
-	})
-
-	protected readonly dom!: DOM;
+	@computed({cache: 'forever'})
+	protected get dom(): DOM {
+		return new DOM(Object.cast(this));
+	}
 
 	/**
-	 * A class for persistent storage of component data
+	 * An API for persistent storage of component data
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx) => new Storage(Object.cast(ctx))
-	})
-
-	protected readonly storage!: Storage;
+	@computed({cache: 'forever'})
+	protected get storage(): Storage {
+		return new Storage(Object.cast(this));
+	}
 
 	/**
-	 * A class with methods to initialize a component state from various related sources
+	 * An API for initializing the component state from various related sources
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx) => new State(Object.cast(ctx))
-	})
-
-	protected readonly state!: State;
+	@computed({cache: 'forever'})
+	protected get state(): State {
+		return new State(Object.cast(this));
+	}
 
 	/**
-	 * A class to manage dynamically loaded modules
+	 * An API for managing dynamically loaded modules
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx) => new ModuleLoader(Object.cast(ctx))
-	})
+	@computed({cache: 'forever'})
+	protected get moduleLoader(): ModuleLoader {
+		return new ModuleLoader(Object.cast(this));
+	}
 
-	protected readonly moduleLoader!: ModuleLoader;
+	/**
+	 * An API for creating daemons associated with the component
+	 */
+	@computed({cache: 'forever'})
+	protected get daemons(): Daemons {
+		return new Daemons(Object.cast(this));
+	}
 
 	/**
 	 * A cache dictionary for the `opt.ifOnce` method
 	 */
-	@system({merge: true})
-	protected readonly ifOnceStore: Dictionary<number> = {};
+	@system({merge: true, init: () => ({})})
+	protected readonly ifOnceStore!: Dictionary<number>;
 
 	/**
-	 * A class with helper methods to optimize component rendering
+	 * An API containing helper methods for optimizing and profiling component rendering
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx) => new Opt(Object.cast(ctx))
-	})
-
-	protected readonly opt!: Opt;
+	@computed({cache: 'forever'})
+	protected get opt(): Opt {
+		return new Opt(Object.cast(this));
+	}
 
 	/**
-	 * An API to determine the current browser name/version
+	 * An API for determining the current browser name/version
 	 */
-	@system({
-		atom: true,
-		unique: true
-	})
-
-	protected readonly browser: typeof browser = browser;
+	@computed({cache: 'forever'})
+	protected get browser(): typeof browser {
+		return browser;
+	}
 
 	/**
-	 * A dictionary with component presets
+	 * A dictionary containing component presets
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: () => presets
-	})
-
-	protected readonly presets!: typeof presets;
+	@computed({cache: 'forever'})
+	protected get presets(): typeof presets {
+		return presets;
+	}
 
 	/**
 	 * A dictionary containing a set of helper functions
-	 * that can be utilized within the component template to extend its functionality
+	 * that can be used within the component template to extend its functionality
 	 */
-	@system({
-		atom: true,
-		unique: true
-	})
-
-	protected readonly h: typeof helpers = helpers;
-
-	/**
-	 * An API for working with the target document's URL
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx) => ctx.remoteState.location
-	})
-
-	protected readonly location!: Location;
+	@computed({cache: 'forever'})
+	protected get h(): typeof helpers {
+		return helpers;
+	}
 
 	/**
 	 * A link to the global object
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: () => globalThis
-	})
-
-	protected readonly global!: Window;
+	@computed({cache: 'forever'})
+	protected get global(): Window {
+		return Object.cast(globalThis);
+	}
 
 	/**
 	 * A link to the native `console` API
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: () => console
-	})
-
-	protected readonly console!: Console;
+	@computed({cache: 'forever'})
+	protected get console(): Console {
+		return console;
+	}
 
 	/**
 	 * Initializes the process of collecting debugging information for the component
@@ -301,5 +235,13 @@ export default abstract class iBlockFriends extends iBlockProps {
 	@hook(['mounted', 'updated'])
 	protected initInfoRender(): void {
 		this.infoRender.initDataGathering();
+	}
+
+	/**
+	 * Initializes the component daemons
+	 */
+	@hook('beforeCreate')
+	protected initDaemons(): void {
+		this.daemons.init();
 	}
 }

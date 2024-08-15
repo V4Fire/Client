@@ -334,6 +334,14 @@ export default abstract class iBlockState extends iBlockMods {
 	protected hookStore: Hook = 'beforeRuntime';
 
 	/**
+	 * An API for working with the target document's URL
+	 */
+	@computed({cache: 'forever'})
+	protected get location(): URL {
+		return this.remoteState.location;
+	}
+
+	/**
 	 * Switches the component to a new lifecycle hook
 	 *
 	 * @param value
