@@ -57,7 +57,8 @@ import type { AsyncWatchOptions } from 'components/friends/sync';
 import iBlockFriends from 'components/super/i-block/friends';
 
 const
-	$$ = symbolGenerator();
+	$$ = symbolGenerator(),
+	i18nKeysets = new Map<Function, string[]>();
 
 @component({partial: 'iBlock'})
 export default abstract class iBlockBase extends iBlockFriends {
@@ -227,16 +228,23 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 */
 	@computed({cache: 'forever'})
 	protected get componentI18nKeysets(): string[] {
-		const res: string[] = [];
+		const {constructor} = this.meta;
 
-		let keyset: CanUndef<string> = getComponentName(this.constructor);
+		let keysets: CanUndef<string[]> = i18nKeysets.get(constructor);
 
-		while (keyset != null) {
-			res.push(keyset);
-			keyset = config.components[keyset]?.parent;
+		if (keysets == null) {
+			keysets = [];
+			i18nKeysets.set(constructor, keysets);
+
+			let keyset: CanUndef<string> = getComponentName(constructor);
+
+			while (keyset != null) {
+				keysets.push(keyset);
+				keyset = config.components[keyset]?.parent;
+			}
 		}
 
-		return res;
+		return keysets;
 	}
 
 	/**
