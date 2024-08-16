@@ -20,5 +20,5 @@ developers can design and optimize their components for optimal performance and 
 ### initFields
 
 Initializes all fields of a given component instance.
-This function returns A dictionary containing the names of the initialized fields as keys,
+This function returns a dictionary containing the names of the initialized fields as keys,
 with their corresponding initialized values as values.
