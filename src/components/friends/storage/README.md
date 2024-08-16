@@ -55,9 +55,8 @@ import iBlock, { component, system } from 'components/super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock {
-  /** @override */
   @system((ctx) => new Storage(ctx, IDBEngine.asyncLocalStorage))
-  protected readonly storage!: Storage;
+  protected override readonly storage!: Storage;
 }
 ```
 
