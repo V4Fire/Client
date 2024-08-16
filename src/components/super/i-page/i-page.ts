@@ -96,7 +96,7 @@ export default abstract class iPage extends iData implements iVisible {
 	 *
 	 * {@link iPage.scrollTo}
 	 */
-	@computed({cache: 'forever'})
+	@computed({cache: true})
 	get scrollToProxy(): this['scrollTo'] {
 		return (...args) => {
 			this.async.setImmediate(() => this.scrollTo(...args), {
