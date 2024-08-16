@@ -29,6 +29,7 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	readonly selfDispatchingProp: boolean = false;
 
 	@system((o) => o.sync.link())
+	// @ts-ignore (override)
 	override readonly selfDispatching!: boolean;
 
 	/**

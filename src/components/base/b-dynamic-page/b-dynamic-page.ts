@@ -209,13 +209,15 @@ export default class bDynamicPage extends iDynamicPage {
 		}
 	}
 
-	override get unsafe(): UnsafeGetter<UnsafeBDynamicPage<this>> {
+	// @ts-ignore (override)
+	override get unsafe(): UnsafeGetter<this, UnsafeBDynamicPage<this>> {
 		return Object.cast(this);
 	}
 
 	protected override readonly componentStatusStore: ComponentStatus = 'ready';
 
-	protected override readonly $refs!: iDynamicPage['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iDynamicPage['$refs'] & {
 		component?: iDynamicPage[];
 	};
 
@@ -343,11 +345,9 @@ export default class bDynamicPage extends iDynamicPage {
 			return true;
 		}
 
-		const {
-			unsafe,
-			route,
-			r
-		} = this;
+		const that = this;
+
+		const {route, r} = this;
 
 		return new SyncPromise((resolve) => {
 			this.onPageChange = onPageChange(resolve, this.route);
@@ -358,13 +358,13 @@ export default class bDynamicPage extends iDynamicPage {
 			currentRoute: typeof route
 		): AnyFunction {
 			return (newPage: CanUndef<string>, currentPage: CanUndef<string>) => {
-				unsafe.pageTakenFromCache = false;
+				that.pageTakenFromCache = false;
 
-				const componentRef = unsafe.$refs[unsafe.$resolveRef('component')];
+				const componentRef = that.$refs[that.$resolveRef('component')];
 				componentRef?.pop();
 
 				const
-					currentPageEl = unsafe.block?.element<iDynamicPageEl>('component'),
+					currentPageEl = that.block?.element<iDynamicPageEl>('component'),
 					currentPageComponent = currentPageEl?.component?.unsafe;
 
 				if (currentPageEl != null) {
@@ -372,7 +372,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 					if (currentPageComponent != null) {
 						const
-							currentPageStrategy = unsafe.getKeepAliveStrategy(currentPage, currentRoute);
+							currentPageStrategy = that.getKeepAliveStrategy(currentPage, currentRoute);
 
 						if (currentPageStrategy.isLoopback) {
 							currentPageComponent.$destroy();
@@ -387,17 +387,17 @@ export default class bDynamicPage extends iDynamicPage {
 				}
 
 				const
-					newPageStrategy = unsafe.getKeepAliveStrategy(newPage),
+					newPageStrategy = that.getKeepAliveStrategy(newPage),
 					pageElFromCache = newPageStrategy.get();
 
 				if (pageElFromCache == null) {
 					const handler = () => {
 						if (!newPageStrategy.isLoopback) {
-							return SyncPromise.resolve(unsafe.component).then((c) => c.activate(true));
+							return SyncPromise.resolve(that.component).then((c) => c.activate(true));
 						}
 					};
 
-					unsafe.localEmitter.once('asyncRenderChunkComplete', handler, {
+					that.localEmitter.once('asyncRenderChunkComplete', handler, {
 						label: $$.renderFilter
 					});
 
@@ -408,15 +408,15 @@ export default class bDynamicPage extends iDynamicPage {
 					if (pageComponentFromCache != null) {
 						pageComponentFromCache.activate();
 
-						unsafe.async.requestAnimationFrame(() => {
+						that.async.requestAnimationFrame(() => {
 							restorePageElementsScroll(pageElFromCache);
 						}, {label: $$.restorePageElementsScroll});
 
-						unsafe.$el?.append(pageElFromCache);
+						that.$el?.append(pageElFromCache);
 						pageComponentFromCache.emit('mounted', pageElFromCache);
 
 						componentRef?.push(pageComponentFromCache);
-						unsafe.pageTakenFromCache = true;
+						that.pageTakenFromCache = true;
 
 					} else {
 						newPageStrategy.remove();
@@ -429,7 +429,7 @@ export default class bDynamicPage extends iDynamicPage {
 				// However, we can't guarantee that the next `renderFilter` call will occur before `syncPageWatcher`.
 				// If `syncPageWatcher` is called before the next `renderFilter`, it will execute
 				// the `onPageChange` callback, which is why we must clean it up here.
-				unsafe.onPageChange = undefined;
+				that.onPageChange = undefined;
 
 				resolve(true);
 			};

@@ -66,10 +66,10 @@ export interface UnsafeBDynamicPage<CTX extends bDynamicPage = bDynamicPage> ext
 	renderFilter: CTX['renderFilter'];
 
 	// @ts-ignore (access)
-	getKeepAliveStrategy: CTX['getKeepAliveStrategy'];
+	addClearListenersToCache: CTX['addClearListenersToCache'];
 
 	// @ts-ignore (access)
-	wrapCache: CTX['wrapCache'];
+	getKeepAliveStrategy: CTX['getKeepAliveStrategy'];
 }
 
 export interface OnBeforeSwitchPage {

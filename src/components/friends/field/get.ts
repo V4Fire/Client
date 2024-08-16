@@ -96,7 +96,7 @@ export function getField<T = unknown>(
 
 	if (isComponent) {
 		const
-			info = getPropertyInfo(path, ctx);
+			info = getPropertyInfo(path, this.component);
 
 		ctx = Object.cast(info.ctx);
 		res = ctx;

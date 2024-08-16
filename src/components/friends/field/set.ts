@@ -105,7 +105,7 @@ export function setField<T = unknown>(
 
 	if (isComponent) {
 		const
-			info = getPropertyInfo(path, ctx);
+			info = getPropertyInfo(path, this.component);
 
 		ctx = Object.cast(info.ctx);
 		ref = ctx;

@@ -12,7 +12,8 @@ import type bBottomSlide from 'components/base/b-bottom-slide/b-bottom-slide';
 import type { Direction } from 'components/base/b-bottom-slide/interface';
 
 export default class SwipeControl extends Friend {
-	override readonly C!: bBottomSlide;
+	/** @inheritDoc */
+	declare readonly C: bBottomSlide;
 
 	/**
 	 * Current cursor direction

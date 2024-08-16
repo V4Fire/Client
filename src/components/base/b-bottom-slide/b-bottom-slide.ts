@@ -43,14 +43,13 @@ const $$ = symbolGenerator();
 
 Block.addToPrototype({getFullElementName});
 
-interface bBottomSlide extends
-	Trait<typeof iLockPageScroll>,
-	Trait<typeof iOpen> {}
+interface bBottomSlide extends Trait<typeof iLockPageScroll>, Trait<typeof iOpen> {}
 
 @component()
 @derive(iLockPageScroll, iOpen)
 class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iOpen, iVisible, iHistory {
-	override get unsafe(): UnsafeGetter<UnsafeBBottomSlide<this>> {
+	// @ts-ignore (override)
+	override get unsafe(): UnsafeGetter<this, UnsafeBBottomSlide<this>> {
 		return Object.cast(this);
 	}
 
@@ -98,7 +97,7 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iOpen, 
 	}
 
 	/** {@link iHistory.history} */
-	@system<iHistory>((ctx) => new History(ctx))
+	@system<iHistory>((o) => new History(Object.cast(o)))
 	readonly history!: History;
 
 	static override readonly mods: ModsDecl = {
@@ -121,7 +120,8 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iOpen, 
 		]
 	};
 
-	protected override readonly $refs!: iBlock['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iBlock['$refs'] & {
 		view: HTMLElement;
 		window: HTMLElement;
 		header: HTMLElement;

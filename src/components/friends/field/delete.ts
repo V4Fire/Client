@@ -107,7 +107,7 @@ export function deleteField(
 
 	if (isComponent) {
 		const
-			info = getPropertyInfo(path, ctx);
+			info = getPropertyInfo(path, this.component);
 
 		const
 			isReady = !ctx.lfc.isBeforeCreate(),
