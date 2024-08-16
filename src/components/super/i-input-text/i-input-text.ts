@@ -189,7 +189,8 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	@prop({type: Object, required: false})
 	readonly regExps?: Dictionary<RegExp>;
 
-	override get unsafe(): UnsafeGetter<UnsafeIInputText<this>> {
+	// @ts-ignore (override)
+	override get unsafe(): UnsafeGetter<this, UnsafeIInputText<this>> {
 		return Object.cast(this);
 	}
 
@@ -258,7 +259,8 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	@system((o) => new Mask(o))
 	protected maskAPI!: Mask;
 
-	protected override readonly $refs!: iInput['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iInput['$refs'] & {
 		input: HTMLInputElement;
 	};
 

@@ -68,11 +68,10 @@ it will be called (the result will be used as the title).
 
 ```typescript
 class bMyPage extends iPage {
-  /** @override */
-  stagePageTitles: StageTitles<this> = {
+  override readonly stagePageTitles: StageTitles<this> = {
     '[[DEFAULT]]': 'Default title',
     profile: 'Profile page'
-  }
+  };
 
   toProfile(): void {
     this.stage = 'profile';
@@ -88,11 +87,10 @@ The current page title.
 
 ```typescript
 class bMyPage extends iPage {
-  /** @override */
-  stagePageTitles: StageTitles<this> = {
+  override readonly stagePageTitles: StageTitles<this> = {
     '[[DEFAULT]]': 'Default title',
     profile: 'Profile page'
-  }
+  };
 
   toProfile(): void {
     console.log(this.title === 'Default title');

@@ -53,7 +53,8 @@ interface bTree extends Trait<typeof iActiveItems>, Trait<typeof iFoldable> {}
 
 @derive(iActiveItems, iFoldable)
 class bTree extends iTreeProps implements iActiveItems, iFoldable {
-	override get unsafe(): UnsafeGetter<UnsafeBTree<this>> {
+	// @ts-ignore (override)
+	override get unsafe(): UnsafeGetter<this, UnsafeBTree<this>> {
 		return Object.cast(this);
 	}
 
@@ -138,7 +139,8 @@ class bTree extends iTreeProps implements iActiveItems, iFoldable {
 
 	protected itemsStore: this['Items'] = [];
 
-	protected override readonly $refs!: iData['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iData['$refs'] & {
 		children?: bTree[];
 	};
 

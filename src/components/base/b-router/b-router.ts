@@ -52,7 +52,8 @@ const
 
 @component()
 export default class bRouter extends iRouterProps {
-	public override async!: Async<this>;
+	/** @inheritDoc */
+	declare public async: Async<this>;
 
 	/**
 	 * Compiled application route map
@@ -60,7 +61,6 @@ export default class bRouter extends iRouterProps {
 	 */
 	@system<bRouter>({
 		after: 'engine',
-		// eslint-disable-next-line @v4fire/unbound-method
 		init: (o) => o.sync.link(o.compileStaticRoutes)
 	})
 
@@ -92,7 +92,8 @@ export default class bRouter extends iRouterProps {
 	@system()
 	private previousTransitionOptions: Nullable<router.TransitionOptions>;
 
-	override get unsafe(): UnsafeGetter<UnsafeBRouter<this>> {
+	// @ts-ignore (override)
+	override get unsafe(): UnsafeGetter<this, UnsafeBRouter<this>> {
 		return Object.cast(this);
 	}
 

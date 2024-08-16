@@ -24,11 +24,6 @@ class Daemons extends Friend {
 		return Object.cast((<typeof iBlock>this.ctx.instance.constructor).daemons);
 	}
 
-	constructor(component: iBlock) {
-		super(component);
-		this.init();
-	}
-
 	init(): void {
 		if (Object.size(this.daemons) === 0) {
 			return;

@@ -226,8 +226,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 
 	if (accessorType != null) {
 		if ((computedFields[name] ?? accessors[name])!.watchable) {
-			let
-				ctxPath: ObjectPropertyPath;
+			let ctxPath: ObjectPropertyPath;
 
 			if (chunks != null) {
 				ctxPath = chunks.slice(0, rootI + 1);

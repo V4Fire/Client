@@ -31,7 +31,7 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 
 			case 'updated': {
 				inheritContext(unsafe, node.component);
-				init.createdState(unsafe);
+				init.createdState(component);
 				mount();
 				break;
 			}
@@ -51,7 +51,7 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 
 			// Performs a mount on the next tick to ensure that the component is rendered
 			// and all adjacent re-renders have collapsed
-			unsafe.$async.nextTick().then(() => init.mountedState(unsafe)).catch(stderr);
+			unsafe.$async.nextTick().then(() => init.mountedState(component)).catch(stderr);
 		}
 	}
 }
@@ -120,7 +120,7 @@ export function inheritContext(
 
 				(
 					Object.isFunction(field.unique) ?
-						!Object.isTruly(field.unique(ctx, parentCtx)) :
+						!Object.isTruly(field.unique(ctx, Object.cast(parentCtx))) :
 						!field.unique
 				) &&
 
@@ -147,7 +147,7 @@ export function inheritContext(
 						ctx[name] = newVal;
 
 					} else if (Object.isFunction(field.merge)) {
-						field.merge(ctx, parentCtx, name, link);
+						field.merge(ctx, Object.cast(parentCtx), name, link);
 					}
 
 				} else {

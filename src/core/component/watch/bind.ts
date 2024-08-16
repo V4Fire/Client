@@ -168,7 +168,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 				// }
 				//
 				// To address this issue, we can check if the handler requires a second argument by using the length property.
-				// If the second argument is needed, we can clone the old value and store it within a closure.
+				// If the second argument is necessary, we can clone the old value and store it within a closure.
 				//
 				// This covers the situations where we need to retain the old value
 				// (a property watcher with a handler length greater than one),

@@ -6,8 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { callMethodFromComponent } from 'core/component/method';
 import { runHook } from 'core/component/hook';
+
+import { callMethodFromComponent } from 'core/component/method';
 
 import type { ComponentInterface } from 'core/component/interface';
 

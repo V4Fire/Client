@@ -43,8 +43,11 @@ export class Link extends AbstractElement<HTMLLinkElement> {
 		this.attrs.type = value;
 	}
 
-	protected override tag!: 'link';
-	protected override attrs!: LinkAttributes;
+	/** @inheritDoc */
+	declare protected tag: 'link';
+
+	/** @inheritDoc */
+	declare protected attrs: LinkAttributes;
 
 	constructor(engine: Engine, attrs: LinkAttributes) {
 		super(engine, 'link', attrs);

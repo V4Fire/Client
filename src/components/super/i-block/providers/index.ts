@@ -11,24 +11,24 @@
  * @packageDocumentation
  */
 
+import config from 'config';
 import symbolGenerator from 'core/symbol';
 
-import Provider, { providers, instanceCache, ProviderOptions } from 'core/data';
-import { unwrap as unwrapWatcher } from 'core/object/watch';
-
-import { i18nFactory } from 'core/i18n';
 import SyncPromise from 'core/promise/sync';
-import config from 'config';
-
 import type { AsyncOptions } from 'core/async';
+
+import Provider, { providers, instanceCache, ProviderOptions } from 'core/data';
+import { i18nFactory } from 'core/i18n';
+
+import { unwrap as unwrapWatcher } from 'core/object/watch';
 import { component } from 'core/component';
 
 import type iData from 'components/super/i-data/i-data';
+import type iBlock from 'components/super/i-block/i-block';
 
 import { statuses } from 'components/super/i-block/const';
 import { system, hook } from 'components/super/i-block/decorators';
 
-import type iBlock from 'components/super/i-block/i-block';
 import type { InitLoadCb, InitLoadOptions } from 'components/super/i-block/interface';
 
 import iBlockState from 'components/super/i-block/state';
@@ -49,8 +49,7 @@ export default abstract class iBlockProviders extends iBlockState {
 				return o.dontWaitRemoteProviders;
 			}
 
-			const isRemote = /\bremote-provider\b/;
-			return !config.components[o.componentName]?.dependencies.some((dep) => isRemote.test(dep));
+			return !config.components[o.componentName]?.dependencies.some((dep) => dep.includes('remote-provider'));
 		}
 
 		return val;
@@ -81,8 +80,7 @@ export default abstract class iBlockProviders extends iBlockState {
 			}
 		}
 
-		const
-			that = this;
+		const that = this;
 
 		if (!this.isActivated) {
 			return;
@@ -102,8 +100,7 @@ export default abstract class iBlockProviders extends iBlockState {
 			return;
 		}
 
-		const
-			{async: $a} = this;
+		const {async: $a} = this;
 
 		const label = <AsyncOptions>{
 			label: $$.initLoad,
@@ -144,8 +141,7 @@ export default abstract class iBlockProviders extends iBlockState {
 
 			const initializing = this.nextTick(label).then((() => {
 				this.$children.forEach((component) => {
-					const
-						status = component.componentStatus;
+					const status = component.componentStatus;
 
 					if (!component.remoteProvider || !Object.isTruly(statuses[status])) {
 						return;
@@ -265,8 +261,7 @@ export default abstract class iBlockProviders extends iBlockState {
 	 * @param [opts] - additional options
 	 */
 	reload(opts?: InitLoadOptions): Promise<void> {
-		const
-			res = this.initLoad(undefined, {silent: true, ...opts});
+		const res = this.initLoad(undefined, {silent: true, ...opts});
 
 		if (Object.isPromise(res)) {
 			return res;
@@ -318,8 +313,7 @@ export default abstract class iBlockProviders extends iBlockState {
 			remoteState: Object.cast(unwrapWatcher(this.remoteState))
 		};
 
-		let
-			dp: Provider;
+		let dp: Provider;
 
 		if (Object.isString(provider)) {
 			const

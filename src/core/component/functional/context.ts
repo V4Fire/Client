@@ -101,7 +101,7 @@ export function createVirtualContext(
 		};
 	}
 
-	const virtualCtx = Object.cast<ComponentInterface['unsafe'] & Dictionary>({
+	const virtualCtx = Object.cast<ComponentInterface & Dictionary>({
 		componentName: meta.componentName,
 
 		meta,
@@ -133,6 +133,8 @@ export function createVirtualContext(
 		}
 	});
 
+	const unsafe = Object.cast<ComponentInterface['unsafe']>(virtualCtx);
+
 	// When extending the context of the original component (e.g., Vue), to avoid conflicts,
 	// we create an object with the original context in the prototype: `V4Context<__proto__: OriginalContext>`.
 	// However, for functional components, this approach is redundant and can lead to memory leaks.
@@ -152,10 +154,10 @@ export function createVirtualContext(
 
 	handlers.forEach(([event, once, handler]) => {
 		if (once) {
-			virtualCtx.$once(event, handler);
+			unsafe.$once(event, handler);
 
 		} else {
-			virtualCtx.$on(event, handler);
+			unsafe.$on(event, handler);
 		}
 	});
 

@@ -121,14 +121,14 @@ export default class Friend {
 		return this.ctx.remoteState;
 	}
 
-	constructor(component: iBlock) {
-		this.ctx = component.unsafe;
-		this.component = component;
+	constructor(component: iBlock | iBlock['unsafe']) {
+		this.ctx = Object.cast(component.unsafe);
+		this.component = Object.cast(component);
 
 		this.ctx.$async.worker(() => {
 			const that = this;
 
-			// We are cleaning memory in a deferred way, because this API may be needed when processing the destroyed hook
+			// We are cleaning memory in a deferred way, because this API may be necessary when processing the destroyed hook
 			// eslint-disable-next-line require-yield
 			gc.add(function* destructor() {
 				// @ts-ignore (unsafe)

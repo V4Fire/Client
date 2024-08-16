@@ -53,7 +53,7 @@ export default class bSuperIBlockWatchDummy extends iData {
 		return this.r.isAuth;
 	}
 
-	@computed({cache: true, dependencies: ['complexObjStore']})
+	@computed({cache: 'forever', dependencies: ['complexObjStore']})
 	get cachedComplexObj(): Dictionary {
 		return Object.fastClone(this.complexObjStore);
 	}

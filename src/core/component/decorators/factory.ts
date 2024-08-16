@@ -143,7 +143,7 @@ export function paramsFactory<T = object>(
 								});
 
 							} else {
-								hooks[hook] = wrapOpts({name, hook});
+								hooks[<string>hook] = wrapOpts({name, hook});
 							}
 						});
 					}

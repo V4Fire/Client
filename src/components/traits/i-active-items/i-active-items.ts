@@ -19,7 +19,7 @@ import type { Active, ActiveProp, Item } from 'components/traits/i-active-items/
 export * from 'components/traits/i-items/i-items';
 export * from 'components/traits/i-active-items/interface';
 
-type TraitComponent = iBlock & iActiveItems;
+type TraitComponent = (iBlock | iBlock['unsafe']) & iActiveItems;
 
 export default abstract class iActiveItems extends iItems {
 	/** {@link iItems.Item} */
@@ -168,7 +168,7 @@ export default abstract class iActiveItems extends iItems {
 	 * @param ctx
 	 */
 	static initActiveStoreListeners(ctx: TraitComponent): void {
-		ctx.watch('activeStore', {deep: ctx.multiple}, (value) => {
+		ctx.unsafe.watch('activeStore', {deep: ctx.multiple}, (value) => {
 			ctx.emit(ctx.activeChangeEvent, value);
 		});
 	}

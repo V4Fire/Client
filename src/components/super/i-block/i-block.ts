@@ -56,7 +56,8 @@ export { Classes, ModVal, ModsDecl, ModsProp, ModsDict };
 
 @component()
 export default abstract class iBlock extends iBlockProviders {
-	override get unsafe(): UnsafeGetter<UnsafeIBlock<this>> {
+	// @ts-ignore (override)
+	override get unsafe(): UnsafeGetter<this, UnsafeIBlock<this>> {
 		return Object.cast(this);
 	}
 
@@ -72,7 +73,8 @@ export default abstract class iBlock extends iBlockProviders {
 		stage: []
 	};
 
-	protected override readonly $refs!: {
+	/** @inheritDoc */
+	declare protected readonly $refs: {
 		$el?: Element;
 	};
 

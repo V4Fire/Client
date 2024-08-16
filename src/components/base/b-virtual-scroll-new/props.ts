@@ -243,7 +243,8 @@ export default abstract class iVirtualScrollProps extends iData {
 
 	readonly itemsProcessors?: ItemsProcessors;
 
-	override readonly DB!: ComponentDb;
+	/** @inheritDoc */
+	declare readonly DB: ComponentDb;
 
 	/**
 	 * A function that returns the GET parameters for a request. This function is called for each request. It receives the

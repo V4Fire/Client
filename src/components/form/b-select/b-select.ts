@@ -75,7 +75,8 @@ interface bSelect extends Trait<typeof iOpenToggle>, Trait<typeof iActiveItems>,
 
 @derive(SelectEventHandlers, iOpenToggle, iActiveItems)
 class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
-	override get unsafe(): UnsafeGetter<UnsafeBSelect<this>> {
+	// @ts-ignore (override)
+	override get unsafe(): UnsafeGetter<this, UnsafeBSelect<this>> {
 		return Object.cast(this);
 	}
 
@@ -249,7 +250,8 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	@system()
 	protected keydownHandlerEnabled: boolean = false;
 
-	protected override readonly $refs!: iInputText['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iInputText['$refs'] & {
 		dropdown?: Element;
 	};
 

@@ -88,7 +88,8 @@ export default abstract class iInput extends iInputHandlers implements iVisible,
 		]
 	};
 
-	override get unsafe(): UnsafeGetter<UnsafeIInput<this>> {
+	// @ts-ignore (override)
+	override get unsafe(): UnsafeGetter<this, UnsafeIInput<this>> {
 		return Object.cast(this);
 	}
 

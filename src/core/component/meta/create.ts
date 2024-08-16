@@ -85,22 +85,21 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		cache = new Map();
 
 	meta.component[SSR ? 'ssrRender' : 'render'] = Object.cast((ctx: object, ...args: unknown[]) => {
-		const
-			unsafe = getComponentContext(ctx),
-			result = callRenderFunction();
+		const {unsafe} = getComponentContext(ctx, true);
+
+		const res = callRenderFunction();
 
 		// @ts-ignore (unsafe)
 		unsafe['$renderCounter'] = unsafe.$renderCounter + 1;
 
-		return result;
+		return res;
 
 		function callRenderFunction() {
 			if (cache.has(ctx)) {
 				return cache.get(ctx)();
 			}
 
-			const
-				render = meta.methods.render!.fn.call(unsafe, unsafe, ...args);
+			const render = meta.methods.render!.fn.call(unsafe, unsafe, ...args);
 
 			if (!Object.isFunction(render)) {
 				return render;

@@ -27,7 +27,8 @@ const
 	$$ = symbolGenerator();
 
 export default class ChunkRender extends Friend {
-	override readonly C!: bVirtualScroll;
+	/** @inheritDoc */
+	declare readonly C: bVirtualScroll;
 
 	/**
 	 * Render items

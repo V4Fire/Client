@@ -11,8 +11,9 @@
  * @packageDocumentation
  */
 
+import type { ModsProp, ModsDict } from 'core/component';
+
 import type iBlock from 'components/super/i-block/i-block';
-import type { ComponentInterface, ModsProp, ModsDict } from 'core/component';
 
 export * from 'components/super/i-block/modules/mods/interface';
 
@@ -127,8 +128,8 @@ export function initMods(component: iBlock): ModsDict {
  * @param [link] - the reference name which takes its value based on the current field
  */
 export function mergeMods(
-	component: iBlock,
-	oldComponent: iBlock,
+	component: iBlock['unsafe'],
+	oldComponent: iBlock['unsafe'],
 	name: string,
 	link?: string
 ): void {
@@ -136,9 +137,7 @@ export function mergeMods(
 		return;
 	}
 
-	const
-		ctx = component.unsafe,
-		cache = ctx.$syncLinkCache.get(link);
+	const cache = component.$syncLinkCache.get(link);
 
 	if (cache == null) {
 		return;
@@ -151,11 +150,11 @@ export function mergeMods(
 	}
 
 	const
-		modsProp = getExpandedModsProp(ctx),
+		modsProp = getExpandedModsProp(component),
 		mods = {...oldComponent.mods};
 
 	Object.keys(mods).forEach((key) => {
-		if (ctx.sync.syncModCache[key]) {
+		if (component.sync.syncModCache[key] != null) {
 			delete mods[key];
 		}
 	});
@@ -167,24 +166,22 @@ export function mergeMods(
 		l.sync(Object.assign(mods, modsProp));
 	}
 
-	function getExpandedModsProp(component: ComponentInterface): ModsDict {
-		const {unsafe} = component;
-
+	function getExpandedModsProp(component: iBlock['unsafe']): ModsDict {
 		if (link == null) {
 			return {};
 		}
 
-		const modsProp = unsafe.$props[link];
+		const modsProp = component.$props[link];
 
 		if (!Object.isDictionary(modsProp)) {
 			return {};
 		}
 
 		const
-			declMods = unsafe.meta.component.mods,
+			declMods = component.meta.component.mods,
 			res = <ModsDict>{...modsProp};
 
-		Object.entries(unsafe.$attrs).forEach(([name, attr]) => {
+		Object.entries(component.$attrs).forEach(([name, attr]) => {
 			if (name in declMods) {
 				if (attr != null) {
 					res[name] = attr;

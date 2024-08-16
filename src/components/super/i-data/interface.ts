@@ -45,7 +45,6 @@ export type CheckDBEquality<T = unknown> =
 	boolean |
 	CheckDBEqualityFn<T>;
 
-// @ts-ignore (extend)
 export interface UnsafeIData<CTX extends iData = iData> extends UnsafeIBlock<CTX> {
 	// @ts-ignore (access)
 	dbStore: CTX['dbStore'];

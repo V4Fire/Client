@@ -8,10 +8,11 @@
 
 import * as gc from 'core/component/gc';
 
+import { runHook } from 'core/component/hook';
+
 import { dropRawComponentContext } from 'core/component/context';
 import { callMethodFromComponent } from 'core/component/method';
 
-import { runHook } from 'core/component/hook';
 import { destroyedHooks } from 'core/component/const';
 
 import type { ComponentInterface, ComponentDestructorOptions } from 'core/component/interface';

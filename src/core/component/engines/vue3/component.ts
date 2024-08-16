@@ -37,23 +37,22 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 		inheritAttrs: p.inheritAttrs,
 
 		data(): Dictionary {
-			const
-				ctx = getComponentContext(this);
+			const {ctx, unsafe} = getComponentContext(this, true);
 
-			ctx.$vueWatch = this.$watch.bind(this);
+			unsafe.$vueWatch = this.$watch.bind(this);
 			init.beforeDataCreateState(ctx);
 
 			const emitter: Function = (_: unknown, handler: WatchHandler) => {
 				// eslint-disable-next-line @v4fire/unbound-method
-				const {unwatch} = watch(ctx.$fields, {deep: true, immediate: true}, handler);
+				const {unwatch} = watch(unsafe.$fields, {deep: true, immediate: true}, handler);
 				return unwatch;
 			};
 
-			ctx.$async.on(emitter, 'mutation', watcher, {
+			unsafe.$async.on(emitter, 'mutation', watcher, {
 				group: 'watchers:suspend'
 			});
 
-			return SSR ? {} : ctx.$fields;
+			return SSR ? {} : unsafe.$fields;
 
 			function watcher(value: unknown, oldValue: unknown, info: WatchHandlerParams): void {
 				const
@@ -68,7 +67,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 					shouldUpdate = meta.fields[firstPathProp]?.forceUpdate === true;
 
 				if (shouldUpdate) {
-					ctx.$async.setImmediate(() => ctx.$forceUpdate(), {label: 'forceUpdate'});
+					unsafe.$async.setImmediate(() => ctx.$forceUpdate(), {label: 'forceUpdate'});
 				}
 			}
 		},
@@ -78,23 +77,17 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 		},
 
 		beforeCreate(): void {
-			const
-				ctx = getComponentContext(this);
+			const {ctx, unsafe} = getComponentContext(this, true);
 
 			// @ts-ignore (unsafe)
-			ctx['$renderEngine'] = {
-				supports,
-				proxyGetters,
-				r,
-				wrapAPI
-			};
+			ctx['$renderEngine'] = {supports, proxyGetters, r, wrapAPI};
 
 			init.beforeCreateState(ctx, meta, {implementEventAPI: true});
 
 			if (SSR) {
 				if (ctx.canFunctional !== true) {
 					this._.type.serverPrefetch = () => {
-						const init = ctx.$initializer;
+						const init = unsafe.$initializer;
 
 						try {
 							// If init is a synchronous promise, we explicitly perform an `unwrap` to eliminate the extra microtask

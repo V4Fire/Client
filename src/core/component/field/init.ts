@@ -11,7 +11,7 @@ import type { ComponentInterface, ComponentField } from 'core/component/interfac
 
 /**
  * Initializes all fields of a given component instance.
- * This function returns a dictionary that contains the names of the initialized fields as keys,
+ * This function returns A dictionary containing the names of the initialized fields as keys,
  * with their corresponding initialized values as values.
  *
  * @param from - the dictionary where is stored the passed component fields, like `$fields` or `$systemFields`
@@ -32,12 +32,10 @@ export function initFields(
 		instance
 	} = unsafe.meta;
 
-	const
-		isFunctional = params.functional === true;
+	const isFunctional = params.functional === true;
 
 	sortFields(from).forEach(([name, field]) => {
-		const
-			sourceVal = store[name];
+		const sourceVal = store[name];
 
 		const canSkip =
 			field == null || sourceVal !== undefined ||
@@ -69,8 +67,6 @@ export function initFields(
 		} else {
 			store[name] = val;
 		}
-
-		unsafe.$activeField = undefined;
 	});
 
 	return store;

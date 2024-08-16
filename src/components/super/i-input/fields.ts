@@ -371,7 +371,8 @@ export default abstract class iInputFields extends iInputProps {
 	@system((o) => o.sync.link())
 	protected errorStore?: string;
 
-	protected override readonly $refs!: iInputProps['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iInputProps['$refs'] & {
 		input?: HTMLInputElement;
 	};
 

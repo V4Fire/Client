@@ -48,17 +48,18 @@ export abstract class ComponentInterface {
 
 	/**
 	 * The unique component identifier.
+	 *
 	 * The value for this prop is automatically generated during the build process,
 	 * but it can also be manually specified.
 	 * If the prop is not provided, the ID will be generated at runtime.
 	 */
-	readonly componentIdProp?: string;
+	abstract readonly componentIdProp?: string;
 
 	/**
 	 * The unique component identifier.
 	 * The value is formed based on the passed prop or dynamically.
 	 */
-	readonly componentId!: string;
+	abstract readonly componentId: string;
 
 	/**
 	 * The component name in dash-style without special postfixes like `-functional`
@@ -69,7 +70,7 @@ export abstract class ComponentInterface {
 	 * The unique or global name of the component.
 	 * Used to synchronize component data with various external storages.
 	 */
-	readonly globalName?: string;
+	abstract readonly globalName?: string;
 
 	/**
 	 * True if the component renders as a regular one, but can be rendered as a functional.
@@ -176,7 +177,7 @@ export abstract class ComponentInterface {
 	 * causing TypeScript errors.
 	 * Use it when you need to decompose the component class into a composition of friendly classes.
 	 */
-	get unsafe(): UnsafeGetter<UnsafeComponentInterface<this>> {
+	get unsafe(): UnsafeGetter<this, UnsafeComponentInterface<this>> {
 		return Object.cast(this);
 	}
 

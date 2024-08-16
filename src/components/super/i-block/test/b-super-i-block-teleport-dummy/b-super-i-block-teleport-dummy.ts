@@ -12,7 +12,8 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component()
 export default class bSuperIBlockTeleportDummy extends iBlock {
-	protected override $refs!: iBlock['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iBlock['$refs'] & {
 		component: bButtonSlide;
 	};
 }

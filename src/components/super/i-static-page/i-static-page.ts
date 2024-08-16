@@ -115,8 +115,9 @@ export default abstract class iStaticPage extends iPage {
 	 * This field is based on the one with the same name from `remoteState`.
 	 * It is used for convenience.
 	 */
-	@system((o) => o.sync.link('remoteState.lastOnlineDate'))
-	lastOnlineDate?: Date;
+	get lastOnlineDate(): Date {
+		return this.remoteState.lastOnlineDate!;
+	}
 
 	/**
 	 * Initial value for the active route.
@@ -135,7 +136,7 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * The name of the active route page
 	 */
-	@computed({cache: true, dependencies: ['route.meta.name']})
+	@computed({dependencies: ['route.meta.name']})
 	get activePage(): CanUndef<string> {
 		return this.field.get('route.meta.name');
 	}

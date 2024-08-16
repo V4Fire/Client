@@ -56,7 +56,8 @@ export default class bDummy extends iData {
 	@field()
 	storedAccessors: Dictionary = {};
 
-	protected override readonly $refs!: iData['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iData['$refs'] & {
 		testComponent?: iBlock;
 	};
 

@@ -15,7 +15,7 @@ import type { ComponentConstructorInfo } from 'core/component/reflect';
  * Registers parent components for the given one.
  * The function returns false if all parent components are already registered.
  *
- * This function is needed because we have lazy component registration: when we see the "foo" component for
+ * This function is necessary because we have lazy component registration: when we see the "foo" component for
  * the first time in the template, we need to check the registration of all its parent components.
  *
  * @param component - the component information object
@@ -60,7 +60,7 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
  * The function returns the metaobject of the created component, or undefined if the component isn't found.
  * If the component is already registered, it won't be registered twice.
  *
- * This function is needed because we have lazy component registration.
+ * This function is necessary because we have lazy component registration.
  * Keep in mind that you must call `registerParentComponents` before calling this function.
  *
  * @param name - the component name

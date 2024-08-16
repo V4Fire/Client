@@ -10,21 +10,18 @@ import type { ComponentInterface } from 'core/component/interface/component/comp
 
 /**
  * A helper structure to pack the unsafe interface.
- * It fixes some ambiguous TS warnings.
+ * It resolves some ambiguous TS warnings.
  */
-export type UnsafeGetter<U extends UnsafeComponentInterface = UnsafeComponentInterface> =
-	Dictionary & U['CTX'] & U & {unsafe: any};
+export type UnsafeGetter<
+	CTX extends ComponentInterface,
+	U extends UnsafeComponentInterface<CTX> = UnsafeComponentInterface<CTX>
+> = Dictionary & Overwrite<CTX, U> & {unsafe: any};
 
 /**
  * This is a special interface that provides access to protected properties and methods outside the primary class.
  * It is used to create friendly classes.
  */
 export interface UnsafeComponentInterface<CTX extends ComponentInterface = ComponentInterface> {
-	/**
-	 * Type: the context type
-	 */
-	readonly CTX: CTX;
-
 	// @ts-ignore (access)
 	meta: CTX['meta'];
 
@@ -38,10 +35,7 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	$modifiedFields: CTX['$modifiedFields'];
 
 	// Avoid using references to CTX for primitive types, as doing so may cause issues with TS
-
 	$activeField: CanUndef<string>;
-
-	$renderCounter: number;
 
 	// @ts-ignore (access)
 	$attrs: CTX['$attrs'];
@@ -86,12 +80,6 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	$delete: CTX['$delete'];
 
 	// @ts-ignore (access)
-	$forceUpdate: CTX['$forceUpdate'];
-
-	// @ts-ignore (access)
-	$nextTick: CTX['$nextTick'];
-
-	// @ts-ignore (access)
 	$destroy: CTX['$destroy'];
 
 	// @ts-ignore (access)
@@ -99,4 +87,7 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 
 	// @ts-ignore (access)
 	$withCtx: CTX['$withCtx'];
+
+	// @ts-ignore (access)
+	createPropAccessors: CTX['createPropAccessors'];
 }

@@ -8,14 +8,13 @@
 
 import { unmute } from 'core/object/watch';
 
+import { runHook } from 'core/component/hook';
 import { destroyedHooks } from 'core/component/const';
 import { callMethodFromComponent } from 'core/component/method';
-import { runHook } from 'core/component/hook';
 
 import type { ComponentDestructorOptions, ComponentInterface, Hook } from 'core/component/interface';
 
-const
-	remoteActivationLabel = Symbol('The remote activation label');
+const remoteActivationLabel = Symbol('The remote activation label');
 
 /**
  * Initializes the "created" state to the specified component instance
@@ -87,8 +86,7 @@ export function createdState(component: ComponentInterface): void {
 				});
 			};
 
-			const
-				normalParent = unsafe.$normalParent!.unsafe;
+			const normalParent = unsafe.$normalParent!.unsafe;
 
 			if (activationHooks[normalParent.hook] != null) {
 				onActivation(normalParent.hook);

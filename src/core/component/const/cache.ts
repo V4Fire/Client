@@ -16,6 +16,7 @@ import type {
 import type {
 
 	ComponentMeta,
+
 	ComponentOptions,
 	ComponentConstructorInfo,
 

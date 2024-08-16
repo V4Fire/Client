@@ -49,8 +49,11 @@ interface DataProvider {
 )
 
 class DataProvider extends Friend {
-	override readonly C!: iBlock & iDataProvider;
-	override readonly CTX!: this['C']['unsafe'] & iDataProvider;
+	/** @inheritDoc */
+	declare readonly C: iBlock & iDataProvider;
+
+	/** @inheritDoc */
+	declare readonly CTX: this['C']['unsafe'] & iDataProvider;
 
 	/**
 	 * The component data provider event emitter.

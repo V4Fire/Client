@@ -22,7 +22,8 @@ import * as vdomRender from 'components/base/b-virtual-scroll-new/modules/factor
  * specifically tailored for the `bVirtualScrollNew` class.
  */
 export class ComponentFactory extends Friend {
-	override readonly C!: bVirtualScrollNew;
+	/** @inheritDoc */
+	declare readonly C: bVirtualScrollNew;
 
 	/**
 	 * Produces component items based on the current state and context.

@@ -15,11 +15,8 @@ import { observerAsyncGroup } from 'components/base/b-virtual-scroll-new/modules
 import type { ObserverEngine } from 'components/base/b-virtual-scroll-new/modules/observer/interface';
 
 export default class IoObserver extends Friend implements ObserverEngine {
-
-	/**
-	 * {@link bVirtualScrollNew}
-	 */
-	override readonly C!: bVirtualScrollNew;
+	/** @inheritDoc */
+	declare readonly C: bVirtualScrollNew;
 
 	/**
 	 * {@link ObserverEngine.watchForIntersection}

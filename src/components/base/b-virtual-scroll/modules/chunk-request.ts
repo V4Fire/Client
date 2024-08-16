@@ -19,7 +19,8 @@ const
 	$$ = symbolGenerator();
 
 export default class ChunkRequest extends Friend {
-	override readonly C!: bVirtualScroll;
+	/** @inheritDoc */
+	declare readonly C: bVirtualScroll;
 
 	/**
 	 * Current page

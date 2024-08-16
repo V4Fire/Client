@@ -9,8 +9,9 @@
 import type {
 
 	ComponentConstructor,
-	ComponentInterface,
 	ComponentOptions,
+
+	ComponentInterface,
 	ComponentMeta
 
 } from 'core/component/interface';
@@ -48,7 +49,7 @@ export interface ComponentConstructorInfo {
 	constructor: ComponentConstructor;
 
 	/**
-	 * A dictionary that contains the parameters provided to the `@component` decorator for the component
+	 * A dictionary containing the parameters provided to the `@component` decorator for the component
 	 */
 	params: ComponentOptions;
 

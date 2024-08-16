@@ -50,9 +50,13 @@ export function beforeCreateState(
 
 	unsafe.unsafe = unsafe;
 	unsafe.componentName = meta.componentName;
-
 	unsafe.meta = meta;
-	unsafe.instance = Object.cast(meta.instance);
+
+	Object.defineProperty(unsafe, 'instance', {
+		configurable: true,
+		enumerable: true,
+		get: () => meta.instance
+	});
 
 	unsafe.$fields = {};
 	unsafe.$systemFields = {};
@@ -198,8 +202,7 @@ export function beforeCreateState(
 	unsafe.$normalParent = getNormalParent(component);
 
 	['$root', '$parent', '$normalParent'].forEach((key) => {
-		const
-			val = unsafe[key];
+		const val = unsafe[key];
 
 		if (val != null) {
 			Object.defineProperty(unsafe, key, {
@@ -215,8 +218,7 @@ export function beforeCreateState(
 		configurable: true,
 		enumerable: true,
 		get() {
-			const
-				{$el} = unsafe;
+			const {$el} = unsafe;
 
 			// If the component node is null or a node that cannot have children (such as a text or comment node)
 			if ($el?.querySelectorAll == null) {
@@ -274,6 +276,7 @@ export function beforeCreateState(
 	});
 
 	attachAttrPropsListeners(component);
+
 	attachAccessorsFromMeta(component);
 
 	runHook('beforeRuntime', component).catch(stderr);

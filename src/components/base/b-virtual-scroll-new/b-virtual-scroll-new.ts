@@ -83,7 +83,8 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 	@system<bVirtualScrollNew>((ctx) => new Observer(ctx))
 	protected readonly observer!: Observer;
 
-	protected override readonly $refs!: iData['$refs'] & $ComponentRefs;
+	/** @inheritDoc */
+	declare protected readonly $refs: iData['$refs'] & $ComponentRefs;
 
 	// @ts-ignore (getter instead readonly)
 	override get requestParams(): iData['requestParams'] {
@@ -95,7 +96,8 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 		};
 	}
 
-	override get unsafe(): UnsafeGetter<UnsafeBVirtualScroll<this>> {
+	// @ts-ignore (override)
+	override get unsafe(): UnsafeGetter<this, UnsafeBVirtualScroll<this>> {
 		return Object.cast(this);
 	}
 

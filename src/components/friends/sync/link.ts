@@ -325,7 +325,7 @@ export function link<D = unknown, R = D>(
 			isCustomWatcher = true;
 
 		} else {
-			info = getPropertyInfo(normalizedPath, this.ctx);
+			info = getPropertyInfo(normalizedPath, this.component);
 
 			if (info.type === 'mounted') {
 				isMountedWatcher = true;

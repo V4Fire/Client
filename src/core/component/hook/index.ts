@@ -18,7 +18,7 @@ import type { Hook, ComponentHook, ComponentInterface } from 'core/component/int
 
 /**
  * Runs a hook on the specified component instance.
- * The function returns a promise that is resolved when all hook handlers are executed.
+ * The function returns a promise resolved when all hook handlers are executed.
  *
  * @param hook - the hook name to run
  * @param component - the tied component instance

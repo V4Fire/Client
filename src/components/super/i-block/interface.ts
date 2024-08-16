@@ -62,40 +62,34 @@ export interface InitLoadCb<R = unknown, CTX extends iBlock = iBlock> {
 
 export interface UnsafeIBlock<CTX extends iBlock = iBlock> extends UnsafeComponentInterface<CTX> {
 	// @ts-ignore (access)
-	state: CTX['state'];
+	get state(): CTX['state'];
 
 	// @ts-ignore (access)
-	storage: CTX['storage'];
+	get storage(): CTX['storage'];
 
 	// @ts-ignore (access)
-	opt: CTX['opt'];
+	get opt(): CTX['opt'];
 
 	// @ts-ignore (access)
-	dom: CTX['dom'];
+	get dom(): CTX['dom'];
 
 	// @ts-ignore (access)
 	block: CTX['block'];
 
 	// @ts-ignore (access)
-	asyncRender: CTX['asyncRender'];
+	get moduleLoader(): CTX['moduleLoader'];
 
 	// @ts-ignore (access)
-	moduleLoader: CTX['moduleLoader'];
+	get localEmitter(): CTX['localEmitter'];
 
 	// @ts-ignore (access)
-	sync: CTX['sync'];
+	get parentEmitter(): CTX['parentEmitter'];
 
 	// @ts-ignore (access)
-	localEmitter: CTX['localEmitter'];
+	get rootEmitter(): CTX['rootEmitter'];
 
 	// @ts-ignore (access)
-	parentEmitter: CTX['parentEmitter'];
-
-	// @ts-ignore (access)
-	rootEmitter: CTX['rootEmitter'];
-
-	// @ts-ignore (access)
-	globalEmitter: CTX['globalEmitter'];
+	get globalEmitter(): CTX['globalEmitter'];
 
 	// @ts-ignore (access)
 	blockReadyListeners: CTX['blockReadyListeners'];
@@ -126,7 +120,4 @@ export interface UnsafeIBlock<CTX extends iBlock = iBlock> extends UnsafeCompone
 
 	// @ts-ignore (access)
 	waitRef: CTX['waitRef'];
-
-	// @ts-ignore (access)
-	createPropAccessors: CTX['createPropAccessors'];
 }

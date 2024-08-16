@@ -17,7 +17,8 @@ export default class bDirectivesRefDummy extends bDummy {
 	@prop(Boolean)
 	useAsyncRender: boolean = false;
 
-	protected override $refs!: bDummy['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: bDummy['$refs'] & {
 		component?: CanArray<bDummy>;
 		slotComponent?: CanArray<bDummy>;
 		nestedSlotComponent?: CanArray<bDummy>;
