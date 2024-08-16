@@ -11,7 +11,7 @@ import type { ComponentInterface, ComponentField } from 'core/component/interfac
 
 /**
  * Initializes all fields of a given component instance.
- * This function returns A dictionary containing the names of the initialized fields as keys,
+ * This function returns a dictionary containing the names of the initialized fields as keys,
  * with their corresponding initialized values as values.
  *
  * @param from - the dictionary where is stored the passed component fields, like `$fields` or `$systemFields`
@@ -67,6 +67,8 @@ export function initFields(
 		} else {
 			store[name] = val;
 		}
+
+		unsafe.$activeField = undefined;
 	});
 
 	return store;
