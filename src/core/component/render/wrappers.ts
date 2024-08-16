@@ -8,6 +8,8 @@
 
 /* eslint-disable prefer-spread */
 
+import { measure } from 'core/performance';
+
 import { app, isComponent, componentRenderFactories, destroyedHooks, ASYNC_RENDER_ID } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 
@@ -83,6 +85,8 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
  */
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
+		const start = performance.now();
+
 		let [
 			name,
 			attrs,
@@ -238,6 +242,13 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		functionalVNode.children = [];
 		functionalVNode.dynamicChildren = [];
 
+		if (!IS_PROD) {
+			measure(`<${this.componentName.camelize(true)}> create block`, {
+				start,
+				end: performance.now()
+			});
+		}
+
 		return vnode;
 	});
 }
@@ -248,8 +259,19 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
  */
 export function wrapCreateElementBlock<T extends typeof createElementBlock>(original: T): T {
 	return Object.cast(function createElementBlock(this: ComponentInterface, ...args: Parameters<T>) {
+		const start = performance.now();
+
 		args[3] = normalizePatchFlagUsingProps.call(this, args[3], args[1]);
-		return resolveAttrs.call(this, original.apply(null, args));
+		const result = resolveAttrs.call(this, original.apply(null, args));
+
+		if (!IS_PROD) {
+			measure(`<${this.componentName.camelize(true)}> create element block`, {
+				start,
+				end: performance.now()
+			});
+		}
+
+		return result;
 	});
 }
 
@@ -324,6 +346,8 @@ export function wrapRenderList<T extends typeof renderList, C extends typeof wit
 		src: Iterable<unknown> | Dictionary | number | undefined | null,
 		cb: AnyFunction
 	) {
+		const start = performance.now();
+
 		const
 			ctx = this.$renderEngine.r.getCurrentInstance(),
 
@@ -342,6 +366,13 @@ export function wrapRenderList<T extends typeof renderList, C extends typeof wit
 				enumerable: false,
 				configurable: false,
 				value: asyncRenderId
+			});
+		}
+
+		if (!IS_PROD) {
+			measure(`<${this.componentName.camelize(true)}> render list`, {
+				start,
+				end: performance.now()
 			});
 		}
 
