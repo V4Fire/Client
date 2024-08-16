@@ -106,8 +106,7 @@ export function deleteField(
 		chunks;
 
 	if (isComponent) {
-		const
-			info = getPropertyInfo(path, this.component);
+		const info = getPropertyInfo(path, Object.cast(ctx));
 
 		const
 			isReady = !ctx.lfc.isBeforeCreate(),
