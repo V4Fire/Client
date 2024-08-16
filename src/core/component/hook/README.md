@@ -7,7 +7,7 @@ This module provides an API to manage component hooks.
 ### runHook
 
 Runs a hook on the specified component instance.
-The function returns a promise that is resolved when all hook handlers are executed.
+The function returns a promise resolved when all hook handlers are executed.
 
 ```js
 runHook('beforeCreate', component).then(() => console.log('Done!'));

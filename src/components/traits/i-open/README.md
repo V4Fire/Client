@@ -23,7 +23,7 @@ This module provides a trait for a component that needs to implement the "openin
   class bButton extends iBlock implements iOpen {
     static override readonly mods: ModsDecl = {
       ...iOpen.mods
-    }
+    };
 
     protected override initModEvents(): void {
       super.initModEvents();
@@ -50,7 +50,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 export default class bButton implements iOpen {
   static override readonly mods: ModsDecl = {
     ...iOpen.mods
-  }
+  };
 }
 ```
 
