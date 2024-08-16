@@ -157,19 +157,21 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 */
 	@computed({cache: 'forever'})
 	protected get parentEmitter(): ReadonlyEventEmitterWrapper<this> {
+		const that = this;
+
 		return this.async.wrapEventEmitter({
 			get on() {
-				const ee = this.$parent?.unsafe.selfEmitter;
+				const ee = that.$parent?.selfEmitter;
 				return ee?.on.bind(ee) ?? (() => Object.throw());
 			},
 
 			get once() {
-				const ee = this.$parent?.unsafe.selfEmitter;
+				const ee = that.$parent?.selfEmitter;
 				return ee?.once.bind(ee) ?? (() => Object.throw());
 			},
 
 			get off() {
-				const ee = this.$parent?.unsafe.selfEmitter;
+				const ee = that.$parent?.selfEmitter;
 				return ee?.off.bind(ee) ?? (() => Object.throw());
 			}
 		});
