@@ -17,8 +17,10 @@ export * from 'components/dummies/b-dummy/b-dummy';
 
 Daemons.addToPrototype(DaemonsAPI);
 
+interface bFriendsDaemonsDummy extends Dictionary {}
+
 @component()
-export default class bFriendsDaemonsDummy extends bDummy {
+class bFriendsDaemonsDummy extends bDummy {
 	// @ts-ignore (override)
 	override get unsafe(): UnsafeGetter<this, UnsafeBFriendsDaemonsDummy<this>> {
 		return Object.cast(this);
@@ -91,3 +93,5 @@ export default class bFriendsDaemonsDummy extends bDummy {
 		}
 	};
 }
+
+export default bFriendsDaemonsDummy;
