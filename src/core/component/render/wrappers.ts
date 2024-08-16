@@ -243,7 +243,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		functionalVNode.dynamicChildren = [];
 
 		if (!IS_PROD) {
-			measure(`<${this.componentName.camelize(true)}> create block`, {
+			measure(`<${componentName.camelize(true)}> create block`, {
 				start,
 				end: performance.now()
 			});
