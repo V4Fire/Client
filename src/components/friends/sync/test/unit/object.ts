@@ -295,7 +295,7 @@ test.describe('friends/sync `object`', () => {
 		test.expect(scan).toEqual([1, {bla: 1}, {bla: 2}, {bla: 3}, {bla: undefined}]);
 	});
 
-	test.only([
+	test([
 		'should create a link for the nested property in the mounted watcher',
 		'when the JavaScript link to this property is specified as the source'
 	].join(' '), async () => {
