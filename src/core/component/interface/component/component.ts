@@ -177,7 +177,7 @@ export abstract class ComponentInterface {
 	 * causing TypeScript errors.
 	 * Use it when you need to decompose the component class into a composition of friendly classes.
 	 */
-	get unsafe(): UnsafeGetter<this, UnsafeComponentInterface<this>> {
+	get unsafe(): UnsafeGetter<UnsafeComponentInterface<this>> {
 		return Object.cast(this);
 	}
 

@@ -122,8 +122,8 @@ export default class Friend {
 	}
 
 	constructor(component: iBlock | iBlock['unsafe']) {
-		this.ctx = Object.cast(component.unsafe);
-		this.component = Object.cast(component);
+		this.component = Object.cast<iBlock>(component);
+		this.ctx = Object.cast<iBlock['unsafe']>(component);
 
 		this.ctx.$async.worker(() => {
 			const that = this;

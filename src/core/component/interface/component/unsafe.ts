@@ -12,16 +12,18 @@ import type { ComponentInterface } from 'core/component/interface/component/comp
  * A helper structure to pack the unsafe interface.
  * It resolves some ambiguous TS warnings.
  */
-export type UnsafeGetter<
-	CTX extends ComponentInterface,
-	U extends UnsafeComponentInterface<CTX> = UnsafeComponentInterface<CTX>
-> = Dictionary & Overwrite<CTX, U> & {unsafe: any};
+export type UnsafeGetter<U extends UnsafeComponentInterface = UnsafeComponentInterface> = U['CTX'] & U;
 
 /**
  * This is a special interface that provides access to protected properties and methods outside the primary class.
  * It is used to create friendly classes.
  */
 export interface UnsafeComponentInterface<CTX extends ComponentInterface = ComponentInterface> {
+	/**
+	 * Type: the context type
+	 */
+	readonly CTX: Omit<CTX, 'unsafe'>;
+
 	// @ts-ignore (access)
 	meta: CTX['meta'];
 

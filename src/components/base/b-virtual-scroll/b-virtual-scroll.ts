@@ -155,6 +155,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly requestQuery?: RequestQueryFn;
 
 	@prop({type: [Object, Array], required: false})
+	// @ts-ignore (override)
 	override readonly request?: RequestParams;
 
 	/**
@@ -186,8 +187,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		this.field.set('itemsStore', value);
 	}
 
-	// @ts-ignore (override)
-	override get unsafe(): UnsafeGetter<this, UnsafeBVirtualScroll<this>> {
+	override get unsafe(): UnsafeGetter<UnsafeBVirtualScroll<this>> {
 		return Object.cast(this);
 	}
 

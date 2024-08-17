@@ -189,8 +189,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	@prop({type: Object, required: false})
 	readonly regExps?: Dictionary<RegExp>;
 
-	// @ts-ignore (override)
-	override get unsafe(): UnsafeGetter<this, UnsafeIInputText<this>> {
+	override get unsafe(): UnsafeGetter<UnsafeIInputText<this>> {
 		return Object.cast(this);
 	}
 

@@ -48,8 +48,7 @@ interface bBottomSlide extends Trait<typeof iLockPageScroll>, Trait<typeof iOpen
 @component()
 @derive(iLockPageScroll, iOpen)
 class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iOpen, iVisible, iHistory {
-	// @ts-ignore (override)
-	override get unsafe(): UnsafeGetter<this, UnsafeBBottomSlide<this>> {
+	override get unsafe(): UnsafeGetter<UnsafeBBottomSlide<this>> {
 		return Object.cast(this);
 	}
 

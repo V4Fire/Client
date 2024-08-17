@@ -209,8 +209,7 @@ export default class bDynamicPage extends iDynamicPage {
 		}
 	}
 
-	// @ts-ignore (override)
-	override get unsafe(): UnsafeGetter<this, UnsafeBDynamicPage<this>> {
+	override get unsafe(): UnsafeGetter<UnsafeBDynamicPage<this>> {
 		return Object.cast(this);
 	}
 

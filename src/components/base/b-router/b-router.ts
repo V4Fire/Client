@@ -92,8 +92,7 @@ export default class bRouter extends iRouterProps {
 	@system()
 	private previousTransitionOptions: Nullable<router.TransitionOptions>;
 
-	// @ts-ignore (override)
-	override get unsafe(): UnsafeGetter<this, UnsafeBRouter<this>> {
+	override get unsafe(): UnsafeGetter<UnsafeBRouter<this>> {
 		return Object.cast(this);
 	}
 

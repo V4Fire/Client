@@ -75,8 +75,7 @@ interface bSelect extends Trait<typeof iOpenToggle>, Trait<typeof iActiveItems>,
 
 @derive(SelectEventHandlers, iOpenToggle, iActiveItems)
 class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
-	// @ts-ignore (override)
-	override get unsafe(): UnsafeGetter<this, UnsafeBSelect<this>> {
+	override get unsafe(): UnsafeGetter<UnsafeBSelect<this>> {
 		return Object.cast(this);
 	}
 

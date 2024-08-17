@@ -53,8 +53,7 @@ interface bTree extends Trait<typeof iActiveItems>, Trait<typeof iFoldable> {}
 
 @derive(iActiveItems, iFoldable)
 class bTree extends iTreeProps implements iActiveItems, iFoldable {
-	// @ts-ignore (override)
-	override get unsafe(): UnsafeGetter<this, UnsafeBTree<this>> {
+	override get unsafe(): UnsafeGetter<UnsafeBTree<this>> {
 		return Object.cast(this);
 	}
 

@@ -59,8 +59,7 @@ const
 
 @component({functional: null})
 export default abstract class iData extends iDataHandlers {
-	// @ts-ignore (override)
-	override get unsafe(): UnsafeGetter<this, UnsafeIData<this>> {
+	override get unsafe(): UnsafeGetter<UnsafeIData<this>> {
 		return Object.cast(this);
 	}
 

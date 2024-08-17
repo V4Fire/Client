@@ -96,8 +96,7 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 		};
 	}
 
-	// @ts-ignore (override)
-	override get unsafe(): UnsafeGetter<this, UnsafeBVirtualScroll<this>> {
+	override get unsafe(): UnsafeGetter<UnsafeBVirtualScroll<this>> {
 		return Object.cast(this);
 	}
 
