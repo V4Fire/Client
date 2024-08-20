@@ -144,7 +144,7 @@ export default class bTextarea extends iInputText {
 	// @ts-ignore (override)
 	protected override valueStore!: this['Value'];
 
-	@system({
+	@system<bTextarea>({
 		after: 'valueStore',
 		init: (o) => o.sync.link((text) => {
 			o.watch('valueProp', {label: $$.textStoreValueProp}, watcher);
@@ -180,6 +180,7 @@ export default class bTextarea extends iInputText {
 		})
 	})
 
+	// @ts-ignore (override)
 	protected override textStore!: string;
 
 	/**

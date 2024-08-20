@@ -46,7 +46,8 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 		}
 
 		function mount() {
-			unsafe.unsafe.$el = node;
+			// @ts-ignore (unsafe)
+			unsafe.$el = node;
 			node.component = unsafe;
 
 			// Performs a mount on the next tick to ensure that the component is rendered
@@ -77,7 +78,7 @@ export function inheritContext(
 	// Here, the functional component is recreated during re-rendering.
 	// Therefore, the destructor call should not recursively propagate to child components.
 	// Also, we should not unmount the vnodes created within the component.
-	parentCtx.unsafe.$destroy(<ComponentDestructorOptions>{recursive: false, shouldUnmountVNodes: false});
+	parentCtx.$destroy(<ComponentDestructorOptions>{recursive: false, shouldUnmountVNodes: false});
 
 	const
 		props = ctx.$props,

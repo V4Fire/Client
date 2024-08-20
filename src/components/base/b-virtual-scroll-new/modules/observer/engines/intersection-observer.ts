@@ -23,8 +23,7 @@ export default class IoObserver extends Friend implements ObserverEngine {
 	 * @param components
 	 */
 	watchForIntersection(components: MountedChild[]): void {
-		const
-			{ctx} = this;
+		const {ctx} = this;
 
 		for (const component of components) {
 			ctx.dom.watchForIntersection(component.node, {

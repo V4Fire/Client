@@ -979,7 +979,9 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock {
-  override $refs!: {myInput: HTMLInputElement};
+  declare protected readonly $refs: iBlock['$refs'] & {
+    myInput: HTMLInputElement
+  };
 
   created() {
     this.waitRef('myInput').then((myInput) => {

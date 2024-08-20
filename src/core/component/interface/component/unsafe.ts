@@ -91,5 +91,8 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	$withCtx: CTX['$withCtx'];
 
 	// @ts-ignore (access)
+	$restArgs: CTX['$restArgs'];
+
+	// @ts-ignore (access)
 	createPropAccessors: CTX['createPropAccessors'];
 }

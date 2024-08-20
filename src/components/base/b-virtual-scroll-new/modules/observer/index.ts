@@ -31,9 +31,8 @@ export class Observer extends Friend {
 	/**
 	 * @param ctx - the `bVirtualScrollNew` component instance.
 	 */
-	constructor(ctx: bVirtualScrollNew) {
+	constructor(ctx: bVirtualScrollNew | bVirtualScrollNew['unsafe']) {
 		super(ctx);
-
 		this.engine = new IoObserver(ctx);
 	}
 

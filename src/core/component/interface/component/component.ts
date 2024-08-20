@@ -280,6 +280,11 @@ export abstract class ComponentInterface {
 	protected readonly $syncLinkCache!: SyncLinkCache;
 
 	/**
+	 * A stub for the correct functioning of `$parent`
+	 */
+	protected $restArgs!: unknown;
+
+	/**
 	 * An API for binding and managing asynchronous operations
 	 */
 	protected readonly async!: Async<ComponentInterface>;

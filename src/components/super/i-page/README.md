@@ -47,20 +47,20 @@ Additionally, you can view the implemented traits or the parent component.
 #### [pageTitleProp]
 
 The current page title.
-Basically this title is set via `document.title`.
+Basically, this title is set via `document.title`.
 
 If the prop value is defined as a function, it will be called (the result will be used as the title).
 
 #### [pageDescriptionProp]
 
 The current page description.
-Basically this description is set via `<meta name="description" content="..."/>`.
+Basically, this description is set via `<meta name="description" content="..."/>`.
 
 If the prop value is defined as a function, it will be called (the result will be used as the description content).
 
 #### [stagePageTitles]
 
-A dictionary of page titles (basically these titles are set via `document.title`).
+A dictionary of page titles (basically, these titles are set via `document.title`).
 The dictionary values are bound to the `stage` values.
 
 The key named `[[DEFAULT]]` is used by default. If the key value is defined as a function,

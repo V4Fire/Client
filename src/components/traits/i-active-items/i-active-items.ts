@@ -168,7 +168,7 @@ export default abstract class iActiveItems extends iItems {
 	 * @param ctx
 	 */
 	static initActiveStoreListeners(ctx: TraitComponent): void {
-		ctx.unsafe.watch('activeStore', {deep: ctx.multiple}, (value) => {
+		(<iBlock['unsafe']>ctx).watch('activeStore', {deep: ctx.multiple}, (value) => {
 			ctx.emit(ctx.activeChangeEvent, value);
 		});
 	}

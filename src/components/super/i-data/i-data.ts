@@ -89,8 +89,7 @@ export default abstract class iData extends iDataHandlers {
 				this.syncDataProviderWatcher(false);
 			}
 
-			const
-				providerHydrationKey = '[[DATA_PROVIDER]]';
+			const providerHydrationKey = '[[DATA_PROVIDER]]';
 
 			const setDBData = (data: CanUndef<this['DB']>) => {
 				this.saveDataToRootStore(data);
@@ -109,8 +108,7 @@ export default abstract class iData extends iDataHandlers {
 				void this.db;
 			};
 
-			const
-				hydrationMode = this.canUseHydratedData && Boolean(this.field.get('ssrRendering'));
+			const hydrationMode = this.canUseHydratedData && Boolean(this.field.get('ssrRendering'));
 
 			if (hydrationMode) {
 				const
@@ -131,8 +129,7 @@ export default abstract class iData extends iDataHandlers {
 				...opts
 			};
 
-			$a
-				.clearAll({group: 'requestSync:get'});
+			$a.clearAll({group: 'requestSync:get'});
 
 			if (this.isFunctional && !SSR) {
 				const res = super.initLoad(() => {
@@ -150,8 +147,7 @@ export default abstract class iData extends iDataHandlers {
 				return res;
 			}
 
-			const
-				{dataProvider} = this;
+			const {dataProvider} = this;
 
 			if (!opts.silent) {
 				this.componentStatus = 'loading';
@@ -162,8 +158,7 @@ export default abstract class iData extends iDataHandlers {
 				void this.lfc.execCbAtTheRightTime(() => this.db = db, label);
 
 			} else if ((!SSR || this.ssrRendering) && dataProvider?.provider.baseURL != null) {
-				const
-					needRequest = Object.isArray(dataProvider.getDefaultRequestParams('get'));
+				const needRequest = Object.isArray(dataProvider.getDefaultRequestParams('get'));
 
 				if (needRequest) {
 					const res = $a
@@ -193,8 +188,7 @@ export default abstract class iData extends iDataHandlers {
 								void this.state.initFromStorage();
 							}
 
-							const
-								req = dataProvider.get(<RequestQuery>query, opts);
+							const req = dataProvider.get(<RequestQuery>query, opts);
 
 							const timeout = $a.sleep(SSR ? 20 : (3).seconds()).then(() => {
 								throw 'timeout';

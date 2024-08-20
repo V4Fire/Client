@@ -24,34 +24,32 @@ export * from 'components/super/i-block/modules/mods/interface';
  *
  * @param component
  */
-export function initMods(component: iBlock): ModsDict {
-	const
-		ctx = component.unsafe,
-		declMods = ctx.meta.component.mods;
+export function initMods(component: iBlock['unsafe']): ModsDict {
+	const declMods = component.meta.component.mods;
 
 	const
 		attrMods: Array<[string, () => CanUndef<string>]> = [],
 		modVal = (val: unknown) => val != null ? String(val) : undefined;
 
-	Object.keys(ctx.$attrs).forEach((attrName) => {
+	Object.keys(component.$attrs).forEach((attrName) => {
 		const modName = attrName.camelize(false);
 
 		if (modName in declMods) {
 			let el: Nullable<Node>;
 
-			ctx.watch(`$attrs.${attrName}`, (attrs: Dictionary = {}) => {
-				el ??= ctx.$el;
+			component.watch(`$attrs.${attrName}`, (attrs: Dictionary = {}) => {
+				el ??= component.$el;
 
 				if (el instanceof Element) {
 					el.removeAttribute(attrName);
 				}
 
-				void ctx.setMod(modName, modVal(attrs[attrName]));
+				void component.setMod(modName, modVal(attrs[attrName]));
 			});
 
-			ctx.meta.hooks['before:mounted'].push({
+			component.meta.hooks['before:mounted'].push({
 				fn: () => {
-					el = ctx.$el;
+					el = component.$el;
 
 					if (el instanceof Element) {
 						el.removeAttribute(attrName);
@@ -59,16 +57,16 @@ export function initMods(component: iBlock): ModsDict {
 				}
 			});
 
-			attrMods.push([modName, () => modVal(ctx.$attrs[attrName])]);
+			attrMods.push([modName, () => modVal(component.$attrs[attrName])]);
 		}
 	});
 
-	return Object.cast(ctx.sync.link(link));
+	return Object.cast(component.sync.link(link));
 
 	function link(propMods: CanUndef<ModsProp>): ModsDict {
 		const
-			isModsInitialized = Object.isDictionary(ctx.mods),
-			mods = isModsInitialized ? ctx.mods : {...declMods};
+			isModsInitialized = Object.isDictionary(component.mods),
+			mods = isModsInitialized ? component.mods : {...declMods};
 
 		if (propMods != null) {
 			Object.entries(propMods).forEach(([key, val]) => {
@@ -86,7 +84,7 @@ export function initMods(component: iBlock): ModsDict {
 			}
 		});
 
-		const {experiments} = ctx.r.remoteState;
+		const {experiments} = component.r.remoteState;
 
 		if (Object.isArray(experiments)) {
 			experiments.forEach((exp) => {
@@ -108,8 +106,8 @@ export function initMods(component: iBlock): ModsDict {
 			val = modVal(mods[name]);
 			mods[name] = val;
 
-			if (ctx.hook !== 'beforeDataCreate') {
-				void ctx.setMod(name, val);
+			if (component.hook !== 'beforeDataCreate') {
+				void component.setMod(name, val);
 			}
 		});
 

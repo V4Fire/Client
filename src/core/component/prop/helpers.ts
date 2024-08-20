@@ -78,7 +78,7 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 			}
 
 			// For functional components, their complete mounting into the DOM is additionally awaited
-			if (parent.isFunctional === true) {
+			if (parent.meta.params.functional === true) {
 				await parent.$nextTick();
 			}
 

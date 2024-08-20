@@ -48,6 +48,7 @@ export function beforeCreateState(
 	// To avoid TS errors marks all properties as editable
 	const unsafe = Object.cast<Writable<ComponentInterface['unsafe']>>(component);
 
+	// @ts-ignore (unsafe)
 	unsafe.unsafe = unsafe;
 	unsafe.componentName = meta.componentName;
 	unsafe.meta = meta;
@@ -62,8 +63,6 @@ export function beforeCreateState(
 	unsafe.$systemFields = {};
 	unsafe.$modifiedFields = {};
 	unsafe.$renderCounter = 0;
-
-	// A stub for the correct functioning of $parent
 	unsafe.$restArgs = undefined;
 
 	unsafe.async = new Async(component);

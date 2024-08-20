@@ -252,9 +252,9 @@ export interface InitFieldFn<CTX extends ComponentInterface = ComponentInterface
 }
 
 export interface MergeFieldFn<CTX extends ComponentInterface = ComponentInterface> {
-	(ctx: CTX['unsafe'], oldCtx: CTX, field: string, link?: string): unknown;
+	(ctx: CTX['unsafe'], oldCtx: CTX['unsafe'], field: string, link?: string): unknown;
 }
 
 export interface UniqueFieldFn<CTX extends ComponentInterface = ComponentInterface> {
-	(ctx: CTX['unsafe'], oldCtx: CTX): AnyToBoolean;
+	(ctx: CTX['unsafe'], oldCtx: CTX['unsafe']): AnyToBoolean;
 }

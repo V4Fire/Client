@@ -296,8 +296,7 @@ export default abstract class iStaticPage extends iPage {
 				return false;
 			}
 
-			const
-				normalizedValue = value !== undefined ? String(value).dasherize() : undefined;
+			const normalizedValue = value !== undefined ? String(value).dasherize() : undefined;
 
 			if (normalizedValue === undefined || normalizedValue === cache.value) {
 				root.classList.remove(cache.class);
