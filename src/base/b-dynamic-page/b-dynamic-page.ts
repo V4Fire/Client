@@ -82,6 +82,14 @@ export default class bDynamicPage extends iDynamicPage {
 	page?: string;
 
 	/**
+	 * Active page unique key.
+	 * It is used to determine whether to reuse current page component or create a new one when switching between routes
+	 * with the same page component.
+	 */
+	@system()
+	pageKey?: CanUndef<string>;
+
+	/**
 	 * If true, when switching from one page to another, the old page is stored within a cache by its name.
 	 * When occur switching back to this page, it will be restored.
 	 * It helps to optimize switching between pages but grows memory using.
@@ -160,7 +168,10 @@ export default class bDynamicPage extends iDynamicPage {
 	readonly event?: string = 'setRoute';
 
 	/**
-	 * Function to extract a component name to load from the caught event object
+	 * Function to extract a component name to load from the caught event object.
+	 * Also, this function can return a tuple consisting of component name and unique key for the passed routed. The key
+	 * will be used to determine whether to reuse current page component or create a new one
+	 * when switching between routes with the same page component.
 	 */
 	@prop({
 		type: [Function, Array],
@@ -477,14 +488,28 @@ export default class bDynamicPage extends iDynamicPage {
 				}
 
 				let
-					newPage = e;
+					newPageInfo = e;
 
 				if (Object.isTruly(this.eventConverter)) {
-					newPage = Array.concat([], this.eventConverter).reduce((res, fn) => fn.call(this, res, this.page), newPage);
+					newPageInfo = Array
+						.concat([], this.eventConverter)
+						.reduce((res, fn) => fn.call(this, res, this.page), newPageInfo);
 				}
 
-				if (newPage == null || Object.isString(newPage)) {
-					this.page = <string>newPage;
+				const
+					[newPageComponentName, newPageKey] = Object.isString(newPageInfo) ? [newPageInfo] : (newPageInfo ?? []);
+
+				const
+					pageChanged = newPageComponentName !== this.page,
+					oldPageKey = this.pageKey;
+
+				if (newPageComponentName == null || Object.isString(newPageComponentName)) {
+					this.page = newPageComponentName;
+					this.pageKey = newPageKey;
+
+					if (!pageChanged && newPageKey !== oldPageKey) {
+						this.syncPageWatcher(newPageComponentName, this.page);
+					}
 				}
 
 			}, group);

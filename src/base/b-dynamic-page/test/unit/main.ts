@@ -14,6 +14,68 @@ import { Component } from 'tests/helpers';
 test.describe('<b-dynamic-page>', () => {
 	test.beforeEach(({demoPage}) => demoPage.goto());
 
+	test('should reuse the page component instance if the page does not change and the page key is not specified', async ({page}) => {
+		const target = await renderDynamicPage(
+			page,
+			{
+				keepAlive: true,
+				include: (_, route) => Object.fastHash(route.params)
+			},
+
+			{
+				page1: {
+					path: '/page-1/:id',
+					component: 'p-v4-dynamic-page1'
+				}
+			}
+		);
+
+		const isSamePageComponent = await target.evaluate(async (ctx) => {
+			await ctx.router?.push('page1', {params: {id: 1}});
+			const page1Component = ctx.unsafe.$refs.component?.[0];
+
+			const routeTransition = ctx.unsafe.async.promisifyOnce(ctx.r, 'transition');
+			await ctx.router?.push('page1', {params: {id: 2}});
+			await routeTransition;
+			const page2Component = ctx.unsafe.$refs.component?.[0];
+
+			return page1Component === page2Component;
+		});
+
+		test.expect(isSamePageComponent).toBe(true);
+	});
+
+	test('should create a new page component if the page does not change but the page key changes', async ({page}) => {
+		const target = await renderDynamicPage(
+			page,
+			{
+				keepAlive: true,
+				eventConverter: (route) => ([route?.meta?.component ?? null, Object.fastHash(route?.params)]),
+				include: (_, route) => Object.fastHash(route.params)
+			},
+			{
+				page1: {
+					path: '/page-1/:id',
+					component: 'p-v4-dynamic-page1'
+				}
+			}
+		);
+
+		const isSamePageComponent = await target.evaluate(async (ctx) => {
+			await ctx.router?.push('page1', {params: {id: 1}});
+			const page1Component = ctx.unsafe.$refs.component?.[0];
+
+			const routeTransition = ctx.unsafe.async.promisifyOnce(ctx.r, 'transition');
+			await ctx.router?.push('page1', {params: {id: 2}});
+			await routeTransition;
+			const page2Component = ctx.unsafe.$refs.component?.[0];
+
+			return page1Component === page2Component;
+		});
+
+		test.expect(isSamePageComponent).toBe(false);
+	});
+
 	test('should emit the `beforeSwitchPage` event before removing the page element', async ({page}) => {
 		const target = await renderDynamicPage(page, {keepAlive: true});
 
@@ -65,14 +127,16 @@ test.describe('<b-dynamic-page>', () => {
  *
  * @param page
  * @param attrs
+ * @param routesConfig
  */
 export async function renderDynamicPage(
 	page: Page,
-	attrs: RenderComponentsVnodeParams['attrs'] = {}
+	attrs: RenderComponentsVnodeParams['attrs'] = {},
+	routesConfig?: Dictionary
 ): Promise<JSHandle<bDynamicPage>> {
 	await Component.createComponent(page, 'b-router', {
 		attrs: {
-			routes: {
+			routes: routesConfig ?? {
 				page1: {
 					path: '/page-1',
 					component: 'p-v4-dynamic-page1'
