@@ -14,10 +14,10 @@ import iBlock, { getPropertyInfo } from 'components/super/i-block/i-block';
 import type { KeyGetter } from 'components/friends/field/interface';
 
 /**
- * Sets a new component property by the specified path
+ * Sets a new component property at the specified path
  *
  * @param path - the property path, for instance `foo.bla.bar`
- * @param value - a value to set to the property
+ * @param value - the value to set to the property
  * @param keyGetter - a function that returns the key to set
  *
  * @example
@@ -42,10 +42,10 @@ import type { KeyGetter } from 'components/friends/field/interface';
 export function setField<T = unknown>(this: Friend, path: string, value: T, keyGetter: KeyGetter): T;
 
 /**
- * Sets a new property to the passed object by the specified path
+ * Sets a new property on the passed object at the specified path
  *
  * @param path - the property path, for instance `foo.bla.bar`
- * @param value - a value to set to the property
+ * @param value - the value to set to the property
  * @param [obj] - the object to set the property
  * @param [keyGetter] - a function that returns the key to set
  *
@@ -84,11 +84,9 @@ export function setField<T = unknown>(
 		return value;
 	}
 
-	let
-		{ctx} = this;
+	let {ctx} = this;
 
-	let
-		isComponent = false;
+	let isComponent = false;
 
 	if ((<Dictionary>obj).instance instanceof iBlock) {
 		ctx = (<iBlock>obj).unsafe;
@@ -96,12 +94,12 @@ export function setField<T = unknown>(
 	}
 
 	let
-		sync,
+		sync: CanNull<() => T> = null,
 		needSetToWatch = isComponent;
 
 	let
 		ref = obj,
-		chunks;
+		chunks: string[];
 
 	if (isComponent) {
 		const info = getPropertyInfo(path, Object.cast(ctx));
@@ -109,15 +107,14 @@ export function setField<T = unknown>(
 		ctx = Object.cast(info.ctx);
 		ref = ctx;
 
-		chunks = info.path.split('.');
+		chunks = info.path.includes('.') ? info.path.split('.') : [info.path];
 
 		if (info.accessor != null) {
 			needSetToWatch = false;
 			chunks[0] = info.accessor;
 
 		} else {
-			const
-				isReady = !ctx.lfc.isBeforeCreate();
+			const isReady = !ctx.lfc.isBeforeCreate();
 
 			const
 				isSystem = info.type === 'system',
@@ -137,7 +134,7 @@ export function setField<T = unknown>(
 					// Otherwise, we must synchronize these properties between the proxy object and the component instance
 					} else {
 						const name = chunks[0];
-						sync = () => Object.set(ctx.$systemFields, [name], ref[name]);
+						sync = () => ctx.$systemFields[name] = ref[name];
 					}
 
 				} else if (ctx.isFunctionalWatchers) {
@@ -147,7 +144,7 @@ export function setField<T = unknown>(
 					// we must synchronize these properties between the proxy object and the component instance
 					if (unwrap(ref) === ref) {
 						const name = chunks[0];
-						sync = () => Object.set(ctx, [name], ref[name]);
+						sync = () => ctx[name] = ref[name];
 					}
 
 				} else {
@@ -157,38 +154,45 @@ export function setField<T = unknown>(
 		}
 
 	} else {
-		chunks = path.split('.');
+		chunks = path.includes('.') ? path.split('.') : [path];
 	}
 
-	let
-		prop;
+	let prop = keyGetter ? <PropertyKey>keyGetter(chunks[0], ref) : chunks[0];
 
-	for (let i = 0; i < chunks.length; i++) {
-		prop = keyGetter ? keyGetter(chunks[i], ref) : chunks[i];
+	if (chunks.length > 1) {
+		chunks.some((key, i) => {
+			prop = keyGetter ? <PropertyKey>keyGetter(key, ref) : key;
 
-		if (i + 1 === chunks.length) {
-			break;
-		}
-
-		let
-			newRef = Object.get(ref, [prop]);
-
-		if (newRef == null || typeof newRef !== 'object') {
-			newRef = isNaN(Number(chunks[i + 1])) ? {} : [];
-
-			if (needSetToWatch) {
-				ctx.$set(ref, prop, newRef);
-
-			} else {
-				Object.set(ref, [prop], newRef);
+			if (i + 1 === chunks.length) {
+				return true;
 			}
-		}
 
-		ref = Object.get(ref, [prop])!;
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			let newRef = ref != null ? ref[prop] : undefined;
+
+			if (newRef == null || typeof newRef !== 'object') {
+				newRef = isNaN(Number(chunks[i + 1])) ? {} : [];
+
+				if (needSetToWatch) {
+					ctx.$set(ref, prop, newRef);
+
+				} else {
+					ref[prop] = newRef;
+				}
+			}
+
+			ref = newRef;
+			return false;
+		});
 	}
 
-	if (!needSetToWatch || !Object.isArray(ref) && Object.has(ref, [prop])) {
-		Object.set(ref, [prop], value);
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+	if (ref == null) {
+		return value;
+	}
+
+	if (!needSetToWatch || !Object.isArray(ref) && prop in ref) {
+		ref[<string>prop] = value;
 
 	} else {
 		ctx.$set(ref, prop, value);

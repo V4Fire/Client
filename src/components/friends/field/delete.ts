@@ -14,7 +14,7 @@ import iBlock, { getPropertyInfo } from 'components/super/i-block/i-block';
 import type { KeyGetter } from 'components/friends/field/interface';
 
 /**
- * Deletes a component property by the specified path
+ * Deletes a component property at the specified path
  *
  * @param path - the property path, for instance `foo.bla.bar`
  * @param keyGetter - a function that returns the key to delete
@@ -44,7 +44,7 @@ import type { KeyGetter } from 'components/friends/field/interface';
 export function deleteField(this: Friend, path: string, keyGetter?: KeyGetter): boolean;
 
 /**
- * Deletes a property from the passed object by the specified path
+ * Deletes a property from the passed object at the specified path
  *
  * @param path - the property path, for instance `foo.bla.bar`
  * @param [obj] - the object to delete the property
@@ -86,11 +86,9 @@ export function deleteField(
 		return false;
 	}
 
-	let
-		{ctx} = this;
+	let {ctx} = this;
 
-	let
-		isComponent = false;
+	let isComponent = false;
 
 	if ((<Dictionary>obj).instance instanceof iBlock) {
 		ctx = (<iBlock>obj).unsafe;
@@ -98,12 +96,12 @@ export function deleteField(
 	}
 
 	let
-		sync,
+		sync: CanNull<() => boolean> = null,
 		needDeleteToWatch = isComponent;
 
 	let
 		ref = obj,
-		chunks;
+		chunks: string[];
 
 	if (isComponent) {
 		const info = getPropertyInfo(path, Object.cast(ctx));
@@ -115,7 +113,7 @@ export function deleteField(
 
 		ctx = Object.cast(info.ctx);
 
-		chunks = info.path.split('.');
+		chunks = info.path.includes('.') ? info.path.split('.') : [info.path];
 		chunks[0] = info.name;
 
 		if (isSystem || isField) {
@@ -134,7 +132,7 @@ export function deleteField(
 				// Otherwise, we must synchronize these properties between the proxy object and the component instance
 				} else {
 					const name = chunks[0];
-					sync = () => Object.delete(ctx.$systemFields, [name]);
+					sync = () => delete ctx.$systemFields[name];
 				}
 
 			} else if (ctx.isFunctionalWatchers) {
@@ -144,7 +142,7 @@ export function deleteField(
 				// we must synchronize these properties between the proxy object and the component instance
 				if (unwrap(ref) === ref) {
 					const name = chunks[0];
-					sync = () => Object.delete(ctx, [name]);
+					sync = () => delete ctx[name];
 				}
 
 			} else {
@@ -153,37 +151,39 @@ export function deleteField(
 		}
 
 	} else {
-		chunks = path.split('.');
+		chunks = path.includes('.') ? path.split('.') : [path];
 	}
 
 	let
 		needDelete = true,
-		prop;
+		prop = keyGetter ? <PropertyKey>keyGetter(chunks[0], ref) : chunks[0];
 
-	for (let i = 0; i < chunks.length; i++) {
-		prop = keyGetter ? keyGetter(chunks[i], ref) : chunks[i];
+	chunks.some((key, i) => {
+		prop = keyGetter ? <PropertyKey>keyGetter(key, ref) : key;
 
 		if (i + 1 === chunks.length) {
-			break;
+			return true;
 		}
 
-		const
-			newRef = Object.get(ref, [prop]);
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		const newRef = ref != null ? ref[prop] : undefined;
 
 		if (newRef == null || typeof newRef !== 'object') {
 			needDelete = false;
-			break;
+			return true;
 		}
 
 		ref = newRef;
-	}
+		return false;
+	});
 
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (needDelete) {
 		if (needDeleteToWatch) {
 			ctx.$delete(ref, prop);
 
 		} else {
-			Object.delete(ref, [prop]);
+			delete ref[prop];
 		}
 
 		if (sync != null) {

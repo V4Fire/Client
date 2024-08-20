@@ -12,10 +12,10 @@ import iBlock, { getPropertyInfo } from 'components/super/i-block/i-block';
 import type { ValueGetter } from 'components/friends/field/interface';
 
 /**
- * Returns a component property by the specified path
+ * Returns a component property at the specified path
  *
  * @param path - the property path, for instance `foo.bla.bar`
- * @param getter - a function that is used to get a value from an object and a property
+ * @param getter - a function used to get a value from an object and a property
  *
  * @example
  * ```typescript
@@ -42,7 +42,7 @@ import type { ValueGetter } from 'components/friends/field/interface';
 export function getField<T = unknown>(this: Friend, path: string, getter: ValueGetter): CanUndef<T>;
 
 /**
- * Returns a property from the passed object by the specified path
+ * Returns a property from the passed object at the specified path
  *
  * @param path - the property path, for instance `foo.bla.bar`
  * @param [obj] - the object to search
@@ -79,11 +79,9 @@ export function getField<T = unknown>(
 		return;
 	}
 
-	let
-		{ctx} = this;
+	let {ctx} = this;
 
-	let
-		isComponent = false;
+	let isComponent = false;
 
 	if ((<Dictionary>obj).instance instanceof iBlock) {
 		ctx = (<iBlock>obj).unsafe;
@@ -92,7 +90,7 @@ export function getField<T = unknown>(
 
 	let
 		res: unknown = obj,
-		chunks;
+		chunks: string[];
 
 	if (isComponent) {
 		const info = getPropertyInfo(path, Object.cast(ctx));
@@ -100,7 +98,7 @@ export function getField<T = unknown>(
 		ctx = Object.cast(info.ctx);
 		res = ctx;
 
-		chunks = info.path.split('.');
+		chunks = info.path.includes('.') ? info.path.split('.') : [info.path];
 
 		if (info.accessor != null) {
 			chunks[0] = info.accessor;
@@ -124,33 +122,38 @@ export function getField<T = unknown>(
 		}
 
 	} else {
-		chunks = path.split('.');
+		chunks = path.includes('.') ? path.split('.') : [path];
 	}
 
-	if (getter == null) {
-		res = Object.get<T>(res, chunks);
+	if (chunks.length === 1) {
+		res = getter != null ? getter(chunks[0], res) : (<object>res)[chunks[0]];
 
 	} else {
-		for (let i = 0; i < chunks.length; i++) {
+		const hasNotProperty = chunks.some((key) => {
 			if (res == null) {
-				return undefined;
+				return true;
 			}
-
-			const
-				key = chunks[i];
 
 			if (Object.isPromiseLike(res) && !(key in res)) {
-				res = res.then((res) => getter!(key, res));
+				res = res.then((res) => getter != null ? getter(key, res) : (<object>res)[key]);
 
 			} else {
-				res = getter(key, res);
+				res = getter != null ? getter(key, res) : (<object>res)[key];
 			}
+
+			return false;
+		});
+
+		if (hasNotProperty) {
+			return undefined;
 		}
 	}
 
 	if (Object.isPromiseLike(res)) {
-		return Object.cast(this.async.promise(res));
+		// @ts-ignore (cast)
+		return this.async.promise(res);
 	}
 
-	return Object.cast(res);
+	// @ts-ignore (cast)
+	return res;
 }
