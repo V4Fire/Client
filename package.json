@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.74.4",
+  "version": "3.74.5",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -110,7 +110,7 @@
     "merge2": "1.4.1",
     "mini-css-extract-plugin": "2.5.3",
     "monic": "2.6.1",
-    "monic-loader": "3.0.4",
+    "monic-loader": "3.0.5",
     "nanoid": "3.2.0",
     "nib": "1.1.2",
     "node-static": "0.7.11",

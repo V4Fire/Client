@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.74.5 (2024-08-02)
+## v3.74.6 (2024-08-02)
 
 #### :rocket: New Feature
 
@@ -20,6 +20,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed an issue where a new page component instance was not created when switching between routes that use the same page component `bDynamicPage`
+
+## v3.74.5 (2024-08-12)
+
+#### :house: Internal
+
+* Updated `monic-loader` to version `3.0.5` to include a fix for the rebuild speed regression
 
 ## v3.74.4 (2024-08-02)
 
