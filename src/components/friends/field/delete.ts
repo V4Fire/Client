@@ -158,24 +158,26 @@ export function deleteField(
 		needDelete = true,
 		prop = keyGetter ? <PropertyKey>keyGetter(chunks[0], ref) : chunks[0];
 
-	chunks.some((key, i) => {
-		prop = keyGetter ? <PropertyKey>keyGetter(key, ref) : key;
+	if (chunks.length > 1) {
+		chunks.some((key, i) => {
+			prop = keyGetter ? <PropertyKey>keyGetter(key, ref) : key;
 
-		if (i + 1 === chunks.length) {
-			return true;
-		}
+			if (i + 1 === chunks.length) {
+				return true;
+			}
 
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		const newRef = ref != null ? ref[prop] : undefined;
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			const newRef = ref != null ? ref[prop] : undefined;
 
-		if (newRef == null || typeof newRef !== 'object') {
-			needDelete = false;
-			return true;
-		}
+			if (newRef == null || typeof newRef !== 'object') {
+				needDelete = false;
+				return true;
+			}
 
-		ref = newRef;
-		return false;
-	});
+			ref = newRef;
+			return false;
+		});
+	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (needDelete) {

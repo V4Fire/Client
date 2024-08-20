@@ -129,7 +129,7 @@ export function getField<T = unknown>(
 		res = getter != null ? getter(chunks[0], res) : (<object>res)[chunks[0]];
 
 	} else {
-		const hasNotProperty = chunks.some((key) => {
+		const hasNoProperty = chunks.some((key) => {
 			if (res == null) {
 				return true;
 			}
@@ -144,7 +144,7 @@ export function getField<T = unknown>(
 			return false;
 		});
 
-		if (hasNotProperty) {
+		if (hasNoProperty) {
 			return undefined;
 		}
 	}

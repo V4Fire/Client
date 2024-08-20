@@ -181,7 +181,7 @@ export function setField<T = unknown>(
 				}
 			}
 
-			ref = newRef;
+			ref = ref[prop];
 			return false;
 		});
 	}
