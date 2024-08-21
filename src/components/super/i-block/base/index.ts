@@ -60,6 +60,8 @@ const
 	$$ = symbolGenerator(),
 	i18nKeysets = new Map<Function, string[]>();
 
+const $propIds = Symbol('propIds');
+
 @component({partial: 'iBlock'})
 export default abstract class iBlockBase extends iBlockFriends {
 	/** @inheritDoc */
@@ -83,13 +85,13 @@ export default abstract class iBlockBase extends iBlockFriends {
 			let id = o.componentIdProp;
 
 			if (id != null) {
-				if (!($$.propIds in r)) {
-					r[$$.propIds] = Object.createDict();
+				if (!($propIds in r)) {
+					r[$propIds] = Object.createDict();
 				}
 
 				const
 					propId = id,
-					propIds = r[$$.propIds];
+					propIds = r[$propIds];
 
 				if (propIds[propId] != null) {
 					id += `-${propIds[propId]++}`;
@@ -112,28 +114,30 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 * {@link iBlock.activatedProp}
 	 */
 	@system((o) => {
-		void o.lfc.execCbAtTheRightTime(() => {
-			if (o.isFunctional && !o.field.get<boolean>('forceActivation')) {
-				return;
-			}
+		if (!o.isFunctional || o.forceActivation) {
+			void o.lfc.execCbAtTheRightTime(() => {
+				if (o.isActivated) {
+					o.activate(true);
 
-			if (o.field.get<boolean>('isActivated')) {
-				o.activate(true);
+				} else {
+					o.deactivate();
+				}
+			});
+		}
 
-			} else {
-				o.deactivate();
-			}
-		});
+		if (!o.isFunctional) {
+			o.watch('activatedProp', (val: CanUndef<boolean>) => {
+				val = val !== false;
 
-		return o.sync.link('activatedProp', (val: CanUndef<boolean>) => {
-			val = val !== false;
+				if (o.hook !== 'beforeDataCreate') {
+					o[val ? 'activate' : 'deactivate']();
+				}
 
-			if (o.hook !== 'beforeDataCreate') {
-				o[val ? 'activate' : 'deactivate']();
-			}
+				o.isActivated = val;
+			});
+		}
 
-			return val;
-		});
+		return o.activatedProp;
 	})
 
 	isActivated!: boolean;
@@ -156,6 +160,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	/**
 	 * A dictionary containing additional attributes for the component's root element
 	 */
+	@computed({dependencies: []})
 	get rootAttrs(): Dictionary {
 		return this.field.get<Dictionary>('rootAttrsStore')!;
 	}
