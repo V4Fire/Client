@@ -375,16 +375,9 @@ export function link<D = unknown, R = D>(
 
 	linksCache[destPath] = {};
 
-	const sync = (val?: unknown, oldVal?: unknown, src?: object) => {
-		const res = getter != null ? getter.call(this.component, val, oldVal) : val;
-
-		if (src != null) {
-			src[destPath!] = res;
-
-		} else {
-			this.field.set(destPath!, res);
-		}
-
+	const sync = (val?: unknown, oldVal?: unknown) => {
+		const res = getter ? getter.call(this.component, val, oldVal) : val;
+		this.field.set(destPath!, res);
 		return res;
 	};
 
@@ -460,8 +453,7 @@ export function link<D = unknown, R = D>(
 		return sync();
 	}
 
-	const
-		needCollapse = resolvedOpts.collapse !== false;
+	const needCollapse = resolvedOpts.collapse !== false;
 
 	if (mountedWatcher) {
 		const obj = info?.ctx;
@@ -473,14 +465,9 @@ export function link<D = unknown, R = D>(
 		return sync(Object.get(obj, normalizedPath));
 	}
 
-	const initSync = () => {
-		const src =
-			info.type === 'field' && (this.hook === 'beforeDataCreate' || ctx.isFunctionalWatchers) ?
-				ctx.$fields :
-				ctx;
-
-		return sync(src[needCollapse ? info.originalTopPath : info.originalPath], undefined, src);
-	};
+	const initSync = () => sync(
+		this.field.get(needCollapse ? info.originalTopPath : info.originalPath)
+	);
 
 	if (this.lfc.isBeforeCreate('beforeDataCreate')) {
 		meta.hooks.beforeDataCreate.splice(this.lastSyncIndex++, 0, {fn: initSync});
