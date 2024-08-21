@@ -40,7 +40,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 * A list of additional dependencies to load during the component's initialization
 	 * {@link iBlock.dependenciesProp}
 	 */
-	@system((o) => o.sync.link((val: Iterable<Module>) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
+	@system((o) => o.sync.link((val?: Iterable<Module>) => val == null ? [] : [...val]))
 	dependencies!: Module[];
 
 	/**

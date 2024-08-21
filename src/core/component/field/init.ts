@@ -49,8 +49,7 @@ export function initFields(
 
 		unsafe.$activeField = name;
 
-		let
-			val: unknown;
+		let val: unknown;
 
 		if (field.init != null) {
 			val = field.init(component.unsafe, store);
@@ -60,16 +59,23 @@ export function initFields(
 			if (store[name] === undefined) {
 				// To prevent linking to the same type of component for non-primitive values,
 				// it's important to clone the default value from the component constructor.
-				val = field.default !== undefined ? field.default : Object.fastClone(instance[name]);
+				val = field.default !== undefined ?
+					field.default :
+
+					(() => {
+						const v = instance[name];
+						return Object.isPrimitive(v) ? v : Object.fastClone(v);
+					})();
+
 				store[name] = val;
 			}
 
 		} else {
 			store[name] = val;
 		}
-
-		unsafe.$activeField = undefined;
 	});
+
+	unsafe.$activeField = undefined;
 
 	return store;
 }

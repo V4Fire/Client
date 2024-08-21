@@ -144,6 +144,15 @@ export interface WatchObject<
 	 * A handler, or the name of a component's method, that gets invoked upon watcher events
 	 */
 	handler: string | WatchHandler<A, B>;
+
+	/**
+	 * A function to determine whether a watcher should be initialized or not.
+	 * If the function returns false, the watcher will not be initialized.
+	 * Useful for precise component optimizations.
+	 *
+	 * @param ctx
+	 */
+	test?(ctx: CTX): boolean;
 }
 
 export interface MethodWatcher<
@@ -211,6 +220,15 @@ export interface MethodWatcher<
 	 * ```
 	 */
 	wrapper?: WatchWrapper<CTX, A, B>;
+
+	/**
+	 * A function to determine whether a watcher should be initialized or not.
+	 * If the function returns false, the watcher will not be initialized.
+	 * Useful for precise component optimizations.
+	 *
+	 * @param ctx
+	 */
+	test?(ctx: CTX): boolean;
 }
 
 export type WatchPath =

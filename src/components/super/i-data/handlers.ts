@@ -14,13 +14,19 @@ import type { ModelMethod } from 'core/data';
 import DataProvider from 'components/friends/data-provider';
 import { component, watch } from 'components/super/i-block/i-block';
 
+import type iData from 'components/super/i-data/i-data';
 import iDataData from 'components/super/i-data/data';
+
 import type { RequestParams, RetryRequestFn } from 'components/super/i-data/interface';
 
 const
 	$$ = symbolGenerator();
 
-@component({partial: 'iData'})
+@component({
+	partial: 'iData',
+	functional: null
+})
+
 export default abstract class iDataHandlers extends iDataData {
 	protected override initGlobalEvents(resetListener?: boolean): void {
 		super.initGlobalEvents(resetListener != null ? resetListener : Boolean(this.dataProvider));
@@ -133,14 +139,22 @@ export default abstract class iDataHandlers extends iDataData {
 	 * Synchronization of `dataProvider` properties
 	 * @param [initLoad] - if false, there is no need to call `initLoad`
 	 */
-	@watch([
-		{path: 'dataProviderProp', provideArgs: false},
-		{path: 'dataProviderOptions', provideArgs: false}
+	@watch<iData>([
+		{
+			path: 'dataProviderProp',
+			provideArgs: false,
+			test: (ctx) => ctx.dataProviderProp != null
+		},
+
+		{
+			path: 'dataProviderOptions',
+			provideArgs: false,
+			test: (ctx) => ctx.dataProviderOptions != null
+		}
 	])
 
 	protected syncDataProviderWatcher(initLoad: boolean = true): void {
-		const
-			{dataProviderProp} = this;
+		const {dataProviderProp} = this;
 
 		if (this.dataProvider != null) {
 			this.async

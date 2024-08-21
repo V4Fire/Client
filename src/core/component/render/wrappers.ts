@@ -265,8 +265,7 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 			name = isSmartComponent.test(name) ? isSmartComponent.replace(name) : name;
 		}
 
-		const
-			component = registerComponent(name);
+		const component = registerComponent(name);
 
 		if (component?.params.functional === true) {
 			return name;
@@ -301,8 +300,7 @@ export function wrapResolveDirective<T extends typeof resolveDirective>(
  */
 export function wrapMergeProps<T extends typeof mergeProps>(original: T): T {
 	return Object.cast(function mergeProps(this: ComponentInterface, ...args: Parameters<T>) {
-		const
-			props = original.apply(null, args);
+		const props = original.apply(null, args);
 
 		if (SSR) {
 			return resolveAttrs.call(this, {props}).props;
@@ -355,8 +353,7 @@ export function wrapRenderList<T extends typeof renderList, C extends typeof wit
  */
 export function wrapRenderSlot<T extends typeof renderSlot>(original: T): T {
 	return Object.cast(function renderSlot(this: ComponentInterface, ...args: Parameters<T>) {
-		const
-			{r} = this.$renderEngine;
+		const {r} = this.$renderEngine;
 
 		if (this.meta.params.functional === true) {
 			try {
@@ -424,8 +421,7 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 			this;
 
 		dirs.forEach((decl) => {
-			const
-				[dir, value, arg, modifiers] = decl;
+			const [dir, value, arg, modifiers] = decl;
 
 			const binding: DirectiveBinding = {
 				dir: Object.isFunction(dir) ? {created: dir, mounted: dir} : dir,

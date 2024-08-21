@@ -86,8 +86,7 @@ export default class Lfc extends Friend {
 
 		this.ctx.beforeReadyListeners++;
 
-		const
-			res = this.ctx.waitComponentStatus('beforeReady', cb, opts);
+		const res = this.ctx.waitComponentStatus('beforeReady', cb, opts);
 
 		if (Object.isPromise(res)) {
 			return res.catch(stderr);

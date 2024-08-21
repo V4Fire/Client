@@ -31,6 +31,10 @@ import { destroyedState } from 'core/component/init/states/destroyed';
 import type { ComponentInterface, ComponentMeta, ComponentElement, ComponentDestructorOptions } from 'core/component/interface';
 import type { InitBeforeCreateStateOptions } from 'core/component/init/interface';
 
+const
+	$getRoot = Symbol('$getRoot'),
+	$getParent = Symbol('$getParent');
+
 /**
  * Initializes the "beforeCreate" state to the specified component instance
  *
@@ -95,8 +99,6 @@ export function beforeCreateState(
 		}
 	});
 
-	const $getRoot = Symbol('$getRoot');
-
 	Object.defineProperty(unsafe, '$getRoot', {
 		configurable: true,
 		enumerable: false,
@@ -132,8 +134,6 @@ export function beforeCreateState(
 			return r;
 		}
 	});
-
-	const $getParent = Symbol('$getParent');
 
 	Object.defineProperty(unsafe, '$getParent', {
 		configurable: true,
@@ -342,12 +342,16 @@ export function beforeCreateState(
 			return;
 		}
 
-		const needToForceWatching = watchers[name] == null && (
-			accessors[normalizedName] != null ||
-			computedFields[normalizedName] != null
+		const
+			accessor = accessors[normalizedName],
+			computed = accessor == null ? computedFields[normalizedName] : null;
+
+		const needForceWatch = watchers[name] == null && (
+			accessor != null && accessor.dependencies?.length !== 0 ||
+			computed != null && computed.cache !== 'forever' && computed.dependencies?.length !== 0
 		);
 
-		if (needToForceWatching) {
+		if (needForceWatch) {
 			watchers[name] = [
 				{
 					deep: true,

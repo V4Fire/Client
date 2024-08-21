@@ -268,8 +268,8 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 * });
 	 * ```
 	 */
-	@prop(Boolean)
-	readonly proxyCall: boolean = false;
+	@prop({type: Boolean, required: false})
+	readonly proxyCall?: boolean;
 
 	/**
 	 * If set to true, the component event dispatching mode is enabled.

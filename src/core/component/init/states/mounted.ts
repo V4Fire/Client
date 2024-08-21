@@ -17,8 +17,7 @@ import type { ComponentInterface } from 'core/component/interface';
  * @param component
  */
 export function mountedState(component: ComponentInterface): void {
-	const
-		{$el} = component;
+	const {$el} = component;
 
 	if ($el != null && $el.component !== component) {
 		$el.component = component;

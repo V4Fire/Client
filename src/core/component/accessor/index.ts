@@ -69,7 +69,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 		meta,
 		// eslint-disable-next-line deprecation/deprecation
-		meta: {params: {deprecatedProps}}
+		meta: {params: {deprecatedProps}, tiedFields}
 	} = component.unsafe;
 
 	const isFunctional = meta.params.functional === true;
@@ -81,8 +81,17 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 			!SSR && isFunctional && accessor.functional === false;
 
 		if (canSkip) {
+			const tiedWith = tiedFields[name];
+
+			if (tiedWith != null) {
+				delete tiedFields[tiedWith];
+				delete tiedFields[name];
+			}
+
 			return;
 		}
+
+		delete tiedFields[name];
 
 		Object.defineProperty(component, name, {
 			configurable: true,
@@ -102,8 +111,17 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 			!SSR && isFunctional && computed.functional === false;
 
 		if (canSkip) {
+			const tiedWith = tiedFields[name];
+
+			if (tiedWith != null) {
+				delete tiedFields[tiedWith];
+				delete tiedFields[name];
+			}
+
 			return;
 		}
+
+		delete tiedFields[name];
 
 		// eslint-disable-next-line func-style
 		const get = function get(this: typeof component): unknown {

@@ -10,7 +10,7 @@ import { wrapWithSuspending, EventId, EventEmitterLike, EventEmitterLikeP } from
 import { getPropertyInfo } from 'core/component/reflect';
 
 import { beforeHooks } from 'core/component/const';
-import { customWatcherRgxp } from 'core/component/watch/const';
+import { isCustomWatcher, customWatcherRgxp } from 'core/component/watch/const';
 
 import type { ComponentInterface } from 'core/component/interface';
 import type { BindRemoteWatchersParams } from 'core/component/watch/interface';
@@ -72,15 +72,29 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 		// Custom watchers look like ':foo', 'bla:foo', '?bla:foo'
 		// and are used to listen to custom events instead of property mutations.
-		const customWatcher = customWatcherRgxp.exec(watchPath);
+		const customWatcher = isCustomWatcher.test(watchPath) ? customWatcherRgxp.exec(watchPath) : null;
 
-		if (customWatcher) {
+		if (customWatcher != null) {
 			const m = customWatcher[1];
 			watcherNeedCreated = m === '';
 			watcherNeedMounted = m === '?';
 		}
 
-		const attachWatcher = () => {
+		// Add a listener to a component's created hook if the component has not yet been created
+		if (watcherNeedCreated && isBeforeCreate) {
+			hooks['before:created'].push({fn: attachWatcher});
+			return;
+		}
+
+		// Add a listener to a component's mounted/activated hook if the component has not yet been mounted or activated
+		if (watcherNeedMounted && (isBeforeCreate || component.$el == null)) {
+			hooks[isDeactivated ? 'activated' : 'mounted'].unshift({fn: attachWatcher});
+			return;
+		}
+
+		attachWatcher();
+
+		function attachWatcher() {
 			// If we have a custom watcher, we need to find a link to the event emitter.
 			// For instance:
 			// ':foo' -> watcherCtx == ctx; key = 'foo'
@@ -99,7 +113,11 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 			}
 
 			// Iterates over all registered handlers for this watcher
-			watchers.forEach((watchInfo) => {
+			watchers!.forEach((watchInfo) => {
+				if (watchInfo.test?.(component) === false) {
+					return;
+				}
+
 				const rawHandler = watchInfo.handler;
 
 				const asyncParams = {
@@ -346,20 +364,6 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 					unwatch = $watch.call(component, toWatch, watchInfo, handler);
 				}
 			});
-		};
-
-		// Add a listener to a component's created hook if the component has not yet been created
-		if (watcherNeedCreated && isBeforeCreate) {
-			hooks['before:created'].push({fn: attachWatcher});
-			return;
 		}
-
-		// Add a listener to a component's mounted/activated hook if the component has not yet been mounted or activated
-		if (watcherNeedMounted && (isBeforeCreate || component.$el == null)) {
-			hooks[isDeactivated ? 'activated' : 'mounted'].unshift({fn: attachWatcher});
-			return;
-		}
-
-		attachWatcher();
 	});
 }

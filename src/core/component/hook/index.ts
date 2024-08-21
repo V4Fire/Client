@@ -44,13 +44,13 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 		m = component.unsafe.meta,
 		hooks: ComponentHook[] = [];
 
-	if (`before:${hook}` in m.hooks) {
+	if (hook === 'created' || hook === 'updated' || hook === 'mounted') {
 		hooks.push(...m.hooks[`before:${hook}`]);
 	}
 
 	hooks.push(...m.hooks[hook]);
 
-	if (`after:${hook}` in m.hooks) {
+	if (hook === 'beforeDataCreate') {
 		hooks.push(...m.hooks[`after:${hook}`]);
 	}
 

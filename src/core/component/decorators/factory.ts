@@ -259,7 +259,9 @@ export function paramsFactory<T = object>(
 				}
 
 				if (tiedFieldMap[metaKey] != null && isStore.test(key)) {
-					meta.tiedFields[key] = isStore.replace(key);
+					const tiedWith = isStore.replace(key);
+					meta.tiedFields[key] = tiedWith;
+					meta.tiedFields[tiedWith] = key;
 				}
 
 				function inheritFromParent() {

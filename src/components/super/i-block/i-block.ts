@@ -11,9 +11,10 @@
  * @packageDocumentation
  */
 
-import { component, hook, watch, UnsafeGetter } from 'core/component';
+import { component, UnsafeGetter } from 'core/component';
 import type { Classes } from 'components/friends/provide';
 
+import { hook, watch } from 'components/super/i-block/decorators';
 import type { ModVal, ModsDecl, ModsProp, ModsDict } from 'components/super/i-block/modules/mods';
 import type { UnsafeIBlock } from 'components/super/i-block/interface';
 
@@ -91,9 +92,10 @@ export default abstract class iBlock extends iBlockProviders {
 	 * Handler: fixes the issue where the teleported component
 	 * and its DOM nodes were rendered before the teleport container was ready
 	 */
-	@watch({
+	@watch<iBlock>({
 		path: 'r.shouldMountTeleports',
-		flush: 'post'
+		flush: 'post',
+		test: (ctx) => HYDRATION && ctx.r.shouldMountTeleports === false
 	})
 
 	@hook('before:mounted')

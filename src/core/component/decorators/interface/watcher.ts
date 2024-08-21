@@ -55,6 +55,15 @@ export interface DecoratorFieldWatcherObject<
 	 * ```
 	 */
 	provideArgs?: boolean;
+
+	/**
+	 * A function to determine whether a watcher should be initialized or not.
+	 * If the function returns false, the watcher will not be initialized.
+	 * Useful for precise component optimizations.
+	 *
+	 * @param ctx
+	 */
+	test?(ctx: CTX): boolean;
 }
 
 export interface DecoratorWatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {

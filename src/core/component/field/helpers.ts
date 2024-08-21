@@ -34,8 +34,7 @@ export function getFieldWeight(field: CanUndef<ComponentField>, scope: Dictionar
 		weight += after.size;
 
 		after.forEach((name) => {
-			const
-				dep = scope[name];
+			const dep = scope[name];
 
 			if (dep == null) {
 				throw new ReferenceError(`The specified dependency ${dep} could not be found in the given scope`);

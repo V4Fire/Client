@@ -127,6 +127,12 @@ export default abstract class iStaticPage extends iPage {
 	initialRoute?: InitialRoute | this['CurrentPage'];
 
 	/**
+	 * True if component teleports should be mounted
+	 */
+	@field()
+	shouldMountTeleports: boolean = false;
+
+	/**
 	 * Number of external root instances of the application.
 	 * This parameter allows you to detect memory leaks when using asyncRender.
 	 */
@@ -169,12 +175,6 @@ export default abstract class iStaticPage extends iPage {
 		this[$$.randomGenerator] ??= new Xor128(19881989);
 		return this[$$.randomGenerator];
 	}
-
-	/**
-	 * True if component teleports should be mounted
-	 */
-	@field()
-	protected shouldMountTeleports: boolean = false;
 
 	/**
 	 * The route information object store

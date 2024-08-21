@@ -22,6 +22,7 @@ import type iBlock from 'components/super/i-block/i-block';
 import {
 
 	component,
+	computed,
 
 	InitLoadCb,
 	InitLoadOptions,
@@ -59,6 +60,7 @@ const
 
 @component({functional: null})
 export default abstract class iData extends iDataHandlers {
+	@computed({functional: true})
 	override get unsafe(): UnsafeGetter<UnsafeIData<this>> {
 		return Object.cast(this);
 	}

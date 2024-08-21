@@ -38,12 +38,15 @@ import type {
 
 } from 'components/super/i-data/interface';
 
-const
-	$$ = symbolGenerator();
+const $$ = symbolGenerator();
 
 interface iDataData extends Trait<typeof iDataProvider> {}
 
-@component({partial: 'iData'})
+@component({
+	partial: 'iData',
+	functional: null
+})
+
 @derive(iDataProvider)
 abstract class iDataData extends iBlock implements iDataProvider {
 	/**
@@ -104,7 +107,14 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	 * A list of converters from the raw `db` to the component field
 	 * {@link iDataProvider.componentConverter}
 	 */
-	@system((o) => o.sync.link('componentConverter', (val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
+	@system((o) => o.sync.link('componentConverter', (val) => {
+		if (val == null) {
+			return [];
+		}
+
+		return Object.isIterable(val) ? [...val] : [val];
+	}))
+
 	componentConverters!: ComponentConverter[];
 
 	/**
@@ -255,7 +265,11 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	 * This method is used to map `db` to bean properties.
 	 * If the method is used, it must return some value other than undefined.
 	 */
-	@watch('componentConverter')
+	@watch<iData>({
+		path: 'componentConverter',
+		test: (ctx) => ctx.componentConverter != null
+	})
+
 	protected initRemoteData(): CanUndef<unknown> {
 		return undefined;
 	}
