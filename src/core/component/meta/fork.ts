@@ -15,9 +15,10 @@ import type { ComponentMeta } from 'core/component/interface';
 export function forkMeta(base: ComponentMeta): ComponentMeta {
 	const meta = Object.create(base);
 
-	meta.watchDependencies = new Map(meta.watchDependencies);
 	meta.params = Object.create(base.params);
+	meta.watchDependencies = new Map(meta.watchDependencies);
 
+	meta.tiedFields = {...meta.tiedFields};
 	meta.hooks = {};
 
 	Object.entries(base.hooks).forEach(([name, handlers]) => {

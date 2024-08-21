@@ -128,14 +128,21 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				};
 			}
 
-			store[name] = Object.assign(store[name] ?? {}, {
+			const acc = Object.assign(store[name] ?? {}, {
 				src,
 				get: desc.get ?? old?.get,
 				set
 			});
 
+			store[name] = acc;
+
+			// eslint-disable-next-line eqeqeq
+			if (acc.functional === undefined && meta.params.functional === null) {
+				acc.functional = false;
+			}
+
 			if (tiedWith != null) {
-				store[name].tiedWith = tiedWith;
+				acc.tiedWith = tiedWith;
 			}
 		}
 	});

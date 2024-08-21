@@ -99,7 +99,9 @@ export function component(opts?: ComponentOptions): Function {
 					components.set(componentOriginName, meta);
 				}
 
-				initEmitter.once(`constructor.${componentOriginName}`, addMethodsToMeta.bind(null, meta, target));
+				initEmitter.once(`constructor.${componentOriginName}`, () => {
+					addMethodsToMeta(components.get(componentOriginName)!, target);
+				});
 			});
 
 			return;

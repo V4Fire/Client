@@ -90,6 +90,10 @@ export function getInfoFromConstructor(
 			};
 
 			partialInfo.set(partial, info);
+
+		// eslint-disable-next-line eqeqeq
+		} else if (declParams != null && declParams.functional !== null) {
+			declParams.functional = undefined;
 		}
 
 		componentParams.set(constructor, info.params);
@@ -133,7 +137,7 @@ export function getInfoFromConstructor(
 	}
 
 	// Mix the "functional" parameter from the parent @component declaration
-	if (parentParams) {
+	if (parentParams != null) {
 		let functional: typeof params.functional;
 
 		if (Object.isDictionary(params.functional) && Object.isDictionary(parentParams.functional)) {
