@@ -66,6 +66,11 @@ class Sync extends Friend {
 	 */
 	protected readonly linksCache!: Dictionary<Dictionary>;
 
+	/**
+	 * The index of the last added link
+	 */
+	protected lastSyncIndex: number = 0;
+
 	/** {@link iBlock.$syncLinkCache} */
 	protected get syncLinkCache(): SyncLinkCache {
 		return this.ctx.$syncLinkCache;
@@ -73,7 +78,7 @@ class Sync extends Friend {
 
 	/** {@link iBlock.$syncLinkCache} */
 	protected set syncLinkCache(value: SyncLinkCache) {
-		Object.set(this.ctx, '$syncLinkCache', value);
+		this.ctx.$syncLinkCache = value;
 	}
 
 	constructor(component: iBlock) {

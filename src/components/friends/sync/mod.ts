@@ -12,11 +12,11 @@ import type Sync from 'components/friends/sync/class';
 import type { ModValueConverter, LinkGetter, AsyncWatchOptions } from 'components/friends/sync/interface';
 
 /**
- * Binds a modifier to a property by the specified path
+ * Binds a modifier to a property at the specified path
  *
- * @param modName - the modifier name to bind
- * @param path - the property path to bind
- * @param [converter] - a converter function
+ * @param modName - the name of the modifier to bind
+ * @param path - the path of the property to bind
+ * @param [converter] - an optional converter function
  *
  * @example
  * ```typescript
@@ -44,12 +44,12 @@ export function mod<D = unknown, R = unknown>(
 ): void;
 
 /**
- * Binds a modifier to a property by the specified path
+ * Binds a modifier to a property at the specified path
  *
- * @param modName - the modifier name to bind
- * @param path - the property path to bind
+ * @param modName - the name of the modifier to bind
+ * @param path - the path of the property to bind
  * @param opts - additional options
- * @param [converter] - converter function
+ * @param [converter] - an optional converter function
  *
  * @example
  * ```typescript
@@ -86,8 +86,7 @@ export function mod<D = unknown, R = unknown>(
 ): void {
 	modName = modName.camelize(false);
 
-	let
-		opts: AsyncWatchOptions;
+	let opts: AsyncWatchOptions;
 
 	if (Object.isFunction(optsOrConverter)) {
 		converter = optsOrConverter;
@@ -96,36 +95,11 @@ export function mod<D = unknown, R = unknown>(
 		opts = Object.cast(optsOrConverter);
 	}
 
-	const
-		{ctx} = this;
+	const that = this;
 
-	const setWatcher = () => {
-		const wrapper = (val: unknown, ...args: unknown[]) => {
-			val = (<LinkGetter>converter).call(this.component, val, ...args);
-
-			if (val !== undefined) {
-				void this.ctx.setMod(modName, val);
-			}
-		};
-
-		if (converter.length > 1) {
-			ctx.watch(path, opts, (val: unknown, oldVal: unknown) => wrapper(val, oldVal));
-
-		} else {
-			ctx.watch(path, opts, wrapper);
-		}
-	};
+	const {ctx} = this;
 
 	if (this.lfc.isBeforeCreate()) {
-		const sync = () => {
-			const
-				v = (<LinkGetter>converter).call(this.component, this.field.get(path));
-
-			if (v !== undefined) {
-				ctx.mods[modName] = String(v);
-			}
-		};
-
 		this.syncModCache[modName] = sync;
 
 		if (ctx.hook !== 'beforeDataCreate') {
@@ -141,5 +115,30 @@ export function mod<D = unknown, R = unknown>(
 
 	} else if (statuses[ctx.componentStatus] >= 1) {
 		setWatcher();
+	}
+
+	function sync() {
+		const v = (<LinkGetter>converter).call(that.component, that.field.get(path));
+
+		if (v !== undefined) {
+			ctx.mods[modName] = String(v);
+		}
+	}
+
+	function setWatcher() {
+		if (converter.length > 1) {
+			ctx.watch(path, opts, (val: unknown, oldVal: unknown) => wrapper(val, oldVal));
+
+		} else {
+			ctx.watch(path, opts, wrapper);
+		}
+
+		function wrapper(val: unknown, ...args: unknown[]) {
+			val = (<LinkGetter>converter).call(that.component, val, ...args);
+
+			if (val !== undefined) {
+				void ctx.setMod(modName, val);
+			}
+		}
 	}
 }

@@ -394,8 +394,7 @@ export function object(
 		}
 
 		{
-			let
-				key;
+			let key;
 
 			if (isMountedWatcher) {
 				const o = info?.originalPath;
