@@ -465,9 +465,14 @@ export function link<D = unknown, R = D>(
 		return sync(Object.get(obj, normalizedPath));
 	}
 
-	const initSync = () => sync(
-		this.field.get(needCollapse ? info.originalTopPath : info.originalPath)
-	);
+	const initSync = () => {
+		const src =
+			info.type === 'field' && (this.hook === 'beforeDataCreate' || ctx.isFunctionalWatchers) ?
+				ctx.$fields :
+				ctx;
+
+		return sync(src[needCollapse ? info.originalTopPath : info.originalPath]);
+	};
 
 	if (this.lfc.isBeforeCreate('beforeDataCreate')) {
 		meta.hooks.beforeDataCreate.splice(this.lastSyncIndex++, 0, {fn: initSync});
