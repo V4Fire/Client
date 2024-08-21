@@ -20,7 +20,7 @@ export type { State } from 'core/component/state';
 export { ComponentEngine as default } from 'core/component/engines';
 
 export { runHook } from 'core/component/hook';
-export { bindRemoteWatchers, customWatcherRgxp } from 'core/component/watch';
+export { bindRemoteWatchers, isCustomWatcher, customWatcherRgxp } from 'core/component/watch';
 
 export { callMethodFromComponent } from 'core/component/method';
 export { normalizeClass, normalizeStyle } from 'core/component/render';
