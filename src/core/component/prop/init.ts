@@ -68,7 +68,16 @@ export function initProps(
 		}
 
 		if (propValue === undefined) {
-			propValue = prop.default !== undefined ? prop.default : Object.fastClone(meta.instance[name]);
+			if (prop.default !== undefined) {
+				propValue = prop.default;
+
+			} else {
+				propValue = meta.instance[name];
+
+				if (!Object.isPrimitive(propValue)) {
+					propValue = Object.fastClone(propValue);
+				}
+			}
 		}
 
 		let needSaveToStore = opts.saveToStore;

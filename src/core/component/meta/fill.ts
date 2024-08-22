@@ -89,6 +89,10 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 		}
 	});
 
+	requestIdleCallback(() => {
+		void meta.instance;
+	});
+
 	const
 		isRoot = params.root === true,
 		isFunctional = params.functional === true;
@@ -105,33 +109,36 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 		}
 
 		if (isFirstFill) {
-			let
-				getDefault: unknown,
-				skipDefault = true;
-
-			if (defaultProps || prop.forceDefault) {
-				const defaultInstanceValue = meta.instance[propName];
-
-				skipDefault = false;
-				getDefault = defaultInstanceValue;
-
-				// If the default value of a field is set via default values for a class property,
-				// it is necessary to clone this value for each new component instance
-				// to ensure that they do not share the same value
-				const needCloneDefValue =
-					defaultInstanceValue != null && typeof defaultInstanceValue === 'object' &&
-					(!isTypeCanBeFunc(prop.type) || !Object.isFunction(defaultInstanceValue));
-
-				if (needCloneDefValue) {
-					getDefault = () => Object.fastClone(defaultInstanceValue);
-					(<object>getDefault)[DEFAULT_WRAPPER] = true;
-				}
-			}
+			const skipDefault = !defaultProps && !prop.forceDefault;
 
 			let defaultValue: unknown;
 
 			if (!skipDefault) {
-				defaultValue = prop.default !== undefined ? prop.default : getDefault;
+				if (prop.default !== undefined) {
+					defaultValue = prop.default;
+
+				} else {
+					const defaultInstanceValue = meta.instance[propName];
+
+					let getDefault = defaultInstanceValue;
+
+					// If the default value of a field is set via default values for a class property,
+					// it is necessary to clone this value for each new component instance
+					// to ensure that they do not share the same value
+					const needCloneDefValue =
+						defaultInstanceValue != null && typeof defaultInstanceValue === 'object' &&
+						(!isTypeCanBeFunc(prop.type) || !Object.isFunction(defaultInstanceValue));
+
+					if (needCloneDefValue) {
+						getDefault = () => Object.isPrimitive(defaultInstanceValue) ?
+							defaultInstanceValue :
+							Object.fastClone(defaultInstanceValue);
+
+						(<object>getDefault)[DEFAULT_WRAPPER] = true;
+					}
+
+					defaultValue = getDefault;
+				}
 			}
 
 			if (!isRoot || defaultValue !== undefined) {

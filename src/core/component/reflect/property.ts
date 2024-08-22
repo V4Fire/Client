@@ -7,7 +7,7 @@
  */
 
 import { deprecate } from 'core/functools/deprecation';
-import { ComponentInterface } from 'core/component/interface';
+import type { ComponentInterface } from 'core/component/interface';
 
 import { isStore, isPrivateField } from 'core/component/reflect/const';
 import type { PropertyInfo, AccessorType } from 'core/component/reflect/interface';
@@ -71,7 +71,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 
 			obj = obj[chunk];
 
-			if (obj?.instance instanceof ComponentInterface) {
+			if (obj != null && typeof obj === 'object' && 'componentName' in obj) {
 				component = obj;
 				rootI = i === chunks.length - 1 ? i : i + 1;
 			}

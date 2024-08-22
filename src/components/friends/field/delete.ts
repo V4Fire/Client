@@ -90,7 +90,7 @@ export function deleteField(
 
 	let isComponent = false;
 
-	if ((<Dictionary>obj).instance instanceof iBlock) {
+	if ('componentName' in obj && 'unsafe' in obj) {
 		ctx = (<iBlock>obj).unsafe;
 		isComponent = true;
 	}

@@ -105,7 +105,10 @@ export function createVirtualContext(
 		componentName: meta.componentName,
 
 		meta,
-		instance: Object.cast(meta.instance),
+
+		get instance(): typeof meta['instance'] {
+			return meta.instance;
+		},
 
 		$props,
 		$attrs,
