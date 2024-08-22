@@ -113,7 +113,7 @@ export function getField<T = unknown>(
 					break;
 
 				case 'field':
-					res = this.getFieldsStore();
+					res = this.getFieldsStore(ctx);
 					break;
 
 				default:
