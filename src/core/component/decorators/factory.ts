@@ -170,7 +170,7 @@ export function paramsFactory<T = object>(
 						});
 					}
 
-					if (p.dependencies != null) {
+					if (p.dependencies != null && p.dependencies.length > 0) {
 						meta.watchDependencies.set(key, p.dependencies);
 					}
 				}
