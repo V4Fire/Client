@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type Friend from 'components/friends/friend';
+import type Field from 'components/friends/field';
 import iBlock, { getPropertyInfo } from 'components/super/i-block/i-block';
 
 import type { ValueGetter } from 'components/friends/field/interface';
@@ -39,7 +39,7 @@ import type { ValueGetter } from 'components/friends/field/interface';
  * }
  * ```
  */
-export function getField<T = unknown>(this: Friend, path: string, getter: ValueGetter): CanUndef<T>;
+export function getField<T = unknown>(this: Field, path: string, getter: ValueGetter): CanUndef<T>;
 
 /**
  * Returns a property from the passed object at the specified path
@@ -58,14 +58,14 @@ export function getField<T = unknown>(this: Friend, path: string, getter: ValueG
  * ```
  */
 export function getField<T = unknown>(
-	this: Friend,
+	this: Field,
 	path: string,
 	obj?: Nullable<object>,
 	getter?: ValueGetter
 ): CanUndef<T>;
 
 export function getField<T = unknown>(
-	this: Friend,
+	this: Field,
 	path: string,
 	obj: Nullable<object | ValueGetter> = this.ctx,
 	getter?: ValueGetter
@@ -113,7 +113,7 @@ export function getField<T = unknown>(
 					break;
 
 				case 'field':
-					res = ctx.isFunctionalWatchers || ctx.lfc.isBeforeCreate() ? ctx.$fields : ctx;
+					res = this.getFieldsStore();
 					break;
 
 				default:

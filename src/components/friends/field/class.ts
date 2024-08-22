@@ -26,7 +26,13 @@ interface Field {
 
 @fakeMethods('delete')
 class Field extends Friend {
-
+	/**
+	 * Returns a reference to the storage object for the component fields
+	 */
+	getFieldsStore<T extends this['C']>(): T {
+		const {ctx} = this;
+		return Object.cast(ctx.isFunctionalWatchers || this.lfc.isBeforeCreate() ? ctx.$fields : ctx);
+	}
 }
 
 Field.addToPrototype({
