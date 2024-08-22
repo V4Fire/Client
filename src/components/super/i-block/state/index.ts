@@ -163,7 +163,8 @@ export default abstract class iBlockState extends iBlockMods {
 	 */
 	@computed()
 	get componentStatus(): ComponentStatus {
-		return this.shadowComponentStatusStore ?? this.field.get<ComponentStatus>('componentStatusStore') ?? 'unloaded';
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		return this.shadowComponentStatusStore ?? this.field.getFieldsStore().componentStatusStore ?? 'unloaded';
 	}
 
 	/**
@@ -194,8 +195,7 @@ export default abstract class iBlockState extends iBlockMods {
 			this.shadowComponentStatusStore = value;
 
 		} else {
-			this.shadowComponentStatusStore = undefined;
-			this.field.set('componentStatusStore', value);
+			this.field.getFieldsStore().componentStatusStore = value;
 
 			if (this.isReady && this.dependencies.length > 0) {
 				void this.forceUpdate();
@@ -244,7 +244,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 */
 	@computed()
 	get stage(): CanUndef<Stage> {
-		return this.field.get('stageStore');
+		return this.field.getFieldsStore().stageStore;
 	}
 
 	/**
@@ -264,7 +264,7 @@ export default abstract class iBlockState extends iBlockMods {
 		}
 
 		this.async.clearAll({group: this.stageGroup});
-		this.field.set('stageStore', value);
+		this.field.getFieldsStore().stageStore = value;
 
 		if (value != null) {
 			this.emit(`stage:${value}`, value, oldValue);
@@ -285,14 +285,15 @@ export default abstract class iBlockState extends iBlockMods {
 	 * A link to the application router
 	 */
 	get router(): CanUndef<bRouter> {
-		return this.field.get('routerStore', this.r);
+		// @ts-ignore (unsafe)
+		return this.r.routerStore;
 	}
 
 	/**
 	 * A link to the current route object
 	 */
 	get route(): CanUndef<this['r']['CurrentPage']> {
-		return this.field.get('route', this.r);
+		return this.r.route;
 	}
 
 	/**
@@ -325,7 +326,7 @@ export default abstract class iBlockState extends iBlockMods {
 		functionalWatching: false,
 		init: (o) => o.sync.link<CanUndef<Stage>>((val) => {
 			o.stage = val;
-			return o.field.get('stageStore');
+			return o.field.getFieldsStore().stageStore;
 		})
 	})
 

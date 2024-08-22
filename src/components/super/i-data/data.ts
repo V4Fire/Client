@@ -155,7 +155,7 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	 * The raw component data from the data provider
 	 */
 	get db(): CanUndef<this['DB']> {
-		return this.field.get('dbStore');
+		return this.field.getFieldsStore<this>().dbStore;
 	}
 
 	/**
@@ -172,14 +172,13 @@ abstract class iDataData extends iBlock implements iDataProvider {
 			return;
 		}
 
-		const
-			{async: $a} = this;
+		const {async: $a} = this;
 
 		$a.terminateWorker({
 			label: $$.db
 		});
 
-		this.field.set('dbStore', value);
+		this.field.getFieldsStore<this>().dbStore = value;
 
 		if (this.initRemoteData() !== undefined) {
 			this.watch('dbStore', this.initRemoteData.bind(this), {

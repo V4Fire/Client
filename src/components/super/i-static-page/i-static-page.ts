@@ -144,7 +144,7 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@computed({dependencies: ['route.meta.name']})
 	get activePage(): CanUndef<string> {
-		return this.field.get('route.meta.name');
+		return this.route?.meta.name;
 	}
 
 	/**
@@ -157,7 +157,7 @@ export default abstract class iStaticPage extends iPage {
 
 	@computed()
 	override get route(): CanUndef<this['CurrentPage']> {
-		return this.field.get('routeStore');
+		return this.field.getFieldsStore<this>().routeStore;
 	}
 
 	/**
@@ -167,7 +167,7 @@ export default abstract class iStaticPage extends iPage {
 	 * @emits `setRoute(value: CanUndef<this['CurrentPage']>)`
 	 */
 	override set route(value: CanUndef<this['CurrentPage']>) {
-		this.field.set('routeStore', value);
+		this.field.getFieldsStore<this>().routeStore = value;
 		this.emit('setRoute', value);
 	}
 

@@ -110,7 +110,7 @@ export default abstract class iData extends iDataHandlers {
 				void this.db;
 			};
 
-			const hydrationMode = this.canUseHydratedData && Boolean(this.field.get('ssrRendering'));
+			const hydrationMode = this.canUseHydratedData && Boolean(this.field.getFieldsStore<this>().ssrRendering);
 
 			if (hydrationMode) {
 				const

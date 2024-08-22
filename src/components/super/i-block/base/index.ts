@@ -130,7 +130,12 @@ export default abstract class iBlockBase extends iBlockFriends {
 				val = val !== false;
 
 				if (o.hook !== 'beforeDataCreate') {
-					o[val ? 'activate' : 'deactivate']();
+					if (val) {
+						o.activate();
+
+					} else {
+						o.deactivate();
+					}
 				}
 
 				o.isActivated = val;
