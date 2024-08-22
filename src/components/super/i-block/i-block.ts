@@ -94,25 +94,27 @@ export default abstract class iBlock extends iBlockProviders {
 	 */
 	@watch<iBlock>({
 		path: 'r.shouldMountTeleports',
-		flush: 'post',
-		test: (ctx) => HYDRATION && ctx.r.shouldMountTeleports === false
+		flush: 'post'
 	})
 
 	@hook('before:mounted')
 	protected onMountTeleports(): void {
-		const getNode = () => this.$refs[this.$resolveRef('$el')] ?? this.$el;
-
 		const {
 			$el: originalNode,
 			$async: $a
 		} = this;
 
-		const
-			node = getNode(),
-			mountedAttrs = new Set<string>(),
-			mountedAttrsGroup = {group: 'mountedAttrs'};
+		if (originalNode == null) {
+			return;
+		}
 
-		if (originalNode != null && node != null && originalNode !== node) {
+		const getNode = () => this.$refs[this.$resolveRef('$el')] ?? this.$el;
+
+		const node = getNode();
+
+		let attrsStore: CanNull<Set<string>> = null;
+
+		if (node != null && originalNode !== node) {
 			// Fix the DOM element link to the component
 			originalNode.component = this;
 
@@ -129,11 +131,15 @@ export default abstract class iBlock extends iBlockProviders {
 		}
 
 		function mountAttrs(attrs: Dictionary<string>) {
+			const mountedAttrsGroup = {group: 'mountedAttrs'};
 			$a.terminateWorker(mountedAttrsGroup);
 
 			if (node == null || originalNode == null) {
 				return;
 			}
+
+			attrsStore ??= new Set<string>();
+			const mountedAttrs = attrsStore;
 
 			Object.entries(attrs).forEach(([name, attr]) => {
 				if (attr == null) {
