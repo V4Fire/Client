@@ -6,29 +6,32 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import * as browser from 'core/browser';
-import * as helpers from 'core/helpers';
-import * as presets from 'components/presets';
+/* eslint-disable @typescript-eslint/no-var-requires */
 
-import Daemons, { DaemonsDict } from 'components/friends/daemons';
-import Analytics from 'components/friends/analytics';
+import type * as browser from 'core/browser';
+import type * as helpers from 'core/helpers';
+import type * as presets from 'components/presets';
 
-import DOM from 'components/friends/dom';
-import VDOM from 'components/friends/vdom';
-import Opt from 'components/super/i-block/modules/opt';
+import type Daemons from 'components/friends/daemons';
+import type { DaemonsDict } from 'components/friends/daemons';
 
-import AsyncRender from 'components/friends/async-render';
-import ModuleLoader from 'components/friends/module-loader';
-import Sync from 'components/friends/sync';
+import type Analytics from 'components/friends/analytics';
+import type DOM from 'components/friends/dom';
+import type VDOM from 'components/friends/vdom';
+import type Opt from 'components/super/i-block/modules/opt';
 
-import Field from 'components/friends/field';
-import Provide from 'components/friends/provide';
-import InfoRender from 'components/friends/info-render';
+import type AsyncRender from 'components/friends/async-render';
+import type ModuleLoader from 'components/friends/module-loader';
+import type Sync from 'components/friends/sync';
+
+import type Field from 'components/friends/field';
+import type Provide from 'components/friends/provide';
+import type InfoRender from 'components/friends/info-render';
 import type Block from 'components/friends/block';
 
-import Lfc from 'components/super/i-block/modules/lfc';
-import State from 'components/friends/state';
-import Storage from 'components/friends/storage';
+import type Lfc from 'components/super/i-block/modules/lfc';
+import type State from 'components/friends/state';
+import type Storage from 'components/friends/storage';
 
 import { component } from 'core/component';
 import { system, hook, computed } from 'components/super/i-block/decorators';
@@ -42,6 +45,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	get provide(): Provide {
+		const Provide = require('components/friends/provide').default;
 		return new Provide(Object.cast(this));
 	}
 
@@ -55,6 +59,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	get field(): Field {
+		const Field = require('components/friends/field').default;
 		return new Field(Object.cast(this));
 	}
 
@@ -75,6 +80,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	get sync(): Sync {
+		const Sync = require('components/friends/sync').default;
 		return new Sync(Object.cast(this));
 	}
 
@@ -89,6 +95,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	get asyncRender(): AsyncRender {
+		const AsyncRender = require('components/friends/async-render').default;
 		return new AsyncRender(Object.cast(this));
 	}
 
@@ -97,6 +104,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	get vdom(): VDOM {
+		const VDOM = require('components/friends/vdom').default;
 		return new VDOM(Object.cast(this));
 	}
 
@@ -105,6 +113,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	get infoRender(): InfoRender {
+		const InfoRender = require('components/friends/info-render').default;
 		return new InfoRender(Object.cast(this));
 	}
 
@@ -113,6 +122,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	get analytics(): Analytics {
+		const Analytics = require('components/friends/analytics').default;
 		return new Analytics(Object.cast(this));
 	}
 
@@ -121,6 +131,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	get lfc(): Lfc {
+		const Lfc = require('components/super/i-block/modules/lfc').default;
 		return new Lfc(Object.cast(this));
 	}
 
@@ -139,6 +150,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	protected get dom(): DOM {
+		const DOM = require('components/friends/dom').default;
 		return new DOM(Object.cast(this));
 	}
 
@@ -147,6 +159,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	protected get storage(): Storage {
+		const Storage = require('components/friends/storage').default;
 		return new Storage(Object.cast(this));
 	}
 
@@ -155,6 +168,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	protected get state(): State {
+		const State = require('components/friends/state').default;
 		return new State(Object.cast(this));
 	}
 
@@ -163,6 +177,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	protected get moduleLoader(): ModuleLoader {
+		const ModuleLoader = require('components/friends/module-loader').default;
 		return new ModuleLoader(Object.cast(this));
 	}
 
@@ -171,6 +186,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	protected get daemons(): Daemons {
+		const Daemons = require('components/friends/daemons').default;
 		return new Daemons(Object.cast(this));
 	}
 
@@ -185,6 +201,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	protected get opt(): Opt {
+		const Opt = require('components/super/i-block/modules/opt').default;
 		return new Opt(Object.cast(this));
 	}
 
@@ -193,7 +210,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	protected get browser(): typeof browser {
-		return browser;
+		return require('core/browser');
 	}
 
 	/**
@@ -201,7 +218,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	protected get presets(): typeof presets {
-		return presets;
+		return require('components/presets');
 	}
 
 	/**
@@ -210,7 +227,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	protected get h(): typeof helpers {
-		return helpers;
+		return require('core/helpers');
 	}
 
 	/**
