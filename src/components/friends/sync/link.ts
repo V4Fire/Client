@@ -376,9 +376,25 @@ export function link<D = unknown, R = D>(
 	linksCache[destPath] = {};
 
 	const sync = (val?: unknown, oldVal?: unknown) => {
-		const res = getter ? getter.call(this.component, val, oldVal) : val;
-		this.field.set(destPath!, res);
-		return res;
+		const resolveVal = getter ? getter.call(this.component, val, oldVal) : val;
+
+		if (destPath == null) {
+			return resolveVal;
+		}
+
+		const info = getPropertyInfo(destPath, this.component);
+
+		if (destPath.includes('.') || info.type === 'mounted') {
+			this.field.set(destPath, resolveVal);
+
+		} else if (info.type === 'field') {
+			this.field.getFieldsStore()[destPath] = resolveVal;
+
+		} else {
+			info.ctx[destPath] = resolveVal;
+		}
+
+		return resolveVal;
 	};
 
 	if (getter != null && (getter.length > 1 || getter['originalLength'] > 1)) {
@@ -466,12 +482,13 @@ export function link<D = unknown, R = D>(
 	}
 
 	const initSync = () => {
-		const src =
-			info.type === 'field' && (this.hook === 'beforeDataCreate' || ctx.isFunctionalWatchers) ?
-				ctx.$fields :
-				ctx;
+		const path: string = needCollapse ? info.originalTopPath : info.originalPath;
 
-		return sync(src[needCollapse ? info.originalTopPath : info.originalPath]);
+		if (path.includes('.')) {
+			return sync(this.field.get(path));
+		}
+
+		return sync(info.type === 'field' ? this.field.getFieldsStore()[path] : info.ctx[path]);
 	};
 
 	if (this.lfc.isBeforeCreate('beforeDataCreate')) {
