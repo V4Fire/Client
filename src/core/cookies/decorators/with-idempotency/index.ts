@@ -9,7 +9,7 @@
 import type { CookieStore } from 'core/cookies';
 
 const
-	rawCookieRegExp = /([^;]+)=[^;]+/;
+	rawCookieRegExp = /([^;]+)=[^;]*/;
 
 /**
  * Adds idempotent behavior to the CookieStore,
@@ -26,7 +26,7 @@ export function withIdempotency(store: CookieStore): CookieStore {
 		set cookie(rawCookie: string) {
 			const
 				[cookie, name] = rawCookieRegExp.exec(rawCookie) ?? [],
-				currentCookieRegExp = new RegExp(`${name}=[^;]+(?=;|$)`),
+				currentCookieRegExp = new RegExp(`${name}=?[^;]*(?=;|$)`),
 				currentCookie = currentCookieRegExp.exec(store.cookie)?.[0];
 
 			if (currentCookie === cookie) {
