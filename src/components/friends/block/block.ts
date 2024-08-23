@@ -153,7 +153,7 @@ export function setMod(this: Block, name: string, value: unknown, reason: ModEve
 	if (!ctx.isFunctional) {
 		const {reactiveModsStore} = ctx.field.getFieldsStore<typeof this.ctx>();
 
-		if (reactiveModsStore != null && name in reactiveModsStore && reactiveModsStore[name] !== normalizedValue) {
+		if (name in reactiveModsStore && reactiveModsStore[name] !== normalizedValue) {
 			delete Object.getPrototypeOf(reactiveModsStore)[name];
 			ctx.field.set(`reactiveModsStore.${name}`, normalizedValue);
 		}
