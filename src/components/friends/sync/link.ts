@@ -384,11 +384,11 @@ export function link<D = unknown, R = D>(
 
 		const info = getPropertyInfo(destPath, this.component);
 
-		if (destPath.includes('.') || info.type === 'mounted') {
+		if (info.path.includes('.') || info.type === 'mounted') {
 			this.field.set(destPath, resolveVal);
 
 		} else if (info.type === 'field') {
-			this.field.getFieldsStore()[destPath] = resolveVal;
+			this.field.getFieldsStore(info.ctx)[destPath] = resolveVal;
 
 		} else {
 			info.ctx[destPath] = resolveVal;
@@ -484,11 +484,12 @@ export function link<D = unknown, R = D>(
 	const initSync = () => {
 		const path: string = needCollapse ? info.originalTopPath : info.originalPath;
 
-		if (path.includes('.')) {
+		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+		if (info.path.includes('.')) {
 			return sync(this.field.get(path));
 		}
 
-		return sync(info.type === 'field' ? this.field.getFieldsStore()[path] : info.ctx[path]);
+		return sync(info.type === 'field' ? this.field.getFieldsStore(info.ctx)[path] : info.ctx[path]);
 	};
 
 	if (this.lfc.isBeforeCreate('beforeDataCreate')) {

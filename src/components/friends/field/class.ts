@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { ComponentInterface } from 'core/component';
 import Friend, { fakeMethods } from 'components/friends/friend';
 
 import { getField } from 'components/friends/field/get';
@@ -30,9 +31,12 @@ class Field extends Friend {
 	 * Returns a reference to the storage object for the fields of the passed component
 	 * @param [component]
 	 */
-	getFieldsStore<T extends this['C'] | this['CTX']>(component: T = Object.cast(this.component)): Extract<T, this['C']> {
-		const unsafe = Object.cast<this['CTX']>(component);
-		return Object.cast(unsafe.isFunctionalWatchers || this.lfc.isBeforeCreate() ? unsafe.$fields : unsafe);
+	getFieldsStore<T extends this['C']>(component?: T): T;
+	getFieldsStore<T extends this['CTX']>(component?: T): T;
+	getFieldsStore<T extends ComponentInterface>(component?: T): T;
+	getFieldsStore<T extends ComponentInterface['unsafe']>(component?: T): T;
+	getFieldsStore(component: typeof this.ctx = this.ctx): object {
+		return Object.cast(component.isFunctionalWatchers || this.lfc.isBeforeCreate() ? component.$fields : component);
 	}
 }
 

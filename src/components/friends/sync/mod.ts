@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { getPropertyInfo } from 'core/component';
 import { statuses } from 'components/super/i-block/const';
 
 import type Sync from 'components/friends/sync/class';
@@ -95,9 +96,11 @@ export function mod<D = unknown, R = unknown>(
 		opts = Object.cast(optsOrConverter);
 	}
 
-	const that = this;
-
 	const {ctx} = this;
+
+	const
+		that = this,
+		info = getPropertyInfo(path, this.component);
 
 	if (this.lfc.isBeforeCreate()) {
 		this.syncModCache[modName] = sync;
@@ -118,7 +121,16 @@ export function mod<D = unknown, R = unknown>(
 	}
 
 	function sync() {
-		const v = (<LinkGetter>converter).call(that.component, that.field.get(path));
+		let v: unknown;
+
+		if (info.path.includes('.')) {
+			v = that.field.get(path);
+
+		} else {
+			v = info.type === 'field' ? that.field.getFieldsStore(info.ctx)[path] : info.ctx[path];
+		}
+
+		v = (<LinkGetter>converter).call(that.component, v);
 
 		if (v !== undefined) {
 			ctx.mods[modName] = String(v);
