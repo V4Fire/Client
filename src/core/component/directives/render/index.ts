@@ -96,7 +96,7 @@ ComponentEngine.directive('render', {
 		}
 
 		async function getSSRInnerHTML(content: CanArray<CanPromise<VNode>>) {
-			let normalizedContent = Array.concat([], content);
+			let normalizedContent = Array.toArray(content);
 
 			while (normalizedContent.some(Object.isPromise)) {
 				normalizedContent = (await Promise.all(normalizedContent)).flat();

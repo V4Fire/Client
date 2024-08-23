@@ -59,8 +59,6 @@ export default <ValidatorsDecl<bInput>>{
 		showMessage = true
 	}: NumberValidatorParams): Promise<ValidatorResult<NumberValidatorResult>> {
 		const
-			numStyleRgxp = new RegExp(`[${Array.concat([], styleSeparator).join('')}]`, 'g'),
-			sepStyleRgxp = new RegExp(`[${Array.concat([], separator).join('')}]`);
 			numStyleRgxp = new RegExp(`[${Array.toArray(styleSeparator).join('')}]`, 'g'),
 			sepStyleRgxp = new RegExp(`[${Array.toArray(separator).join('')}]`);
 

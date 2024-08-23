@@ -68,8 +68,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 		ctx.componentStatus = 'loading';
 
 		if (needRouterSync || globalName != null) {
-			const tasks = Array.concat(
-				[],
+			const tasks = Array.toArray(
 				needRouterSync ? $s.resetRouter() : null,
 				globalName != null ? $s.resetStorage() : null
 			);
