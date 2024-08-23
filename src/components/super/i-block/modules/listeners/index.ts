@@ -120,7 +120,7 @@ export function initRemoteWatchers(component: iBlock): void {
 	}
 
 	Object.entries(watchProp).forEach(([method, watchers]) => {
-		Array.toArray( watchers).forEach((watcher) => {
+		Array.toArray(watchers).forEach((watcher) => {
 			if (Object.isString(watcher)) {
 				const
 					path = normalizePath(watcher),
