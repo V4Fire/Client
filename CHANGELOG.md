@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.XXX (2024-XX-XX)
+
+#### :bug: Bug Fix
+
+* Fixed wrong `attrs` type for `removeLinks` method `core/page-meta-data`
+
 ## v4.0.0-beta.125 (2024-08-12)
 
 #### :bug: Bug Fix
