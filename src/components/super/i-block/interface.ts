@@ -107,6 +107,12 @@ export interface UnsafeIBlock<CTX extends iBlock = iBlock> extends UnsafeCompone
 	ifOnceStore: CTX['ifOnceStore'];
 
 	// @ts-ignore (access)
+	reactiveModsStore: CTX['reactiveModsStore'];
+
+	// @ts-ignore (access)
+	rootAttrsStore: CTX['rootAttrsStore'];
+
+	// @ts-ignore (access)
 	syncRouterState: CTX['syncRouterState'];
 
 	// @ts-ignore (access)

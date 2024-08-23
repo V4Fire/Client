@@ -88,7 +88,14 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	 * These functions step by step transform the original provider data before storing it in `db`.
 	 * {@link iDataProvider.dbConverter}
 	 */
-	@system((o) => o.sync.link('dbConverter', (val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
+	@system((o) => o.sync.link('dbConverter', (val) => {
+		if (val == null) {
+			return [];
+		}
+
+		return Object.isIterable(val) ? [...val] : [val];
+	}))
+
 	dbConverters!: ComponentConverter[];
 
 	/**

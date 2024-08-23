@@ -45,8 +45,7 @@ export default abstract class iVisible {
 			localEmitter: $e
 		} = component.unsafe;
 
-		component.sync
-			.mod('hidden', 'r.isOnline', (v) => component.hideIfOffline && v === false);
+		component.sync.mod('hidden', 'r.isOnline', (v) => component.hideIfOffline && v === false);
 
 		$e.on('block.mod.*.hidden.*', (e: ModEvent) => {
 			if (e.type === 'remove' && e.reason !== 'removeMod') {
