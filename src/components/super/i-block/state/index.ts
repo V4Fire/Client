@@ -161,7 +161,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 *   6. `destroyed` - the component has been destroyed:
 	 *      this status might coincide with certain component hooks such as `beforeDestroy` or `destroyed`.
 	 */
-	@computed()
+	@computed({cache: false, dependencies: []})
 	get componentStatus(): ComponentStatus {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		return this.shadowComponentStatusStore ?? this.field.getFieldsStore().componentStatusStore ?? 'unloaded';
@@ -242,7 +242,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 *
 	 * {@link iBlock.stageProp}
 	 */
-	@computed()
+	@computed({cache: false, dependencies: []})
 	get stage(): CanUndef<Stage> {
 		return this.field.getFieldsStore().stageStore;
 	}
@@ -284,6 +284,7 @@ export default abstract class iBlockState extends iBlockMods {
 	/**
 	 * A link to the application router
 	 */
+	@computed({cache: false, dependencies: []})
 	get router(): CanUndef<bRouter> {
 		// @ts-ignore (unsafe)
 		return this.r.routerStore;
