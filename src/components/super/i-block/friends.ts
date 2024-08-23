@@ -113,7 +113,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	get infoRender(): InfoRender {
-		const InfoRender = require('components/friends/info-render/class').default;
+		const InfoRender = require('components/friends/info-render').default;
 		return new InfoRender(Object.cast(this));
 	}
 
