@@ -133,7 +133,7 @@ export class PageMetaData {
 	 * Removes link elements with the given attributes from the current page
 	 * @param attrs - attributes of the removed elements
 	 */
-	removeLinks(attrs: MetaAttributes): void {
+	removeLinks(attrs: LinkAttributes): void {
 		this.store.removeLinks(attrs);
 	}
 

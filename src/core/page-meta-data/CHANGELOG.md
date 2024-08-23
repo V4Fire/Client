@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.XXX (2024-XX-XX)
+
+#### :bug: Bug Fix
+
+* Fixed wrong `attrs` type for `removeLinks` method
+
 ## v4.0.0-beta.110 (2024-07-17)
 
 #### :bug: Bug Fix
