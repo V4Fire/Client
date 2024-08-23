@@ -59,7 +59,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	get field(): Field {
-		const Field = require('components/friends/field').default;
+		const Field = require('components/friends/field/class').default;
 		return new Field(Object.cast(this));
 	}
 
@@ -80,7 +80,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	get sync(): Sync {
-		const Sync = require('components/friends/sync').default;
+		const Sync = require('components/friends/sync/class').default;
 		return new Sync(Object.cast(this));
 	}
 
@@ -95,7 +95,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	get asyncRender(): AsyncRender {
-		const AsyncRender = require('components/friends/async-render').default;
+		const AsyncRender = require('components/friends/async-render/class').default;
 		return new AsyncRender(Object.cast(this));
 	}
 
@@ -104,7 +104,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	get vdom(): VDOM {
-		const VDOM = require('components/friends/vdom').default;
+		const VDOM = require('components/friends/vdom/class').default;
 		return new VDOM(Object.cast(this));
 	}
 
@@ -113,7 +113,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	get infoRender(): InfoRender {
-		const InfoRender = require('components/friends/info-render').default;
+		const InfoRender = require('components/friends/info-render/class').default;
 		return new InfoRender(Object.cast(this));
 	}
 
@@ -150,7 +150,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	protected get dom(): DOM {
-		const DOM = require('components/friends/dom').default;
+		const DOM = require('components/friends/dom/class').default;
 		return new DOM(Object.cast(this));
 	}
 
@@ -159,7 +159,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	protected get storage(): Storage {
-		const Storage = require('components/friends/storage').default;
+		const Storage = require('components/friends/storage/class').default;
 		return new Storage(Object.cast(this));
 	}
 
@@ -168,7 +168,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	protected get state(): State {
-		const State = require('components/friends/state').default;
+		const State = require('components/friends/state/class').default;
 		return new State(Object.cast(this));
 	}
 
@@ -177,7 +177,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	protected get moduleLoader(): ModuleLoader {
-		const ModuleLoader = require('components/friends/module-loader').default;
+		const ModuleLoader = require('components/friends/module-loader/class').default;
 		return new ModuleLoader(Object.cast(this));
 	}
 
@@ -186,7 +186,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	 */
 	@computed({cache: 'forever'})
 	protected get daemons(): Daemons {
-		const Daemons = require('components/friends/daemons').default;
+		const Daemons = require('components/friends/daemons/class').default;
 		return new Daemons(Object.cast(this));
 	}
 
