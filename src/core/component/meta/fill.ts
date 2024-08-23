@@ -257,7 +257,7 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 				watcherListeners.push({
 					...watcher,
 					method: methodName,
-					args: Array.concat([], watcher.args),
+					args: Array.toArray(watcher.args),
 					handler: Object.cast(method.fn)
 				});
 			});

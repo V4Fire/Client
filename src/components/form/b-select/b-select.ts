@@ -149,7 +149,7 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 		const val = this.field.get('defaultProp');
 
 		if (this.multiple) {
-			return new Set(Object.isIterable(val) ? val : Array.concat([], val));
+			return new Set(Object.isIterable(val) ? val : Array.toArray(val));
 		}
 
 		return val;
@@ -306,7 +306,7 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 		}
 
 		SyncPromise.resolve(this.activeElement).then((els) => {
-			Array.concat([], els).forEach((el) => {
+			Array.toArray(els).forEach((el) => {
 				h.setSelectedMod.call(this, el, true);
 			});
 		}).catch(stderr);
@@ -331,7 +331,7 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 		}
 
 		SyncPromise.resolve(previousActiveElement).then((els) => {
-			Array.concat([], els).forEach((el) => {
+			Array.toArray(els).forEach((el) => {
 				const
 					id = el.getAttribute('data-id'),
 					item = this.values.getItem(id ?? -1);

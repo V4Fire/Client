@@ -238,7 +238,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 			return null;
 		}
 
-		const clearHandlers = Array.concat([], p.onClear);
+		const clearHandlers = Array.toArray(p.onClear);
 		p.onClear = clearHandlers;
 
 		function dragStartClear(this: unknown, ...args: unknown[]): void {

@@ -61,6 +61,8 @@ export default <ValidatorsDecl<bInput>>{
 		const
 			numStyleRgxp = new RegExp(`[${Array.concat([], styleSeparator).join('')}]`, 'g'),
 			sepStyleRgxp = new RegExp(`[${Array.concat([], separator).join('')}]`);
+			numStyleRgxp = new RegExp(`[${Array.toArray(styleSeparator).join('')}]`, 'g'),
+			sepStyleRgxp = new RegExp(`[${Array.toArray(separator).join('')}]`);
 
 		const value = String((await this.formValue) ?? '')
 			.replace(numStyleRgxp, '')

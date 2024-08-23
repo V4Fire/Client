@@ -115,7 +115,7 @@ export function paramsFactory<T = object>(
 					if (p.watch != null) {
 						watchers ??= {};
 
-						Array.concat([], p.watch).forEach((watcher) => {
+						(Object.isArray(p.watch) ? p.watch : [p.watch]).forEach((watcher) => {
 							if (Object.isPlainObject(watcher)) {
 								const path = String(watcher.path ?? watcher.field);
 								watchers[path] = wrapOpts({...p.watchParams, ...watcher, path});
@@ -129,7 +129,7 @@ export function paramsFactory<T = object>(
 					if (p.hook != null) {
 						hooks ??= {};
 
-						Array.concat([], p.hook).forEach((hook) => {
+						(Object.isArray(p.hook) ? p.hook : [p.hook]).forEach((hook) => {
 							if (Object.isSimpleObject(hook)) {
 								const
 									hookName = Object.keys(hook)[0],
@@ -212,7 +212,7 @@ export function paramsFactory<T = object>(
 				}
 
 				if (p.watch != null) {
-					Array.concat([], p.watch).forEach((watcher) => {
+					(Object.isArray(p.watch) ? p.watch : [p.watch]).forEach((watcher) => {
 						watchers ??= new Map();
 
 						if (Object.isPlainObject(watcher)) {

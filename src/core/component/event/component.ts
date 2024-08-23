@@ -148,13 +148,12 @@ export function implementEventEmitterAPI(component: object): void {
 				emitter = Object.cast(opts.rawEmitter ? reversedEmitter : wrappedReversedEmitter);
 			}
 
-			Array.concat([], event).forEach((event) => {
+			Array.toArray(event).forEach((event) => {
 				if (method === 'off' && cb == null) {
 					emitter.removeAllListeners(event);
 
 				} else {
-					const
-						link = emitter[method](Object.cast(event), Object.cast(cb));
+					const link = emitter[method](Object.cast(event), Object.cast(cb));
 
 					if (isOnLike) {
 						links.push(Object.cast(opts.rawEmitter ? cb : link));

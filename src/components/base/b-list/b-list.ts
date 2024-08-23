@@ -228,7 +228,7 @@ class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 			}
 
 			SyncPromise.resolve(this.activeElement).then((selectedElement) => {
-				Array.concat([], selectedElement).forEach((el) => setActiveMod.call(this, el, true));
+				Array.toArray(selectedElement).forEach((el) => setActiveMod.call(this, el, true));
 			}, stderr);
 		}
 
@@ -253,7 +253,7 @@ class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 
 		if ($b != null) {
 			SyncPromise.resolve(activeElement).then((activeElement) => {
-				const els = Array.concat([], activeElement);
+				const els = Array.toArray(activeElement);
 
 				els.forEach((el) => {
 					const

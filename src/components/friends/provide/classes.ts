@@ -106,7 +106,7 @@ export function classes(
 			});
 		}
 
-		map[innerEl.dasherize()] = fullElementName.apply(this, Object.cast(Array.concat([componentName], outerEl)));
+		map[innerEl.dasherize()] = fullElementName.apply(this, Array.toArray(componentName, outerEl));
 	});
 
 	return map;

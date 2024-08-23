@@ -51,7 +51,7 @@ export function getComponentMods(component: ComponentConstructorInfo): ModsDecl 
 	if (Object.isDictionary(modsFromDS)) {
 		Object.entries(modsFromDS).forEach(([name, dsModDecl]) => {
 			const modDecl = modsFromConstructor[name];
-			modsFromConstructor[name] = Object.cast(Array.concat([], modDecl, dsModDecl));
+			modsFromConstructor[name] = Object.cast(Array.toArray(modDecl, dsModDecl));
 		});
 	}
 

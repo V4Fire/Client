@@ -463,7 +463,7 @@ export default class bDynamicPage extends iDynamicPage {
 					return loopbackStrategy;
 				}
 
-			} else if (Object.isRegExp(exclude) ? exclude.test(page) : Array.concat([], exclude).includes(page)) {
+			} else if (Object.isRegExp(exclude) ? exclude.test(page) : Array.toArray(exclude).includes(page)) {
 				return loopbackStrategy;
 			}
 		}
@@ -509,7 +509,7 @@ export default class bDynamicPage extends iDynamicPage {
 				};
 			}
 
-			if (Object.isRegExp(include) ? !include.test(page) : !Array.concat([], include).includes(page)) {
+			if (Object.isRegExp(include) ? !include.test(page) : !Array.toArray(include).includes(page)) {
 				return loopbackStrategy;
 			}
 		}

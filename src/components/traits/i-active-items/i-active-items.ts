@@ -105,7 +105,7 @@ export default abstract class iActiveItems extends iItems {
 						return ctx.activeStore;
 					}
 
-					return new Set(Array.concat([], ctx.activeStore));
+					return new Set(Array.toArray(ctx.activeStore));
 				}
 
 				return ctx.activeStore;
@@ -115,7 +115,7 @@ export default abstract class iActiveItems extends iItems {
 				newVal;
 
 			if (ctx.multiple) {
-				newVal = new Set(Object.isIterable(val) && !Object.isString(val) ? val : Array.concat([], val));
+				newVal = new Set(Object.isIterable(val) && !Object.isString(val) ? val : Array.toArray(val));
 
 				if (Object.fastCompare(newVal, ctx.activeStore)) {
 					return ctx.activeStore;

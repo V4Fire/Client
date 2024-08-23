@@ -102,7 +102,7 @@ export function create(
 	}
 
 	const
-		resolvedDescriptors = Array.concat([], typeOrDesc, Object.cast(descriptors)),
+		resolvedDescriptors = Array.toArray(typeOrDesc, Object.cast(descriptors)),
 		vnodes = new Array(resolvedDescriptors.length);
 
 	resolvedDescriptors.forEach((descriptor, i) => {
@@ -176,10 +176,10 @@ function createVNode(
 					slots[key] = Object.isFunction(slot) ?
 						function slotWrapper(this: unknown) {
 							// eslint-disable-next-line prefer-rest-params
-							return Array.concat([], slot.apply(this, arguments)).map(Object.cast(factory));
+							return Array.toArray(slot.apply(this, arguments)).map(Object.cast(factory));
 						} :
 
-						() => Array.concat([], slot).map(factory);
+						() => Array.toArray(slot).map(factory);
 				});
 
 				resolvedChildren = slots;

@@ -59,7 +59,7 @@ export function bindListenerToElement(
 		group: new RegExp(`:${id}`)
 	});
 
-	Array.concat([], listener).forEach((listener: Listener) => {
+	Array.toArray(listener).forEach((listener: Listener) => {
 		const group = {
 			group: `${listener.group ?? ''}:${id}`
 		};

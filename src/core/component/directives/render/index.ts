@@ -41,8 +41,7 @@ ComponentEngine.directive('render', {
 		}
 
 		if (Object.isString(vnode.type)) {
-			const
-				children = Array.concat([], newVNode);
+			const children = Array.toArray(newVNode);
 
 			if (SSR) {
 				if (isTemplate) {

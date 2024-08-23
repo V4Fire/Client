@@ -173,7 +173,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		vnode.children = functionalVNode.children;
 		vnode.dynamicChildren = functionalVNode.dynamicChildren;
 
-		vnode.dirs = Array.concat([], vnode.dirs, functionalVNode.dirs);
+		vnode.dirs = Array.toArray(vnode.dirs, functionalVNode.dirs);
 		vnode.dirs.push({
 			dir: Object.cast(r.resolveDirective.call(virtualCtx, 'hook')),
 

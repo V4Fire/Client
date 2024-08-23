@@ -263,7 +263,7 @@ class bTree extends iTreeProps implements iActiveItems, iFoldable {
 
 		// Activate current active nodes
 		SyncPromise.resolve(this.activeElement).then((activeElement) => {
-			Array.concat([], activeElement).forEach((activeElement) => setActiveMod.call(top, activeElement, true));
+			Array.toArray(activeElement).forEach((activeElement) => setActiveMod.call(top, activeElement, true));
 		}).catch(stderr);
 
 		return true;
