@@ -189,6 +189,22 @@ By default, `bDynamicPage` dispatches all events from the inner page component, 
 < b-dynamic-page :keepAlive = true | @initLoad = console.log('Caught!')
 ```
 
+## Forcing Recreation of the Page Component When Switching Between the Same Route
+
+When switching between routes that use the same page component but have different path or query parameters,
+it can be beneficial to recreate the page component to avoid considering the previous state and current prop values.
+
+To achieve this, you can specify a unique key for each route. You can do this by returning a tuple from the `pageGetter` function.
+The second element of the tuple should be a unique key. This value helps determine whether a new page component
+should be used to render the next page.
+
+For example, this approach ensures that every page with the same route but different path parameters
+will be tied to separate component instances:
+
+```
+< b-dynamic-page :pageGetter = (e) => [e.meta.pageComponent, Object.fastHash(e.params)]
+```
+
 ## API
 
 Additionally, you can view the implemented traits or the parent component.
@@ -263,6 +279,11 @@ The page switching event name.
 #### page
 
 The name of the active page to load.
+
+#### pageKey
+
+Active page unique key. It is used to determine whether to reuse current page component or create a new one
+when switching between routes with the same page component.
 
 #### keepAliveCache
 

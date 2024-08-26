@@ -16,7 +16,7 @@ import type { ComponentElement, UnsafeIData } from 'components/super/i-dynamic-p
 export type Include = CanArray<string> | RegExp | IncludeFn;
 
 export interface PageGetter {
-	(route: iDynamicPage['route'], ctx: bDynamicPage): CanUndef<string>;
+	(route: iDynamicPage['route'], ctx: bDynamicPage): CanUndef<PageComponentName | PageInfo>;
 }
 
 export interface IncludeFn {
@@ -79,3 +79,8 @@ export interface OnBeforeSwitchPage {
 	 */
 	saveScroll(el: Element): void;
 }
+
+type PageComponentName = string;
+type PageKey = string;
+
+export type PageInfo = [PageComponentName, PageKey?];

@@ -11,6 +11,29 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.126 (2024-08-23)
+
+#### :rocket: New Feature
+
+* The `eventConverter` function can now return a tuple consisting of the page component name and page component key, instead of just a string representing the page component name `bDynamicPage`
+
+#### :bug: Bug Fix
+
+* Fixed an issue where a new page component instance was not created when switching between routes that use the same page component `bDynamicPage`
+
+## v4.0.0-beta.125 (2024-08-12)
+
+#### :bug: Bug Fix
+
+* Fixed the dynamic component import transformer for the SSR build `build/monic`
+* Fixed the TypeScript configuration for SSR builds using SWC `config`
+
+## v4.0.0-beta.124 (2024-08-12)
+
+#### :house: Internal
+
+* Updated `monic-loader` to version `3.0.5` to include a fix for the rebuild speed regression
+
 ## v4.0.0-beta.123 (2024-08-09)
 
 #### :bug: Bug Fix
