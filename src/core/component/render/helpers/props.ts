@@ -14,8 +14,10 @@ export const isHandler = {
 			return false;
 		}
 
-		const char = key.charAt(2);
-		return char.toUpperCase() === char.toLowerCase();
+		const codePoint = key.codePointAt(2);
+
+		// [^a-z]
+		return codePoint != null && (codePoint < 97 || codePoint > 122);
 	}
 };
 
