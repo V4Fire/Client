@@ -154,7 +154,7 @@ test.describe('core/cookies', () => {
 		});
 	});
 
-	test.describe.only('with `withIdempotency` decorator', () => {
+	test.describe('with `withIdempotency` decorator', () => {
 		let idempotentCookiesAPI;
 
 		test.beforeEach(async () => {
