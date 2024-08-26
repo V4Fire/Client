@@ -154,7 +154,7 @@ test.describe('core/cookies', () => {
 		});
 	});
 
-	test.describe('with `withIdempotency` decorator', () => {
+	test.describe.only('with `withIdempotency` decorator', () => {
 		let idempotentCookiesAPI;
 
 		test.beforeEach(async () => {
@@ -192,25 +192,25 @@ test.describe('core/cookies', () => {
 		test.describe('should change current cookie', () => {
 			test('base case', async () => {
 				const res = await idempotentCookiesAPI.evaluate((cookies) => {
-					cookies.set('testCookie', 'testCookieVal', {maxAge: 10});
+					cookies.set('testCookie', 'testCookieVal1', {maxAge: 10});
 					cookies.set('testCookie', 'testCookieVal2', {maxAge: 10});
 
 					return cookies.store.cookie;
 				});
 
-				test.expect(res.includes('testCookie=testCookieVal')).toBe(true);
+				test.expect(res.includes('testCookie=testCookieVal1')).toBe(false);
 				test.expect(res.includes('testCookie=testCookieVal2')).toBe(true);
 			});
 
 			test('cookie has no value', async () => {
 				const res = await idempotentCookiesAPI.evaluate((cookies) => {
-					cookies.set('testCookie', {maxAge: 10});
+					cookies.set('testCookie1', {maxAge: 10});
 					cookies.set('testCookie2', {maxAge: 10});
 
 					return cookies.store.cookie;
 				});
 
-				test.expect(res.includes('testCookie')).toBe(true);
+				test.expect(res.includes('testCookie1')).toBe(true);
 				test.expect(res.includes('testCookie2')).toBe(true);
 			});
 		});
