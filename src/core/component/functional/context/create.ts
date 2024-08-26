@@ -16,6 +16,7 @@ import type { ComponentInterface } from 'core/component/interface';
 import type { VirtualContextOptions } from 'core/component/functional/interface';
 
 import { initDynamicComponentLifeCycle } from 'core/component/functional/life-cycle';
+import { isComponentEventHandler, isOnceEvent } from 'core/component/functional/context/helpers';
 
 /**
  * Creates a virtual context for the passed functional component
@@ -28,7 +29,7 @@ import { initDynamicComponentLifeCycle } from 'core/component/functional/life-cy
  */
 export function createVirtualContext(
 	component: ComponentMeta,
-	{parent, props = {}, slots = {}}: VirtualContextOptions
+	{parent, props, slots}: VirtualContextOptions
 ): ComponentInterface {
 	const meta = forkMeta(component);
 	meta.params.functional = true;
@@ -40,18 +41,6 @@ export function createVirtualContext(
 	const handlers: Array<[string, boolean, Function]> = [];
 
 	if (props != null) {
-		const
-			isOnceEvent = /.Once(.|$)/,
-			isDOMEvent = /.(?:Passive|Capture)(.|$)/;
-
-		const isComponentEventHandler = (event: string, handler: unknown): handler is Function => {
-			if (!event.startsWith('on') || isDOMEvent.test(event) || !Object.isFunction(handler)) {
-				return false;
-			}
-
-			return handler.name !== 'withModifiers' && handler.name !== 'withKeys';
-		};
-
 		Object.entries(props).forEach(([name, prop]) => {
 			const normalizedName = name.camelize(false);
 
@@ -62,13 +51,13 @@ export function createVirtualContext(
 				if (isComponentEventHandler(name, prop)) {
 					let event = name.slice('on'.length).camelize(false);
 
-					const once = isOnceEvent.test(name);
+					const isOnce = isOnceEvent.test(name);
 
-					if (once) {
-						event = event.replace(/Once$/, '');
+					if (isOnce) {
+						event = isOnceEvent.replace(event);
 					}
 
-					handlers.push([event, once, prop]);
+					handlers.push([event, isOnce, prop]);
 				}
 
 				$attrs[name] = prop;

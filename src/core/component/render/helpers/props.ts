@@ -8,16 +8,23 @@
 
 import { normalizeClass, normalizeStyle } from 'core/component/render/helpers/normalizers';
 
-export const
-	isHandler = /^on[^a-z]/;
+export const isHandler = {
+	test(key: string): boolean {
+		if (key.length < 3 || !key.startsWith('on')) {
+			return false;
+		}
+
+		const char = key.charAt(2);
+		return char.toUpperCase() === char.toLowerCase();
+	}
+};
 
 /**
  * Merges the specified props into one and returns a single merged prop object
  * @param args
  */
 export function mergeProps(...args: Dictionary[]): Dictionary {
-	const
-		props: Dictionary = {};
+	const props: Dictionary = {};
 
 	args.forEach((toMerge) => {
 		for (const key in toMerge) {

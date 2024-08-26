@@ -21,8 +21,7 @@ export function normalizeClass(classes: CanArray<string | Dictionary>): string {
 
 	} else if (Object.isArray(classes)) {
 		classes.forEach((className) => {
-			const
-				normalizedClass = normalizeClass(className);
+			const normalizedClass = normalizeClass(className);
 
 			if (normalizedClass !== '') {
 				classesStr += `${normalizedClass} `;
@@ -87,8 +86,7 @@ export function parseStringStyle(style: string): Dictionary<string> {
 		singleStyle = singleStyle.trim();
 
 		if (singleStyle !== '') {
-			const
-				chunks = singleStyle.split(propertyDelimiterRgxp);
+			const chunks = singleStyle.split(propertyDelimiterRgxp, 2);
 
 			if (chunks.length > 1) {
 				styles[chunks[0].trim()] = chunks[1].trim();
@@ -121,9 +119,9 @@ export function normalizeComponentAttrs(
 		return null;
 	}
 
-	const
-		dynamicPropsPatches = new Map<string, string>(),
-		normalizedAttrs = {...attrs};
+	let dynamicPropsPatches: CanNull<Map<string, string>> = null;
+
+	const normalizedAttrs = {...attrs};
 
 	if (Object.isDictionary(normalizedAttrs['v-attrs'])) {
 		normalizedAttrs['v-attrs'] = normalizeComponentAttrs(normalizedAttrs['v-attrs'], dynamicProps, component);
@@ -184,22 +182,26 @@ export function normalizeComponentAttrs(
 			return;
 		}
 
+		dynamicPropsPatches ??= new Map();
 		dynamicPropsPatches.set(name, newName);
+
 		patchDynamicProps(newName);
 	}
 
 	function patchDynamicProps(propName: string) {
 		if (functional !== true && component.props[propName]?.forceUpdate === false) {
+			dynamicPropsPatches ??= new Map();
 			dynamicPropsPatches.set(propName, '');
 		}
 	}
 
 	function modifyDynamicPath() {
-		if (dynamicProps == null || dynamicPropsPatches.size === 0) {
+		if (dynamicProps == null || dynamicPropsPatches == null) {
 			return;
 		}
 
-		for (let i = dynamicProps.length - 1; i >= 0; i--) {
+		// eslint-disable-next-line vars-on-top, no-var
+		for (var i = dynamicProps.length - 1; i >= 0; i--) {
 			const
 				prop = dynamicProps[i],
 				path = dynamicPropsPatches.get(prop);
