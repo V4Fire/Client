@@ -12,10 +12,10 @@ import { saveRawComponentContext } from 'core/component/context';
 import { forkMeta, ComponentMeta } from 'core/component/meta';
 import { initProps } from 'core/component/prop';
 
-import { initDynamicComponentLifeCycle } from 'core/component/functional/helpers';
-
 import type { ComponentInterface } from 'core/component/interface';
 import type { VirtualContextOptions } from 'core/component/functional/interface';
+
+import { initDynamicComponentLifeCycle } from 'core/component/functional/life-cycle';
 
 /**
  * Creates a virtual context for the passed functional component
@@ -37,8 +37,7 @@ export function createVirtualContext(
 		$props = {},
 		$attrs = {};
 
-	const
-		handlers: Array<[string, boolean, Function]> = [];
+	const handlers: Array<[string, boolean, Function]> = [];
 
 	if (props != null) {
 		const
@@ -54,19 +53,16 @@ export function createVirtualContext(
 		};
 
 		Object.entries(props).forEach(([name, prop]) => {
-			const
-				normalizedName = name.camelize(false);
+			const normalizedName = name.camelize(false);
 
 			if (normalizedName in meta.props) {
 				$props[normalizedName] = prop;
 
 			} else {
 				if (isComponentEventHandler(name, prop)) {
-					let
-						event = name.slice('on'.length).camelize(false);
+					let event = name.slice('on'.length).camelize(false);
 
-					const
-						once = isOnceEvent.test(name);
+					const once = isOnceEvent.test(name);
 
 					if (once) {
 						event = event.replace(/Once$/, '');
@@ -80,8 +76,7 @@ export function createVirtualContext(
 		});
 	}
 
-	let
-		$options: {directives: Dictionary; components: Dictionary};
+	let $options: {directives: Dictionary; components: Dictionary};
 
 	if ('$options' in parent) {
 		const {
