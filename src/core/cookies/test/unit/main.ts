@@ -166,7 +166,7 @@ test.describe('core/cookies', () => {
 		});
 
 		test.describe('should not change current cookie', () => {
-			test('base case', async () => {
+			test('cookie has value', async () => {
 				const res = await idempotentCookiesAPI.evaluate((cookies) => {
 					cookies.set('testCookie', 'testCookieVal', {maxAge: 10});
 					cookies.set('testCookie', 'testCookieVal', {maxAge: 0});
@@ -190,7 +190,7 @@ test.describe('core/cookies', () => {
 		});
 
 		test.describe('should change current cookie', () => {
-			test('base case', async () => {
+			test('cookie has value', async () => {
 				const res = await idempotentCookiesAPI.evaluate((cookies) => {
 					cookies.set('testCookie', 'testCookieVal1');
 					cookies.set('testCookie', 'testCookieVal2');
