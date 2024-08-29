@@ -183,13 +183,15 @@ function initLibs(libs, assets) {
 			p.src = resolveAsLib({name: key, relative: !p.inline}, cwd, p.src);
 		}
 
-		if (p.inline) {
-			if (!fs.existsSync(p.src)) {
-				throw new Error(`The asset for inline ${p} cannot be found`);
-			}
+		if (p.source !== 'external') {
+			if (p.inline) {
+				if (!fs.existsSync(p.src)) {
+					throw new Error(`The asset for inline ${p} cannot be found`);
+				}
 
-		} else if (p.source !== 'external') {
-			p.src = addPublicPath(p.src);
+			} else {
+				p.src = addPublicPath(p.src);
+			}
 		}
 
 		res.push(p);
