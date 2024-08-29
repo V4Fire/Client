@@ -65,11 +65,12 @@ import type { ComponentInterface } from 'core/component/interface';
  */
 export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	const {
-		async: $a,
-
 		meta,
+
 		// eslint-disable-next-line deprecation/deprecation
-		meta: {params: {deprecatedProps}, tiedFields}
+		meta: {params: {deprecatedProps}, tiedFields},
+
+		$destructors
 	} = component.unsafe;
 
 	const isFunctional = meta.params.functional === true;
@@ -182,7 +183,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	});
 
 	// Register a worker to clean up memory upon component destruction
-	$a.worker(() => {
+	$destructors.push(() => {
 		// eslint-disable-next-line require-yield
 		gc.add(function* destructor() {
 			cachedAccessors.forEach((getter) => {

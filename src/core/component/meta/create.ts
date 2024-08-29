@@ -111,10 +111,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 
 			if (needCacheRenderFn) {
 				cache.set(ctx, render);
-
-				unsafe.$async.worker(() => {
-					cache.delete(ctx);
-				}, {label});
+				unsafe.$async.worker(() => cache.delete(ctx), {label});
 			}
 
 			return render();

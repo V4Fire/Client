@@ -71,6 +71,7 @@ export function beforeCreateState(
 
 	unsafe.async = new Async(component);
 	unsafe.$async = new Async(component);
+	unsafe.$destructors = [];
 
 	Object.defineProperty(unsafe, '$destroy', {
 		configurable: true,
@@ -230,7 +231,7 @@ export function beforeCreateState(
 		}
 	});
 
-	unsafe.$async.worker(() => {
+	unsafe.$destructors.push(() => {
 		// eslint-disable-next-line require-yield
 		gc.add(function* destructor() {
 			for (const key of ['$root', '$parent', '$normalParent', '$children']) {

@@ -25,14 +25,7 @@ export function createdState(component: ComponentInterface): void {
 		return;
 	}
 
-	const {
-		unsafe,
-		unsafe: {
-			$root: r,
-			$async: $a,
-			$parent: parent
-		}
-	} = component;
+	const {unsafe, unsafe: {$parent: parent}} = component;
 
 	unmute(unsafe.$fields);
 	unmute(unsafe.$systemFields);
@@ -40,7 +33,7 @@ export function createdState(component: ComponentInterface): void {
 	if (parent != null) {
 		const
 			isRegularComponent = unsafe.meta.params.functional !== true,
-			isDynamicallyMountedComponent = '$remoteParent' in r;
+			isDynamicallyMountedComponent = '$remoteParent' in unsafe.r;
 
 		const destroy = (opts: Required<ComponentDestructorOptions>) => {
 			// A component might have already been removed by explicitly calling $destroy
@@ -55,7 +48,7 @@ export function createdState(component: ComponentInterface): void {
 
 		parent.unsafe.$once('[[BEFORE_DESTROY]]', destroy);
 
-		unsafe.$async.worker(() => {
+		unsafe.$destructors.push(() => {
 			// A component might have already been removed by explicitly calling $destroy
 			if (destroyedHooks[parent.hook] != null) {
 				return;
@@ -80,7 +73,7 @@ export function createdState(component: ComponentInterface): void {
 					return;
 				}
 
-				$a.requestIdleCallback(component.activate.bind(component), {
+				unsafe.$async.requestIdleCallback(component.activate.bind(component), {
 					label: remoteActivationLabel,
 					timeout: 50
 				});
@@ -93,7 +86,7 @@ export function createdState(component: ComponentInterface): void {
 			}
 
 			normalParent.$on('onHookChange', onActivation);
-			$a.worker(() => normalParent.$off('onHookChange', onActivation));
+			unsafe.$destructors.push(() => normalParent.$off('onHookChange', onActivation));
 		}
 	}
 

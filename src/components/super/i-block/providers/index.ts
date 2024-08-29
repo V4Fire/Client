@@ -343,7 +343,7 @@ export default abstract class iBlockProviders extends iBlockState {
 		return dp;
 
 		function registerDestructor() {
-			that.r.unsafe.async.worker(() => {
+			that.r.unsafe.$destructors.push(() => {
 				instanceCache[dp.getCacheKey()]?.destroy();
 			});
 		}

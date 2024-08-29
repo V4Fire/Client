@@ -149,7 +149,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				cacheKey = [info.originalPath];
 
 			} else {
-				cacheKey = Array.concat([info.ctx], info.path);
+				cacheKey = Array.toArray(info.ctx, Object.cast(info.path));
 			}
 
 			if (Object.has(watchCache, cacheKey)) {
@@ -269,7 +269,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				};
 
 			} else if (flush === 'post') {
-				handler = (...args) => component.$nextTick().then(() => originalHandler.call(this, ...args));
+				handler = (...args: unknown[]) => component.$nextTick().then(() => originalHandler.call(this, ...args));
 			}
 
 			if (needImmediate) {
@@ -595,16 +595,18 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 		function wrapDestructor<T>(destructor: T): T {
 			if (Object.isFunction(destructor)) {
-				// Every worker passed to Async has a counter that tracks the number of consumers of this worker.
-				// However, in this case, this behavior is redundant and could lead to an error.
-				// That's why we wrap the original destructor with a new function.
-				component.unsafe.$async.worker(() => {
-					watchCache.clear();
-					return destructor();
-				});
+				component.unsafe.$destructors.push(wrappedDestructor);
 			}
 
 			return destructor;
+
+			function wrappedDestructor() {
+				watchCache.clear();
+
+				if (Object.isFunction(destructor)) {
+					return destructor();
+				}
+			}
 		}
 	};
 }

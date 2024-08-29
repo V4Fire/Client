@@ -17,10 +17,7 @@ import type { ComponentInterface } from 'core/component/interface';
  * @param component
  */
 export function attachAttrPropsListeners(component: ComponentInterface): void {
-	const {
-		unsafe,
-		unsafe: {meta}
-	} = component;
+	const {unsafe, unsafe: {meta}} = component;
 
 	if (unsafe.meta.params.functional === true) {
 		return;
@@ -67,7 +64,7 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 
 		if (propValuesToUpdate.length > 0) {
 			nonFunctionalParent.$on('hook:beforeUpdate', updatePropsValues);
-			unsafe.$async.worker(() => nonFunctionalParent.$off('hook:beforeUpdate', updatePropsValues));
+			unsafe.$destructors.push(() => nonFunctionalParent.$off('hook:beforeUpdate', updatePropsValues));
 		}
 
 		async function updatePropsValues() {

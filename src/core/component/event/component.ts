@@ -114,7 +114,7 @@ export function implementEventEmitterAPI(component: object): void {
 		value: getMethod('off')
 	});
 
-	ctx.$async.worker(() => {
+	ctx.$destructors.push(() => {
 		gc.add(function* destructor() {
 			for (const key of ['$emit', '$on', '$once', '$off']) {
 				Object.defineProperty(ctx, key, {
