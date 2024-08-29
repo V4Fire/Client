@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.126 (2024-08-29)
+
+#### :bug: Bug Fix
+
+* Fixed the RegExp for determining cookie in the `withIdempotent` decorator
+
 ## v4.0.0-beta.119 (2024-08-02)
 
 #### :rocket: New Feature
