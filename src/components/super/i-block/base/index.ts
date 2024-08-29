@@ -35,7 +35,7 @@ import {
 	getComponentName,
 
 	bindRemoteWatchers,
-	customWatcherRgxp,
+	isCustomWatcher,
 
 	RawWatchHandler,
 	WatchPath,
@@ -477,7 +477,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 			opts = Object.isDictionary(optsOrHandler) ? optsOrHandler : {};
 		}
 
-		if (Object.isString(path) && RegExp.test(customWatcherRgxp, path)) {
+		if (Object.isString(path) && isCustomWatcher.test(path)) {
 			bindRemoteWatchers(this, {
 				async: $a,
 				watchers: {
