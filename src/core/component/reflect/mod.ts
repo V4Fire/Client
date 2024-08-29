@@ -56,12 +56,10 @@ export function getComponentMods(component: ComponentConstructorInfo): ModsDecl 
 	}
 
 	Object.entries(modsFromConstructor).forEach(([modName, modDecl]) => {
-		const
-			modValues: Array<string | object> = [];
+		const modValues: Array<string | object> = [];
 
 		if (modDecl != null && modDecl.length > 0) {
-			const
-				cache = new Map();
+			const cache = new Map();
 
 			let
 				active: CanUndef<string>;

@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import * as gc from 'core/component/gc';
+
 import { deprecate } from 'core/functools/deprecation';
 
 import { beforeHooks } from 'core/component/const';
@@ -90,9 +92,9 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		});
 	});
 
-	const computedFields = Object.entries(meta.computedFields);
+	const cachedAccessors = new Set<Function>();
 
-	computedFields.forEach(([name, computed]) => {
+	Object.entries(meta.computedFields).forEach(([name, computed]) => {
 		const canSkip =
 			component[name] != null ||
 			computed == null || computed.cache === 'auto' ||
@@ -121,7 +123,8 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 				// For functional components, this problem does not exist, as no change in state can trigger their re-render.
 				if (!isFunctional && hook !== 'created') {
 					meta.watchDependencies.get(name)?.forEach((path) => {
-						Object.get(this, path);
+						// @ts-ignore (effect)
+						void this[path];
 					});
 
 					['Store', 'Prop'].forEach((postfix) => {
@@ -129,7 +132,8 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 							path = name + postfix;
 
 						if (path in this) {
-							Object.get(this, path);
+							// @ts-ignore (effect)
+							void this[path];
 						}
 					});
 				}
@@ -143,6 +147,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 			// we should not cache the computed value until the component is created
 			// @see https://github.com/V4Fire/Client/issues/1292
 			if (!SSR && (canUseCache || !isFunctional)) {
+				cachedAccessors.add(get);
 				get[cacheStatus] = value;
 			}
 
@@ -159,9 +164,14 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 	// Register a worker to clean up memory upon component destruction
 	$a.worker(() => {
-		computedFields.forEach(([name]) => {
-			delete Object.getOwnPropertyDescriptor(component, name)?.get?.[cacheStatus];
-		});
+		// eslint-disable-next-line require-yield
+		gc.add(function* destructor() {
+			cachedAccessors.forEach((getter) => {
+				delete getter[cacheStatus];
+			});
+
+			cachedAccessors.clear();
+		}());
 	});
 
 	if (deprecatedProps != null) {

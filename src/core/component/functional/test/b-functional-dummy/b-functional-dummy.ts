@@ -15,12 +15,7 @@ import type bFunctionalGettersDummy from 'core/component/functional/test/b-funct
 
 export * from 'components/dummies/b-dummy/b-dummy';
 
-@component({
-	functional: {
-		functional: true
-	}
-})
-
+@component()
 export default class bFunctionalDummy extends bDummy {
 	@field()
 	counter: number = 0;

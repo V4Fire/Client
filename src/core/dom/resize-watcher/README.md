@@ -13,7 +13,7 @@ ResizeWatcher.watch(document.getElementById('my-elem'), (newGeometry, oldGeometr
 });
 ```
 
-## Why is This Module Needed?
+## Why is This Module Necessary?
 
 Often when working with ResizeObserver, we simply want to register a handler on an element.
 However, the native API is based on classes, so we first need to create an instance of the class,

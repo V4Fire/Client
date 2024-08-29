@@ -363,8 +363,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 				this.dispatch(eventDecl, ...args);
 			}
 
-			const
-				logArgs = args.slice();
+			const logArgs = args.slice();
 
 			if (eventDecl.logLevel === 'error') {
 				logArgs.forEach((el, i) => {

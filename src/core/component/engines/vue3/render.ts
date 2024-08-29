@@ -8,6 +8,8 @@
 
 import { disposeLazy } from 'core/lazy';
 
+import * as gc from 'core/component/gc';
+
 import {
 
 	resolveComponent as superResolveComponent,
@@ -200,7 +202,7 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 				// To safely extend the $root object with the properties we need,
 				// we create a new object with a prototype
 				const root = Object.create(parent.r, {
-					// This property is needed because the actual $parent
+					// This property is necessary because the actual $parent
 					// of this component refers to an App that is created higher up.
 					$remoteParent: {
 						configurable: true,
@@ -210,7 +212,8 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 					}
 				});
 
-				Object.set(root, 'remoteRootInstances', root.remoteRootInstances + 1);
+				// @ts-ignore (unsafe)
+				root['remoteRootInstances'] = root.remoteRootInstances + 1;
 
 				Object.defineProperty(this, 'unsafe', {
 					configurable: true,
@@ -225,24 +228,38 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 
 			function registerDestructor() {
 				parent?.unsafe.async.worker(() => {
-					setImmediate(() => {
-						if ('skipDestruction' in vnode) {
-							delete vnode.skipDestruction;
-							registerDestructor();
+					if ('skipDestruction' in vnode) {
+						delete vnode.skipDestruction;
+						registerDestructor();
 
-						} else {
+					} else {
+						// To immediately initiate the removal of all asynchronously added components, we explicitly call unmount,
+						// but we do this through setImmediate to allow the destroyed hook to execute,
+						// as it relies on the component having an event API
+						setImmediate(() => {
 							vue.unmount();
-							Array.concat([], vnode).forEach(destroy);
+						});
+
+						gc.add(function* destructor() {
+							const vnodes = Object.isArray(vnode) ? vnode : [vnode];
+
+							for (const vnode of vnodes) {
+								destroy(vnode);
+								yield;
+							}
+
 							disposeLazy(vue);
-						}
-					});
+						}());
+					}
 				}, {group});
 			}
 		},
 
 		beforeUnmount() {
 			const root = this.unsafe.r;
-			Object.set(root, 'remoteRootInstances', root.remoteRootInstances - 1);
+
+			// @ts-ignore (unsafe)
+			root['remoteRootInstances'] = root.remoteRootInstances - 1;
 		}
 	});
 
@@ -323,19 +340,23 @@ export function destroy(node: VNode | Node): void {
 			vnode['dynamicChildren'].forEach((vnode) => removeVNode(Object.cast(vnode)));
 		}
 
-		if (vnode.component != null) {
-			vnode.component.effect.stop();
-			vnode.component = null;
-		}
+		gc.add(function* destructor() {
+			if (vnode.component != null) {
+				vnode.component.effect.stop();
+				vnode.component = null;
+			}
 
-		vnode.props = {};
+			vnode.props = {};
 
-		['dirs', 'children', 'dynamicChildren', 'dynamicProps'].forEach((key) => {
-			vnode[key] = [];
-		});
+			yield;
 
-		['el', 'ctx', 'ref', 'virtualComponent', 'virtualContext'].forEach((key) => {
-			vnode[key] = null;
-		});
+			['dirs', 'children', 'dynamicChildren', 'dynamicProps'].forEach((key) => {
+				vnode[key] = [];
+			});
+
+			['el', 'ctx', 'ref', 'virtualComponent', 'virtualContext'].forEach((key) => {
+				vnode[key] = null;
+			});
+		}());
 	}
 }

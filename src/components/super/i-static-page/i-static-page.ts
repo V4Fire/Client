@@ -221,8 +221,7 @@ export default abstract class iStaticPage extends iPage {
 	 * @param [component] - an instance of the component that wants to set the modifier
 	 */
 	override setRootMod(name: string, value: unknown, component: iBlock = this): boolean {
-		let
-			root: HTMLElement;
+		let root: HTMLElement;
 
 		try {
 			root = document.documentElement;
@@ -274,8 +273,7 @@ export default abstract class iStaticPage extends iPage {
 	 * @param [component] - an instance of the component that wants to remove the modifier
 	 */
 	override removeRootMod(name: string, value?: unknown, component: iBlock = this): boolean {
-		let
-			root: HTMLElement;
+		let root: HTMLElement;
 
 		try {
 			root = document.documentElement;
@@ -350,8 +348,7 @@ export default abstract class iStaticPage extends iPage {
 		super.beforeDestroy();
 		this.remoteState.hydrationStore.clear();
 
-		const
-			isThisApp = new RegExp(RegExp.escape(`:${RegExp.escape(this.remoteState.appProcessId)}:`));
+		const isThisApp = new RegExp(RegExp.escape(`:${RegExp.escape(this.remoteState.appProcessId)}:`));
 
 		Object.forEach(instanceCache, (provider, key) => {
 			if (isThisApp.test(key)) {

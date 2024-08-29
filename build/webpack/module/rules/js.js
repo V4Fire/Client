@@ -16,7 +16,8 @@ const
 	{isJsFile} = include('build/webpack/module/const');
 
 const
-	monic = config.monic();
+	monic = config.monic(),
+	swcOptions = config.webpack.swc();
 
 const
 	{inherit} = include('build/helpers');
@@ -31,6 +32,10 @@ module.exports = function jsRules() {
 		test: isJsFile,
 		exclude: isExternalDep,
 		use: [
+			{
+				loader: 'swc-loader',
+				options: swcOptions.js
+			},
 			{
 				loader: 'monic-loader',
 				options: inherit(monic.javascript, {

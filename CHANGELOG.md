@@ -11,11 +11,87 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.120 (2024-08-02)
+## v4.0.0-beta.128 (2024-08-29)
 
 * #### :nail_care: Polish
 
 * Now, if an external link is passed to `initLibs()`, `PUBLIC_PATH` won't be added to it.
+
+## v4.0.0-beta.127 (2024-08-29)
+
+#### :bug: Bug Fix
+
+* Fixed the RegExp for determining cookie in the `withIdempotent` decorator
+
+## v4.0.0-beta.126 (2024-08-23)
+
+#### :rocket: New Feature
+
+* The `eventConverter` function can now return a tuple consisting of the page component name and page component key, instead of just a string representing the page component name `bDynamicPage`
+
+#### :bug: Bug Fix
+
+* Fixed an issue where a new page component instance was not created when switching between routes that use the same page component `bDynamicPage`
+
+## v4.0.0-beta.125 (2024-08-12)
+
+#### :bug: Bug Fix
+
+* Fixed the dynamic component import transformer for the SSR build `build/monic`
+* Fixed the TypeScript configuration for SSR builds using SWC `config`
+
+## v4.0.0-beta.124 (2024-08-12)
+
+#### :house: Internal
+
+* Updated `monic-loader` to version `3.0.5` to include a fix for the rebuild speed regression
+
+## v4.0.0-beta.123 (2024-08-09)
+
+#### :bug: Bug Fix
+
+* Fix the browserslist for correct CSS autoprefixer work
+
+## v4.0.0-beta.122 (2024-08-06)
+
+#### :rocket: New Feature
+
+* Added settings for the component garbage collector `config`
+* Added a new module with an implementation of the garbage collector for components `core/component/gc`
+
+## v4.0.0-beta.121.the-phantom-menace (2024-08-05)
+
+#### :boom: Breaking Change
+
+* `core/component/interface`:
+  * Removed the `renderedOnce` field
+  * The `$renderCounter` field is now public and updates after each call to the render function
+
+#### :rocket: New Feature
+
+* Added the `createPropAccessors` method for creating accessors
+  for props marked as `forceUpdate: false` `core/component/interface`
+
+* Added the `forceUpdate: false` property to designate props whose changes
+  should not lead to a template re-render `core/component/decorators/prop`
+
+#### :bug: Bug Fix
+
+* Fixed a bug where adding refs to components could cause them to re-render `core/component/directives/ref`
+* Fixed a bug where adding `v-attrs` to components could cause them to re-render `core/component/directives/attrs`
+* Fixed an issue with updating modifier values `iBlock`
+
+## v4.0.0-beta.120 (2024-09-05)
+
+#### :boom: Breaking Change
+
+* Removed the ES build option
+* Added `edition` build option for configuring environment support
+* Added browserslist support
+
+#### :house: Internal
+
+* Use SWC with support for browserslist
 
 ## v4.0.0-beta.119 (2024-08-02)
 

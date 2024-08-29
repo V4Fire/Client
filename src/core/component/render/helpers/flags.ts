@@ -8,6 +8,8 @@
 
 import type { VNode, VNodeProps } from 'core/component/engines';
 
+import type { ComponentInterface } from 'core/component/interface';
+
 export const flagValues = {
 	classes: 2,
 	styles: 4,
@@ -74,6 +76,7 @@ export function buildPatchFlag(initial: number = 0, ...flags: PatchFlags): numbe
  * @param props - the initial vnode props
  */
 export function normalizePatchFlagUsingProps(
+	this: ComponentInterface,
 	patchFlag: number | undefined,
 	props: Nullable<Record<string, unknown> & VNodeProps>
 ): number {
@@ -83,7 +86,7 @@ export function normalizePatchFlagUsingProps(
 		return patchFlag ?? 0;
 	}
 
-	if ('data-has-v-on-directives' in props) {
+	if ('data-has-v-on-directives' in props && this.meta.params.functional === true) {
 		flags.push('props');
 	}
 

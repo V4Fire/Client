@@ -21,4 +21,4 @@ export const
 	toComponentObject = Symbol('A link to the component object');
 
 export const
-	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/;
+	customWatcherRgxp = /^([!?]?)([^!:?]*):(.*)/;

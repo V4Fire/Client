@@ -205,7 +205,7 @@ test.describe('<b-select> keyboard interaction', () => {
 		await page.keyboard.press('Enter');
 
 		const instanceIsRecreated = await select.evaluate(
-			(current, previous) => current.$el!.component !== previous,
+			(current, previous) => current.$el?.component !== previous,
 			componentInstance
 		);
 

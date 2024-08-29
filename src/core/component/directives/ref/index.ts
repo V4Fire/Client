@@ -71,8 +71,7 @@ function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode
 		if (Object.isArray(refVal)) {
 			refVal[REF_ID] ??= Math.random();
 
-			let
-				virtualRefs = <CanUndef<unknown[]>>refs[refName];
+			let virtualRefs = <CanUndef<unknown[]>>refs[refName];
 
 			if (virtualRefs == null || virtualRefs[REF_ID] !== refVal[REF_ID]) {
 				Object.defineProperty(refs, refName, {

@@ -6,8 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import * as gc from 'core/component/gc';
+
 import { dropRawComponentContext } from 'core/component/context';
 import { callMethodFromComponent } from 'core/component/method';
+
 import { runHook } from 'core/component/hook';
 import { destroyedHooks } from 'core/component/const';
 
@@ -40,11 +43,11 @@ export function beforeDestroyState(component: ComponentInterface, opts: Componen
 	unsafe.async.clearAll().locked = true;
 	unsafe.$async.clearAll().locked = true;
 
-	if ($el != null) {
+	if ($el != null && $el.component === component) {
 		delete $el.component;
 	}
 
-	setTimeout(() => {
+	gc.add(function* destructor() {
 		if ($el != null && !$el.isConnected && $el.component == null) {
 			unsafe.$renderEngine.r.destroy($el);
 		}
@@ -74,16 +77,17 @@ export function beforeDestroyState(component: ComponentInterface, opts: Componen
 			}
 		};
 
-		Object.getOwnPropertyNames(unsafe).forEach((key) => {
+		for (const [i, key] of Object.getOwnPropertyNames(unsafe).entries()) {
 			delete unsafe[key];
-		});
+
+			if (i % 10 === 0) {
+				yield;
+			}
+		}
 
 		Object.assign(unsafe, {componentId, componentName, hook});
 		Object.setPrototypeOf(unsafe, Object.create({}, destroyedDescriptors));
 
 		dropRawComponentContext(unsafe);
-
-	// To avoid freezing during cleaning of a larger number of components at once,
-	// a little randomness is added to the process
-	}, Math.floor(Math.random() * 1000));
+	}());
 }

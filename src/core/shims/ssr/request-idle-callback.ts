@@ -6,18 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-'use strict';
+import GLOBAL from 'core/shims/global';
 
-/* eslint-disable no-var */
-
-var GLOBAL = require('core/shims/global');
-
-if (typeof process === 'object' && typeof GLOBAL['requestIdleCallback'] === 'undefined') {
+if (typeof GLOBAL['requestIdleCallback'] === 'undefined') {
 	(function requestIdleCallbackShim() {
-		GLOBAL['requestIdleCallback'] = function requestIdleCallback(cb, options) {
-			var timeout = options != null && options.timeout != null ?
-				options.timeout :
-				Math.floor(Math.random() * 30) + 1;
+		GLOBAL['requestIdleCallback'] = function requestIdleCallback(cb: Function, options?: {timeout: CanUndef<number>}) {
+			const timeout = options?.timeout ?? Math.floor(Math.random() * 30) + 1;
 
 			return setTimeout(handler, timeout);
 

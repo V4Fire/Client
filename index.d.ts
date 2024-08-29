@@ -22,6 +22,7 @@ declare var ssr: Nullable<{
 }>;
 
 declare const BUILD_MODE: CanUndef<string>;
+declare const BUILD_EDITION: CanUndef<string>;
 
 declare const CSP_NONCE_STORE: string;
 declare const LANG_PACKS: string;

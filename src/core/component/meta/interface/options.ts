@@ -69,7 +69,7 @@ export interface ComponentOptions {
 	 *    depending on the values of its props:
 	 *
 	 *    1. If an empty dictionary is passed, the component will always be created as a functional one.
-	 *       However, you still have the option to create it like a regular component using the `v-func` directive.
+	 *       However, you can still create it like a regular component using the `v-func` directive.
 	 *
 	 *       ```
 	 *       < b-button v-func = false

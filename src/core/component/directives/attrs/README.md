@@ -50,6 +50,38 @@ parameters for an element or component, except for the `v-if` directive.
 } .
 ```
 
+### Providing `forceUpdate: false` props to components
+
+When working with component properties in frameworks like Vue or React,
+optimizing re-render behavior is crucial for performance.
+By default, any change to a component's props results in the component's template being re-rendered.
+However, there are scenarios where you might want to prevent unnecessary re-renders
+when the prop value changes do not affect the visual output or component behavior.
+
+To address this issue in V4Fire, it is necessary to add a special flag `forceUpdate: false` to any prop.
+
+```typescript
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
+
+@component()
+class bExample extends iBlock {
+  @prop({type: Number, forceUpdate: false})
+  value!: number;
+}
+```
+
+Additionally, when passing such props using the `v-attrs` directive,
+they should be transmitted as demonstrated in the example below:
+
+```
+< b-example v-attrs = {'@:value': createPropAccessors(() => someValue)}
+```
+
+The `createPropAccessors` function generates accessor functions for `someValue`,
+effectively allowing you to manage how prop changes affect component re-rendering.
+By doing this, you can ensure that updates to `someValue` do not automatically
+trigger a re-render unless explicitly required, enhancing the performance and efficiency of the application.
+
 ### Providing the `v-model` directive
 
 To use the `v-model` directive, provide the model store as a string.

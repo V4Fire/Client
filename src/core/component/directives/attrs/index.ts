@@ -12,6 +12,7 @@
  */
 
 import { components } from 'core/component/const';
+import { propGetterRgxp } from 'core/component/reflect';
 import { ComponentEngine, DirectiveBinding, VNode } from 'core/component/engines';
 
 import { setVNodePatchFlags, normalizeComponentAttrs } from 'core/component/render';
@@ -309,12 +310,20 @@ ComponentEngine.directive('attrs', {
 				}
 			}
 
+			// For the transmission of accessors, `forceUpdate: false` props use events.
+			// For example, `@:value = createPropAccessors(() => someValue)`.
+			// A distinctive feature of such events is the prefix `@:` or `on:`.
+			// Such events are processed in a special way.
+			const isSystemGetter = propGetterRgxp.test(event);
 			props[event] = attrVal;
-			setVNodePatchFlags(vnode, 'events');
 
-			const dynamicProps = vnode.dynamicProps ?? [];
-			vnode.dynamicProps = dynamicProps;
-			dynamicProps.push(event);
+			if (!isSystemGetter) {
+				setVNodePatchFlags(vnode, 'events');
+
+				const dynamicProps = vnode.dynamicProps ?? [];
+				vnode.dynamicProps = dynamicProps;
+				dynamicProps.push(event);
+			}
 		}
 
 		function getHandlerStore() {

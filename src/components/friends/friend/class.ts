@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { gc } from 'core/component';
+
 import type iBlock from 'components/super/i-block/i-block';
 
 export default class Friend {
@@ -124,12 +126,17 @@ export default class Friend {
 		this.component = component;
 
 		this.ctx.$async.worker(() => {
+			const that = this;
+
 			// We are cleaning memory in a deferred way, because this API may be needed when processing the destroyed hook
-			setTimeout(() => {
-				// Use Object.delete to bypass TS checks
-				Object.delete(this, 'ctx');
-				Object.delete(this, 'component');
-			}, 1000);
+			// eslint-disable-next-line require-yield
+			gc.add(function* destructor() {
+				// @ts-ignore (unsafe)
+				delete that['ctx'];
+
+				// @ts-ignore (unsafe)
+				delete that['component'];
+			}());
 		});
 	}
 }

@@ -9,6 +9,17 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.121.the-phantom-menace (2024-08-05)
+
+#### :boom: Breaking Change
+
+* Removed the `renderedOnce` field
+* The `$renderCounter` field is now public and updates after each call to the render function
+
+#### :rocket: New Feature
+
+* Added the `createPropAccessors` method for creating accessors for props marked as `forceUpdate: false`
+
 ## v4.0.0-beta.105 (2024-06-24)
 
 #### :bug: Bug Fix
@@ -18,7 +29,6 @@ Changelog
   The `$destroy` method now accepts an object with options, which enables control over
   both the recursion of the destructor and the unmounting of vnodes
   within the component
-
 
 ## v4.0.0-beta.104 (2024-06-19)
 

@@ -14,6 +14,12 @@
 import { paramsFactory } from 'core/component/decorators/factory';
 import type { DecoratorProp } from 'core/component/decorators/interface';
 
+//#if runtime has dummyComponents
+import('core/component/decorators/prop/test/b-effect-prop-wrapper-dummy');
+import('core/component/decorators/prop/test/b-effect-prop-dummy');
+import('core/component/decorators/prop/test/b-non-effect-prop-dummy');
+//#endif
+
 /**
  * Marks a class property as a component prop
  *
@@ -42,8 +48,8 @@ export const prop = paramsFactory<
 	DecoratorProp
 >('props', (p) => {
 	if (Object.isFunction(p) || Object.isArray(p)) {
-		return {type: p};
+		return {type: p, forceUpdate: true};
 	}
 
-	return p;
+	return {forceUpdate: true, ...p};
 });

@@ -9,7 +9,7 @@ then the module falls back to a different strategy.
 This fallback strategy is based on using the elements' heightmap
 and the [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver).
 
-## Why is This Module Needed?
+## Why is This Module Necessary?
 
 Often when working with IntersectionObserver, we simply want to register a handler on an element.
 However, the native API is based on classes, so we first need to create an instance of the class,
@@ -152,7 +152,10 @@ IntersectionWatcher.watch(document.getElementById('my-elem'), {delay: 1500}, (wa
 
 ##### [once = `false`]
 
-If set to true, then after the first intersection handler is called, the observation will be canceled
+If set to true, the observation will be canceled after the first intersection handler is called.
+
+> Disclaimer: This option does not apply to the `onEnter` handler.
+
 
 ```js
 import * as IntersectionWatcher from 'core/dom/intersection-watcher';
@@ -176,9 +179,13 @@ functionality is truly insufficient.
 ##### [onEnter]
 
 Handler: the observable element has entered the viewport.
-If the handler function returns false, the main watcher handler will not be called.
+If the handler function returns `false`, the main watcher handler will not be called.
+
+> In this case, if the watcher was created with the option `once = true`, the watcher will not be
+> canceled because the main handler was not called.
+
 It's important to note that this handler is always called immediately,
-meaning it ignores the delay option specified.
+meaning it ignores any specified delay option.
 
 ```js
 import * as IntersectionWatcher from 'core/dom/intersection-watcher';
