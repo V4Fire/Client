@@ -296,6 +296,11 @@ export abstract class ComponentInterface {
 	protected readonly $async!: Async<ComponentInterface>;
 
 	/**
+	 * A list of functions that should be called when the component is destroyed
+	 */
+	protected readonly $destructors!: Function[];
+
+	/**
 	 * Cache for rendered SSR templates
 	 */
 	protected readonly $ssrCache?: AbstractCache<string>;

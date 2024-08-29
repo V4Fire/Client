@@ -114,7 +114,20 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 				const tasks: Array<Promise<unknown>> = [];
 
 				hooks.slice().forEach((hook) => {
-					const res = args.length > 0 ? hook.fn.apply(component, args) : hook.fn.call(component);
+					let res: unknown;
+
+					switch (args.length) {
+						case 0:
+							res = hook.fn.call(component);
+							break;
+
+						case 1:
+							res = hook.fn.call(component, args[0]);
+							break;
+
+						default:
+							res = hook.fn.apply(component, args);
+					}
 
 					if (hook.once) {
 						hooks.pop();

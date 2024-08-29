@@ -58,6 +58,9 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	$async: CTX['$async'];
 
 	// @ts-ignore (access)
+	$destructors: CTX['$destructors'];
+
+	// @ts-ignore (access)
 	$initializer: CTX['$initializer'];
 
 	// @ts-ignore (access)
