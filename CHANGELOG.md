@@ -11,11 +11,21 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.126 (2024-08-29)
+## v4.0.0-beta.127 (2024-08-29)
 
 #### :bug: Bug Fix
 
 * Fixed the RegExp for determining cookie in the `withIdempotent` decorator
+
+## v4.0.0-beta.126 (2024-08-23)
+
+#### :rocket: New Feature
+
+* The `eventConverter` function can now return a tuple consisting of the page component name and page component key, instead of just a string representing the page component name `bDynamicPage`
+
+#### :bug: Bug Fix
+
+* Fixed an issue where a new page component instance was not created when switching between routes that use the same page component `bDynamicPage`
 
 ## v4.0.0-beta.125 (2024-08-12)
 
