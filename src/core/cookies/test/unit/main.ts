@@ -15,12 +15,13 @@ import type * as CookiesAPI from 'core/cookies';
 
 test.describe('core/cookies', () => {
 	let
+		api: JSHandle<typeof CookiesAPI>,
 		cookiesAPI: JSHandle<CookiesAPI.Cookies>;
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 
-		const api: JSHandle<typeof CookiesAPI> = await Utils.import(page, 'core/cookies');
+		api = await Utils.import(page, 'core/cookies');
 		cookiesAPI = await api.evaluateHandle((ctx) => ctx.from(document));
 	});
 
@@ -150,6 +151,68 @@ test.describe('core/cookies', () => {
 			});
 
 			test.expect(res.includes('testCookie=testCookieVal')).toBe(false);
+		});
+	});
+
+	test.describe('with `withIdempotency` decorator', () => {
+		let idempotentCookiesAPI;
+
+		test.beforeEach(async () => {
+			idempotentCookiesAPI = await api.evaluateHandle((ctx) => {
+				const store = ctx.withIdempotency(document);
+
+				return ctx.from(store);
+			});
+		});
+
+		test.describe('should not change current cookie', () => {
+			test('cookie has value', async () => {
+				const res = await idempotentCookiesAPI.evaluate((cookies) => {
+					cookies.set('testCookie', 'testCookieVal', {maxAge: 10});
+					cookies.set('testCookie', 'testCookieVal', {maxAge: 0});
+
+					return cookies.store.cookie;
+				});
+
+				test.expect(res.includes('testCookie=testCookieVal')).toBe(true);
+			});
+
+			test('cookie has no value', async () => {
+				const res = await idempotentCookiesAPI.evaluate((cookies) => {
+					cookies.set('testCookie', {maxAge: 10});
+					cookies.set('testCookie', {maxAge: 0});
+
+					return cookies.store.cookie;
+				});
+
+				test.expect(res.includes('testCookie')).toBe(true);
+			});
+		});
+
+		test.describe('should change current cookie', () => {
+			test('cookie has value', async () => {
+				const res = await idempotentCookiesAPI.evaluate((cookies) => {
+					cookies.set('testCookie', 'testCookieVal1');
+					cookies.set('testCookie', 'testCookieVal2');
+
+					return cookies.store.cookie;
+				});
+
+				test.expect(res.includes('testCookie=testCookieVal1')).toBe(false);
+				test.expect(res.includes('testCookie=testCookieVal2')).toBe(true);
+			});
+
+			test('cookie has no value', async () => {
+				const res = await idempotentCookiesAPI.evaluate((cookies) => {
+					cookies.set('testCookie1');
+					cookies.set('testCookie2');
+
+					return cookies.store.cookie;
+				});
+
+				test.expect(res.includes('testCookie1')).toBe(true);
+				test.expect(res.includes('testCookie2')).toBe(true);
+			});
 		});
 	});
 

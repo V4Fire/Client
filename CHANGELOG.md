@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.127 (2024-08-29)
+
+#### :bug: Bug Fix
+
+* Fixed the RegExp for determining cookie in the `withIdempotent` decorator
+
 ## v4.0.0-beta.126 (2024-08-23)
 
 #### :rocket: New Feature
