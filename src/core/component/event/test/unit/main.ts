@@ -28,7 +28,8 @@ test.describe('core/component/event', () => {
 				// ...
 			});
 
-			return Object.get(ctx, '$async.cache.eventListener.groups.$onTest') != null;
+			const {eventListener} = ctx.unsafe.async.Namespaces;
+			return Object.get(ctx, `$async.cache.${eventListener}.groups.$onTest`) != null;
 		});
 
 		test.expect(isWrapped).toBe(true);
@@ -40,7 +41,8 @@ test.describe('core/component/event', () => {
 				// ...
 			});
 
-			return Object.get(ctx, '$async.cache.eventListener.groups.$onTest') != null;
+			const {eventListener} = ctx.unsafe.async.Namespaces;
+			return Object.get(ctx, `$async.cache.${eventListener}.groups.$onTest`) != null;
 		});
 
 		test.expect(isWrapped).toBe(true);
