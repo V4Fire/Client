@@ -171,13 +171,15 @@ async function initLibs(libs, assets) {
 			p.src = resolveAsLib({name: key, relative: !p.inline}, cwd, p.src);
 		}
 
-		if (p.inline) {
-			while (!fs.existsSync(p.src)) {
-				await delay((1).second());
-			}
+		if (p.source !== 'external') {
+			if (p.inline) {
+				while (!fs.existsSync(p.src)) {
+					await delay((1).second());
+				}
 
-		} else if (p.source !== 'external') {
-			p.src = addPublicPath(p.src);
+			} else {
+				p.src = addPublicPath(p.src);
+			}
 		}
 
 		res.push(p);
