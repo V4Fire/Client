@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an implicitly infinite loop when we tried to wait for externally hosted library to appear in the filesystem.
+
 ## v3.74.6 (2024-08-02)
 
 #### :rocket: New Feature

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an implicitly infinite loop when we tried to wait for externally hosted library to appear in the filesystem.
+
 ## v3.74.4 (2024-08-02)
 
 #### :nail_care: Polish
