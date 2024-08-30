@@ -12,5 +12,10 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
+		< b-virtual-scroll-new &
+			:item = 'b-button-functional' |
+			:items = [{}] |
+			:itemProps = () => ({mods: {upper: false}})
+		.
 		< template v-if = stage === 'teleports'
 			< b-bottom-slide
