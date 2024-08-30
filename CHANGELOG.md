@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :boom: Breaking Change
+
+* Moved back `std.js` chunk as the standalone entry for performance improve
+
 ## v4.0.0-beta.127 (2024-08-29)
 
 #### :bug: Bug Fix
