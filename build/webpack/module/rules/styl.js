@@ -9,15 +9,15 @@
 'use strict';
 
 const
-	config = require('@config/config');
-	// MiniCssExtractPlugin = require('mini-css-extract-plugin');
+	config = require('@config/config'),
+	rspack = require('@rspack/core');
 
 const
 	{webpack} = config,
 	monic = config.monic();
 
 const
-	{inherit} = include('build/helpers');
+	{hash, output, inherit} = include('build/helpers');
 
 const
 	isStylFile = /\.styl$/;
@@ -28,12 +28,11 @@ const
  * @param {import('../index').ModuleArgs} args
  * @returns {import('webpack').RuleSetRule}
  */
-module.exports = function stylRules() {
-	// FIXME: fails in rspack
-	// plugins.set('extractCSS', new MiniCssExtractPlugin(inherit(config.miniCssExtractPlugin(), {
-	// 	filename: `${hash(output, true)}.css`,
-	// 	chunkFilename: '[id].css'
-	// })));
+module.exports = function stylRules({plugins}) {
+	plugins.set('extractCSS', new rspack.CssExtractRspackPlugin(inherit(config.miniCssExtractPlugin(), {
+		filename: `${hash(output, true)}.css`,
+		chunkFilename: '[id].css'
+	})));
 
 	const staticCSSFiles = [].concat(
 		styleHelperLoaders(true),
@@ -96,8 +95,7 @@ function styleHelperLoaders(isStatic = false) {
 		usePureCSSFiles = isStatic || useLink;
 
 	return [].concat(
-		// FIXME: fails without mini css extract plugin
-		// usePureCSSFiles ? MiniCssExtractPlugin.loader : [],
+		usePureCSSFiles ? rspack.CssExtractRspackPlugin.loader : [],
 
 		[
 			{
