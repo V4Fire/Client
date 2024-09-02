@@ -33,7 +33,7 @@
     "build:hydration": "npx webpack --env hydration=true",
     "dev": "gulp build:tsconfig && webpack --watch",
     "dev:file": "gulp build:tsconfig && webpack --watch --env public-path",
-    "dev:rspack": "gulp build:tsconfig && rspack build --watch",
+    "dev:rspack": "gulp build:tsconfig && cross-env NODE_ENV=development rspack build --watch",
     "test": "yarn test:typescript && yarn test:eslint && yarn test:unit && yarn test:jest",
     "test:server": "cross-env NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" node tests/server",
     "test:unit": "cross-env NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" npx playwright test --config tests/config/unit/index.ts",
