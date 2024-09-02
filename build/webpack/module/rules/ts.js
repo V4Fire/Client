@@ -39,7 +39,7 @@ module.exports = function tsRules() {
 		exclude: isExternalDep,
 		use: [].concat(
 			{
-				loader: 'swc-loader',
+				loader: 'builtin:swc-loader',
 				options: webpack.swc().ts
 			},
 

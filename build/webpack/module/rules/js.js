@@ -33,7 +33,7 @@ module.exports = function jsRules() {
 		exclude: isExternalDep,
 		use: [
 			{
-				loader: 'swc-loader',
+				loader: 'builtin:swc-loader',
 				options: swcOptions.js
 			},
 			{

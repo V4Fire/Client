@@ -29,7 +29,7 @@ module.exports = function ssRules() {
 		test: /\.ss$/,
 		use: [
 			{
-				loader: 'swc-loader',
+				loader: 'builtin:swc-loader',
 				options: swcOptions.ss
 			},
 			{

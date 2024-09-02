@@ -16,6 +16,8 @@ const
 const
 	{src, i18n, locale, webpack} = require('@config/config');
 
+const {LANG_KEYSETS} = include('build/globals.webpack.js');
+
 module.exports = class I18NGeneratorPlugin {
 	/**
 	 * This WebPack plugin allows the integration of internationalization files
@@ -35,7 +37,8 @@ module.exports = class I18NGeneratorPlugin {
 					locales = i18n.supportedLocales(),
 					// Extract translates from DefinePlugin
 					// translates declared in build/globals.webpack.js
-					localizations = JSON.parse(compilation.valueCacheVersions.get('webpack/DefinePlugin LANG_KEYSETS'));
+					// NOTE: compilation.valueCacheVersions is private API
+					localizations = JSON.parse(LANG_KEYSETS);
 
 				const htmlFiles = () =>
 					glob.sync(path.normalize(src.clientOutput('*.html')), {

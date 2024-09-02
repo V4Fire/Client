@@ -8,7 +8,7 @@
 
 'use strict';
 
-const {webpack} = require('@config/config');
+// const {webpack} = require('@config/config');
 
 /**
  * Returns options for other webpack options
@@ -16,6 +16,7 @@ const {webpack} = require('@config/config');
  */
 module.exports = function other() {
 	return {
-		parallelism: webpack.moduleParallelism()
+		// Unsupported in rspack
+		// parallelism: webpack.moduleParallelism()
 	};
 };

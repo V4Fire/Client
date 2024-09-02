@@ -9,7 +9,7 @@
 'use strict';
 
 const
-	webpack = require('webpack');
+	rspack = require('@rspack/core');
 
 const
 	ProgressbarView = include('build/webpack/plugins/progress-plugin/progressbar-view');
@@ -23,10 +23,10 @@ let
  * @param {string} processName
  * @returns {import('webpack').ProgressPlugin}
  */
-module.exports = function createProgressPlugin(processName) {
+module.exports = function createProgressPlugin() {
 	if (logger == null) {
 		logger = new ProgressbarView();
 	}
 
-	return new webpack.ProgressPlugin(logger.getProgressHandler(processName));
+	return new rspack.ProgressPlugin();
 };

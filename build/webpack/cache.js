@@ -9,28 +9,24 @@
 'use strict';
 
 const
-	{webpack} = require('@config/config'),
-	{cacheDir} = include('build/helpers');
+	{webpack} = require('@config/config');
 
 /**
  * Returns parameters for `webpack.cache`
  *
  * @param {(number|string)} buildId
  * @returns {(object|boolean)}
+ * @throws {Error}
  */
-module.exports = function cache({buildId}) {
+module.exports = function cache() {
 	switch (webpack.cacheType()) {
 		case 'mem':
 		case 'memory':
-			return {type: 'memory'};
+			return true;
 
 		case 'fs':
 		case 'filesystem':
-			return {
-				name: String(buildId),
-				type: 'filesystem',
-				cacheDirectory: cacheDir
-			};
+			throw new Error('Filesystem cache not supported in rspack');
 
 		default:
 			return false;
