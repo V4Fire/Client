@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import iStaticPage, { component, prop, field, system, hook } from 'components/super/i-static-page/i-static-page';
+import iStaticPage, { component, prop, field, system, hook, ModsDict } from 'components/super/i-static-page/i-static-page';
 import VDOM, * as VDOMAPI from 'components/friends/vdom';
 
 export * from 'components/super/i-static-page/i-static-page';
@@ -30,6 +30,10 @@ export default class pV4ComponentsDemo extends iStaticPage {
 
 	@system((o) => o.sync.link())
 	override readonly selfDispatching!: boolean;
+
+	override get sharedMods(): CanNull<ModsDict> {
+		return {foo: 'bar'};
+	}
 
 	/**
 	 * Parameter to test
