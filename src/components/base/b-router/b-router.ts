@@ -12,7 +12,6 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import type Async from 'core/async';
 
 import globalRoutes from 'routes';
 import * as router from 'core/router';
@@ -53,7 +52,7 @@ const
 @component()
 export default class bRouter extends iRouterProps {
 	/** @inheritDoc */
-	declare public async: Async<this>;
+	declare public async: iRouterProps['async'];
 
 	/**
 	 * Compiled application route map
