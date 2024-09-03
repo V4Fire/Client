@@ -18,6 +18,10 @@ import type { ComponentElement } from 'components/super/i-block/i-block';
 
 import type { DOMModificationOptions, ElCb } from 'components/friends/dom/interface';
 
+//#if runtime has dummyComponents
+import('components/friends/dom/test/b-friends-dom-dummy');
+//#endif
+
 interface DOM {
 	delegate<T extends Function>(selector: string, fn: T): T;
 	delegateElement<T extends Function>(name: string, fn: T): T;

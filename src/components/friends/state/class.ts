@@ -9,6 +9,10 @@
 import Friend, { fakeMethods } from 'components/friends/friend';
 import iBlock from 'components/super/i-block/i-block';
 
+//#if runtime has dummyComponents
+import('components/friends/state/test/b-friends-state-dummy');
+//#endif
+
 let
 	baseSyncRouterState;
 

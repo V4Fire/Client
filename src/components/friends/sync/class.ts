@@ -26,6 +26,10 @@ import type {
 
 } from 'components/friends/sync/interface';
 
+//#if runtime has dummyComponents
+import('components/friends/sync/test/b-friends-sync-dummy');
+//#endif
+
 interface Sync {
 	mod<D = unknown, R = unknown>(
 		modName: string,

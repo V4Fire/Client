@@ -14,6 +14,10 @@ import { setField } from 'components/friends/field/set';
 
 import type { KeyGetter, ValueGetter } from 'components/friends/field/interface';
 
+//#if runtime has dummyComponents
+import('components/friends/field/test/b-friends-field-dummy');
+//#endif
+
 interface Field {
 	get<T = unknown>(path: string, getter: ValueGetter): CanUndef<T>;
 	get<T = unknown>(path: string, obj?: Nullable<object>, getter?: ValueGetter): CanUndef<T>;

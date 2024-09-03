@@ -19,6 +19,10 @@ import type iDataProvider from 'components/traits/i-data-provider/i-data-provide
 
 import type { DataProviderProp, DataProviderOptions, DefaultRequest } from 'components/friends/data-provider/interface';
 
+//#if runtime has dummyComponents
+import('components/friends/data-provider/test/provider');
+//#endif
+
 interface DataProvider {
 	url(): CanUndef<string>;
 	url(value: string): this;
