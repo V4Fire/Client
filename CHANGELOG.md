@@ -34,6 +34,20 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * A lot of TypeScript type fixes
 * Performance improvements
 
+## v4.0.0-beta.128 (2024-09-03)
+
+#### :bug: Bug Fix
+
+* Fix normalization of the `forceUpdate` props declared as `*Prop` in:
+  * `bDummy`
+  * `bVirtualScrollNew`
+
+## v4.0.0-beta.127 (2024-08-29)
+
+#### :bug: Bug Fix
+
+* Fixed the RegExp for determining cookie in the `withIdempotent` decorator
+
 ## v4.0.0-beta.126 (2024-08-23)
 
 #### :rocket: New Feature

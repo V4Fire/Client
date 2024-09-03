@@ -78,7 +78,7 @@ export default class bDummy extends iData {
 		Object.keys(this.testComponentAttrs).forEach((key) => {
 			const value = this.testComponentAttrs[key];
 
-			if (meta.props[key]?.forceUpdate === false) {
+			if (meta.props[key]?.forceUpdate === false || meta.props[`${key}Prop`]?.forceUpdate === false) {
 				if (key in this.storedProps) {
 					this.storedProps[key] = value;
 					attrs[`@:${key}`] = this.storedAccessors[key];
