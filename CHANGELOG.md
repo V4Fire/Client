@@ -11,6 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-09-03)
+
+#### :bug: Bug Fix
+
+* Fix normalization of the `forceUpdate` props declared as `*Prop` in:
+  * `bDummy`
+  * `bVirtualScrollNew`
+
 ## v4.0.0-beta.127 (2024-08-29)
 
 #### :bug: Bug Fix
