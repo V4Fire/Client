@@ -184,6 +184,15 @@ export interface MethodWatcher<
 	functional?: boolean;
 
 	/**
+	 * A function to determine whether a watcher should be initialized or not.
+	 * If the function returns false, the watcher will not be initialized.
+	 * Useful for precise component optimizations.
+	 *
+	 * @param ctx
+	 */
+	test?(ctx: CTX): boolean;
+
+	/**
 	 * An object with additional settings for the event emitter
 	 */
 	options?: Dictionary;
@@ -220,15 +229,6 @@ export interface MethodWatcher<
 	 * ```
 	 */
 	wrapper?: WatchWrapper<CTX, A, B>;
-
-	/**
-	 * A function to determine whether a watcher should be initialized or not.
-	 * If the function returns false, the watcher will not be initialized.
-	 * Useful for precise component optimizations.
-	 *
-	 * @param ctx
-	 */
-	test?(ctx: CTX): boolean;
 }
 
 export type WatchPath =

@@ -13,8 +13,9 @@ export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
 	/**
 	 * If set to true, the accessor value will be cached after the first touch.
 	 *
-	 * The option is set to true by default if it also provided `dependencies` or the bound accessor matches
-	 * by the name with another prop or field.
+	 * Note that to support the propagation of the getter's effect to the template,
+	 * caching never works until the component has been rendered for the first time.
+	 * If you want to ensure that the cached value is never invalidated, you should set the parameter to `'forever'`.
 	 *
 	 * If the option value is passed as `auto` caching will be delegated to the used component library.
 	 *
@@ -28,7 +29,7 @@ export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
 	 * @component()
 	 * class bExample extends iBlock {
 	 *   // The value is cached after the first touch and will never be reset
-	 *   @computed({cache: true})
+	 *   @computed({cache: 'forever'})
 	 *   get hashCode(): number {
 	 *     return Math.random();
 	 *   }
@@ -36,9 +37,17 @@ export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
 	 *   @field()
 	 *   i: number = 0;
 	 *
-	 *   // The value is cached after the first touch, but the cache can be reset if the fields used internally change
+	 *   // The value is cached after the first touch, but the cache can be reset if the fields used internally change.
+	 *   // The caching logic in this mode is handled by the library being used, such as Vue.
 	 *   @computed({cache: 'auto'})
 	 *   get iWrapper(): number {
+	 *     return this.i;
+	 *   }
+	 *
+	 *   // The value is cached after the first touch, but the cache can be reset if the fields used internally change.
+	 *   // The caching logic in this case is carried out using the V4Fire library.
+	 *   @computed({dependencies: ['i']})
+	 *   get iWrapper2(): number {
 	 *     return this.i;
 	 *   }
 	 * }

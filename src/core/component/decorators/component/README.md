@@ -15,7 +15,7 @@ export default class bUser extends iBlock {
 }
 ```
 
-## How to create a component?
+## Declaring a Component
 
 To register a new component, generate a simple JS/TS class and apply the `@component` decorator to it.
 You can also pass additional parameters to this decorator.
