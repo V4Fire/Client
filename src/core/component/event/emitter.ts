@@ -19,8 +19,7 @@ export const globalEmitter = new EventEmitter({
 	wildcard: true
 });
 
-const
-	originalEmit = globalEmitter.emit.bind(globalEmitter);
+const originalEmit = globalEmitter.emit.bind(globalEmitter);
 
 globalEmitter.emit = (event: string, ...args) => {
 	const res = originalEmit(event, ...args);

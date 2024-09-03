@@ -18,8 +18,7 @@ import type { ComponentInterface } from 'core/component/interface';
  * @param component
  */
 export function getNormalParent(component: ComponentInterface): ComponentInterface | null {
-	let
-		normalParent: Nullable<ComponentInterface> = component.$parent;
+	let normalParent: Nullable<ComponentInterface> = component.$parent;
 
 	while (
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

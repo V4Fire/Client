@@ -2,7 +2,7 @@
 
 This module provides an API to initialize component fields to a component instance.
 
-## What differences between fields and system fields?
+## What Are the Differences Between Fields and System Fields?
 
 The main difference between fields and system fields in V4Fire is that any changes to a regular field
 can trigger a re-render of the component template.
