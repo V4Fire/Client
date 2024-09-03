@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2024-08-23)
+## v4.0.0-beta.?? (2024-??-??)
 
 #### :boom: Breaking Change
 
@@ -30,6 +30,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Set all friend classes now through getters with `cache: 'forever'`
   * Modules for friend classes are now loaded lazily
 
+* Apply the `symbol-generator-loader` consistently to optimize Runtime performance `build/webpack`
+* A lot of TypeScript type fixes
 * Performance improvements
 
 ## v4.0.0-beta.126 (2024-08-23)
