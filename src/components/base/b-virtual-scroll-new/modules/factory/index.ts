@@ -149,7 +149,7 @@ export class ComponentFactory extends Friend {
 
 		return Object.entries(props).reduce((acc, [key, value]) => {
 			const
-				noUpdate = meta.props[key]?.forceUpdate === false,
+				noUpdate = meta.props[key]?.forceUpdate === false || meta.props[`${key}Prop`]?.forceUpdate === false,
 				normalizedKey = noUpdate ? `@:${key}` : key;
 
 			acc[normalizedKey] = noUpdate ?

@@ -77,7 +77,7 @@ globalThis.renderComponents = (
 		const normalized = {};
 
 		Object.keys(attrs).forEach((key) => {
-			if (componentMeta.props[key]?.forceUpdate === false) {
+			if (componentMeta.props[key]?.forceUpdate === false || componentMeta.props[`${key}Prop`]?.forceUpdate === false) {
 				const value = attrs[key];
 				normalized[`@:${key}`] = ctx!.createPropAccessors(() => <object>value);
 
