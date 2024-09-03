@@ -33,7 +33,7 @@ export function createdState(component: ComponentInterface): void {
 	if (parent != null) {
 		const
 			isRegularComponent = unsafe.meta.params.functional !== true,
-			isDynamicallyMountedComponent = '$remoteParent' in unsafe.r;
+			isDynamicallyMountedComponent = '$remoteParent' in unsafe.$root;
 
 		const destroy = (opts: Required<ComponentDestructorOptions>) => {
 			// A component might have already been removed by explicitly calling $destroy
