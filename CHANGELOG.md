@@ -11,6 +11,27 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-08-23)
+
+#### :boom: Breaking Change
+
+* The `Async` module  has been moved to `V4/Core`
+
+#### :rocket: New Feature
+
+* Added the `partial` parameter for the declaration of components consisting of multiple classes `core/component/meta`
+* Added a new method for efficient access to the field store `getFieldsStore` `components/friends/field`
+* Introduced a new type of caching: `'forever'` `core/component/accessors`
+* Added the `test` parameter for fine-tuning watchers `core/component/decorators`
+
+#### :house: Internal
+
+* `iBlock`:
+  * Set all friend classes now through getters with `cache: 'forever'`
+  * Modules for friend classes are now loaded lazily
+
+* Performance improvements
+
 ## v4.0.0-beta.126 (2024-08-23)
 
 #### :rocket: New Feature

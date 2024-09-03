@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-08-23)
+
+#### :rocket: New Feature
+
+* Introduced a new type of caching: `'forever'`
+
 ## v4.0.0-beta.106 (2024-06-25)
 
 #### :bug: Bug Fix
