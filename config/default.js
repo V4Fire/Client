@@ -878,7 +878,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		swc(env) {
 			const
-				browsersListEnv = this.config.browsersListEnv(env),
+				browsersListEnv = this.config.browserslistEnv(env),
 				browsersListConfig = browserslist.findConfig('.'),
 				targets = browsersListConfig[browsersListEnv];
 
@@ -1111,7 +1111,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @returns {object}
 	 */
 	autoprefixer() {
-		return {remove: false, env: this.config.browsersListEnv()};
+		return {remove: false, env: this.browserslistEnv()};
 	},
 
 	/**
