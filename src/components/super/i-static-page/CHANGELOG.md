@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.129 (2024-09-04)
+
+#### :nail_care: Polish
+
+* Now, if an external link is passed to `initLibs()`, `PUBLIC_PATH` won't be added to it.
+
 ## 4.0.0-beta.108.a-new-hope (2024-07-15)
 
 #### :boom: Breaking Change
