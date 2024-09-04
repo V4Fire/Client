@@ -17,6 +17,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Now, if an external link is passed to `initLibs()`, `PUBLIC_PATH` won't be added to it.
 
+## v4.0.0-beta.128 (2024-09-03)
+
+#### :bug: Bug Fix
+
+* Fix normalization of the `forceUpdate` props declared as `*Prop` in:
+  * `bDummy`
+  * `bVirtualScrollNew`
+
 ## v4.0.0-beta.127 (2024-08-29)
 
 #### :bug: Bug Fix
