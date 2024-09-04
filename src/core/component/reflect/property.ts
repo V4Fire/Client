@@ -69,7 +69,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 				return true;
 			}
 
-			obj = obj[chunk];
+			obj = chunk in obj ? obj[chunk] : undefined;
 
 			if (obj != null && typeof obj === 'object' && 'componentName' in obj) {
 				component = obj;

@@ -35,7 +35,7 @@ export function paramsFactory<T = object>(
 	transformer?: ParamsFactoryTransformer
 ): FactoryTransformer<T> {
 	return (params: Dictionary<any> = {}) => (_: object, key: string, desc?: PropertyDescriptor) => {
-		initEmitter.once('bindConstructor', (componentName) => {
+		initEmitter.once('bindConstructor', (componentName, regEvent) => {
 			metaPointers[componentName] = metaPointers[componentName] ?? Object.createDict();
 
 			const link = metaPointers[componentName];
@@ -45,7 +45,7 @@ export function paramsFactory<T = object>(
 			}
 
 			link[key] = true;
-			initEmitter.once(`constructor.${componentName}`, decorate);
+			initEmitter.once(regEvent, decorate);
 		});
 
 		function decorate({meta}: {meta: ComponentMeta}): void {

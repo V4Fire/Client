@@ -63,7 +63,9 @@ export function getInfoFromConstructor(
 	constructor: ComponentConstructor,
 	declParams?: ComponentOptions
 ): ComponentConstructorInfo {
-	const partial = declParams?.partial?.dasherize();
+	const
+		partial = declParams?.partial?.dasherize(),
+		layer = declParams?.layer;
 
 	if (partial != null) {
 		let info = partialInfo.get(partial);
@@ -74,6 +76,7 @@ export function getInfoFromConstructor(
 			info = {
 				name: partial,
 				componentName: partial,
+				layer,
 
 				constructor,
 				params: {...declParams, partial},
@@ -100,9 +103,7 @@ export function getInfoFromConstructor(
 		return info;
 	}
 
-	const
-		name = declParams?.name ?? getComponentName(constructor),
-		layer = declParams?.layer;
+	const name = declParams?.name ?? getComponentName(constructor);
 
 	let {parent, parentParams} = getParent();
 

@@ -88,7 +88,9 @@ export function component(opts?: ComponentOptions): Function {
 			Object.defineProperty(componentInfo.parent, OVERRIDDEN, {value: true});
 		}
 
-		initEmitter.emit('bindConstructor', componentOriginName);
+		const regEvent = `constructor.${componentOriginName}.componentInfo.layer`;
+
+		initEmitter.emit('bindConstructor', componentOriginName, regEvent);
 
 		if (isPartial) {
 			pushToInitList(() => {
@@ -99,7 +101,7 @@ export function component(opts?: ComponentOptions): Function {
 					components.set(componentOriginName, meta);
 				}
 
-				initEmitter.once(`constructor.${componentOriginName}`, () => {
+				initEmitter.once(regEvent, () => {
 					addMethodsToMeta(components.get(componentOriginName)!, target);
 				});
 			});
@@ -134,7 +136,7 @@ export function component(opts?: ComponentOptions): Function {
 		function regComponent() {
 			registerParentComponents(componentInfo);
 
-			let rawMeta = components.get(componentNormalizedName);
+			let rawMeta = !hasSameOrigin ? components.get(componentNormalizedName) : null;
 
 			if (rawMeta == null) {
 				rawMeta = createMeta(componentInfo);
@@ -182,7 +184,7 @@ export function component(opts?: ComponentOptions): Function {
 				components.set(target, meta);
 			}
 
-			initEmitter.emit(`constructor.${componentNormalizedName}`, {
+			initEmitter.emit(regEvent, {
 				meta,
 				parentMeta: componentInfo.parentMeta
 			});

@@ -126,7 +126,15 @@ export function getField<T = unknown>(
 	}
 
 	if (chunks.length === 1) {
-		res = getter != null ? getter(chunks[0], res) : (<object>res)[chunks[0]];
+		const key = chunks[0];
+
+		if (getter != null) {
+			res = getter(key, res);
+
+		} else {
+			const obj = <object>res;
+			res = key in obj ? obj[key] : undefined;
+		}
 
 	} else {
 		const hasNoProperty = chunks.some((key) => {
@@ -135,10 +143,23 @@ export function getField<T = unknown>(
 			}
 
 			if (Object.isPromiseLike(res) && !(key in res)) {
-				res = res.then((res) => getter != null ? getter(key, res) : (<object>res)[key]);
+				res = res.then((res) => {
+					if (getter != null) {
+						return getter(key, res);
+					}
+
+					const obj = <object>res;
+					return key in obj ? obj[key] : undefined;
+				});
 
 			} else {
-				res = getter != null ? getter(key, res) : (<object>res)[key];
+				if (getter != null) {
+					res = getter(key, res);
+
+				} else {
+					const obj = <object>res;
+					res = key in obj ? obj[key] : undefined;
+				}
 			}
 
 			return false;
