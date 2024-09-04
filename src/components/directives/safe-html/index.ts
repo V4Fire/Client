@@ -31,6 +31,14 @@ ComponentEngine.directive('safe-html', {
 		};
 	},
 
+	beforeUpdate(el: Element, {value, oldValue}: SafeHtmlDirectiveParams): void {
+		if (value === oldValue || SSR) {
+			return;
+		}
+
+		el.innerHTML = sanitize(value);
+	},
+
 	getSSRProps({value, oldValue}: SafeHtmlDirectiveParams) {
 		if (value === oldValue) {
 			return;
