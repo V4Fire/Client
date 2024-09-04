@@ -88,7 +88,7 @@ export function component(opts?: ComponentOptions): Function {
 			Object.defineProperty(componentInfo.parent, OVERRIDDEN, {value: true});
 		}
 
-		const regEvent = `constructor.${componentOriginName}.componentInfo.layer`;
+		const regEvent = `constructor.${componentOriginName}.${componentInfo.layer}`;
 
 		initEmitter.emit('bindConstructor', componentOriginName, regEvent);
 
