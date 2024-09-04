@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { metaPointers, PARENT } from 'core/component/const';
+import { componentDecoratedKeys, PARENT } from 'core/component/const';
 
 import type { ModDeclVal, FieldWatcher } from 'core/component/interface';
 import type { ComponentMeta } from 'core/component/meta/interface';
@@ -19,7 +19,7 @@ import type { ComponentMeta } from 'core/component/meta/interface';
  * @param parentMeta
  */
 export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): ComponentMeta {
-	const metaPointer = metaPointers[meta.componentName];
+	const decoratedKeys = componentDecoratedKeys[meta.componentName];
 
 	Object.assign(meta.tiedFields, parentMeta.tiedFields);
 
@@ -50,7 +50,7 @@ export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): Com
 				return;
 			}
 
-			if (metaPointer == null || !metaPointer[propName]) {
+			if (decoratedKeys == null || !decoratedKeys.has(propName)) {
 				current[propName] = parent;
 				return;
 			}
@@ -72,7 +72,7 @@ export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): Com
 				return;
 			}
 
-			if (metaPointer == null || !metaPointer[fieldName]) {
+			if (decoratedKeys == null || !decoratedKeys.has(fieldName)) {
 				current[fieldName] = parent;
 				return;
 			}
@@ -107,7 +107,7 @@ export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): Com
 				return;
 			}
 
-			if (metaPointer == null || !metaPointer[methodName]) {
+			if (decoratedKeys == null || !decoratedKeys.has(methodName)) {
 				current[methodName] = {...parent};
 				return;
 			}

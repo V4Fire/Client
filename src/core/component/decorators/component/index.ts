@@ -88,9 +88,9 @@ export function component(opts?: ComponentOptions): Function {
 			Object.defineProperty(componentInfo.parent, OVERRIDDEN, {value: true});
 		}
 
-		const regEvent = `constructor.${componentOriginName}.${componentInfo.layer}`;
+		const regEvent = `constructor.${componentNormalizedName}.${componentInfo.layer}`;
 
-		initEmitter.emit('bindConstructor', componentOriginName, regEvent);
+		initEmitter.emit('bindConstructor', componentNormalizedName, regEvent);
 
 		if (isPartial) {
 			pushToInitList(() => {

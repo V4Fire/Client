@@ -61,9 +61,11 @@ export const componentRegInitializers = Object.createDict<Function[]>();
 export const componentRenderFactories = Object.createDict<RenderFactory>();
 
 /**
- * A dictionary containing component pointers for metatables
+ * A map representing a dictionary where the key is the component name,
+ * and the value is a Set of all keys that have a decorator specified
+ * within the component declaration
  */
-export const metaPointers = Object.createDict<Dictionary<boolean>>();
+export const componentDecoratedKeys = Object.createDict<Set<string>>();
 
 /**
  * Globally initialized application (not supported in SSR)

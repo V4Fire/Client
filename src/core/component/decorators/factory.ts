@@ -11,7 +11,7 @@ import { defProp } from 'core/const/props';
 import { isStore } from 'core/component/reflect';
 import { initEmitter } from 'core/component/event';
 
-import { metaPointers } from 'core/component/const';
+import { componentDecoratedKeys } from 'core/component/const';
 import { invertedFieldMap, tiedFieldMap } from 'core/component/decorators/const';
 
 import type { ComponentMeta, ComponentProp, ComponentField } from 'core/component/interface';
@@ -36,15 +36,10 @@ export function paramsFactory<T = object>(
 ): FactoryTransformer<T> {
 	return (params: Dictionary<any> = {}) => (_: object, key: string, desc?: PropertyDescriptor) => {
 		initEmitter.once('bindConstructor', (componentName, regEvent) => {
-			metaPointers[componentName] = metaPointers[componentName] ?? Object.createDict();
+			const decoratedKeys = componentDecoratedKeys[componentName] ?? new Set();
+			componentDecoratedKeys[componentName] = decoratedKeys;
 
-			const link = metaPointers[componentName];
-
-			if (link == null) {
-				return;
-			}
-
-			link[key] = true;
+			decoratedKeys.add(key);
 			initEmitter.once(regEvent, decorate);
 		});
 
