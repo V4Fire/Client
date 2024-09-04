@@ -45,7 +45,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns browserslistEnv targets
+	 * Returns browserslist env
 	 * @param {string} env - custom environment
 	 */
 	browserslistEnv(env) {
