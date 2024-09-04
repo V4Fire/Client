@@ -12,7 +12,8 @@ Changelog
 ## v4.0.0-beta.??? (2024-09-??)
 
 #### :bug: Bug Fix
-* Fixed re-rendering issue when the passed value changed. Added innerHTML updating in the `beforeUpdate` hook.
+
+* Fixed re-rendering issue when the passed value changed. Added innerHTML updating in the `updated` hook.
 
 #### :rocket: New Feature
 
