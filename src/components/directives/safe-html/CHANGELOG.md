@@ -9,7 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.90 (2024-04-17)
+## v4.0.0-beta.130 (2024-09-05)
+
+#### :bug: Bug Fix
+
+* Fixed re-rendering issue when the passed value changed. Added innerHTML updating in the `updated` hook.
 
 #### :rocket: New Feature
 
