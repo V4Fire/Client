@@ -83,7 +83,12 @@ export function initProps(
 
 		if (Object.isFunction(propValue)) {
 			if (opts.saveToStore === true || propValue[DEFAULT_WRAPPER] !== true) {
-				propValue = prop.type === Function ? propValue.bind(component) : propValue(component);
+				propValue = prop.type === Function ? propValue : propValue(component);
+
+				if (Object.isFunction(propValue)) {
+					propValue = propValue.bind(component);
+				}
+
 				needSaveToStore = true;
 			}
 		}
