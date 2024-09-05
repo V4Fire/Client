@@ -50,7 +50,13 @@ const deps = {
 if (!ssr) {
 	switch (runtime.engine) {
 		case 'vue3':
-			deps.scripts.set('vue', `vue/dist/vue.runtime.global${config.webpack.mode() === 'production' ? '.prod' : ''}.js`);
+			deps.scripts.set(
+				'vue',
+				config.webpack.mode() === 'production' ?
+					{source: 'src', src: 'assets/lib/vue.runtime.global.prod.js'} :
+					'vue/dist/vue.runtime.global.js'
+			);
+
 			break;
 
 		default:
