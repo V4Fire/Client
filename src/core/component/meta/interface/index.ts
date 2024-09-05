@@ -100,7 +100,11 @@ export interface ComponentMeta {
 	systemFields: Dictionary<ComponentField>;
 
 	/**
-	 * A dictionary containing the component fields that have a "Store" postfix in their name
+	 * A dictionary containing the component properties as well as properties that are related to them.
+	 * For example:
+	 *
+	 * `foo → fooStore`
+	 * `fooStore → foo`
 	 */
 	tiedFields: Dictionary<string>;
 

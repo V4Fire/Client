@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ComponentInterface } from 'core/component';
+import { getFieldsStore, ComponentInterface } from 'core/component';
 import Friend, { fakeMethods } from 'components/friends/friend';
 
 import { getField } from 'components/friends/field/get';
@@ -40,7 +40,7 @@ class Field extends Friend {
 	getFieldsStore<T extends ComponentInterface>(component?: T): T;
 	getFieldsStore<T extends ComponentInterface['unsafe']>(component?: T): T;
 	getFieldsStore(component: typeof this.ctx = this.ctx): object {
-		return Object.cast(component.isFunctionalWatchers || this.lfc.isBeforeCreate() ? component.$fields : component);
+		return getFieldsStore(component);
 	}
 }
 

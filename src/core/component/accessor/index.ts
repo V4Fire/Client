@@ -16,6 +16,7 @@ import * as gc from 'core/component/gc';
 import { deprecate } from 'core/functools/deprecation';
 
 import { beforeHooks } from 'core/component/const';
+import { getFieldsStore } from 'core/component/field';
 import { cacheStatus } from 'core/component/watch';
 
 import type { ComponentInterface } from 'core/component/interface';
@@ -68,7 +69,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		meta,
 
 		// eslint-disable-next-line deprecation/deprecation
-		meta: {params: {deprecatedProps}, tiedFields},
+		meta: {params: {deprecatedProps}, fields, tiedFields},
 
 		$destructors
 	} = component.unsafe;
@@ -114,6 +115,9 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		if (canSkip) {
 			const tiedWith = tiedFields[name];
 
+			// If the getter is not initialized,
+			// then the related fields should also be removed to avoid registering a watcher for cache invalidation,
+			// as it will not be used
 			if (tiedWith != null) {
 				delete tiedFields[tiedWith];
 				delete tiedFields[name];
@@ -122,11 +126,16 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 			return;
 		}
 
+		// In the `tiedFields` dictionary,
+		// the names of the getters themselves are also stored as keys with their related fields as values.
+		// This is done for convenience.
+		// However, watchers for cache invalidation of the getter will be created for all keys in `tiedFields`.
+		// Since it's not possible to watch the getter itself, we need to remove the key with its name.
 		delete tiedFields[name];
 
 		// eslint-disable-next-line func-style
 		const get = function get(this: typeof component): unknown {
-			const {hook} = this;
+			const {unsafe, hook} = this;
 
 			const canUseForeverCache = computed.cache === 'forever';
 
@@ -147,8 +156,39 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 				if (needEffect) {
 					meta.watchDependencies.get(name)?.forEach((path) => {
-						// @ts-ignore (effect)
-						void this[path];
+						let firstChunk: string;
+
+						if (Object.isString(path)) {
+							if (path.includes('.')) {
+								const chunks = path.split('.');
+
+								firstChunk = path[0];
+
+								if (chunks.length === 1) {
+									path = firstChunk;
+								}
+
+							} else {
+								firstChunk = path;
+							}
+
+						} else {
+							firstChunk = path[0];
+
+							if (path.length === 1) {
+								path = firstChunk;
+							}
+						}
+
+						const store = fields[firstChunk] != null ? getFieldsStore(unsafe) : unsafe;
+
+						if (Object.isArray(path)) {
+							void Object.get(store, path);
+
+						} else if (path in store) {
+							// @ts-ignore (effect)
+							void store[path];
+						}
 					});
 
 					['Store', 'Prop'].forEach((postfix) => {

@@ -49,6 +49,8 @@ export {
 
 } from 'core/component/event';
 
+export { getFieldsStore } from 'core/component/field';
+
 export * from 'core/component/reflect';
 export * from 'core/component/decorators';
 export * from 'core/component/interface';
