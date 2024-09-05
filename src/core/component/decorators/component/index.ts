@@ -82,18 +82,21 @@ export function component(opts?: ComponentOptions): Function {
 		const
 			componentOriginName = componentInfo.name,
 			componentNormalizedName = componentInfo.componentName,
-			hasSameOrigin = !isPartial && componentOriginName === componentInfo.parentParams?.name;
+			isParentLayerOverride = !isPartial && componentOriginName === componentInfo.parentParams?.name;
 
-		if (hasSameOrigin) {
+		if (isParentLayerOverride) {
 			Object.defineProperty(componentInfo.parent, OVERRIDDEN, {value: true});
 		}
 
+		// Add information about the layer in which the component is described
+		// to correctly handle situations where the component is overridden in child layers of the application
 		const regEvent = `constructor.${componentNormalizedName}.${componentInfo.layer}`;
 
 		initEmitter.emit('bindConstructor', componentNormalizedName, regEvent);
 
 		if (isPartial) {
 			pushToInitList(() => {
+				// Partial classes reuse the same metaobject
 				let meta = components.get(componentOriginName);
 
 				if (meta == null) {
@@ -136,14 +139,18 @@ export function component(opts?: ComponentOptions): Function {
 		function regComponent() {
 			registerParentComponents(componentInfo);
 
-			let rawMeta = !hasSameOrigin ? components.get(componentNormalizedName) : null;
+			// The metaobject might have already been created by partial classes or in the case of a smart component
+			let rawMeta = !isParentLayerOverride ? components.get(componentNormalizedName) : null;
 
+			// If the metaobject has not been created, it should be created now
 			if (rawMeta == null) {
 				rawMeta = createMeta(componentInfo);
 				components.set(componentNormalizedName, rawMeta);
 
+			// If the metaobject has already been created, we create its shallow copy with some fields overridden.
+			// This is necessary because smart components use the same metaobject.
 			} else {
-				const newTarget = target !== rawMeta.constructor;
+				const hasNewTarget = target !== rawMeta.constructor;
 
 				rawMeta = Object.create(rawMeta, {
 					constructor: {
@@ -157,7 +164,7 @@ export function component(opts?: ComponentOptions): Function {
 						configurable: true,
 						enumerable: true,
 						writable: true,
-						value: newTarget ? getComponentMods(componentInfo) : rawMeta.mods
+						value: hasNewTarget ? getComponentMods(componentInfo) : rawMeta.mods
 					},
 
 					params: {
@@ -171,7 +178,7 @@ export function component(opts?: ComponentOptions): Function {
 				if (rawMeta != null && componentInfo.parentMeta != null) {
 					inheritParams(rawMeta, componentInfo.parentMeta);
 
-					if (newTarget) {
+					if (hasNewTarget) {
 						inheritMods(rawMeta, componentInfo.parentMeta);
 					}
 				}

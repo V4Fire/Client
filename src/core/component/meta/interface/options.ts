@@ -37,7 +37,7 @@ export interface ComponentOptions {
 	 * This option is used when we want to split the component into multiple classes.
 	 *
 	 * Please note that in partial classes,
-	 * there should be no conflicts in methods or properties with other partial classes of this component.
+	 * there should be no overrides in methods or properties with other partial classes of this component.
 	 *
 	 * @example
 	 * ```typescript
@@ -47,9 +47,19 @@ export interface ComponentOptions {
 	 *   value: number = 0;
 	 * }
 	 *
-	 * @component()
-	 * class bExample extends bExampleProps {
+	 * @component({partial: 'bExample'})
+	 * class bExampleAPI extends bExampleProps {
+	 *   getName(): string {
+	 *     return this.meta.componentName;
+	 *   }
+	 * }
 	 *
+	 * @component()
+	 * class bExample extends bExampleAPI {
+	 *   // This override will not work correctly, as it overrides what was added within the partial class
+	 *   override getName(): string {
+	 *     return this.meta.componentName;
+	 *   }
 	 * }
 	 * ```
 	 */
