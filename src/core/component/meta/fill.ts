@@ -17,9 +17,9 @@ import { addMethodsToMeta } from 'core/component/meta/method';
 import type { ComponentConstructor, ComponentMeta, ModVal } from 'core/component/interface';
 
 const
-	BLUEPRINT = Symbol('The meta blueprint'),
 	INSTANCE = Symbol('The component instance'),
-	ALREADY_PASSED = Symbol('This constructor is already passed');
+	BLUEPRINT = Symbol('The metaobject blueprint'),
+	ALREADY_FILLED = Symbol('This constructor has already been used to populate the metaobject');
 
 /**
  * Populates the passed metaobject with methods and properties from the specified component class constructor
@@ -35,7 +35,7 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 	}
 
 	// For smart components, this method can be called more than once
-	const isFirstFill = !constructor.hasOwnProperty(ALREADY_PASSED);
+	const isFirstFill = !constructor.hasOwnProperty(ALREADY_FILLED);
 
 	if (Object.isDictionary(meta.params.functional) && meta[BLUEPRINT] == null) {
 		Object.defineProperty(meta, BLUEPRINT, {
@@ -89,6 +89,8 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 		}
 	});
 
+	// Creating an instance of a component is not a free operation.
+	// If it is not immediately necessary, we execute it in the background during idle time.
 	requestIdleCallback(() => {
 		void meta.instance;
 	});
@@ -305,7 +307,7 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 		});
 	}
 
-	Object.defineProperty(constructor, ALREADY_PASSED, {value: true});
+	Object.defineProperty(constructor, ALREADY_FILLED, {value: true});
 
 	return meta;
 }
