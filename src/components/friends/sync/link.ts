@@ -388,7 +388,12 @@ export function link<D = unknown, R = D>(
 			this.field.set(destPath, resolveVal);
 
 		} else if (info.type === 'field') {
-			this.field.getFieldsStore(info.ctx)[destPath] = resolveVal;
+			const store = this.field.getFieldsStore(info.ctx);
+			store[destPath] = resolveVal;
+
+			if (store !== info.ctx) {
+				info.ctx[destPath] = resolveVal;
+			}
 
 		} else {
 			info.ctx[destPath] = resolveVal;
