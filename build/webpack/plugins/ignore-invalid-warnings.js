@@ -20,23 +20,24 @@ module.exports = class IgnoreInvalidWarningsPlugin {
 
 		compiler.hooks.infrastructureLog.tap('IgnoreInvalidWarningsPlugin', infrastructureLogHook);
 
-		function doneHook(stats) {
-			stats.compilation.warnings = stats.compilation.warnings.filter((warn) => {
-				switch (warn.constructor.name) {
-					// @see https://github.com/TypeStrong/ts-loader/issues/653
-					// @see https://github.com/jaredwray/keyv/issues/45
-					case 'ModuleDependencyWarning':
-						return !/export '.*'( \(reexported as '.*'\))? was not found in/.test(warn.message) &&
-									!/Critical dependency: the request of a dependency is an expression/.test(warn.message);
+		function doneHook() {
+			// FIXME: unable to modify in rspack
+			// stats.compilation.warnings = stats.compilation.warnings.filter((warn) => {
+			// 	switch (warn.constructor.name) {
+			// 		// @see https://github.com/TypeStrong/ts-loader/issues/653
+			// 		// @see https://github.com/jaredwray/keyv/issues/45
+			// 		case 'ModuleDependencyWarning':
+			// 			return !/export '.*'( \(reexported as '.*'\))? was not found in/.test(warn.message) &&
+			// 						!/Critical dependency: the request of a dependency is an expression/.test(warn.message);
 
-					// `require.context` goes fucking crazy :(
-					case 'ModuleNotFoundError':
-						return !/Can't resolve '(?:rc|ode_modules)/.test(warn.message);
+			// 		// `require.context` goes fucking crazy :(
+			// 		case 'ModuleNotFoundError':
+			// 			return !/Can't resolve '(?:rc|ode_modules)/.test(warn.message);
 
-					default:
-						return true;
-				}
-			});
+			// 		default:
+			// 			return true;
+			// 	}
+			// });
 		}
 
 		function infrastructureLogHook(origin, type, args) {

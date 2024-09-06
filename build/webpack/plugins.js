@@ -13,7 +13,8 @@ const
 
 const
 	config = require('@config/config'),
-	webpack = require('webpack');
+	webpack = require('webpack'),
+	rspack = require('@rspack/core');
 
 /**
  * Returns parameters for `webpack.plugins`
@@ -36,7 +37,7 @@ module.exports = async function plugins({name}) {
 		StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default;
 
 	const plugins = new Map([
-		['globals', new webpack.DefinePlugin(await $C(globals).async.map())],
+		['globals', new rspack.DefinePlugin(await $C(globals).async.map())],
 		['ignoreNotFoundExport', new IgnoreInvalidWarningsPlugin()],
 		['i18nGeneratorPlugin', new I18NGeneratorPlugin()],
 		['invalidateExternalCache', new InvalidateExternalCachePlugin()]

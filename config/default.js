@@ -383,7 +383,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @returns {?string}
 		 */
 		hashFunction() {
-			return this.mode() !== 'production' || this.fatHTML() ? undefined : this.config.build.hashAlg;
+			// FIXME: only md4 and xxhash64 are suported
+			return this.mode() !== 'production' || this.fatHTML() ? undefined : 'md4';
 		},
 
 		/**
@@ -600,7 +601,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		externals() {
 			return {
-				vue: this.config.webpack.ssr ? 'vue' : 'root Vue',
+				// FIXME: imports from Vue not working in rspack
+				// vue: this.config.webpack.ssr ? 'vue' : 'root Vue',
 				jsdom: 'jsdom',
 				eventemitter2: 'EventEmitter2',
 				setimmediate: 'setImmediate'

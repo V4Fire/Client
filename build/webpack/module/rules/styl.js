@@ -10,7 +10,7 @@
 
 const
 	config = require('@config/config'),
-	MiniCssExtractPlugin = require('mini-css-extract-plugin');
+	rspack = require('@rspack/core');
 
 const
 	{webpack} = config,
@@ -29,7 +29,7 @@ const
  * @returns {import('webpack').RuleSetRule}
  */
 module.exports = function stylRules({plugins}) {
-	plugins.set('extractCSS', new MiniCssExtractPlugin(inherit(config.miniCssExtractPlugin(), {
+	plugins.set('extractCSS', new rspack.CssExtractRspackPlugin(inherit(config.miniCssExtractPlugin(), {
 		filename: `${hash(output, true)}.css`,
 		chunkFilename: '[id].css'
 	})));
@@ -95,7 +95,7 @@ function styleHelperLoaders(isStatic = false) {
 		usePureCSSFiles = isStatic || useLink;
 
 	return [].concat(
-		usePureCSSFiles ? MiniCssExtractPlugin.loader : [],
+		usePureCSSFiles ? rspack.CssExtractRspackPlugin.loader : [],
 
 		[
 			{
