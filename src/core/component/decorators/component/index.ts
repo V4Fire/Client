@@ -80,9 +80,9 @@ export function component(opts?: ComponentOptions): Function {
 			isPartial = componentParams.partial != null;
 
 		const
-			componentOriginName = componentInfo.name,
+			componentFullName = componentInfo.name,
 			componentNormalizedName = componentInfo.componentName,
-			isParentLayerOverride = !isPartial && componentOriginName === componentInfo.parentParams?.name;
+			isParentLayerOverride = !isPartial && componentFullName === componentInfo.parentParams?.name;
 
 		if (isParentLayerOverride) {
 			Object.defineProperty(componentInfo.parent, OVERRIDDEN, {value: true});
@@ -97,15 +97,15 @@ export function component(opts?: ComponentOptions): Function {
 		if (isPartial) {
 			pushToInitList(() => {
 				// Partial classes reuse the same metaobject
-				let meta = components.get(componentOriginName);
+				let meta = components.get(componentFullName);
 
 				if (meta == null) {
 					meta = createMeta(componentInfo);
-					components.set(componentOriginName, meta);
+					components.set(componentFullName, meta);
 				}
 
 				initEmitter.once(regEvent, () => {
-					addMethodsToMeta(components.get(componentOriginName)!, target);
+					addMethodsToMeta(components.get(componentFullName)!, target);
 				});
 			});
 
@@ -117,13 +117,13 @@ export function component(opts?: ComponentOptions): Function {
 		const needRegisterImmediate =
 			componentInfo.isAbstract ||
 			componentParams.root === true ||
-			!Object.isTruly(componentOriginName);
+			!Object.isTruly(componentFullName);
 
 		if (needRegisterImmediate) {
-			registerComponent(componentOriginName);
+			registerComponent(componentFullName);
 
 		} else {
-			requestIdleCallback(registerComponent.bind(null, componentOriginName));
+			requestIdleCallback(registerComponent.bind(null, componentFullName));
 		}
 
 		// If we have a smart component,
@@ -131,7 +131,7 @@ export function component(opts?: ComponentOptions): Function {
 		if (Object.isPlainObject(componentParams.functional)) {
 			component({
 				...opts,
-				name: `${componentOriginName}-functional`,
+				name: `${componentFullName}-functional`,
 				functional: true
 			})(target);
 		}
@@ -185,7 +185,7 @@ export function component(opts?: ComponentOptions): Function {
 			}
 
 			const meta = rawMeta!;
-			components.set(componentOriginName, meta);
+			components.set(componentFullName, meta);
 
 			if (componentParams.name == null || !componentInfo.isSmart) {
 				components.set(target, meta);
@@ -209,13 +209,13 @@ export function component(opts?: ComponentOptions): Function {
 				}
 
 			} else if (meta.params.root) {
-				rootComponents[componentOriginName] = loadTemplate(getComponent(meta));
+				rootComponents[componentFullName] = loadTemplate(getComponent(meta));
 
 			} else {
-				const componentDeclArgs = <const>[componentOriginName, loadTemplate(getComponent(meta))];
+				const componentDeclArgs = <const>[componentFullName, loadTemplate(getComponent(meta))];
 				ComponentEngine.component(...componentDeclArgs);
 
-				if (app.context != null && app.context.component(componentOriginName) == null) {
+				if (app.context != null && app.context.component(componentFullName) == null) {
 					app.context.component(...componentDeclArgs);
 				}
 			}
@@ -258,8 +258,8 @@ export function component(opts?: ComponentOptions): Function {
 		}
 
 		function pushToInitList(init: Function) {
-			const initList = componentRegInitializers[componentOriginName] ?? [];
-			componentRegInitializers[componentOriginName] = initList;
+			const initList = componentRegInitializers[componentFullName] ?? [];
+			componentRegInitializers[componentFullName] = initList;
 			initList.push(init);
 		}
 	};
