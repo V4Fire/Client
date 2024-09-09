@@ -10,7 +10,9 @@ import { beforeHooks } from 'core/component/const';
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
- * Returns a reference to the storage object for the fields of the passed component
+ * Returns a reference to the storage object for the fields of the passed component.
+ * This method can be used to optimize access to the @field property instead of using `field.get`.
+ *
  * @param [component]
  */
 export function getFieldsStore(component: ComponentInterface['unsafe']): object {
