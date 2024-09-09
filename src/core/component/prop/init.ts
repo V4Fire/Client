@@ -66,23 +66,12 @@ export function initProps(
 			propValue = getAccessors()[0];
 		}
 
-		if (propValue === undefined) {
-			if (prop.default !== undefined) {
-				propValue = prop.default;
-
-			} else {
-				propValue = meta.instance[propName];
-
-				if (!Object.isPrimitive(propValue)) {
-					propValue = Object.fastClone(propValue);
-				}
-			}
-		}
-
 		let needSaveToStore = opts.saveToStore;
 
-		if (Object.isFunction(propValue)) {
-			if (opts.saveToStore === true || propValue[DEFAULT_WRAPPER] !== true) {
+		if (propValue === undefined && prop.default !== undefined) {
+			propValue = prop.default;
+
+			if (Object.isFunction(propValue) && (opts.saveToStore === true || propValue[DEFAULT_WRAPPER] !== true)) {
 				propValue = prop.type === Function ? propValue : propValue(component);
 
 				if (Object.isFunction(propValue)) {

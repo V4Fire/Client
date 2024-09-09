@@ -128,14 +128,11 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 					// it is necessary to clone this value for each new component instance
 					// to ensure that they do not share the same value
 					const needCloneDefValue =
-						defaultInstanceValue != null && typeof defaultInstanceValue === 'object' &&
-						(!isTypeCanBeFunc(prop.type) || !Object.isFunction(defaultInstanceValue));
+						!Object.isPrimitive(defaultInstanceValue) &&
+						(prop.type !== Function || !Object.isFunction(defaultInstanceValue));
 
 					if (needCloneDefValue) {
-						getDefault = () => Object.isPrimitive(defaultInstanceValue) ?
-							defaultInstanceValue :
-							Object.fastClone(defaultInstanceValue);
-
+						getDefault = () => Object.fastClone(defaultInstanceValue);
 						(<object>getDefault)[DEFAULT_WRAPPER] = true;
 					}
 
