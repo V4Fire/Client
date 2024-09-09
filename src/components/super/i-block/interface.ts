@@ -77,6 +77,15 @@ export interface UnsafeIBlock<CTX extends iBlock = iBlock> extends UnsafeCompone
 	block: CTX['block'];
 
 	// @ts-ignore (access)
+	get browser(): CTX['browser'];
+
+	// @ts-ignore (access)
+	get presets(): CTX['presets'];
+
+	// @ts-ignore (access)
+	get h(): CTX['h'];
+
+	// @ts-ignore (access)
 	get moduleLoader(): CTX['moduleLoader'];
 
 	// @ts-ignore (access)
@@ -126,4 +135,10 @@ export interface UnsafeIBlock<CTX extends iBlock = iBlock> extends UnsafeCompone
 
 	// @ts-ignore (access)
 	waitRef: CTX['waitRef'];
+
+	// @ts-ignore (access)
+	initInfoRender: CTX['initInfoRender'];
+
+	// @ts-ignore (access)
+	initDaemons: CTX['initDaemons'];
 }
