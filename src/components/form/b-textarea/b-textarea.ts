@@ -61,11 +61,9 @@ export default class bTextarea extends iInputText {
 	declare readonly FormValue: FormValue;
 
 	@prop({type: String, required: false})
-	// @ts-ignore (override)
 	override readonly valueProp?: this['Value'];
 
 	@prop({type: String, required: false})
-	// @ts-ignore (override)
 	override readonly defaultProp?: this['Value'];
 
 	/**
@@ -141,7 +139,6 @@ export default class bTextarea extends iInputText {
 	};
 
 	@system()
-	// @ts-ignore (override)
 	protected override valueStore!: this['Value'];
 
 	@system<bTextarea>({
@@ -180,7 +177,6 @@ export default class bTextarea extends iInputText {
 		})
 	})
 
-	// @ts-ignore (override)
 	protected override textStore!: string;
 
 	/**

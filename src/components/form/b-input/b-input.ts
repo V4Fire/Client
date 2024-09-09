@@ -57,11 +57,9 @@ export default class bInput extends iInputText {
 	declare readonly FormValue: FormValue;
 
 	@prop({type: String, required: false})
-	// @ts-ignore (override)
 	override readonly valueProp?: this['Value'];
 
 	@prop({type: String, required: false})
-	// @ts-ignore (override)
 	override readonly defaultProp?: this['Value'];
 
 	/**
@@ -229,7 +227,6 @@ export default class bInput extends iInputText {
 	};
 
 	@system()
-	// @ts-ignore (override)
 	protected override valueStore!: this['Value'];
 
 	/**
@@ -276,7 +273,6 @@ export default class bInput extends iInputText {
 		})
 	})
 
-	// @ts-ignore (override)
 	protected override textStore!: string;
 
 	@wait('ready', {label: $$.clear})

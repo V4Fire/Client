@@ -41,11 +41,9 @@ export default class bSelectDate extends iInput implements iWidth {
 	declare readonly FormValue: FormValue;
 
 	@prop({type: Date, required: false})
-	// @ts-ignore (override)
 	override readonly valueProp?: this['Value'];
 
 	@prop({type: Date, required: false})
-	// @ts-ignore (override)
 	override readonly defaultProp?: this['Value'];
 
 	/**

@@ -40,6 +40,5 @@ export default class bFriendsModuleLoaderDummy extends iData {
 			[]
 	})
 
-	// @ts-ignore (override)
 	override readonly dependenciesProp!: Module[];
 }

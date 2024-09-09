@@ -155,7 +155,6 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly requestQuery?: RequestQueryFn;
 
 	@prop({type: [Object, Array], required: false})
-	// @ts-ignore (override)
 	override readonly request?: RequestParams;
 
 	/**

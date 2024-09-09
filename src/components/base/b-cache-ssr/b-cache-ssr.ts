@@ -23,7 +23,6 @@ export * from 'components/base/b-cache-ssr/const';
 @component({functional: true})
 export default class bCacheSSR extends iBlock {
 	@prop({required: true})
-	// @ts-ignore (override)
 	override readonly globalName!: string;
 
 	override readonly rootTag: string = 'div';
@@ -36,7 +35,6 @@ export default class bCacheSSR extends iBlock {
 	}
 
 	@system(() => ssrCache)
-	// @ts-ignore (override)
 	protected override readonly $ssrCache!: AbstractCache<string>;
 
 	protected override get state(): SuperState {

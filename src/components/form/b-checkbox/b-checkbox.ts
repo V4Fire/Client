@@ -184,8 +184,7 @@ export default class bCheckbox extends iInput implements iSize {
 	};
 
 	@system()
-	// @ts-ignore (override)
-	protected override valueStore: this['Value'];
+	protected override valueStore!: this['Value'];
 
 	/** @inheritDoc */
 	declare protected readonly $refs: iInput['$refs'] & {
