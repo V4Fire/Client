@@ -34,6 +34,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * A lot of TypeScript type fixes
 * Performance improvements
 
+## v4.0.0-beta.?? (2024-09-??)
+
+#### :rocket: New Feature
+
+* Enhanced filesystem cache invalidation criteria by including the current branch name and the most recent merge `build/webpack`
+
 ## v4.0.0-beta.130 (2024-09-05)
 
 #### :bug: Bug Fix
