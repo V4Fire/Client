@@ -10,8 +10,6 @@ import { DEFAULT_WRAPPER } from 'core/component/const';
 
 import { getComponentContext } from 'core/component/context';
 import { isAbstractComponent, isBinding } from 'core/component/reflect';
-
-import { isTypeCanBeFunc } from 'core/component/prop';
 import { addMethodsToMeta } from 'core/component/meta/method';
 
 import type { ComponentConstructor, ComponentMeta, ModVal } from 'core/component/interface';
@@ -124,15 +122,14 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 
 					let getDefault = defaultInstanceValue;
 
-					// If the default value of a field is set via default values for a class property,
+					// If the default value of a prop is set via a default value for a class property,
 					// it is necessary to clone this value for each new component instance
 					// to ensure that they do not share the same value
-					const needCloneDefValue =
-						!Object.isPrimitive(defaultInstanceValue) &&
-						(prop.type !== Function || !Object.isFunction(defaultInstanceValue));
+					if (prop.type !== Function && defaultInstanceValue != null && typeof defaultInstanceValue === 'object') {
+						getDefault = () => Object.isPrimitive(defaultInstanceValue) ?
+							defaultInstanceValue :
+							Object.fastClone(defaultInstanceValue);
 
-					if (needCloneDefValue) {
-						getDefault = () => Object.fastClone(defaultInstanceValue);
 						(<object>getDefault)[DEFAULT_WRAPPER] = true;
 					}
 
