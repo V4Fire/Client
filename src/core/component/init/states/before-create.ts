@@ -11,6 +11,7 @@ import Async from 'core/async';
 import * as gc from 'core/component/gc';
 import watch from 'core/object/watch';
 
+import { V4_COMPONENT } from 'core/component/const';
 import { getComponentContext } from 'core/component/context';
 
 import { forkMeta } from 'core/component/meta';
@@ -51,6 +52,7 @@ export function beforeCreateState(
 
 	// To avoid TS errors marks all properties as editable
 	const unsafe = Object.cast<Writable<ComponentInterface['unsafe']>>(component);
+	unsafe[V4_COMPONENT] = true;
 
 	// @ts-ignore (unsafe)
 	unsafe.unsafe = unsafe;

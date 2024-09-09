@@ -9,7 +9,7 @@
 import { unwrap } from 'core/object/watch';
 
 import type Friend from 'components/friends/friend';
-import iBlock, { getPropertyInfo } from 'components/super/i-block/i-block';
+import iBlock, { getPropertyInfo, V4_COMPONENT } from 'components/super/i-block/i-block';
 
 import type { KeyGetter } from 'components/friends/field/interface';
 
@@ -90,7 +90,7 @@ export function deleteField(
 
 	let isComponent = false;
 
-	if ('componentName' in obj && 'unsafe' in obj) {
+	if (V4_COMPONENT in obj) {
 		ctx = (<iBlock>obj).unsafe;
 		isComponent = true;
 	}

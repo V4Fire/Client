@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { isComponent } from 'core/component';
+import { isComponent, V4_COMPONENT } from 'core/component';
 import { getDirectiveComponent } from 'core/component/directives';
 import type { VNode, VNodeVirtualParent } from 'core/component/engines';
 
@@ -205,7 +205,7 @@ function createVNode(
 				let
 					ctxFromVNode = getDirectiveComponent(vnode);
 
-				if (ctxFromVNode?.$parent != null && !('componentName' in ctxFromVNode.$parent)) {
+				if (ctxFromVNode?.$parent != null && !(V4_COMPONENT in ctxFromVNode.$parent)) {
 					ctxFromVNode = Object.create(ctxFromVNode, {
 						$parent: {
 							enumerable: true,

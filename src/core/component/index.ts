@@ -32,6 +32,7 @@ export {
 	isComponent,
 	rootComponents,
 
+	V4_COMPONENT,
 	ASYNC_RENDER_ID,
 	PARENT
 

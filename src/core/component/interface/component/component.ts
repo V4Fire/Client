@@ -15,6 +15,7 @@ import type Async from 'core/async';
 import type { BoundFn, ProxyCb, EventId } from 'core/async';
 import type { AbstractCache } from 'core/cache';
 
+import { V4_COMPONENT } from 'core/component/const';
 import type { ComponentMeta } from 'core/component/meta';
 import type { VNode, Slots, ComponentOptions, SetupContext } from 'core/component/engines';
 
@@ -40,6 +41,11 @@ export abstract class ComponentInterface {
 	 * Type: the base superclass for all components
 	 */
 	readonly Component!: ComponentInterface;
+
+	/**
+	 * A unique symbol used to identify a V4Fire component
+	 */
+	readonly [V4_COMPONENT]: true;
 
 	/**
 	 * References to the instance of the entire application and its state

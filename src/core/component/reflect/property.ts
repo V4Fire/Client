@@ -7,10 +7,12 @@
  */
 
 import { deprecate } from 'core/functools/deprecation';
-import type { ComponentInterface } from 'core/component/interface';
 
+import { V4_COMPONENT } from 'core/component/const';
 import { isStore, isPrivateField } from 'core/component/reflect/const';
+
 import type { PropertyInfo, AccessorType } from 'core/component/reflect/interface';
+import type { ComponentInterface } from 'core/component/interface';
 
 /**
  * Returns an object containing information of the component property by the specified path
@@ -71,7 +73,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 
 			obj = chunk in obj ? obj[chunk] : undefined;
 
-			if (obj != null && typeof obj === 'object' && 'componentName' in obj) {
+			if (obj != null && typeof obj === 'object' && V4_COMPONENT in obj) {
 				component = obj;
 				rootI = i === chunks.length - 1 ? i : i + 1;
 			}
