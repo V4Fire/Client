@@ -33,7 +33,7 @@ export default abstract class AbstractEngine {
 	protected elements: ObservableElements = new Map();
 
 	/** {@link Async} */
-	protected async: Async<this> = new Async(this);
+	protected async: Async = new Async();
 
 	/**
 	 * Tracks the intersection of the passed element with the viewport,

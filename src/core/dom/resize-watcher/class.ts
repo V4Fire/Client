@@ -27,7 +27,7 @@ export default class ResizeWatcher {
 	protected elements: ObservableElements = new Map();
 
 	/** {@link Async} */
-	protected async: Async<this> = new Async(this);
+	protected async: Async = new Async();
 
 	constructor() {
 		this.observer = new ResizeObserver((entries) => {
