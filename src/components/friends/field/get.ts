@@ -126,40 +126,42 @@ export function getField<T = unknown>(
 	}
 
 	if (chunks.length === 1) {
-		const key = chunks[0];
+		const chunk = chunks[0];
 
 		if (getter != null) {
-			res = getter(key, res);
+			res = getter(chunk, res);
 
 		} else {
 			const obj = <object>res;
-			res = key in obj ? obj[key] : undefined;
+			res = typeof obj !== 'object' || chunk in obj ? obj[chunk] : undefined;
 		}
 
 	} else {
-		const hasNoProperty = chunks.some((key) => {
+		const hasNoProperty = chunks.some((chunk) => {
 			if (res == null) {
 				return true;
 			}
 
-			if (Object.isPromiseLike(res) && !(key in res)) {
+			if (Object.isPromiseLike(res) && !(chunk in res)) {
 				res = res.then((res) => {
 					if (getter != null) {
-						return getter(key, res);
+						return getter(chunk, res);
+					}
+
+					if (res == null) {
+						return undefined;
 					}
 
 					const obj = <object>res;
-					return key in obj ? obj[key] : undefined;
+					return typeof obj !== 'object' || chunk in obj ? obj[chunk] : undefined;
 				});
 
-			} else {
-				if (getter != null) {
-					res = getter(key, res);
+			} else if (getter != null) {
+				res = getter(chunk, res);
 
-				} else {
-					const obj = <object>res;
-					res = key in obj ? obj[key] : undefined;
-				}
+			} else {
+				const obj = <object>res;
+				res = typeof obj !== 'object' || chunk in obj ? obj[chunk] : undefined;
 			}
 
 			return false;

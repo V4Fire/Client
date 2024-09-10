@@ -159,8 +159,8 @@ export function deleteField(
 		prop = keyGetter ? <PropertyKey>keyGetter(chunks[0], ref) : chunks[0];
 
 	if (chunks.length > 1) {
-		chunks.some((key, i) => {
-			prop = keyGetter ? <PropertyKey>keyGetter(key, ref) : key;
+		chunks.some((chunk, i) => {
+			prop = keyGetter ? <PropertyKey>keyGetter(chunk, ref) : chunk;
 
 			if (i + 1 === chunks.length) {
 				return true;
