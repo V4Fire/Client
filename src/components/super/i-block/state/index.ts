@@ -195,6 +195,7 @@ export default abstract class iBlockState extends iBlockMods {
 			this.shadowComponentStatusStore = value;
 
 		} else {
+			this.shadowComponentStatusStore = undefined;
 			this.field.getFieldsStore().componentStatusStore = value;
 
 			if (this.isReady && this.dependencies.length > 0) {
