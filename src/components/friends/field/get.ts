@@ -133,7 +133,13 @@ export function getField<T = unknown>(
 
 		} else {
 			const obj = <object>res;
-			res = typeof obj !== 'object' || chunk in obj ? obj[chunk] : undefined;
+
+			if (Object.isMap(obj)) {
+				res = obj.get(chunk);
+
+			} else {
+				res = typeof obj !== 'object' || chunk in obj ? obj[chunk] : undefined;
+			}
 		}
 
 	} else {
@@ -153,6 +159,11 @@ export function getField<T = unknown>(
 					}
 
 					const obj = <object>res;
+
+					if (Object.isMap(obj)) {
+						return obj.get(chunk);
+					}
+
 					return typeof obj !== 'object' || chunk in obj ? obj[chunk] : undefined;
 				});
 
@@ -161,7 +172,13 @@ export function getField<T = unknown>(
 
 			} else {
 				const obj = <object>res;
-				res = typeof obj !== 'object' || chunk in obj ? obj[chunk] : undefined;
+
+				if (Object.isMap(obj)) {
+					res = obj.get(chunk);
+
+				} else {
+					res = typeof obj !== 'object' || chunk in obj ? obj[chunk] : undefined;
+				}
 			}
 
 			return false;

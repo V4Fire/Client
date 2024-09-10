@@ -166,8 +166,7 @@ export function deleteField(
 				return true;
 			}
 
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			const newRef = ref != null ? ref[prop] : undefined;
+			const newRef = Object.isMap(ref) ? ref.get(prop) : ref[prop];
 
 			if (newRef == null || typeof newRef !== 'object') {
 				needDelete = false;
@@ -183,6 +182,9 @@ export function deleteField(
 	if (needDelete) {
 		if (needDeleteToWatch) {
 			ctx.$delete(ref, prop);
+
+		} else if (Object.isMap(ref)) {
+			ref.delete(prop);
 
 		} else {
 			delete ref[prop];

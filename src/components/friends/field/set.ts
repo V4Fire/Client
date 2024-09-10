@@ -176,12 +176,21 @@ export function setField<T = unknown>(
 				if (needSetToWatch) {
 					ctx.$set(ref, prop, newRef);
 
+				} else if (Object.isMap(ref)) {
+					ref.set(prop, newRef);
+
 				} else {
 					ref[prop] = newRef;
 				}
 			}
 
-			ref = ref[prop];
+			if (Object.isMap(ref)) {
+				ref = Object.cast(ref.get(prop));
+
+			} else {
+				ref = ref[prop];
+			}
+
 			return false;
 		});
 	}
@@ -191,8 +200,16 @@ export function setField<T = unknown>(
 		return value;
 	}
 
-	if (!needSetToWatch || !Object.isArray(ref) && prop in ref) {
-		ref[<string>prop] = value;
+	if (Object.isMap(ref)) {
+		if (!needSetToWatch || ref.has(prop)) {
+			ref.set(prop, value);
+
+		} else {
+			ctx.$set(ref, prop, value);
+		}
+
+	} else if (!needSetToWatch || !Object.isArray(ref) && prop in ref) {
+		ref[prop] = value;
 
 	} else {
 		ctx.$set(ref, prop, value);
