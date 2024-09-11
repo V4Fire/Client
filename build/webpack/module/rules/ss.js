@@ -35,7 +35,13 @@ module.exports = function ssRules() {
 			{
 				loader: 'monic-loader',
 				options: inherit(monic.javascript, {
-					replacers: [include('build/monic/dynamic-component-import')]
+					replacers: [
+						// NOTE: it would be better to convert `factory(exports)` to `factory(module.exports)`
+						// but for some reason compiled snakeskin is threated as ESM module
+						// @see https://github.com/V4Fire/Client/issues/1410
+						(text) => text.replace('if (typeof exports === "object" && typeof module !== "undefined") {factory(exports)', 'if (true) {factory(typeof exports === \'undefined\' ? __webpack_exports__ : exports)'),
+						include('build/monic/dynamic-component-import')
+					]
 				})
 			},
 
