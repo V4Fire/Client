@@ -66,6 +66,7 @@
     "jsdom": "16.7.0",
     "path-to-regexp": "3.2.0",
     "requestidlecallback": "0.3.0",
+    "resize-observer-polyfill": "1.5.1",
     "sharp": "0.30.6",
     "simple-git": "3.25.0",
     "snakeskin": "github:SnakeskinTpl/Snakeskin#new-var",
