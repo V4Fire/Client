@@ -19,7 +19,6 @@ const
 const {
 	isLayerDep,
 	isExternalDep,
-	isPolyfillRegExp,
 
 	RUNTIME
 } = include('build/const');
@@ -51,13 +50,6 @@ module.exports = function optimization({buildId, plugins}) {
 	if (buildId === RUNTIME) {
 		params.splitChunks = inherit(optimize.splitChunks(), {
 			cacheGroups: {
-				std: {
-					name: 'std',
-					chunks: 'all',
-					enforce: true,
-					test: isPolyfillRegExp
-				},
-
 				async: {
 					chunks: 'async',
 					minChunks: 1,
