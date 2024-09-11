@@ -11,12 +11,27 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.131 (2024-09-11)
 
-## v4.0.0-beta.?? (2024-??-??)
+#### :rocket: New Feature
+
+* Enhanced filesystem cache invalidation criteria by including the current branch name and the most recent merge `build/webpack`
 
 #### :bug: Bug Fix
 
 * Fixed `env` argument for autoprefixer
+
+## v4.0.0-beta.130 (2024-09-05)
+
+#### :bug: Bug Fix
+
+* Fixed re-rendering issue when the value passed in `v-safe-html` changed. Added innerHTML updating in the `updated` hook.
+
+## v4.0.0-beta.129 (2024-09-04)
+
+* #### :nail_care: Polish
+
+* Now, if an external link is passed to `initLibs()`, `PUBLIC_PATH` won't be added to it.
 
 ## v4.0.0-beta.128 (2024-09-03)
 

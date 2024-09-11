@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-07-??)
+
+#### :rocket: New Feature
+
+* Enhanced filesystem cache invalidation criteria by including the current branch name and the most recent merge
+
 ## v4.0.0-beta.26 (2023-09-20)
 
 #### :rocket: New Feature
