@@ -167,8 +167,11 @@ export function setField<T = unknown>(
 				return true;
 			}
 
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			let newRef = ref != null ? ref[prop] : undefined;
+			type AnyMap = Map<any, any>;
+
+			const isRefMap = Object.isMap(ref);
+
+			let newRef: unknown = isRefMap ? (<AnyMap>ref).get(prop) : ref[prop];
 
 			if (newRef == null || typeof newRef !== 'object') {
 				newRef = isNaN(Number(chunks[i + 1])) ? {} : [];
@@ -176,16 +179,16 @@ export function setField<T = unknown>(
 				if (needSetToWatch) {
 					ctx.$set(ref, prop, newRef);
 
-				} else if (Object.isMap(ref)) {
-					ref.set(prop, newRef);
+				} else if (isRefMap) {
+					(<AnyMap>ref).set(prop, newRef);
 
 				} else {
 					ref[prop] = newRef;
 				}
 			}
 
-			if (Object.isMap(ref)) {
-				ref = Object.cast(ref.get(prop));
+			if (isRefMap) {
+				ref = (<AnyMap>ref).get(prop);
 
 			} else {
 				ref = ref[prop];
