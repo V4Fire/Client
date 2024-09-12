@@ -37,7 +37,8 @@ const
 	$getParent = Symbol('$getParent');
 
 /**
- * Initializes the "beforeCreate" state to the specified component instance
+ * Initializes the "beforeCreate" state to the specified component instance.
+ * The function returns a function for transitioning to the beforeCreate hook.
  *
  * @param component
  * @param meta - the component metaobject
@@ -47,8 +48,10 @@ export function beforeCreateState(
 	component: ComponentInterface,
 	meta: ComponentMeta,
 	opts?: InitBeforeCreateStateOptions
-): void {
+): () => void {
 	meta = forkMeta(meta);
+
+	const isFunctional = meta.params.functional === true;
 
 	// To avoid TS errors marks all properties as editable
 	const unsafe = Object.cast<Writable<ComponentInterface['unsafe']>>(component);
@@ -301,9 +304,7 @@ export function beforeCreateState(
 	const fakeHandler = () => undefined;
 
 	if (watchDependencies.size > 0) {
-		const
-			isFunctional = meta.params.functional === true,
-			watchSet = new Set<PropertyInfo>();
+		const watchSet = new Set<PropertyInfo>();
 
 		watchDependencies.forEach((deps) => {
 			deps.forEach((dep) => {
@@ -368,6 +369,8 @@ export function beforeCreateState(
 		}
 	});
 
-	runHook('beforeCreate', component).catch(stderr);
-	callMethodFromComponent(component, 'beforeCreate');
+	return () => {
+		runHook('beforeCreate', component).catch(stderr);
+		callMethodFromComponent(component, 'beforeCreate');
+	};
 }

@@ -10,6 +10,8 @@ import * as init from 'core/component/init';
 
 import { saveRawComponentContext } from 'core/component/context';
 import { forkMeta, ComponentMeta } from 'core/component/meta';
+
+import { runHook } from 'core/component/hook';
 import { initProps } from 'core/component/prop';
 
 import type { ComponentInterface } from 'core/component/interface';
@@ -128,16 +130,18 @@ export function createVirtualContext(
 	// Instead, we simply assign a reference to the raw context, which points to the original context.
 	saveRawComponentContext(virtualCtx, virtualCtx);
 
+	const runHook = init.beforeCreateState(virtualCtx, meta, {
+		addMethods: true,
+		implementEventAPI: true
+	});
+
 	initProps(virtualCtx, {
 		from: $props,
 		store: virtualCtx,
 		saveToStore: true
 	});
 
-	init.beforeCreateState(virtualCtx, meta, {
-		addMethods: true,
-		implementEventAPI: true
-	});
+	runHook();
 
 	handlers.forEach(([event, once, handler]) => {
 		if (once) {
