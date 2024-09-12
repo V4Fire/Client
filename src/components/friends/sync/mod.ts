@@ -101,8 +101,7 @@ export function mod<D = unknown, R = unknown>(
 
 	const
 		that = this,
-		info = getPropertyInfo(path, this.component),
-		needCollapse = opts.collapse !== false;
+		info = getPropertyInfo(path, this.component);
 
 	if (this.lfc.isBeforeCreate()) {
 		this.syncModCache[modName] = sync;
@@ -128,7 +127,7 @@ export function mod<D = unknown, R = unknown>(
 		let val: unknown;
 
 		if (path.includes('.')) {
-			val = that.field.get(needCollapse ? info.originalTopPath : info.originalPath);
+			val = that.field.get(info.originalPath);
 
 		} else {
 			val = info.type === 'field' ? that.field.getFieldsStore(info.ctx)[path] : info.ctx[path];
