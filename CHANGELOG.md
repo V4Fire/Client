@@ -11,6 +11,20 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :boom: Breaking Change
+
+* To improve performance, the `std.js` chunk has been moved back as the standalone entry
+
+#### :bug: Bug Fix
+
+* Fix exports in transpiled snakeskin modules `build/webpack`
+
+#### :house: Internal
+
+* Add ResizeObserver polyfill for legacy build
+
 ## v4.0.0-beta.131 (2024-09-11)
 
 #### :rocket: New Feature
