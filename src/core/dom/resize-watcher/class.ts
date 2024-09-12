@@ -12,6 +12,15 @@ import Async from 'core/async';
 import { shouldInvokeHandler } from 'core/dom/resize-watcher/helpers';
 import type { Watcher, WatchOptions, WatchHandler, ObservableElements } from 'core/dom/resize-watcher/interface';
 
+//#if buildEdition = legacy
+import ResizeObserverPolyfill from 'resize-observer-polyfill';
+
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+if (globalThis.ResizeObserver == null) {
+	globalThis.ResizeObserver = ResizeObserverPolyfill;
+}
+//#endif
+
 const
 	$$ = symbolGenerator();
 
@@ -42,7 +51,7 @@ export default class ResizeWatcher {
 						watcher.boxSize = newBoxSize;
 
 						if (watcher.watchInit) {
-							watcher.handler(watcher.rect, undefined, watcher);
+							watcher.handler(watcher.rect!, undefined, watcher);
 						}
 
 						return;
