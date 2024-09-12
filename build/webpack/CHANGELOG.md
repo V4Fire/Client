@@ -13,9 +13,15 @@ Changelog
 
 #### :house: Internal
 
-Apply the `symbol-generator-loader` consistently to optimize Runtime performance
+* Apply the `symbol-generator-loader` consistently to optimize Runtime performance
 
-## v4.0.0-beta.?? (2024-07-??)
+## v4.0.0-beta.132 (2024-09-12)
+
+#### :bug: Bug Fix
+
+* Fix exports in transpiled snakeskin modules
+
+## v4.0.0-beta.131 (2024-09-11)
 
 #### :rocket: New Feature
 

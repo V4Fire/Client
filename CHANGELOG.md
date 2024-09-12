@@ -34,11 +34,29 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * A lot of TypeScript type fixes
 * Performance improvements
 
-## v4.0.0-beta.?? (2024-09-??)
+## v4.0.0-beta.132 (2024-09-12)
+
+#### :boom: Breaking Change
+
+* To improve performance, the `std.js` chunk has been moved back as the standalone entry
+
+#### :bug: Bug Fix
+
+* Fix exports in transpiled snakeskin modules `build/webpack`
+
+#### :house: Internal
+
+* Add ResizeObserver polyfill for legacy build
+
+## v4.0.0-beta.131 (2024-09-11)
 
 #### :rocket: New Feature
 
 * Enhanced filesystem cache invalidation criteria by including the current branch name and the most recent merge `build/webpack`
+
+#### :bug: Bug Fix
+
+* Fixed `env` argument for autoprefixer
 
 ## v4.0.0-beta.130 (2024-09-05)
 

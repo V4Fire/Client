@@ -45,10 +45,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns browserslist targets
+	 * Returns browserslist env
 	 * @param {string} env - custom environment
 	 */
-	browserslist(env) {
+	browserslistEnv(env) {
 		if (env == null) {
 			const configEnv = this.environment;
 
@@ -63,10 +63,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			}
 		}
 
-		const
-			browsersListConfig = browserslist.findConfig('.');
-
-		return browsersListConfig[env];
+		return env;
 	},
 
 	src: {
@@ -881,7 +878,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		swc(env) {
 			const
-				targets = this.config.browserslist(env);
+				browsersListEnv = this.config.browserslistEnv(env),
+				browsersListConfig = browserslist.findConfig('.'),
+				targets = browsersListConfig[browsersListEnv];
 
 			const base = {
 				jsc: {
@@ -1112,7 +1111,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @returns {object}
 	 */
 	autoprefixer() {
-		return {remove: false, env: this.browserslist()};
+		return {remove: false, env: this.browserslistEnv()};
 	},
 
 	/**
