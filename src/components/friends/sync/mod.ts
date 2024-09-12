@@ -91,6 +91,7 @@ export function mod<D = unknown, R = unknown>(
 
 	if (Object.isFunction(optsOrConverter)) {
 		converter = optsOrConverter;
+		opts = {};
 
 	} else {
 		opts = Object.cast(optsOrConverter);
@@ -100,7 +101,8 @@ export function mod<D = unknown, R = unknown>(
 
 	const
 		that = this,
-		info = getPropertyInfo(path, this.component);
+		info = getPropertyInfo(path, this.component),
+		needCollapse = opts.collapse !== false;
 
 	if (this.lfc.isBeforeCreate()) {
 		this.syncModCache[modName] = sync;
@@ -121,19 +123,21 @@ export function mod<D = unknown, R = unknown>(
 	}
 
 	function sync() {
-		let v: unknown;
+		const {path} = info;
 
-		if (info.path.includes('.')) {
-			v = that.field.get(path);
+		let val: unknown;
+
+		if (path.includes('.')) {
+			val = that.field.get(needCollapse ? info.originalTopPath : info.originalPath);
 
 		} else {
-			v = info.type === 'field' ? that.field.getFieldsStore(info.ctx)[path] : info.ctx[path];
+			val = info.type === 'field' ? that.field.getFieldsStore(info.ctx)[path] : info.ctx[path];
 		}
 
-		v = (<LinkGetter>converter).call(that.component, v);
+		val = (<LinkGetter>converter).call(that.component, val);
 
-		if (v !== undefined) {
-			ctx.mods[modName] = String(v);
+		if (val !== undefined) {
+			ctx.mods[modName] = String(val);
 		}
 	}
 

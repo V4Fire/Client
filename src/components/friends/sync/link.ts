@@ -487,11 +487,11 @@ export function link<D = unknown, R = D>(
 	}
 
 	const initSync = () => {
-		const path: string = needCollapse ? info.originalTopPath : info.originalPath;
+		const {path} = info;
 
 		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-		if (info.path.includes('.')) {
-			return sync(this.field.get(path));
+		if (path.includes('.')) {
+			return sync(this.field.get(needCollapse ? info.originalTopPath : info.originalPath));
 		}
 
 		return sync(info.type === 'field' ? this.field.getFieldsStore(info.ctx)[path] : info.ctx[path]);
