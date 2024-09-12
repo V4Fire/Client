@@ -10,8 +10,6 @@ import * as init from 'core/component/init';
 
 import { saveRawComponentContext } from 'core/component/context';
 import { forkMeta, ComponentMeta } from 'core/component/meta';
-
-import { runHook } from 'core/component/hook';
 import { initProps } from 'core/component/prop';
 
 import type { ComponentInterface } from 'core/component/interface';
