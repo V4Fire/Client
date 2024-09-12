@@ -40,21 +40,21 @@ export default abstract class iVisible {
 	 * @param component
 	 */
 	static initModEvents<T extends iBlock & iVisible>(component: T): void {
-		const {unsafe} = component;
+		const {$el, localEmitter: $e} = component.unsafe;
 
 		component.sync.mod('hidden', 'r.isOnline', (v) => component.hideIfOffline && v === false);
 
-		unsafe.localEmitter.on('block.mod.*.hidden.*', (e: ModEvent) => {
+		$e.on('block.mod.*.hidden.*', (e: ModEvent) => {
 			if (e.type === 'remove' && e.reason !== 'removeMod') {
 				return;
 			}
 
 			if (e.value === 'false' || e.type === 'remove') {
-				unsafe.$el?.setAttribute('aria-hidden', 'true');
+				$el?.setAttribute('aria-hidden', 'true');
 				component.emit('show');
 
 			} else {
-				unsafe.$el?.setAttribute('aria-hidden', 'false');
+				$el?.setAttribute('aria-hidden', 'false');
 				component.emit('hide');
 			}
 		});
