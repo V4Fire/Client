@@ -89,7 +89,7 @@ export function setField<T = unknown>(
 
 	let isComponent = false;
 
-	if (V4_COMPONENT in obj) {
+	if (typeof obj === 'object' && V4_COMPONENT in obj) {
 		ctx = (<iBlock>obj).unsafe;
 		isComponent = true;
 	}
