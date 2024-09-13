@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-09-??)
+
+#### :bug: Bug Fix
+
+* Support for the recursive `dropCache` operation by adding the `recursive` argument. `components/friends/data-provider`
+
 ## v4.0.0-beta.132 (2024-09-12)
 
 #### :boom: Breaking Change

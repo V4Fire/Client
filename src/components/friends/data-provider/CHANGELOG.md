@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-09-??)
+
+#### :bug: Bug Fix
+
+* Support for the recursive `dropCache` operation by adding the `recursive` argument
+
 ## v4.0.0-beta.113 (2024-07-24)
 
 #### :bug: Bug Fix
