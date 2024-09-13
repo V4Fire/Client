@@ -7,7 +7,7 @@
  */
 
 import { isProxy } from 'core/object/watch';
-import { getPropertyInfo, isBinding, isCustomWatcher } from 'core/component';
+import { getPropertyInfo, isBinding, isCustomWatcher, PropertyInfo } from 'core/component';
 
 import type iBlock from 'components/super/i-block/i-block';
 import type Sync from 'components/friends/sync/class';
@@ -310,7 +310,7 @@ export function link<D = unknown, R = D>(
 	}
 
 	let
-		info,
+		srcInfo,
 		normalizedPath: CanUndef<ObjectPropertyPath>,
 		topPathIndex = 1;
 
@@ -325,12 +325,12 @@ export function link<D = unknown, R = D>(
 			customWatcher = true;
 
 		} else {
-			info = getPropertyInfo(normalizedPath, this.component);
+			srcInfo = getPropertyInfo(normalizedPath, this.component);
 
-			if (info.type === 'mounted') {
+			if (srcInfo.type === 'mounted') {
 				mountedWatcher = true;
-				normalizedPath = info.path;
-				topPathIndex = Object.size(info.path) > 0 ? 0 : 1;
+				normalizedPath = srcInfo.path;
+				topPathIndex = Object.size(srcInfo.path) > 0 ? 0 : 1;
 			}
 		}
 
@@ -338,18 +338,18 @@ export function link<D = unknown, R = D>(
 		mountedWatcher = true;
 
 		if (isProxy(resolvedPath)) {
-			info = {ctx: resolvedPath};
+			srcInfo = {ctx: resolvedPath};
 			normalizedPath = undefined;
 
 		} else {
-			info = resolvedPath;
-			normalizedPath = info.path;
+			srcInfo = resolvedPath;
+			normalizedPath = srcInfo.path;
 			topPathIndex = 0;
 		}
 	}
 
-	const isAccessor = info != null ?
-		Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor) :
+	const isAccessor = srcInfo != null ?
+		Boolean(srcInfo.type === 'accessor' || srcInfo.type === 'computed' || srcInfo.accessor) :
 		false;
 
 	if (isAccessor) {
@@ -375,6 +375,8 @@ export function link<D = unknown, R = D>(
 
 	linksCache[destPath] = {};
 
+	let destInfo: CanUndef<PropertyInfo>;
+
 	const sync = (val?: unknown, oldVal?: unknown) => {
 		const resolveVal = getter ? getter.call(this.component, val, oldVal) : val;
 
@@ -382,28 +384,14 @@ export function link<D = unknown, R = D>(
 			return resolveVal;
 		}
 
-		const info = getPropertyInfo(destPath, this.component);
-
-		if (info.path.includes('.') || info.type === 'mounted') {
-			this.field.set(destPath, resolveVal);
-
-		} else if (info.type === 'field') {
-			const store = this.field.getFieldsStore(info.ctx);
-			store[destPath] = resolveVal;
-
-			if (store !== info.ctx) {
-				info.ctx[destPath] = resolveVal;
-			}
-
-		} else {
-			info.ctx[destPath] = resolveVal;
-		}
+		destInfo ??= getPropertyInfo(destPath, this.component);
+		this.field.set(destInfo, resolveVal);
 
 		return resolveVal;
 	};
 
 	if (getter != null && (getter.length > 1 || getter['originalLength'] > 1)) {
-		ctx.watch(info ?? normalizedPath, resolvedOpts, (val: unknown, oldVal: unknown, ...args: unknown[]) => {
+		ctx.watch(srcInfo ?? normalizedPath, resolvedOpts, (val: unknown, oldVal: unknown, ...args: unknown[]) => {
 			if (customWatcher) {
 				oldVal = undefined;
 
@@ -424,7 +412,7 @@ export function link<D = unknown, R = D>(
 		});
 
 	} else {
-		ctx.watch(info ?? normalizedPath, resolvedOpts, (val: unknown, ...args: unknown[]) => {
+		ctx.watch(srcInfo ?? normalizedPath, resolvedOpts, (val: unknown, ...args: unknown[]) => {
 			let
 				oldVal: unknown = undefined;
 
@@ -453,8 +441,8 @@ export function link<D = unknown, R = D>(
 		let key: Nullable<string | object>;
 
 		if (mountedWatcher) {
-			const o = info?.originalPath;
-			key = Object.isString(o) ? o : info?.ctx ?? normalizedPath;
+			const o = srcInfo?.originalPath;
+			key = Object.isString(o) ? o : srcInfo?.ctx ?? normalizedPath;
 
 		} else {
 			key = normalizedPath;
@@ -477,7 +465,7 @@ export function link<D = unknown, R = D>(
 	const needCollapse = resolvedOpts.collapse !== false;
 
 	if (mountedWatcher) {
-		const obj = info?.ctx;
+		const obj = srcInfo?.ctx;
 
 		if (needCollapse || normalizedPath == null || normalizedPath.length === 0) {
 			return sync(obj);
@@ -487,14 +475,14 @@ export function link<D = unknown, R = D>(
 	}
 
 	const initSync = () => {
-		const {path} = info;
+		const {path} = srcInfo;
 
 		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		if (path.includes('.')) {
-			return sync(this.field.get(needCollapse ? info.originalTopPath : info.originalPath));
+			return sync(this.field.get(needCollapse ? srcInfo.originalTopPath : srcInfo.originalPath));
 		}
 
-		return sync(info.type === 'field' ? this.field.getFieldsStore(info.ctx)[path] : info.ctx[path]);
+		return sync(srcInfo.type === 'field' ? this.field.getFieldsStore(srcInfo.ctx)[path] : srcInfo.ctx[path]);
 	};
 
 	if (this.lfc.isBeforeCreate('beforeDataCreate')) {
