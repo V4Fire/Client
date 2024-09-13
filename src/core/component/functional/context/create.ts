@@ -128,18 +128,16 @@ export function createVirtualContext(
 	// Instead, we simply assign a reference to the raw context, which points to the original context.
 	saveRawComponentContext(virtualCtx, virtualCtx);
 
-	const runHook = init.beforeCreateState(virtualCtx, meta, {
-		addMethods: true,
-		implementEventAPI: true
-	});
-
 	initProps(virtualCtx, {
 		from: $props,
 		store: virtualCtx,
 		saveToStore: true
 	});
 
-	runHook();
+	init.beforeCreateState(virtualCtx, meta, {
+		addMethods: true,
+		implementEventAPI: true
+	});
 
 	handlers.forEach(([event, once, handler]) => {
 		if (once) {

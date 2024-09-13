@@ -82,7 +82,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			// @ts-ignore (unsafe)
 			ctx['$renderEngine'] = {supports, proxyGetters, r, wrapAPI};
 
-			init.beforeCreateState(ctx, meta, {implementEventAPI: true})();
+			init.beforeCreateState(ctx, meta, {implementEventAPI: true});
 
 			if (SSR) {
 				if (ctx.canFunctional !== true) {

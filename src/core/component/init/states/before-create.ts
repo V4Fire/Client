@@ -48,7 +48,7 @@ export function beforeCreateState(
 	component: ComponentInterface,
 	meta: ComponentMeta,
 	opts?: InitBeforeCreateStateOptions
-): () => void {
+): void {
 	meta = forkMeta(meta);
 
 	const isFunctional = meta.params.functional === true;
@@ -369,8 +369,6 @@ export function beforeCreateState(
 		}
 	});
 
-	return () => {
-		runHook('beforeCreate', component).catch(stderr);
-		callMethodFromComponent(component, 'beforeCreate');
-	};
+	runHook('beforeCreate', component).catch(stderr);
+	callMethodFromComponent(component, 'beforeCreate');
 }
