@@ -97,9 +97,12 @@ class DataProvider extends Friend {
 
 	/**
 	 * Drops the data provider's cache
+	 *
+	 * @param [recursive] - if true, then the `dropCache` operation will be propagated recursively,
+	 * for example, if an engine based on a data provider is used
 	 */
-	dropCache(): void {
-		this.provider.dropCache();
+	dropCache(recursive?: boolean): void {
+		this.provider.dropCache(recursive);
 	}
 }
 
