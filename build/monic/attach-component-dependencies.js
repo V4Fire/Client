@@ -101,14 +101,12 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 		} else {
 			try {
 				decl += `
-	(() => {
-		requestAnimationFrame(async () => {
+	(async () => {
 			if (__webpack_component_styles_are_loaded__('${dep}')) {
 				return;
 			}
 
 			try { ${styles.map(([_, style]) => `await ${style}`).join(';')} } catch (err) { stderr(err); }
-		});
 	})();`;
 
 			} catch {}

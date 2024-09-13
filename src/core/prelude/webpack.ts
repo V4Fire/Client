@@ -22,22 +22,40 @@ if (!SSR) {
 	globalThis.__webpack_component_styles_are_loaded__ = __webpack_component_styles_are_loaded__;
 }
 
+const loadedStyles = new Set();
+const loadedStylesIndexed = Symbol('loadedStylesIndexed');
+
 /**
  * Checks that styles for the given component are loaded
  * @param componentName
  */
 function __webpack_component_styles_are_loaded__(componentName: string): boolean {
 	try {
-		const el = document.createElement('i');
-		el.className = `${componentName}-is-style-loaded`;
-		document.body.appendChild(el);
-
-		const isStylesLoaded = getComputedStyle(el).color === 'rgba(0, 250, 154, 0)';
-		document.body.removeChild(el);
-
-		if (isStylesLoaded) {
+		const loaded = loadedStyles.has(componentName);
+		if (loaded) {
 			return true;
 		}
+
+		const {styleSheets} = document;
+
+		for (let i = 0; i < styleSheets.length; i++) {
+			const rules = styleSheets[i].cssRules;
+			if (rules[loadedStylesIndexed] === true) {
+				continue;
+			}
+
+			for (let r = 0; r < rules.length; r++) {
+				const match = rules[r]['selectorText']?.match(/^\.([\w-]+)-is-style-loaded$/)?.[1];
+				if (match !== undefined) {
+					loadedStyles.add(match);
+				}
+
+			}
+
+			rules[loadedStylesIndexed] = true;
+		}
+
+		return loadedStyles.has(componentName);
 
 	} catch (err) {
 		stderr(err);
