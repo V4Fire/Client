@@ -7,16 +7,17 @@
  */
 
 import { unwrap } from 'core/object/watch';
+import { getPropertyInfo, V4_COMPONENT, PropertyInfo } from 'core/component';
 
 import type Friend from 'components/friends/friend';
-import iBlock, { getPropertyInfo, V4_COMPONENT } from 'components/super/i-block/i-block';
+import type iBlock from 'components/super/i-block/i-block';
 
 import type { KeyGetter } from 'components/friends/field/interface';
 
 /**
  * Deletes a component property at the specified path
  *
- * @param path - the property path, for instance `foo.bla.bar`
+ * @param path - the property path, for instance `foo.bla.bar`, or a property descriptor
  * @param keyGetter - a function that returns the key to delete
  *
  * @example
@@ -41,12 +42,12 @@ import type { KeyGetter } from 'components/friends/field/interface';
  * }
  * ```
  */
-export function deleteField(this: Friend, path: string, keyGetter?: KeyGetter): boolean;
+export function deleteField(this: Friend, path: string | PropertyInfo, keyGetter?: KeyGetter): boolean;
 
 /**
  * Deletes a property from the passed object at the specified path
  *
- * @param path - the property path, for instance `foo.bla.bar`
+ * @param path - the property path, for instance `foo.bla.bar`, or a property descriptor
  * @param [obj] - the object to delete the property
  * @param [keyGetter] - a function that returns the key to delete
  *
@@ -66,14 +67,14 @@ export function deleteField(this: Friend, path: string, keyGetter?: KeyGetter): 
  */
 export function deleteField(
 	this: Friend,
-	path: string,
+	path: string | PropertyInfo,
 	obj?: Nullable<object>,
 	keyGetter?: KeyGetter
 ): boolean;
 
 export function deleteField(
 	this: Friend,
-	path: string,
+	path: string | PropertyInfo,
 	obj: Nullable<object> = this.ctx,
 	keyGetter?: KeyGetter
 ): boolean {
@@ -104,7 +105,7 @@ export function deleteField(
 		chunks: string[];
 
 	if (isComponent) {
-		const info = getPropertyInfo(path, Object.cast(ctx));
+		const info = Object.isString(path) ? getPropertyInfo(path, Object.cast(ctx)) : path;
 
 		const
 			isReady = !ctx.lfc.isBeforeCreate(),
@@ -151,6 +152,10 @@ export function deleteField(
 		}
 
 	} else {
+		if (!Object.isString(path)) {
+			path = path.originalPath;
+		}
+
 		chunks = path.includes('.') ? path.split('.') : [path];
 	}
 

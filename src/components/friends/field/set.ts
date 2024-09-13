@@ -7,16 +7,17 @@
  */
 
 import { unwrap } from 'core/object/watch';
+import { getPropertyInfo, V4_COMPONENT, PropertyInfo } from 'core/component';
 
 import type Friend from 'components/friends/friend';
-import iBlock, { getPropertyInfo, V4_COMPONENT } from 'components/super/i-block/i-block';
+import type iBlock from 'components/super/i-block/i-block';
 
 import type { KeyGetter } from 'components/friends/field/interface';
 
 /**
  * Sets a new component property at the specified path
  *
- * @param path - the property path, for instance `foo.bla.bar`
+ * @param path - the property path, for instance `foo.bla.bar`, or a property descriptor
  * @param value - the value to set to the property
  * @param keyGetter - a function that returns the key to set
  *
@@ -39,12 +40,12 @@ import type { KeyGetter } from 'components/friends/field/interface';
  * }
  * ```
  */
-export function setField<T = unknown>(this: Friend, path: string, value: T, keyGetter: KeyGetter): T;
+export function setField<T = unknown>(this: Friend, path: string | PropertyInfo, value: T, keyGetter: KeyGetter): T;
 
 /**
  * Sets a new property on the passed object at the specified path
  *
- * @param path - the property path, for instance `foo.bla.bar`
+ * @param path - the property path, for instance `foo.bla.bar`, or a property descriptor
  * @param value - the value to set to the property
  * @param [obj] - the object to set the property
  * @param [keyGetter] - a function that returns the key to set
@@ -62,7 +63,7 @@ export function setField<T = unknown>(this: Friend, path: string, value: T, keyG
  */
 export function setField<T = unknown>(
 	this: Friend,
-	path: string,
+	path: string | PropertyInfo,
 	value: T,
 	obj?: Nullable<object>,
 	keyGetter?: KeyGetter
@@ -70,7 +71,7 @@ export function setField<T = unknown>(
 
 export function setField<T = unknown>(
 	this: Friend,
-	path: string,
+	path: string | PropertyInfo,
 	value: T,
 	obj: Nullable<object> = this.ctx,
 	keyGetter?: KeyGetter
@@ -102,7 +103,7 @@ export function setField<T = unknown>(
 		chunks: string[];
 
 	if (isComponent) {
-		const info = getPropertyInfo(path, Object.cast(ctx));
+		const info = Object.isString(path) ? getPropertyInfo(path, Object.cast(ctx)) : path;
 
 		ctx = Object.cast(info.ctx);
 		ref = ctx;
@@ -154,6 +155,10 @@ export function setField<T = unknown>(
 		}
 
 	} else {
+		if (!Object.isString(path)) {
+			path = path.originalPath;
+		}
+
 		chunks = path.includes('.') ? path.split('.') : [path];
 	}
 

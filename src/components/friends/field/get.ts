@@ -6,15 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { getPropertyInfo, V4_COMPONENT, PropertyInfo } from 'core/component';
+
 import type Field from 'components/friends/field';
-import iBlock, { getPropertyInfo, V4_COMPONENT } from 'components/super/i-block/i-block';
+import type iBlock from 'components/super/i-block/i-block';
 
 import type { ValueGetter } from 'components/friends/field/interface';
 
 /**
  * Returns a component property at the specified path
  *
- * @param path - the property path, for instance `foo.bla.bar`
+ * @param path - the property path, for instance `foo.bla.bar`, or a property descriptor
  * @param getter - a function used to get a value from an object and a property
  *
  * @example
@@ -39,12 +41,12 @@ import type { ValueGetter } from 'components/friends/field/interface';
  * }
  * ```
  */
-export function getField<T = unknown>(this: Field, path: string, getter: ValueGetter): CanUndef<T>;
+export function getField<T = unknown>(this: Field, path: string | PropertyInfo, getter: ValueGetter): CanUndef<T>;
 
 /**
  * Returns a property from the passed object at the specified path
  *
- * @param path - the property path, for instance `foo.bla.bar`
+ * @param path - the property path, for instance `foo.bla.bar`, or a property descriptor
  * @param [obj] - the object to search
  * @param [getter] - a function that is used to get a value from an object and a property
  *
@@ -59,14 +61,14 @@ export function getField<T = unknown>(this: Field, path: string, getter: ValueGe
  */
 export function getField<T = unknown>(
 	this: Field,
-	path: string,
+	path: string | PropertyInfo,
 	obj?: Nullable<object>,
 	getter?: ValueGetter
 ): CanUndef<T>;
 
 export function getField<T = unknown>(
 	this: Field,
-	path: string,
+	path: string | PropertyInfo,
 	obj: Nullable<object | ValueGetter> = this.ctx,
 	getter?: ValueGetter
 ): CanUndef<T> {
@@ -93,7 +95,7 @@ export function getField<T = unknown>(
 		chunks: string[];
 
 	if (isComponent) {
-		const info = getPropertyInfo(path, Object.cast(ctx));
+		const info = Object.isString(path) ? getPropertyInfo(path, Object.cast(ctx)) : path;
 
 		ctx = Object.cast(info.ctx);
 		res = ctx;
@@ -122,6 +124,10 @@ export function getField<T = unknown>(
 		}
 
 	} else {
+		if (!Object.isString(path)) {
+			path = path.originalPath;
+		}
+
 		chunks = path.includes('.') ? path.split('.') : [path];
 	}
 
