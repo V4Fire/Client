@@ -34,6 +34,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * A lot of TypeScript type fixes
 * Performance improvements
 
+## v4.0.0-beta.133 (2024-09-13)
+
+#### :bug: Bug Fix
+
+* Support for the recursive `dropCache` operation by adding the `recursive` argument `components/friends/data-provider`
+
 ## v4.0.0-beta.132 (2024-09-12)
 
 #### :boom: Breaking Change
