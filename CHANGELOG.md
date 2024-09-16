@@ -11,11 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2024-09-??)
+## v4.0.0-beta.134 (2024-09-16)
 
 #### :house: Internal
 
-* Modified the method for checking stylesheet loading status `core/prelude/webpack`
+* Modified the method for checking the stylesheet loading status `core/prelude/webpack`
 
 ## v4.0.0-beta.133 (2024-09-13)
 
