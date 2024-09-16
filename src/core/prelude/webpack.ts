@@ -45,9 +45,10 @@ function __webpack_component_styles_are_loaded__(componentName: string): boolean
 			}
 
 			for (let r = 0; r < rules.length; r++) {
-				const match = rules[r]['selectorText']?.match(/^\.([\w-]+)-is-style-loaded$/)?.[1];
-				if (match !== undefined) {
-					loadedStyles.add(match);
+				const selector: string | undefined = rules[r]['selectorText'];
+				if (selector?.endsWith('-is-style-loaded')) {
+					const component = selector.slice(1, -'-is-style-loaded'.length);
+					loadedStyles.add(component);
 				}
 
 			}
