@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## 4.0.0-beta.134 (2024-09-17)
+
+#### :rocket: New Feature
+
+* Added sanitizing to `toString` method to prevent XSS vulnerabilities `core/hydration-store`
+
 ## v4.0.0-beta.133 (2024-09-13)
 
 #### :bug: Bug Fix
