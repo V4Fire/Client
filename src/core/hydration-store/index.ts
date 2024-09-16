@@ -106,7 +106,7 @@ export default class HydrationStore {
 
 			const res = Object.entries(obj).reduce((res, [key, value], index) => {
 				const separator = index < lastIndex ? ',' : '';
-				res.push(`"${key}":${value != null ? value : null}${separator}`);
+				res[index] = `"${key}":${value != null ? value : null}${separator}`;
 
 				return res;
 			}, <string[]>[]).join('');
