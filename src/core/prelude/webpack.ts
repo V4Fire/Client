@@ -32,6 +32,7 @@ const loadedStylesIndexed = Symbol('loadedStylesIndexed');
 function __webpack_component_styles_are_loaded__(componentName: string): boolean {
 	try {
 		const loaded = loadedStyles.has(componentName);
+
 		if (loaded) {
 			return true;
 		}
@@ -40,12 +41,14 @@ function __webpack_component_styles_are_loaded__(componentName: string): boolean
 
 		for (let i = 0; i < styleSheets.length; i++) {
 			const rules = styleSheets[i].cssRules;
+
 			if (rules[loadedStylesIndexed] === true) {
 				continue;
 			}
 
 			for (let r = 0; r < rules.length; r++) {
-				const selector: string | undefined = rules[r]['selectorText'];
+				const selector: CanUndef<string> = rules[r]['selectorText'];
+
 				if (selector?.endsWith('-is-style-loaded')) {
 					const component = selector.slice(1, -'-is-style-loaded'.length);
 					loadedStyles.add(component);
