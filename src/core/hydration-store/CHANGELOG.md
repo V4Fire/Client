@@ -9,9 +9,9 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## 4.0.0-beta.134 (2024-09-17)
+## 4.0.0-beta.135 (2024-09-17)
 
-#### :rocket: New Feature
+#### :house: Internal
 
 * Added sanitizing to `toString` method to prevent XSS vulnerabilities
 

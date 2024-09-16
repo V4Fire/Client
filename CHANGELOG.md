@@ -11,11 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## 4.0.0-beta.134 (2024-09-17)
+## 4.0.0-beta.135 (2024-09-17)
 
-#### :rocket: New Feature
+#### :house: Internal
 
 * Added sanitizing to `toString` method to prevent XSS vulnerabilities `core/hydration-store`
+
+## v4.0.0-beta.134 (2024-09-16)
+
+#### :house: Internal
+
+* Modified the method for checking the stylesheet loading status `core/prelude/webpack`
 
 ## v4.0.0-beta.133 (2024-09-13)
 
