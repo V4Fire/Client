@@ -55,7 +55,19 @@ import { ComponentFactory } from 'components/base/b-virtual-scroll-new/modules/f
 import { Observer } from 'components/base/b-virtual-scroll-new/modules/observer';
 import { isAsyncReplaceError } from 'components/base/b-virtual-scroll-new/modules/helpers';
 
-import iData, { component, system, field, watch, wait, RequestParams, UnsafeGetter } from 'components/super/i-data/i-data';
+import iData, {
+
+	component,
+	field,
+	computed,
+
+	watch,
+	wait,
+
+	RequestParams,
+	UnsafeGetter
+
+} from 'components/super/i-data/i-data';
 
 export * from 'components/base/b-virtual-scroll-new/interface';
 export * from 'components/base/b-virtual-scroll-new/const';
@@ -72,24 +84,34 @@ interface bVirtualScrollNew extends Trait<typeof iVirtualScrollHandlers> {}
 @derive(iVirtualScrollHandlers)
 class bVirtualScrollNew extends iVirtualScrollProps implements iItems {
 	/** {@link componentTypedEmitter} */
-	@system<bVirtualScrollNew>((ctx) => componentTypedEmitter(ctx))
-	protected readonly componentEmitter!: ComponentTypedEmitter;
+	@computed({cache: 'forever'})
+	protected get componentEmitter(): ComponentTypedEmitter {
+		return componentTypedEmitter(this.unsafe);
+	}
 
 	/** {@link SlotsStateController} */
-	@system<bVirtualScrollNew>((ctx) => new SlotsStateController(ctx))
-	protected readonly slotsStateController!: SlotsStateController;
+	@computed({cache: 'forever'})
+	protected get slotsStateController(): SlotsStateController {
+		return new SlotsStateController(this);
+	}
 
 	/** {@link ComponentInternalState} */
-	@system<bVirtualScrollNew>((ctx) => new ComponentInternalState(ctx))
-	protected readonly componentInternalState!: ComponentInternalState;
+	@computed({cache: 'forever'})
+	protected get componentInternalState(): ComponentInternalState {
+		return new ComponentInternalState(this);
+	}
 
 	/** {@link ComponentFactory} */
-	@system<bVirtualScrollNew>((ctx) => new ComponentFactory(ctx))
-	protected readonly componentFactory!: ComponentFactory;
+	@computed({cache: 'forever'})
+	protected get componentFactory(): ComponentFactory {
+		return new ComponentFactory(this);
+	}
 
 	/** {@link Observer} */
-	@system<bVirtualScrollNew>((ctx) => new Observer(ctx))
-	protected readonly observer!: Observer;
+	@computed({cache: 'forever'})
+	protected get observer(): Observer {
+		return new Observer(this);
+	}
 
 	/** @inheritDoc */
 	declare protected readonly $refs: iData['$refs'] & $ComponentRefs;
