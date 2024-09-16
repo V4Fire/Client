@@ -102,14 +102,11 @@ export default class HydrationStore {
 		return sanitize(`{"store":${shallowStringify(store)},"data":${shallowStringify(data)}}`);
 
 		function shallowStringify(obj: Dictionary<string>): string {
-			const lastIndex = Object.size(obj) - 1;
-
 			const res = Object.entries(obj).reduce((res, [key, value], index) => {
-				const separator = index < lastIndex ? ',' : '';
-				res[index] = `"${key}":${value != null ? value : null}${separator}`;
+				res[index] = `"${key}":${value != null ? value : null}`;
 
 				return res;
-			}, <string[]>[]).join('');
+			}, <string[]>[]).join(',');
 
 			return `{${res}}`;
 		}
