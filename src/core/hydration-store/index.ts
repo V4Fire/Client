@@ -12,6 +12,7 @@
  */
 
 import { expandedStringify, expandedParse } from 'core/json';
+import { sanitize } from 'core/html/xss';
 
 import { styles, emptyDataStoreKey } from 'core/hydration-store/const';
 import type { Store, HydratedData, HydratedValue, Environment, StoreJSON } from 'core/hydration-store/interface';
@@ -101,12 +102,14 @@ export default class HydrationStore {
 		return `{"store":${shallowStringify(store)},"data":${shallowStringify(data)}}`;
 
 		function shallowStringify(obj: Dictionary<string>): string {
-			let res = '';
+			const lastIndex = Object.size(obj) - 1;
 
-			Object.entries(obj).forEach(([key, value], index) => {
-				const separator = index < Object.size(obj) - 1 ? ',' : '';
-				res += `"${key}":${value}${separator}`;
-			});
+			const res = Object.entries(obj).reduce((acc, [key, value], index) => {
+				const separator = index < lastIndex ? ',' : '';
+				acc.push(`"${sanitize(key)}":${value != null ? sanitize(value) : null}${separator}`);
+
+				return acc;
+			}, <string[]>[]).join('');
 
 			return `{${res}}`;
 		}
