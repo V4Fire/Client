@@ -34,6 +34,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * A lot of TypeScript type fixes
 * Performance improvements
 
+## v4.0.0-beta.134 (2024-09-16)
+
+#### :house: Internal
+
+* Modified the method for checking the stylesheet loading status `core/prelude/webpack`
+
 ## v4.0.0-beta.133 (2024-09-13)
 
 #### :bug: Bug Fix
