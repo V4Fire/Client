@@ -102,15 +102,12 @@ export function paramsFactory<T = object>(
 				function decorateMethod() {
 					const name = key;
 
-					let {
-						watchers,
-						hooks
-					} = info;
+					let {watchers, hooks} = info;
 
 					if (p.watch != null) {
 						watchers ??= {};
 
-						(Object.isArray(p.watch) ? p.watch : [p.watch]).forEach((watcher) => {
+						Array.toArray(p.watch).forEach((watcher) => {
 							if (Object.isPlainObject(watcher)) {
 								const path = String(watcher.path ?? watcher.field);
 								watchers[path] = wrapOpts({...p.watchParams, ...watcher, path});
@@ -124,7 +121,7 @@ export function paramsFactory<T = object>(
 					if (p.hook != null) {
 						hooks ??= {};
 
-						(Object.isArray(p.hook) ? p.hook : [p.hook]).forEach((hook) => {
+						Array.toArray(p.hook).forEach((hook) => {
 							if (Object.isSimpleObject(hook)) {
 								const
 									hookName = Object.keys(hook)[0],
@@ -197,17 +194,14 @@ export function paramsFactory<T = object>(
 
 				const info = metaCluster[key] ?? {src: meta.componentName};
 
-				let {
-					watchers,
-					after
-				} = info;
+				let {watchers, after} = info;
 
 				if (p.after != null) {
 					after = new Set([].concat(p.after));
 				}
 
 				if (p.watch != null) {
-					(Object.isArray(p.watch) ? p.watch : [p.watch]).forEach((watcher) => {
+					Array.toArray(p.watch).forEach((watcher) => {
 						watchers ??= new Map();
 
 						if (Object.isPlainObject(watcher)) {
