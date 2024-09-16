@@ -59,13 +59,13 @@ export function initFields(
 			if (store[name] === undefined) {
 				// To prevent linking to the same type of component for non-primitive values,
 				// it's important to clone the default value from the component constructor.
-				val = field.default !== undefined ?
-					field.default :
+				if (field.default !== undefined) {
+					val = field.default;
 
-					(() => {
-						const v = instance[name];
-						return Object.isPrimitive(v) ? v : Object.fastClone(v);
-					})();
+				} else {
+					const defValue = instance[name];
+					val = Object.isPrimitive(defValue) ? defValue : Object.fastClone(defValue);
+				}
 
 				store[name] = val;
 			}
