@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2023-09-??)
+
+#### :house: Internal
+
+* Modified the method for checking stylesheet loading status
+
 ## v4.0.0-beta.19 (2023-09-08)
 
 #### :house: Internal
