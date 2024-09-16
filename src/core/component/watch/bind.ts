@@ -114,7 +114,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 			// Iterates over all registered handlers for this watcher
 			watchers!.forEach((watchInfo) => {
-				if (watchInfo.test?.(component) === false) {
+				if (watchInfo.shouldInit?.(component) === false) {
 					return;
 				}
 

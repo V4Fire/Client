@@ -189,7 +189,7 @@ Determines the execution timing of the event handler:
 
 3. `sync` - the handler will be invoked immediately after each mutation.
 
-### [test]
+### [shouldInit]
 
 A function to determine whether a watcher should be initialized or not.
 If the function returns false, the watcher will not be initialized.
@@ -203,7 +203,7 @@ export default class bExample extends iBlock {
   @prop({required: false})
   params?: Dictionary;
 
-  @watch({path: 'params', test: (ctx) => ctx.params != null})
+  @watch({path: 'params', shouldInit: (ctx) => ctx.params != null})
   watcher() {
 
   }

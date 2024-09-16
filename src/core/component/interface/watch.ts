@@ -152,7 +152,7 @@ export interface WatchObject<
 	 *
 	 * @param ctx
 	 */
-	test?(ctx: CTX): boolean;
+	shouldInit?(ctx: CTX): boolean;
 }
 
 export interface MethodWatcher<
@@ -190,7 +190,7 @@ export interface MethodWatcher<
 	 *
 	 * @param ctx
 	 */
-	test?(ctx: CTX): boolean;
+	shouldInit?(ctx: CTX): boolean;
 
 	/**
 	 * An object with additional settings for the event emitter

@@ -143,13 +143,13 @@ export default abstract class iDataHandlers extends iDataData {
 		{
 			path: 'dataProviderProp',
 			provideArgs: false,
-			test: (ctx) => ctx.dataProviderProp != null
+			shouldInit: (ctx) => ctx.dataProviderProp != null
 		},
 
 		{
 			path: 'dataProviderOptions',
 			provideArgs: false,
-			test: (ctx) => ctx.dataProviderOptions != null
+			shouldInit: (ctx) => ctx.dataProviderOptions != null
 		}
 	])
 

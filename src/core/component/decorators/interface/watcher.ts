@@ -63,7 +63,7 @@ export interface DecoratorFieldWatcherObject<
 	 *
 	 * @param ctx
 	 */
-	test?(ctx: CTX): boolean;
+	shouldInit?(ctx: CTX): boolean;
 }
 
 export interface DecoratorWatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
