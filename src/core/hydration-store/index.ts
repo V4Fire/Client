@@ -99,16 +99,16 @@ export default class HydrationStore {
 	toString(): string {
 		const {store, data} = this.storeJSON;
 
-		return `{"store":${shallowStringify(store)},"data":${shallowStringify(data)}}`;
+		return sanitize(`{"store":${shallowStringify(store)},"data":${shallowStringify(data)}}`);
 
 		function shallowStringify(obj: Dictionary<string>): string {
 			const lastIndex = Object.size(obj) - 1;
 
-			const res = Object.entries(obj).reduce((acc, [key, value], index) => {
+			const res = Object.entries(obj).reduce((res, [key, value], index) => {
 				const separator = index < lastIndex ? ',' : '';
-				acc.push(`"${sanitize(key)}":${value != null ? sanitize(value) : null}${separator}`);
+				res.push(`"${key}":${value != null ? value : null}${separator}`);
 
-				return acc;
+				return res;
 			}, <string[]>[]).join('');
 
 			return `{${res}}`;
