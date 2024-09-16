@@ -75,16 +75,17 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 		}
 
 		default: {
-			if (hooks.some((hook) => hook.after != null && hook.after.size > 0)) {
-				const
-					emitter = new QueueEmitter(),
-					filteredHooks: ComponentHook[] = [];
+			let toDelete: CanNull<number[]> = null;
 
-				hooks.forEach((hook) => {
+			if (hooks.some((hook) => hook.after != null && hook.after.size > 0)) {
+				const emitter = new QueueEmitter();
+
+				hooks.forEach((hook, i) => {
 					const nm = hook.name;
 
-					if (!hook.once) {
-						filteredHooks.push(hook);
+					if (hook.once) {
+						toDelete ??= [];
+						toDelete.push(i);
 					}
 
 					emitter.on(hook.after, () => {
@@ -102,7 +103,7 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 					});
 				});
 
-				m.hooks[hook] = filteredHooks;
+				removeFromHooks(toDelete);
 
 				const tasks = emitter.drain();
 
@@ -111,9 +112,9 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 				}
 
 			} else {
-				const tasks: Array<Promise<unknown>> = [];
+				let tasks: CanNull<Array<Promise<unknown>>> = null;
 
-				hooks.slice().forEach((hook) => {
+				hooks.forEach((hook, i) => {
 					let res: unknown;
 
 					switch (args.length) {
@@ -130,15 +131,20 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 					}
 
 					if (hook.once) {
-						hooks.pop();
+						toDelete ??= [];
+						toDelete.push(i);
 					}
 
 					if (Object.isPromise(res)) {
+						tasks ??= [];
 						tasks.push(res);
 					}
 				});
 
-				if (tasks.length > 0) {
+				removeFromHooks(toDelete);
+
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				if (tasks != null) {
 					return Promise.all(tasks).then(() => undefined);
 				}
 			}
@@ -146,4 +152,12 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 	}
 
 	return SyncPromise.resolve();
+
+	function removeFromHooks(toDelete: CanNull<number[]>) {
+		if (toDelete != null) {
+			toDelete.reverse().forEach((i) => {
+				hooks.splice(i, 1);
+			});
+		}
+	}
 }
