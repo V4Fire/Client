@@ -26,13 +26,7 @@ export default class PageMetaData {
 	 * @param value - new title value
 	 */
 	set title(value: string) {
-		const
-			div = Object.assign(document.createElement('div'), {innerHTML: value}),
-			title = div.textContent ?? '';
-
-		// Fix strange Chrome bug
-		document.title = `${title} `;
-		document.title = title;
+		document.title = value;
 	}
 
 	/**
