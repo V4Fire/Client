@@ -128,7 +128,7 @@ export function component(opts?: ComponentOptions): Function {
 
 		// If we have a smart component,
 		// we need to compile two components at runtime
-		if (Object.isPlainObject(componentParams.functional)) {
+		if (!componentInfo.isAbstract && Object.isPlainObject(componentParams.functional)) {
 			component({
 				...opts,
 				name: `${componentFullName}-functional`,
