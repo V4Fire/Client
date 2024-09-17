@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { getPropertyInfo } from 'core/component';
+import { getPropertyInfo, PropertyInfo } from 'core/component';
 import { statuses } from 'components/super/i-block/const';
 
 import type Sync from 'components/friends/sync/class';
@@ -101,7 +101,9 @@ export function mod<D = unknown, R = unknown>(
 
 	const
 		that = this,
-		info = getPropertyInfo(path, this.component);
+		originalPath = path;
+
+	let info: CanNull<PropertyInfo> = null;
 
 	if (this.lfc.isBeforeCreate()) {
 		this.syncModCache[modName] = sync;
@@ -122,6 +124,8 @@ export function mod<D = unknown, R = unknown>(
 	}
 
 	function sync() {
+		info ??= getPropertyInfo(originalPath, that.component);
+
 		const {path} = info;
 
 		let val: unknown;
