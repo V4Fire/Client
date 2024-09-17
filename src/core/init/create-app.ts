@@ -72,7 +72,7 @@ export async function createApp(
 
 		try {
 			ssrContent = (await renderToString(app)).replace(/<\/?ssr-fragment>/g, '');
-			hydratedData = `<noframes id="hydration-store" style="display: none">${state.hydrationStore.toString()}</noframes>`;
+			hydratedData = `<noframes id="hydration-store" style="display: none;">${state.hydrationStore.toString()}</noframes>`;
 
 			return {
 				state,

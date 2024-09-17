@@ -265,7 +265,11 @@ export default class bRouter extends iRouterProps {
 		method: TransitionMethod = 'push'
 	): Promise<CanUndef<router.Route>> {
 		if (method === 'replace' && ref == null) {
-			opts = Object.mixin(true, {}, this.previousTransitionOptions, opts);
+			opts = Object.mixin({
+				deep: true,
+				skipUndefs: false,
+				extendFilter: (el) => !Object.isArray(el)
+			}, {}, this.previousTransitionOptions, opts);
 		}
 
 		this.previousTransitionOptions = opts;

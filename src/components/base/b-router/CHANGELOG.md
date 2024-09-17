@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.135 (2024-09-17)
+
+#### :bug: Bug Fix
+
+* Removed the array merging logic from the old and current options during `replace(null, opts)`
+
 ## v4.0.0-beta.118 (2024-08-01)
 
 #### :bug: Bug Fix

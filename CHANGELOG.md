@@ -34,6 +34,18 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * A lot of TypeScript type fixes
 * Performance improvements
 
+## 4.0.0-beta.136 (2024-09-17)
+
+#### :house: Internal
+
+* Added sanitizing to `toString` method to prevent XSS vulnerabilities `core/hydration-store`
+
+## v4.0.0-beta.135 (2024-09-17)
+
+#### :bug: Bug Fix
+
+* Removed the array merging logic from the old and current options during `replace(null, opts)`
+
 ## v4.0.0-beta.134 (2024-09-16)
 
 #### :house: Internal
