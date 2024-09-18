@@ -49,6 +49,8 @@ interface bList extends Trait<typeof iActiveItems> {}
 
 @derive(iActiveItems)
 class bList extends iListProps implements iVisible, iWidth, iActiveItems {
+	protected override $refs!: iListProps['$refs'] & {items: HTMLElement[]};
+
 	/** {@link bList.attrsProp} */
 	get attrs(): Dictionary {
 		const

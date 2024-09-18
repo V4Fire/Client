@@ -23,6 +23,7 @@
 				< .&__item v-tag = listElementTag
 					< .&__link &
 						v-tag = getHref(el) !== undefined ? 'a' : 'button' |
+						ref = items |
 						:key = getItemKey(el, i) |
 
 						:href = getHref(el) |
