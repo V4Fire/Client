@@ -11,6 +11,8 @@ import { isComponent, componentRegInitializers, componentParams, components } fr
 import type { ComponentMeta } from 'core/component/interface';
 import type { ComponentConstructorInfo } from 'core/component/reflect';
 
+import { globalEmitter } from 'core/component/event';
+
 /**
  * Registers parent components for the given one.
  * The function returns false if all parent components are already registered.
@@ -78,6 +80,8 @@ export function registerComponent(name: CanUndef<string>): CanNull<ComponentMeta
 	if (regComponent != null) {
 		regComponent.forEach((reg) => reg());
 		delete componentRegInitializers[name];
+
+		globalEmitter.emit('registered', name);
 	}
 
 	return components.get(name) ?? null;

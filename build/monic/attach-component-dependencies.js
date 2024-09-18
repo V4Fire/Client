@@ -27,6 +27,15 @@ const
  * @returns {Promise<string>}
  */
 module.exports = async function attachComponentDependencies(str, filePath) {
+
+	function invokeByRegisterEvent(script, componentName) {
+		return `globalEmitter.on('register', (componentName) => {
+			if (componentName === '${componentName}') {
+				${script}
+			}
+		});`;
+	}
+
 	if (webpack.fatHTML()) {
 		return str;
 	}
@@ -51,10 +60,10 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 	attachComponentDeps(component);
 
 	let
-		imports = '';
+		imports = `const {globalEmitter} = require('core/component/event');`;
 
 	$C([...libs].reverse()).forEach((lib) => {
-		imports += `require('${lib}');`;
+		imports += invokeByRegisterEvent(`require('${lib}');`, component.name);
 	});
 
 	await $C([...deps].reverse()).async.forEach(forEach);
@@ -129,13 +138,13 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 						expr;
 
 					if (chunk === 'tpl') {
-						expr = `TPLS['${dep}'] = require('${src}')['${dep}'];`;
+						expr = `TPLS['${dep}'] = require('${src}')['${dep}'];`
 
 					} else {
-						expr = `require('${src}');`;
+						expr = `require('${src}')`
 					}
 
-					decl += `try { ${expr} } catch (err) { stderr(err); }`;
+					decl += invokeByRegisterEvent(`try { ${expr} } catch (err) { stderr(err); }`, component.name);
 				}
 
 			} catch {}
