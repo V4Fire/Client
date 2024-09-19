@@ -11,7 +11,7 @@ import { isComponent, componentRegInitializers, componentParams, components } fr
 import type { ComponentMeta } from 'core/component/interface';
 import type { ComponentConstructorInfo } from 'core/component/reflect';
 
-import { globalEmitter } from 'core/component/event';
+import { initEmitter } from 'core/component/event';
 
 /**
  * Registers parent components for the given one.
@@ -52,6 +52,9 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
 		if (regParentComponent != null) {
 			regParentComponent.forEach((reg) => reg());
 			delete componentRegInitializers[parentName];
+
+			// initEmitter.emit(`registerComponent.${name}`);
+
 			return true;
 		}
 	}
@@ -79,9 +82,10 @@ export function registerComponent(name: CanUndef<string>): CanNull<ComponentMeta
 
 	if (regComponent != null) {
 		regComponent.forEach((reg) => reg());
+		
+		initEmitter.emit(`registerComponent.${components.get(name)?.componentName || name}`);
 		delete componentRegInitializers[name];
 
-		globalEmitter.emit('registered', name);
 	}
 
 	return components.get(name) ?? null;

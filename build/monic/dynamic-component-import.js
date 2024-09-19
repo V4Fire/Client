@@ -25,6 +25,19 @@ const
 	isESImport = !ssr && typescript().client.compilerOptions.module === 'ES2020',
 	fatHTML = webpack.fatHTML();
 
+	function invokeByRegisterEvent(script, componentName) {
+		return `
+			(function() {
+				const {initEmitter} = require('core/component/event');
+
+				console.log('1 handle event', '${componentName}');
+				initEmitter.on('registerComponent.${componentName}', () => {
+					${script}
+				});
+			})()
+		`;
+	}
+
 /**
  * A Monic replacer is used to enable dynamic imports of components
  *
@@ -127,7 +140,8 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 			imports[0] = `TPLS['${resourceName}'] ? ${imports[0]} : ${imports[0]}.then(${decl}, function (err) { stderr(err); return ${decl}(); })`;
 		}
 
-		return `Promise.all([${imports.join(',')}])`;
+		return invokeByRegisterEvent(`Promise.all([${imports.join(',')}])`, resourceName);
+		// return `Promise.all([${imports.join(',')}])`;
 	});
 };
 

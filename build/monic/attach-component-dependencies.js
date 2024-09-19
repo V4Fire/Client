@@ -10,7 +10,8 @@
 
 const
 	$C = require('collection.js'),
-	{webpack} = require('@config/config');
+	{webpack} = require('@config/config'),
+	fs = require('node:fs');
 
 const
 	path = require('upath'),
@@ -29,10 +30,9 @@ const
 module.exports = async function attachComponentDependencies(str, filePath) {
 
 	function invokeByRegisterEvent(script, componentName) {
-		return `globalEmitter.on('register', (componentName) => {
-			if (componentName === '${componentName}') {
-				${script}
-			}
+		return `initEmitter.on('registerComponent.${componentName}', () => {
+			console.log('1 handle event', '${componentName}');
+			(function() {${script}})()
 		});`;
 	}
 
@@ -49,7 +49,8 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 		ext = path.extname(filePath),
 		component = components.get(path.basename(filePath, ext));
 
-	if (component == null) {
+
+	if (component == null || component.name == 'p-v4-components-demo') {
 		return str;
 	}
 
@@ -59,15 +60,19 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 
 	attachComponentDeps(component);
 
+	const importEventEmitter = `const {initEmitter} = require('core/component/event');`;
+
 	let
-		imports = `const {globalEmitter} = require('core/component/event');`;
+		imports = '';
 
 	$C([...libs].reverse()).forEach((lib) => {
-		imports += invokeByRegisterEvent(`require('${lib}');`, component.name);
+		imports += `require('${lib}');`;
 	});
 
 	await $C([...deps].reverse()).async.forEach(forEach);
-	return imports + str;
+	const result = importEventEmitter + invokeByRegisterEvent(imports, component.name) + str;
+
+	return result;
 
 	async function forEach(dep) {
 		if (dep.startsWith('g-')) {
@@ -141,10 +146,10 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 						expr = `TPLS['${dep}'] = require('${src}')['${dep}'];`
 
 					} else {
-						expr = `require('${src}')`
+						expr = `require('${src}');`
 					}
 
-					decl += invokeByRegisterEvent(`try { ${expr} } catch (err) { stderr(err); }`, component.name);
+					decl += `try { ${expr} } catch (err) { stderr(err); }`;
 				}
 
 			} catch {}
