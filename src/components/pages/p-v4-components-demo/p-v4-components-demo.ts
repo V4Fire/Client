@@ -13,6 +13,7 @@
 
 import iStaticPage, { component, prop, field, system, hook } from 'components/super/i-static-page/i-static-page';
 import VDOM, * as VDOMAPI from 'components/friends/vdom';
+import type iBlock from 'components/super/i-block/i-block';
 
 export * from 'components/super/i-static-page/i-static-page';
 
@@ -30,6 +31,10 @@ export default class pV4ComponentsDemo extends iStaticPage {
 
 	@system((o) => o.sync.link())
 	override readonly selfDispatching!: boolean;
+
+	override readonly $refs!: iStaticPage['$refs'] & {
+		dummy: iBlock;
+	};
 
 	/**
 	 * Parameter to test
@@ -50,5 +55,16 @@ export default class pV4ComponentsDemo extends iStaticPage {
 		if (matches != null) {
 			this.stage = decodeURIComponent(matches[1]);
 		}
+	}
+
+	mounted(): void {
+		const reload = this.$refs.dummy.reload.bind(this.$refs.dummy);
+
+		this.$refs.dummy.unsafe.async.worker(() => {
+			console.log(performance.now(), 'b-dummy destroyed');
+			setTimeout(reload, 2000);
+		});
+
+		this.$refs.dummy.unsafe.$destroy();
 	}
 }

@@ -14,3 +14,6 @@
 	- block body
 		< template v-if = stage === 'teleports'
 			< b-bottom-slide
+
+		< b-dummy ref = dummy
+			Hello!

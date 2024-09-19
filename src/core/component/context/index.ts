@@ -32,6 +32,8 @@ export function getComponentContext(component: object): Dictionary & ComponentIn
 	if (!(toWrapped in component)) {
 		const wrappedCtx = Object.create(component);
 		saveRawComponentContext(wrappedCtx, component);
+	} else {
+		console.log(performance.now(), '[getComponentContext] toWrapped exists', component.componentName, 'component:', component);
 	}
 
 	return component[toWrapped];
@@ -54,8 +56,10 @@ export function saveRawComponentContext(ctx: object, rawCtx: object): void {
  */
 export function dropRawComponentContext(ctx: object): void {
 	if (toRaw in ctx) {
+		console.log(performance.now(), '[dropRawComponentContext] deleting toWrapped', ctx.componentName);
 		delete ctx[toRaw]?.[toWrapped];
 	}
 
+	console.log(performance.now(), '[dropRawComponentContext] deleting toRaw', ctx.componentName);
 	delete ctx[toRaw];
 }
