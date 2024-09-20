@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-09-??)
+
+#### :bug: Bug Fix
+
+* Fix the bug when the global event listener might be called after the component has been destroyed
+
 ## v4.0.0-beta.117 (2024-07-31)
 
 #### :house: Internal
