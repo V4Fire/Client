@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import SyncPromise from 'core/promise/sync';
 import watch, { WatchHandler, WatchHandlerParams } from 'core/object/watch';
 
 import * as init from 'core/component/init';
@@ -17,9 +16,28 @@ import { getComponentContext, dropRawComponentContext } from 'core/component/con
 import { wrapAPI } from 'core/component/render';
 
 import type { ComponentEngine, ComponentOptions, SetupContext } from 'core/component/engines';
-import type { ComponentMeta } from 'core/component/interface';
+import type { ComponentInterface, ComponentMeta } from 'core/component/interface';
 
 import { supports, proxyGetters } from 'core/component/engines/vue3/const';
+
+import {
+
+	getCurrentInstance,
+
+	onBeforeMount,
+	onMounted,
+
+	onBeforeUpdate,
+	onUpdated,
+
+	onBeforeUnmount,
+	onUnmounted,
+
+	onErrorCaptured,
+	onServerPrefetch,
+	onRenderTriggered
+
+} from 'vue';
 
 import * as r from 'core/component/engines/vue3/render';
 
@@ -33,7 +51,13 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 	const p = meta.params;
 
 	return {
-		...Object.cast(component),
+		name: component.name,
+		props: component.props,
+
+		methods: component.methods,
+		computed: component.computed,
+		render: component.render,
+
 		inheritAttrs: p.inheritAttrs,
 
 		data(): Dictionary {
@@ -55,8 +79,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			return SSR ? {} : unsafe.$fields;
 
 			function watcher(value: unknown, oldValue: unknown, info: WatchHandlerParams): void {
-				const
-					{path} = info;
+				const {path} = info;
 
 				if (beforeRenderHooks[ctx.hook] != null) {
 					return;
@@ -72,95 +95,106 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			}
 		},
 
-		setup(props: Dictionary, ctx: SetupContext) {
-			return meta.methods.setup?.fn(props, ctx);
-		},
+		setup(props: Dictionary, setupCtx: SetupContext) {
+			const internalInstance = getCurrentInstance();
 
-		beforeCreate(): void {
-			const {ctx, unsafe} = getComponentContext(this, true);
+			let
+				ctx: Nullable<ComponentInterface> = null,
+				unsafe: Nullable<ComponentInterface['unsafe']> = null;
+
+			({ctx, unsafe} = getComponentContext(internalInstance!['proxy']!, true));
+
+			const {hooks} = meta;
 
 			// @ts-ignore (unsafe)
 			ctx['$renderEngine'] = {supports, proxyGetters, r, wrapAPI};
 
 			init.beforeCreateState(ctx, meta, {implementEventAPI: true});
 
-			if (SSR) {
-				if (ctx.canFunctional !== true) {
-					this._.type.serverPrefetch = () => {
-						const init = unsafe.$initializer;
+			if (SSR && ctx.canFunctional !== true) {
+				onServerPrefetch(() => {
+					if (unsafe == null) {
+						return;
+					}
 
-						try {
-							// If init is a synchronous promise, we explicitly perform an `unwrap` to eliminate the extra microtask
-							return SyncPromise.resolve(init).unwrap();
+					return unsafe.$initializer;
+				});
+			}
 
-						} catch {
-							return init;
-						}
-					};
-
-				} else {
-					delete this._.type.serverPrefetch;
+			onBeforeMount(() => {
+				if (ctx == null) {
+					return;
 				}
+
+				init.createdState(ctx);
+				init.beforeMountState(ctx);
+			});
+
+			onMounted(() => {
+				if (ctx == null) {
+					return;
+				}
+
+				init.mountedState(ctx);
+			});
+
+			onBeforeUpdate(() => {
+				if (ctx == null) {
+					return;
+				}
+
+				init.beforeUpdateState(ctx);
+			});
+
+			onUpdated(() => {
+				if (ctx == null) {
+					return;
+				}
+
+				init.beforeUpdateState(ctx);
+			});
+
+			onBeforeUnmount(() => {
+				if (ctx == null) {
+					return;
+				}
+
+				init.beforeDestroyState(ctx, {recursive: true});
+			});
+
+			onUnmounted(() => {
+				if (ctx == null) {
+					return;
+				}
+
+				init.destroyedState(ctx);
+				dropRawComponentContext(ctx);
+
+				ctx = null;
+				unsafe = null;
+			});
+
+			if (hooks.errorCaptured.length > 0) {
+				onErrorCaptured((...args) => {
+					if (ctx == null) {
+						return;
+					}
+
+					init.errorCapturedState(ctx, ...args);
+				});
 			}
-		},
 
-		created(): void {
-			init.createdState(getComponentContext(this));
-		},
+			if (hooks.renderTriggered.length > 0) {
+				onRenderTriggered((...args) => {
+					if (ctx == null) {
+						return;
+					}
 
-		beforeMount(): void {
-			init.beforeMountState(getComponentContext(this));
-		},
-
-		mounted(): void {
-			init.mountedState(getComponentContext(this));
-		},
-
-		beforeUpdate(): void {
-			init.beforeUpdateState(getComponentContext(this));
-		},
-
-		updated(): void {
-			init.updatedState(getComponentContext(this));
-		},
-
-		activated(): void {
-			init.activatedState(getComponentContext(this));
-		},
-
-		deactivated(): void {
-			init.deactivatedState(getComponentContext(this));
-		},
-
-		beforeUnmount(): void {
-			const ctx = getComponentContext(this);
-
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (ctx == null) {
-				return;
+					init.renderTriggeredState(ctx, ...args);
+				});
 			}
 
-			init.beforeDestroyState(ctx, {recursive: false});
-		},
-
-		unmounted(): void {
-			const ctx = getComponentContext(this);
-
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (ctx == null) {
-				return;
-			}
-
-			init.destroyedState(ctx);
-			dropRawComponentContext(ctx);
-		},
-
-		errorCaptured(...args: unknown[]): void {
-			init.errorCapturedState(getComponentContext(this), ...args);
-		},
-
-		renderTriggered(...args: unknown[]): void {
-			init.renderTriggeredState(getComponentContext(this), ...args);
+			return meta.methods.setup?.fn(props, setupCtx);
 		}
 	};
 }
