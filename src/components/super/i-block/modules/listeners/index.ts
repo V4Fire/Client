@@ -97,6 +97,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 
 	function waitNextTickForReset(rawFn: () => CanPromise<void>) {
 		const fn = $a.proxy(rawFn);
+
 		return async () => {
 			try {
 				await ctx.nextTick({label: $$.reset});
