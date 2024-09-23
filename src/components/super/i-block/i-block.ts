@@ -168,7 +168,7 @@ export default abstract class iBlock extends iBlockProviders {
 	 * Registers the handlers which will be called just before rendering the component
 	 */
 	@hook('beforeRuntime')
-	protected registerRenderHandlers(): void {
+	private registerRenderHandlers(): void {
 		this.$on('[[RENDER]]', () => {
 			this.vdom.saveRenderContext();
 			this.hydrateStyles();
