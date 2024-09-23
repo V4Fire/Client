@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fix the bug when the global event listener might be called after the component has been destroyed `iBlock`
 
+#### :house: Internal
+
+* Removed method calls from the `iBlock` template
+* Added a [[RENDER]] event before calling the component's render function `core/component/meta`
 
 ## 4.0.0-beta.136 (2024-09-17)
 
