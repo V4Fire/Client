@@ -16,7 +16,9 @@ import AppClass, {
 	rootComponents,
 
 	State,
-	ComponentElement
+	ComponentElement,
+
+	initEmitter
 
 } from 'core/component';
 
@@ -34,6 +36,7 @@ export async function createApp(
 	opts: CreateAppOptions,
 	state: State
 ): Promise<App> {
+	initEmitter.emit(`registerComponent.${rootComponentName}`);
 	const rootComponentParams = await getRootComponentParams(rootComponentName);
 	opts.setup?.(Object.cast(rootComponentParams));
 

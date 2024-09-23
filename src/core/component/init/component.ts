@@ -12,6 +12,7 @@ import type { ComponentMeta } from 'core/component/interface';
 import type { ComponentConstructorInfo } from 'core/component/reflect';
 
 import { initEmitter } from 'core/component/event';
+import { c } from '../../../../../core/src/core/analytics/engines/appmetrica/helpers';
 
 /**
  * Registers parent components for the given one.
@@ -53,7 +54,7 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
 			regParentComponent.forEach((reg) => reg());
 			delete componentRegInitializers[parentName];
 
-			// initEmitter.emit(`registerComponent.${name}`);
+			initEmitter.emit(`registerComponent.${component?.name || parentName}`);
 
 			return true;
 		}
@@ -76,17 +77,19 @@ export function registerComponent(name: CanUndef<string>): CanNull<ComponentMeta
 	if (name == null || !isComponent.test(name)) {
 		return null;
 	}
-
 	const
 		regComponent = componentRegInitializers[name];
 
 	if (regComponent != null) {
 		regComponent.forEach((reg) => reg());
-		
-		initEmitter.emit(`registerComponent.${components.get(name)?.componentName || name}`);
+
 		delete componentRegInitializers[name];
 
 	}
+
+
+	let componentName = (components.get(name)?.componentName || name).replaceAll('-functional', '');	
+	initEmitter.emit(`registerComponent.${componentName}`);
 
 	return components.get(name) ?? null;
 }

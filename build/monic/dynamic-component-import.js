@@ -13,7 +13,8 @@ const
 	{commentModuleExpr: commentExpr} = include('build/const');
 
 const
-	graph = include('build/graph');
+	graph = include('build/graph'),
+	{invokeByRegisterEvent} = include('build/helpers');
 
 const importRgxp = new RegExp(
 	`\\bimport${commentExpr}\\((${commentExpr})(["'])((?:.*?[\\\\/]|)([bp]-[^.\\\\/"')]+)+)\\2${commentExpr}\\)`,
@@ -24,19 +25,6 @@ const
 	hasImport = importRgxp.removeFlags('g'),
 	isESImport = !ssr && typescript().client.compilerOptions.module === 'ES2020',
 	fatHTML = webpack.fatHTML();
-
-	function invokeByRegisterEvent(script, componentName) {
-		return `
-			(function() {
-				const {initEmitter} = require('core/component/event');
-
-				console.log('1 handle event', '${componentName}');
-				initEmitter.on('registerComponent.${componentName}', () => {
-					${script}
-				});
-			})()
-		`;
-	}
 
 /**
  * A Monic replacer is used to enable dynamic imports of components
@@ -137,7 +125,7 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 			}
 
 			decl = `function () { return ${decl}; }`;
-			imports[0] = `TPLS['${resourceName}'] ? ${imports[0]} : ${imports[0]}.then(${decl}, function (err) { stderr(err); return ${decl}(); })`;
+			imports[0] = `TPLS['${resourceName}'] ? ${(imports[0])} : ${imports[0]}.then(${decl}, function (err) { stderr(err); return ${decl}(); })`;
 		}
 
 		return invokeByRegisterEvent(`Promise.all([${imports.join(',')}])`, resourceName);

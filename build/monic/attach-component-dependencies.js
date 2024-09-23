@@ -10,12 +10,12 @@
 
 const
 	$C = require('collection.js'),
-	{webpack} = require('@config/config'),
-	fs = require('node:fs');
+	{webpack} = require('@config/config');
 
 const
 	path = require('upath'),
-	graph = include('build/graph');
+	graph = include('build/graph'),
+	{invokeByRegisterEvent} = include('build/helpers');
 
 const
 	decls = Object.create(null);
@@ -28,14 +28,6 @@ const
  * @returns {Promise<string>}
  */
 module.exports = async function attachComponentDependencies(str, filePath) {
-
-	function invokeByRegisterEvent(script, componentName) {
-		return `initEmitter.on('registerComponent.${componentName}', () => {
-			console.log('1 handle event', '${componentName}');
-			(function() {${script}})()
-		});`;
-	}
-
 	if (webpack.fatHTML()) {
 		return str;
 	}
@@ -50,7 +42,7 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 		component = components.get(path.basename(filePath, ext));
 
 
-	if (component == null || component.name == 'p-v4-components-demo') {
+	if (component == null) {
 		return str;
 	}
 
@@ -60,8 +52,6 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 
 	attachComponentDeps(component);
 
-	const importEventEmitter = `const {initEmitter} = require('core/component/event');`;
-
 	let
 		imports = '';
 
@@ -70,9 +60,8 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 	});
 
 	await $C([...deps].reverse()).async.forEach(forEach);
-	const result = importEventEmitter + invokeByRegisterEvent(imports, component.name) + str;
-
-	return result;
+	
+	return invokeByRegisterEvent(imports, component.name) + str;
 
 	async function forEach(dep) {
 		if (dep.startsWith('g-')) {
