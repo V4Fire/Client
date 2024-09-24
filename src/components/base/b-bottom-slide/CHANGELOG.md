@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-09-??)
+
+#### :bug: Bug Fix
+
+* Fix memory leak when the component destroys while the user pulls its header
+
 ## v4.0.0-beta.94 (2024-04-24)
 
 #### :bug: Bug Fix

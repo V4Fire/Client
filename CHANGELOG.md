@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-09-??)
+
+#### :bug: Bug Fix
+
+* Fix memory leak when the component destroys while the user pulls its header `b-bottom-slide`
+
 ## 4.0.0-beta.?? (2024-09-??)
 
 #### :bug: Bug Fix
