@@ -92,9 +92,13 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		let canSkipWatching = false;
 
 		// We cannot observe props and attributes on a component if it is a root component, a functional component,
-		// or if it does not accept such parameters in the template
+		// or if it does not accept such parameters in the template.
+		// Also, prop watching does not work during SSR.
 		if (info.type === 'prop' || info.type === 'attr') {
-			canSkipWatching = isRoot || isFunctional || info.ctx.getPassedProps?.().has(info.name) === false;
+			canSkipWatching =
+				SSR ||
+				isRoot || isFunctional ||
+				info.ctx.getPassedProps?.().has(info.name) === false;
 		}
 
 		if (!canSkipWatching && isFunctional) {

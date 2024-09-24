@@ -506,12 +506,16 @@ export default abstract class iBlockBase extends iBlockFriends {
 			let canSkipWatching = !opts.immediate;
 
 			// We cannot observe props and attributes on a component if it is a root component, a functional component,
-			// or if it does not accept such parameters in the template
-			if (!canSkipWatching && info != null && (info.type === 'prop' || info.type === 'attr')) {
+			// or if it does not accept such parameters in the template.
+			// Also, prop watching does not work during SSR.
+			if (canSkipWatching && info != null && (info.type === 'prop' || info.type === 'attr')) {
+				const {ctx, ctx: {unsafe: {meta: {params}}}} = info;
+
 				canSkipWatching =
-					this.meta.params.root === true ||
-					this.isFunctional ||
-					info.ctx.getPassedProps?.().has(info.name) === false;
+					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+					SSR ||
+					params.root === true || params.functional === true ||
+					ctx.getPassedProps?.().has(info.name) === false;
 			}
 
 			if (!canSkipWatching) {

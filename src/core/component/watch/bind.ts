@@ -292,12 +292,15 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						let canSkipWatching = !watchInfo.immediate;
 
 						// We cannot observe props and attributes on a component if it is a root component, a functional component,
-						// or if it does not accept such parameters in the template
-						if (!canSkipWatching && toWatch.type === 'prop' || toWatch.type === 'attr') {
+						// or if it does not accept such parameters in the template.
+						// Also, prop watching does not work during SSR.
+						if (canSkipWatching && (toWatch.type === 'prop' || toWatch.type === 'attr')) {
+							const {ctx, ctx: {unsafe: {meta: {params}}}} = toWatch;
+
 							canSkipWatching =
-								meta.params.root === true ||
-								meta.params.functional !== true ||
-								toWatch.ctx.getPassedProps?.().has(toWatch.name) === false;
+								SSR ||
+								params.root === true || params.functional === true ||
+								ctx.getPassedProps?.().has(toWatch.name) === false;
 						}
 
 						if (canSkipWatching) {
@@ -359,12 +362,15 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 					let canSkipWatching = !watchInfo.immediate;
 
 					// We cannot observe props and attributes on a component if it is a root component, a functional component,
-					// or if it does not accept such parameters in the template
-					if (!canSkipWatching && toWatch.type === 'prop' || toWatch.type === 'attr') {
+					// or if it does not accept such parameters in the template.
+					// Also, prop watching does not work during SSR.
+					if (canSkipWatching && (toWatch.type === 'prop' || toWatch.type === 'attr')) {
+						const {ctx, ctx: {unsafe: {meta: {params}}}} = toWatch;
+
 						canSkipWatching =
-							meta.params.root === true ||
-							meta.params.functional !== true ||
-							toWatch.ctx.getPassedProps?.().has(toWatch.name) === false;
+							SSR ||
+							params.root === true || params.functional === true ||
+							ctx.getPassedProps?.().has(toWatch.name) === false;
 					}
 
 					if (canSkipWatching) {
