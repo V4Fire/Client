@@ -518,7 +518,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 					ctx.getPassedProps?.().has(info.name) === false;
 			}
 
-			if (!canSkipWatching) {
+			if (canSkipWatching) {
 				return () => undefined;
 			}
 
