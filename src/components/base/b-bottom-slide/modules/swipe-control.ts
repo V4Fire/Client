@@ -148,14 +148,21 @@ export default class SwipeControl extends Friend {
 	protected moveToClosest(respectDirection: boolean, isThresholdPassed: boolean): void {
 		const
 			{direction, ctx} = this,
-			{geometry} = ctx;
+			{geometry, async} = ctx;
 
 		if (ctx.heightMode === 'content') {
+			let
+				method: CanUndef<'prev' | 'next'>;
+
 			if (!respectDirection && isThresholdPassed) {
-				void ctx[geometry.contentHeight / 2 < geometry.offset ? 'next' : 'prev']();
+				method = geometry.contentHeight / 2 < geometry.offset ? 'next' : 'prev';
 
 			} else if (respectDirection) {
-				void ctx[direction > 0 ? 'next' : 'prev']();
+				method = direction > 0 ? 'next' : 'prev';
+			}
+
+			if (method != null) {
+				void async.promise(ctx[method]());
 			}
 
 		} else {
