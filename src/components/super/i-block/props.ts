@@ -317,4 +317,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 
 	@prop({type: Function, required: false})
 	override readonly getParent?: () => this['$parent'];
+
+	@prop({type: Function, required: false})
+	override readonly getPassedProps?: () => Set<string>;
 }

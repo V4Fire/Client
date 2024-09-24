@@ -123,6 +123,11 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			vnode = createVNode(name, attrs, isRegular ? slots : [], patchFlag, dynamicProps);
 
 		vnode.props ??= {};
+
+		let props: CanNull<Set<string>> = null;
+
+		vnode.props.getPassedProps ??= () => props ??= new Set(Object.keys(vnode.props!));
+
 		vnode.props.getRoot ??= this.$getRoot(this);
 
 		vnode.props.getParent ??= () => vnode.virtualParent?.value != null ?
