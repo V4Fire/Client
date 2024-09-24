@@ -95,6 +95,15 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			}
 		},
 
+		beforeCreate() {
+			const ctx = getComponentContext(this);
+			init.beforeCreateState(ctx, meta, {implementEventAPI: true});
+		},
+
+		created() {
+			init.createdState(getComponentContext(this));
+		},
+
 		setup(props: Dictionary, setupCtx: SetupContext) {
 			const internalInstance = getCurrentInstance();
 
@@ -108,8 +117,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 
 			// @ts-ignore (unsafe)
 			ctx['$renderEngine'] = {supports, proxyGetters, r, wrapAPI};
-
-			init.beforeCreateState(ctx, meta, {implementEventAPI: true});
 
 			if (SSR && ctx.canFunctional !== true) {
 				onServerPrefetch(() => {
@@ -126,7 +133,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 					return;
 				}
 
-				init.createdState(ctx);
 				init.beforeMountState(ctx);
 			});
 
