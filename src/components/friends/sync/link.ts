@@ -396,7 +396,7 @@ export function link<D = unknown, R = D>(
 	// We cannot observe props and attributes on a component if it is a root component, a functional component,
 	// or if it does not accept such parameters in the template.
 	// Also, prop watching does not work during SSR.
-	if (canSkipWatching && (srcInfo.type === 'prop' || srcInfo.type === 'attr')) {
+	if (canSkipWatching && srcInfo != null && (srcInfo.type === 'prop' || srcInfo.type === 'attr')) {
 		const {ctx, ctx: {unsafe: {meta, meta: {params}}}} = srcInfo;
 
 		canSkipWatching = SSR || params.root === true || params.functional === true;
