@@ -87,6 +87,8 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 	meta.component[SSR ? 'ssrRender' : 'render'] = Object.cast((ctx: object, ...args: unknown[]) => {
 		const {unsafe} = getComponentContext(ctx, true);
 
+		unsafe.$emit('[[RENDER]]');
+
 		const res = callRenderFunction();
 
 		// @ts-ignore (unsafe)

@@ -35,6 +35,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 		ctx = component.unsafe;
 
 	const {
+		async: $a,
 		globalName,
 		globalEmitter: $e,
 		state: $s,
@@ -91,7 +92,9 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 		await ctx.reload();
 	}));
 
-	function waitNextTickForReset(fn: Function) {
+	function waitNextTickForReset(rawFn: () => CanPromise<void>) {
+		const fn = $a.proxy(rawFn);
+
 		return async () => {
 			try {
 				await ctx.nextTick({label: $$.reset});

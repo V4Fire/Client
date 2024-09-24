@@ -261,9 +261,6 @@
 			< ${teleport ? 'span' : '?'}.i-block-helper.${self.name()} -teleport
 				< ${teleport ? 'teleport' : '?'} to = ${teleport}
 					< _ v-attrs = rootAttrs | ${rootAttrs|!html}
-						{{ void(vdom.saveRenderContext()) }}
-						{{ void(hydrateStyles('${self.name()}')) }}
-
 						/**
 						 * Generates a slot declaration by the specified parameters
 						 *
