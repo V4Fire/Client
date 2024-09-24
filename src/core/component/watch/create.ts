@@ -95,10 +95,15 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		// or if it does not accept such parameters in the template.
 		// Also, prop watching does not work during SSR.
 		if (info.type === 'prop' || info.type === 'attr') {
-			canSkipWatching =
-				SSR ||
-				isRoot || isFunctional ||
-				info.ctx.getPassedProps?.().has(info.name) === false;
+			canSkipWatching = SSR || isRoot || isFunctional;
+
+			if (!canSkipWatching) {
+				const
+					prop = info.ctx.meta.props[info.name],
+					propName = prop?.forceUpdate !== false ? info.name : `on:${info.name}`;
+
+				canSkipWatching = info.ctx.getPassedProps?.().has(propName) === false;
+			}
 		}
 
 		if (!canSkipWatching && isFunctional) {

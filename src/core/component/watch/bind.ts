@@ -295,12 +295,17 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						// or if it does not accept such parameters in the template.
 						// Also, prop watching does not work during SSR.
 						if (canSkipWatching && (toWatch.type === 'prop' || toWatch.type === 'attr')) {
-							const {ctx, ctx: {unsafe: {meta: {params}}}} = toWatch;
+							const {ctx, ctx: {unsafe: {meta, meta: {params}}}} = toWatch;
 
-							canSkipWatching =
-								SSR ||
-								params.root === true || params.functional === true ||
-								ctx.getPassedProps?.().has(toWatch.name) === false;
+							canSkipWatching = SSR || params.root === true || params.functional === true;
+
+							if (!canSkipWatching) {
+								const
+									prop = meta.props[toWatch.name],
+									propName = prop?.forceUpdate !== false ? toWatch.name : `on:${toWatch.name}`;
+
+								canSkipWatching = ctx.getPassedProps?.().has(propName) === false;
+							}
 
 						} else {
 							canSkipWatching = false;
@@ -368,12 +373,17 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 					// or if it does not accept such parameters in the template.
 					// Also, prop watching does not work during SSR.
 					if (canSkipWatching && (toWatch.type === 'prop' || toWatch.type === 'attr')) {
-						const {ctx, ctx: {unsafe: {meta: {params}}}} = toWatch;
+						const {ctx, ctx: {unsafe: {meta, meta: {params}}}} = toWatch;
 
-						canSkipWatching =
-							SSR ||
-							params.root === true || params.functional === true ||
-							ctx.getPassedProps?.().has(toWatch.name) === false;
+						canSkipWatching = SSR || params.root === true || params.functional === true;
+
+						if (!canSkipWatching) {
+							const
+								prop = meta.props[toWatch.name],
+								propName = prop?.forceUpdate !== false ? toWatch.name : `on:${toWatch.name}`;
+
+							canSkipWatching = ctx.getPassedProps?.().has(propName) === false;
+						}
 
 					} else {
 						canSkipWatching = false;

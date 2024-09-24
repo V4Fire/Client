@@ -509,13 +509,18 @@ export default abstract class iBlockBase extends iBlockFriends {
 			// or if it does not accept such parameters in the template.
 			// Also, prop watching does not work during SSR.
 			if (canSkipWatching && info != null && (info.type === 'prop' || info.type === 'attr')) {
-				const {ctx, ctx: {unsafe: {meta: {params}}}} = info;
+				const {ctx, ctx: {unsafe: {meta, meta: {params}}}} = info;
 
-				canSkipWatching =
-					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-					SSR ||
-					params.root === true || params.functional === true ||
-					ctx.getPassedProps?.().has(info.name) === false;
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				canSkipWatching = SSR || params.root === true || params.functional === true;
+
+				if (!canSkipWatching) {
+					const
+						prop = meta.props[info.name],
+						propName = prop?.forceUpdate !== false ? info.name : `on:${info.name}`;
+
+					canSkipWatching = ctx.getPassedProps?.().has(propName) === false;
+				}
 
 			} else {
 				canSkipWatching = false;

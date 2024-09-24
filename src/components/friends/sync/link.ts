@@ -397,12 +397,17 @@ export function link<D = unknown, R = D>(
 	// or if it does not accept such parameters in the template.
 	// Also, prop watching does not work during SSR.
 	if (canSkipWatching && (srcInfo.type === 'prop' || srcInfo.type === 'attr')) {
-		const {ctx, ctx: {unsafe: {meta: {params}}}} = srcInfo;
+		const {ctx, ctx: {unsafe: {meta, meta: {params}}}} = srcInfo;
 
-		canSkipWatching =
-			SSR ||
-			params.root === true || params.functional === true ||
-			ctx.getPassedProps?.().has(srcInfo.name) === false;
+		canSkipWatching = SSR || params.root === true || params.functional === true;
+
+		if (!canSkipWatching) {
+			const
+				prop = meta.props[srcInfo.name],
+				propName = prop?.forceUpdate !== false ? srcInfo.name : `on:${srcInfo.name}`;
+
+			canSkipWatching = ctx.getPassedProps?.().has(propName) === false;
+		}
 
 	} else {
 		canSkipWatching = false;
