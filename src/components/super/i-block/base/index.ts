@@ -14,6 +14,7 @@
 import symbolGenerator from 'core/symbol';
 
 import log, { LogMessageOptions } from 'core/log';
+import { isProxy } from 'core/object/watch';
 
 import type Async from 'core/async';
 
@@ -33,6 +34,7 @@ import {
 
 	component,
 	getComponentName,
+	getPropertyInfo,
 
 	bindRemoteWatchers,
 	isCustomWatcher,
@@ -494,6 +496,28 @@ export default abstract class iBlockBase extends iBlockFriends {
 		}
 
 		void this.lfc.execCbAfterComponentCreated(() => {
+			let info = Object.isString(path) ? getPropertyInfo(path, this) : null;
+
+			// TODO: Implement a more accurate check
+			if (info == null && !isProxy(path)) {
+				info = Object.cast(path);
+			}
+
+			let canSkipWatching = !opts.immediate;
+
+			// We cannot observe props and attributes on a component if it is a root component, a functional component,
+			// or if it does not accept such parameters in the template
+			if (!canSkipWatching && info != null && (info.type === 'prop' || info.type === 'attr')) {
+				canSkipWatching =
+					this.meta.params.root === true ||
+					this.isFunctional ||
+					info.ctx.getPassedProps?.().has(info.name) === false;
+			}
+
+			if (!canSkipWatching) {
+				return () => undefined;
+			}
+
 			let
 				// eslint-disable-next-line prefer-const
 				link: Nullable<CanArray<IdObject>>,

@@ -57,6 +57,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			info = getPropertyInfo(path, component);
 
 		} else {
+			// TODO: Implement a more accurate check
 			if (isProxy(path)) {
 				info = Object.cast({ctx: path});
 
@@ -88,9 +89,13 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 		const isDefinedPath = Object.size(info.path) > 0;
 
-		let canSkipWatching =
-			(isRoot || isFunctional) &&
-			(info.type === 'prop' || info.type === 'attr');
+		let canSkipWatching = false;
+
+		// We cannot observe props and attributes on a component if it is a root component, a functional component,
+		// or if it does not accept such parameters in the template
+		if (info.type === 'prop' || info.type === 'attr') {
+			canSkipWatching = isRoot || isFunctional || info.ctx.getPassedProps?.().has(info.name) === false;
+		}
 
 		if (!canSkipWatching && isFunctional) {
 			let field: Nullable<ComponentField>;

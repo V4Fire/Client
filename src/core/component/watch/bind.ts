@@ -283,30 +283,42 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							return;
 						}
 
-						/* eslint-disable prefer-const */
-
 						let
 							link: Nullable<EventId>,
 							unwatch: Nullable<Function>;
 
-						/* eslint-enable prefer-const */
-
-						const emitter: EventEmitterLikeP = (_, wrappedHandler) => {
-							handler = Object.cast(wrappedHandler);
-
-							$a.worker(() => {
-								if (link != null) {
-									$a.off(link);
-								}
-							}, asyncParams);
-
-							return () => unwatch?.();
-						};
-
-						link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(asyncParams, 'watchers'));
-
 						const toWatch = p.info ?? getPropertyInfo(watchPath, component);
-						unwatch = $watch.call(component, toWatch, watchInfo, handler);
+
+						let canSkipWatching = !watchInfo.immediate;
+
+						// We cannot observe props and attributes on a component if it is a root component, a functional component,
+						// or if it does not accept such parameters in the template
+						if (!canSkipWatching && toWatch.type === 'prop' || toWatch.type === 'attr') {
+							canSkipWatching =
+								meta.params.root === true ||
+								meta.params.functional !== true ||
+								toWatch.ctx.getPassedProps?.().has(toWatch.name) === false;
+						}
+
+						if (canSkipWatching) {
+							unwatch = () => undefined;
+
+						} else {
+							const emitter: EventEmitterLikeP = (_, wrappedHandler) => {
+								handler = Object.cast(wrappedHandler);
+
+								$a.worker(() => {
+									if (link != null) {
+										$a.off(link);
+									}
+								}, asyncParams);
+
+								return () => unwatch?.();
+							};
+
+							link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(asyncParams, 'watchers'));
+							unwatch = $watch.call(component, toWatch, watchInfo, handler);
+						}
 					}).catch(stderr);
 
 				} else {
@@ -338,30 +350,42 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						return;
 					}
 
-					/* eslint-disable prefer-const */
-
 					let
 						link: Nullable<EventId>,
 						unwatch: Nullable<Function>;
 
-					/* eslint-enable prefer-const */
-
-					const emitter: EventEmitterLikeP = (_, wrappedHandler) => {
-						handler = Object.cast(wrappedHandler);
-
-						$a.worker(() => {
-							if (link != null) {
-								$a.off(link);
-							}
-						}, asyncParams);
-
-						return () => unwatch?.();
-					};
-
-					link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(asyncParams, 'watchers'));
-
 					const toWatch = p.info ?? getPropertyInfo(watchPath, component);
-					unwatch = $watch.call(component, toWatch, watchInfo, handler);
+
+					let canSkipWatching = !watchInfo.immediate;
+
+					// We cannot observe props and attributes on a component if it is a root component, a functional component,
+					// or if it does not accept such parameters in the template
+					if (!canSkipWatching && toWatch.type === 'prop' || toWatch.type === 'attr') {
+						canSkipWatching =
+							meta.params.root === true ||
+							meta.params.functional !== true ||
+							toWatch.ctx.getPassedProps?.().has(toWatch.name) === false;
+					}
+
+					if (canSkipWatching) {
+						unwatch = () => undefined;
+
+					} else {
+						const emitter: EventEmitterLikeP = (_, wrappedHandler) => {
+							handler = Object.cast(wrappedHandler);
+
+							$a.worker(() => {
+								if (link != null) {
+									$a.off(link);
+								}
+							}, asyncParams);
+
+							return () => unwatch?.();
+						};
+
+						link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(asyncParams, 'watchers'));
+						unwatch = $watch.call(component, toWatch, watchInfo, handler);
+					}
 				}
 			});
 		}

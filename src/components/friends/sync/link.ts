@@ -247,6 +247,7 @@ export function link<D = unknown, R = D>(
 	getter?: LinkGetter<Sync['C'], D, R>
 ): CanUndef<R>;
 
+// eslint-disable-next-line complexity
 export function link<D = unknown, R = D>(
 	this: Sync,
 	path?: LinkDecl | AsyncWatchOptions | LinkGetter<Sync['C'], D>,
@@ -390,51 +391,64 @@ export function link<D = unknown, R = D>(
 		return resolveVal;
 	};
 
-	if (getter != null && (getter.length > 1 || getter['originalLength'] > 1)) {
-		ctx.watch(srcInfo ?? normalizedPath, resolvedOpts, (val: unknown, oldVal: unknown, ...args: unknown[]) => {
-			if (customWatcher) {
-				oldVal = undefined;
+	let canSkipWatching = !resolvedOpts.immediate;
 
-			} else {
-				if (args.length === 0 && Object.isArray(val) && val.length > 0) {
-					const mutation = <[unknown, unknown]>val[val.length - 1];
+	// We cannot observe props and attributes on a component if it is a root component, a functional component,
+	// or if it does not accept such parameters in the template
+	if (!canSkipWatching && srcInfo.type === 'prop' || srcInfo.type === 'attr') {
+		canSkipWatching =
+			meta.params.root === true ||
+			ctx.isFunctional ||
+			srcInfo.ctx.getPassedProps?.().has(srcInfo.name) === false;
+	}
 
-					val = mutation[0];
-					oldVal = mutation[1];
-				}
-
-				if (Object.isTruly(compareNewAndOldValue.call(this, val, oldVal, destPath, resolvedOpts))) {
-					return;
-				}
-			}
-
-			sync(val, oldVal);
-		});
-
-	} else {
-		ctx.watch(srcInfo ?? normalizedPath, resolvedOpts, (val: unknown, ...args: unknown[]) => {
-			let
-				oldVal: unknown = undefined;
-
-			if (!customWatcher) {
-				if (args.length === 0 && Object.isArray(val) && val.length > 0) {
-					const
-						mutation = <[unknown, unknown]>val[val.length - 1];
-
-					val = mutation[0];
-					oldVal = mutation[1];
+	if (!canSkipWatching) {
+		if (getter != null && (getter.length > 1 || getter['originalLength'] > 1)) {
+			ctx.watch(srcInfo ?? normalizedPath, resolvedOpts, (val: unknown, oldVal: unknown, ...args: unknown[]) => {
+				if (customWatcher) {
+					oldVal = undefined;
 
 				} else {
-					oldVal ??= args[0];
+					if (args.length === 0 && Object.isArray(val) && val.length > 0) {
+						const mutation = <[unknown, unknown]>val[val.length - 1];
+
+						val = mutation[0];
+						oldVal = mutation[1];
+					}
+
+					if (Object.isTruly(compareNewAndOldValue.call(this, val, oldVal, destPath, resolvedOpts))) {
+						return;
+					}
 				}
 
-				if (Object.isTruly(compareNewAndOldValue.call(this, val, oldVal, destPath, resolvedOpts))) {
-					return;
-				}
-			}
+				sync(val, oldVal);
+			});
 
-			sync(val, oldVal);
-		});
+		} else {
+			ctx.watch(srcInfo ?? normalizedPath, resolvedOpts, (val: unknown, ...args: unknown[]) => {
+				let
+					oldVal: unknown = undefined;
+
+				if (!customWatcher) {
+					if (args.length === 0 && Object.isArray(val) && val.length > 0) {
+						const
+							mutation = <[unknown, unknown]>val[val.length - 1];
+
+						val = mutation[0];
+						oldVal = mutation[1];
+
+					} else {
+						oldVal ??= args[0];
+					}
+
+					if (Object.isTruly(compareNewAndOldValue.call(this, val, oldVal, destPath, resolvedOpts))) {
+						return;
+					}
+				}
+
+				sync(val, oldVal);
+			});
+		}
 	}
 
 	{
