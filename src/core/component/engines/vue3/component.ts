@@ -100,10 +100,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			init.beforeCreateState(ctx, meta, {implementEventAPI: true});
 		},
 
-		created() {
-			init.createdState(getComponentContext(this));
-		},
-
 		setup(props: Dictionary, setupCtx: SetupContext) {
 			const internalInstance = getCurrentInstance();
 
@@ -133,6 +129,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 					return;
 				}
 
+				init.createdState(ctx);
 				init.beforeMountState(ctx);
 			});
 
@@ -157,7 +154,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 					return;
 				}
 
-				init.beforeUpdateState(ctx);
+				init.updatedState(ctx);
 			});
 
 			onBeforeUnmount(() => {
