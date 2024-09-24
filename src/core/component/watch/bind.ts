@@ -301,6 +301,9 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 								SSR ||
 								params.root === true || params.functional === true ||
 								ctx.getPassedProps?.().has(toWatch.name) === false;
+
+						} else {
+							canSkipWatching = false;
 						}
 
 						if (canSkipWatching) {
@@ -371,6 +374,9 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							SSR ||
 							params.root === true || params.functional === true ||
 							ctx.getPassedProps?.().has(toWatch.name) === false;
+
+					} else {
+						canSkipWatching = false;
 					}
 
 					if (canSkipWatching) {

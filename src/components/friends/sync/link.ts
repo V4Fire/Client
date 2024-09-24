@@ -403,6 +403,9 @@ export function link<D = unknown, R = D>(
 			SSR ||
 			params.root === true || params.functional === true ||
 			ctx.getPassedProps?.().has(srcInfo.name) === false;
+
+	} else {
+		canSkipWatching = false;
 	}
 
 	if (!canSkipWatching) {

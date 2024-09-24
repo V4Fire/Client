@@ -516,6 +516,9 @@ export default abstract class iBlockBase extends iBlockFriends {
 					SSR ||
 					params.root === true || params.functional === true ||
 					ctx.getPassedProps?.().has(info.name) === false;
+
+			} else {
+				canSkipWatching = false;
 			}
 
 			if (canSkipWatching) {
