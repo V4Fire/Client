@@ -19,8 +19,7 @@ import iBlock from 'components/super/i-block/i-block';
 const
 	$$ = symbolGenerator();
 
-let
-	baseInitLoad;
+let baseInitLoad;
 
 /**
  * Initializes the listening of global application events for the component
