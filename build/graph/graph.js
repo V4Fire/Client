@@ -198,7 +198,7 @@ async function buildProjectGraph() {
 
 			if (!isParent && tpl && !componentsToIgnore.test(name)) {
 				const entry = getEntryPath(tpl);
-				str += invokeByRegisterEvent(`Object.assign(TPLS, require('./${entry}'));\n`, name);
+				str += `Object.assign(TPLS, require('./${entry}'));\n`;
 			}
 
 			return str;
@@ -223,7 +223,7 @@ async function buildProjectGraph() {
 						if (!usedLibs.has(el)) {
 							usedLibs.add(el);
 							
-							str += invokeByRegisterEvent(`require('${el}');\n`, name);
+							str += invokeByRegisterEvent(`require('${el}');\n`, name); // ok
 						}
 					});
 				}
@@ -231,6 +231,10 @@ async function buildProjectGraph() {
 				const needRequireAsLogic = component ?
 					logic :
 					/^$|^\.(?:js|ts)(?:\?|$)/.test(path.extname(name));
+
+				const isComponentPath = (path) =>
+					new RegExp(`\\/(${validators.blockTypeList.join('|')})-.+?\\/?`)
+					.test(path);
 
 				if (needRequireAsLogic) {
 					let
@@ -246,17 +250,19 @@ async function buildProjectGraph() {
 						entry = path.resolve(tmpEntries, '../', name);
 					}
 
-					let
-						importScript;
+					const entryPath = getEntryPath(entry);
+					let importScript;
 					
 					if (webpack.ssr) {
-						importScript = `Object.assign(module.exports, require('${getEntryPath(entry)}'));\n`;
+						importScript = `Object.assign(module.exports, require('${entryPath}'));\n`;
 
 					} else {
-						importScript = `require('${getEntryPath(entry)}');\n`;
+						importScript = `require('${entryPath}');\n`;
 					}
 
-					str += importScript;
+					str += !isComponentPath(entryPath) ?
+						importScript :
+						invokeByRegisterEvent(importScript, name);
 				}
 
 				return str;
