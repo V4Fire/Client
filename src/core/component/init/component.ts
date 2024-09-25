@@ -54,11 +54,11 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
 			regParentComponent.forEach((reg) => reg());
 			delete componentRegInitializers[parentName];
 
-			initEmitter.emit(`registerComponent.${component?.name || parentName}`);
-
 			return true;
 		}
 	}
+
+	initEmitter.emit(`registerComponent.${component?.name || parentName}`);
 
 	return false;
 }

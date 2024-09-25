@@ -198,21 +198,20 @@ async function buildProjectGraph() {
 
 			if (!isParent && tpl && !componentsToIgnore.test(name)) {
 				const entry = getEntryPath(tpl);
-				str += `Object.assign(TPLS, require('./${entry}'));\n`;
+				str += invokeByRegisterEvent(`Object.assign(TPLS, require('./${entry}'));\n`, name);
 			}
 
 			return str;
 		});
 
 		if (tplContent) {
-			const tplsStore = 'globalThis.TPLS = globalThis.TPLS || Object.create(null)';
+			const tplsStore = 'globalThis.TPLS = globalThis.TPLS || Object.create(null);\n';
 			tplContent = [webpackRuntime, tplsStore, tplContent, ''].join('\n');
 		}
 
 		{
 			const
-				entrySrc = path.join(tmpEntries, `${name}.js`),
-				componentsRequires = new Map();
+				entrySrc = path.join(tmpEntries, `${name}.js`);
 
 			let content = await $C(list).async.to('').reduce(async (str, {name}) => {
 				const
@@ -224,12 +223,7 @@ async function buildProjectGraph() {
 						if (!usedLibs.has(el)) {
 							usedLibs.add(el);
 							
-							if (!componentsRequires.has(el)) {
-								componentsRequires.set(name, new Set([`require('${el}');\n`]));
-							} else {
-								componentsRequires.get(name).add(`require('${el}');\n`);
-							}
-							// str += invokeByRegisterEvent(`require('${el}');\n`, name);
+							str += invokeByRegisterEvent(`require('${el}');\n`, name);
 						}
 					});
 				}
@@ -255,10 +249,6 @@ async function buildProjectGraph() {
 					let
 						importScript;
 					
-					const
-						entryPath = getEntryPath(entry),
-						isComponentPath = new RegExp(`\\/(${validators.blockTypeList.join('|')})-.+?\\/?`);
-					
 					if (webpack.ssr) {
 						importScript = `Object.assign(module.exports, require('${getEntryPath(entry)}'));\n`;
 
@@ -266,23 +256,7 @@ async function buildProjectGraph() {
 						importScript = `require('${getEntryPath(entry)}');\n`;
 					}
 
-					if (!componentsRequires.has(name) && isComponentPath.test(entryPath)) {
-						componentsRequires.set(name, new Set([importScript]));
-
-					} else if (componentsRequires.has(name) && isComponentPath.test(entryPath)) {
-						componentsRequires.get(name).add(importScript);
-
-					} else {
-						str += importScript;
-					}
-					// str += isComponentPath.test(entryPath) ? invokeByRegisterEvent(importScript, name) : importScript;
-				}
-
-				console.log(componentsRequires);
-
-				for (const [componentName, importsSet] of componentsRequires) {
-					const importsStr = [...importsSet].join('');
-					str += invokeByRegisterEvent(importsStr, componentName);
+					str += importScript;
 				}
 
 				return str;

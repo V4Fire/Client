@@ -128,8 +128,8 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 			imports[0] = `TPLS['${resourceName}'] ? ${(imports[0])} : ${imports[0]}.then(${decl}, function (err) { stderr(err); return ${decl}(); })`;
 		}
 
-		return invokeByRegisterEvent(`Promise.all([${imports.join(',')}])`, resourceName);
-		// return `Promise.all([${imports.join(',')}])`;
+		// return invokeByRegisterEvent(`Promise.all([${imports.join(',')}])`, resourceName); вызывает синтакс. ошибки, некоторые результаты импортов присваиваются переменным :(
+		return `Promise.all([${imports.join(',')}])`;
 	});
 };
 
