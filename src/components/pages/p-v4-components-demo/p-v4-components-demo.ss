@@ -12,7 +12,7 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
-		/// < b-button
-		/// 	btn
+		< b-button
+			btn
 		< template v-if = stage === 'teleports'
 			< b-bottom-slide

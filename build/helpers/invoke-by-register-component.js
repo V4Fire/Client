@@ -7,7 +7,11 @@
  * @returns {String}
  */
 exports.invokeByRegisterEvent = function(script, componentName) {
-	return `\n\n
+	if (script?.trim()?.length == 0) {
+		return script;
+	}
+
+	return `\n
 		(function() {
 			const {initEmitter} = require('core/component/event');
 
