@@ -466,7 +466,9 @@ export default abstract class iBlockBase extends iBlockFriends {
 			return;
 		}
 
-		const {async: $a} = this;
+		const that = this;
+
+		const {meta: {hooks}, async: $a} = this;
 
 		let
 			handler: RawWatchHandler<this, T>,
@@ -497,8 +499,15 @@ export default abstract class iBlockBase extends iBlockFriends {
 			return;
 		}
 
-		void this.lfc.execCbAfterComponentCreated(() => {
-			let info = Object.isString(path) ? getPropertyInfo(path, this) : null;
+		if (this.lfc.isBeforeCreate()) {
+			hooks['before:created'].push({fn: initWatcher});
+
+		} else {
+			initWatcher();
+		}
+
+		function initWatcher() {
+			let info = Object.isString(path) ? getPropertyInfo(path, that) : null;
 
 			// TODO: Implement a more accurate check
 			if (info == null && !isProxy(path)) {
@@ -513,7 +522,6 @@ export default abstract class iBlockBase extends iBlockFriends {
 			if (canSkipWatching && info != null && (info.type === 'prop' || info.type === 'attr')) {
 				const {ctx, ctx: {unsafe: {meta, meta: {params}}}} = info;
 
-				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				canSkipWatching = SSR || params.root === true || params.functional === true;
 
 				if (!canSkipWatching) {
@@ -529,7 +537,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 			}
 
 			if (canSkipWatching) {
-				return () => undefined;
+				return;
 			}
 
 			let
@@ -539,7 +547,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 				// eslint-disable-next-line prefer-const
 				unwatch: Nullable<Function>;
 
-			const emitter: Function = (_: any, wrappedHandler: RawWatchHandler<this, T>) => {
+			const emitter: Function = (_: any, wrappedHandler: RawWatchHandler<typeof that, T>) => {
 				wrappedHandler['originalLength'] = handler['originalLength'] ?? handler.length;
 				handler = wrappedHandler;
 
@@ -553,8 +561,8 @@ export default abstract class iBlockBase extends iBlockFriends {
 			};
 
 			link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(opts, 'watchers'));
-			unwatch = this.$watch(Object.cast(path), opts, handler);
-		});
+			unwatch = that.$watch(Object.cast(path), opts, handler);
+		}
 	}
 
 	/**
