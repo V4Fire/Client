@@ -35,6 +35,8 @@ import {
 
 	onErrorCaptured,
 	onServerPrefetch,
+
+	onRenderTracked,
 	onRenderTriggered
 
 } from 'vue';
@@ -95,8 +97,12 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			}
 		},
 
-		beforeCreate() {
+		beforeCreate(): void {
 			const ctx = getComponentContext(this);
+
+			// @ts-ignore (unsafe)
+			ctx['$renderEngine'] = {supports, proxyGetters, r, wrapAPI};
+
 			init.beforeCreateState(ctx, meta, {implementEventAPI: true});
 		},
 
@@ -110,9 +116,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			({ctx, unsafe} = getComponentContext(internalInstance!['proxy']!, true));
 
 			const {hooks} = meta;
-
-			// @ts-ignore (unsafe)
-			ctx['$renderEngine'] = {supports, proxyGetters, r, wrapAPI};
 
 			if (SSR && ctx.canFunctional !== true) {
 				onServerPrefetch(() => {
@@ -177,25 +180,32 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 				unsafe = null;
 			});
 
-			if (hooks.errorCaptured.length > 0) {
-				onErrorCaptured((...args) => {
+			onErrorCaptured((...args) => {
+				if (ctx == null) {
+					return;
+				}
+
+				init.errorCapturedState(ctx, ...args);
+			});
+
+			// The capturing of this hook slows down the development build of the application, so we enable it optionally
+			if (hooks.renderTracked.length > 0) {
+				onRenderTracked((...args) => {
 					if (ctx == null) {
 						return;
 					}
 
-					init.errorCapturedState(ctx, ...args);
+					init.renderTrackedState(ctx, ...args);
 				});
 			}
 
-			if (hooks.renderTriggered.length > 0) {
-				onRenderTriggered((...args) => {
-					if (ctx == null) {
-						return;
-					}
+			onRenderTriggered((...args) => {
+				if (ctx == null) {
+					return;
+				}
 
-					init.renderTriggeredState(ctx, ...args);
-				});
-			}
+				init.renderTriggeredState(ctx, ...args);
+			});
 
 			return meta.methods.setup?.fn(props, setupCtx);
 		}
