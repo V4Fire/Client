@@ -169,7 +169,9 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 */
 	@computed({dependencies: []})
 	get rootAttrs(): Dictionary {
-		return this.field.getFieldsStore().rootAttrsStore;
+		return this.meta.fields.rootAttrsStore != null ?
+			this.field.getFieldsStore().rootAttrsStore :
+			this.rootAttrsStore;
 	}
 
 	/**

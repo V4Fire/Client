@@ -15,13 +15,13 @@ Changelog
 
 * Added the `partial` parameter for the declaration of components consisting of multiple classes
 
-## 4.0.0-beta.?? (2024-09-??)
+## v4.0.0-beta.137 (2024-09-24)
 
 #### :house: Internal
 
 * Added a [[RENDER]] event before calling the component's render function
 
-## 4.0.0-beta.71 (2024-03-12)
+## v4.0.0-beta.71 (2024-03-12)
 
 #### :rocket: New Feature
 

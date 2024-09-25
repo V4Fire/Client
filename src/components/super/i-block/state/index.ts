@@ -163,8 +163,16 @@ export default abstract class iBlockState extends iBlockMods {
 	 */
 	@computed({cache: false, dependencies: []})
 	get componentStatus(): ComponentStatus {
+		if (this.shadowComponentStatusStore != null) {
+			return this.shadowComponentStatusStore;
+		}
+
+		const status = this.meta.fields.componentStatusStore != null ?
+			this.field.getFieldsStore().componentStatusStore :
+			this.componentStatusStore;
+
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		return this.shadowComponentStatusStore ?? this.field.getFieldsStore().componentStatusStore ?? 'unloaded';
+		return status ?? 'unloaded';
 	}
 
 	/**
@@ -196,7 +204,13 @@ export default abstract class iBlockState extends iBlockMods {
 
 		} else {
 			this.shadowComponentStatusStore = undefined;
-			this.field.getFieldsStore().componentStatusStore = value;
+
+			if (this.meta.fields.componentStatusStore != null) {
+				this.field.getFieldsStore().componentStatusStore = value;
+
+			} else {
+				this.componentStatusStore = value;
+			}
 
 			if (this.isReady && this.dependencies.length > 0) {
 				void this.forceUpdate();
@@ -245,7 +259,9 @@ export default abstract class iBlockState extends iBlockMods {
 	 */
 	@computed({cache: false, dependencies: []})
 	get stage(): CanUndef<Stage> {
-		return this.field.getFieldsStore().stageStore;
+		return this.meta.fields.stageStore != null ?
+			this.field.getFieldsStore().stageStore :
+			this.stageStore;
 	}
 
 	/**
@@ -265,7 +281,13 @@ export default abstract class iBlockState extends iBlockMods {
 		}
 
 		this.async.clearAll({group: this.stageGroup});
-		this.field.getFieldsStore().stageStore = value;
+
+		if (this.meta.fields.stageStore != null) {
+			this.field.getFieldsStore().stageStore = value;
+
+		} else {
+			this.stageStore = value;
+		}
 
 		if (value != null) {
 			this.emit(`stage:${value}`, value, oldValue);
