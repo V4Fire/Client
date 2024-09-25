@@ -17,6 +17,16 @@ Changelog
 * Modules for friend classes are now loaded lazily
 * Performance improvements
 
+## v4.0.0-beta.137 (2024-09-24)
+
+#### :bug: Bug Fix
+
+* Fix the bug when the global event listener might be called after the component has been destroyed
+
+#### :house: Internal
+
+* Removed method calls from the template
+
 ## v4.0.0-beta.117 (2024-07-31)
 
 #### :house: Internal
