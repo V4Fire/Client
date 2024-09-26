@@ -63,10 +63,16 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 
 			} else {
 				if (isESImport) {
-					decl = `import(${magicComments} '${fullPath}')`;
+					// decl = `import(${magicComments} '${fullPath}')`;
+					decl = `new Promise((resolve) => {
+						${invokeByRegisterEvent(`resolve(import(${magicComments} '${fullPath}'))`, resourceName)}
+					})`;
 
 				} else {
-					decl = `new Promise(function (r) { return r(require('${fullPath}')); })`;
+					// decl = `new Promise(function (r) { return r(require('${fullPath}')); })`; // сделать резолв внутри обработчика!!!!!!!
+					decl = `new Promise((resolve) => {
+						${invokeByRegisterEvent(`resolve(require('${fullPath}'))`, resourceName)}
+					})`;
 				}
 
 				decl += '.catch(function (err) { stderr(err) })';
@@ -78,7 +84,7 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 		{
 			const
 				tplPath = `${fullPath}.ss`,
-				regTpl = `function (module) { TPLS['${resourceName}'] = module${isESImport ? '.default' : ''}['${resourceName}']; return module; }`;
+				regTpl = `function (module) { ${invokeByRegisterEvent(`TPLS['${resourceName}'] = module${isESImport ? '.default' : ''}['${resourceName}'];`, resourceName)} return module; }`;
 
 			let
 				decl;
@@ -111,9 +117,15 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 
 			if (ssr || isESImport) {
 				decl = `import(${magicComments} '${stylPath}')`;
+				// decl = `new Promise((resolve) => {
+				// 	${invokeByRegisterEvent(`resolve(import(${magicComments} '${stylPath}'))`, resourceName)}
+				// })`;
 
 			} else {
 				decl = `new Promise(function (r) { return r(require('${stylPath}')); })`;
+				// decl = `new Promise((resolve) => {
+				// 	${invokeByRegisterEvent(`resolve(require('${stylPath}'))`, resourceName)}
+				// })`;
 			}
 
 			if (ssr) {
@@ -128,7 +140,7 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 			imports[0] = `TPLS['${resourceName}'] ? ${(imports[0])} : ${imports[0]}.then(${decl}, function (err) { stderr(err); return ${decl}(); })`;
 		}
 
-		// return invokeByRegisterEvent(`Promise.all([${imports.join(',')}])`, resourceName); вызывает синтакс. ошибки, некоторые результаты импортов присваиваются переменным :(
+		// return invokeByRegisterEvent(`Promise.all([${imports.join(',')}])`, resourceName); //вызывает синтакс. ошибки, некоторые результаты импортов присваиваются переменным :(
 		return `Promise.all([${imports.join(',')}])`;
 	});
 };
