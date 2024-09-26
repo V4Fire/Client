@@ -25,7 +25,7 @@ export function canSkipWatching(
 	propInfo: Nullable<PropertyInfo>,
 	opts?: Nullable<WatchOptions>
 ): boolean {
-	if (propInfo == null || propInfo.type === 'mounted') {
+	if (propInfo == null || !('type' in propInfo) || propInfo.type === 'mounted') {
 		return false;
 	}
 
@@ -33,6 +33,11 @@ export function canSkipWatching(
 
 	if (skipWatching) {
 		const {ctx, ctx: {unsafe: {meta, meta: {params}}}} = propInfo;
+
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		if (meta == null || params == null) {
+			return false;
+		}
 
 		const isFunctional = params.functional === true;
 
