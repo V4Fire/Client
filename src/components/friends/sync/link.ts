@@ -247,7 +247,6 @@ export function link<D = unknown, R = D>(
 	getter?: LinkGetter<Sync['C'], D, R>
 ): CanUndef<R>;
 
-// eslint-disable-next-line complexity
 export function link<D = unknown, R = D>(
 	this: Sync,
 	path?: LinkDecl | AsyncWatchOptions | LinkGetter<Sync['C'], D>,
