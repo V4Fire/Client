@@ -15,7 +15,7 @@ import { tiedWatchers, watcherInitializer } from 'core/component/watch/const';
 import { cloneWatchValue } from 'core/component/watch/clone';
 import { attachDynamicWatcher, canSkipWatching } from 'core/component/watch/helpers';
 
-import type { ComponentMeta, ComponentField } from 'core/component/meta';
+import type { ComponentMeta } from 'core/component/meta';
 import type { ComponentInterface, WatchPath, WatchOptions, RawWatchHandler } from 'core/component/interface';
 
 /**
@@ -85,28 +85,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			isFunctional = SSR || !isRoot && ctxParams.functional === true;
 		}
 
-		let skipWatching = canSkipWatching(info);
-
-		if (!skipWatching && isFunctional) {
-			let field: Nullable<ComponentField>;
-
-			switch (info.type) {
-				case 'system':
-					field = meta?.systemFields[info.name];
-					break;
-
-				case 'field':
-					field = meta?.fields[info.name];
-					break;
-
-				default:
-					// Do nothing
-			}
-
-			if (field != null) {
-				skipWatching = field.functional === false || field.functionalWatching === false;
-			}
-		}
+		const skipWatching = canSkipWatching(info);
 
 		const
 			isAccessor = Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor),

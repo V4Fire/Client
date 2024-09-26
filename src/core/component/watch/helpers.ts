@@ -11,47 +11,69 @@ import watch, { Watcher, WatchOptions, MultipleWatchHandler } from 'core/object/
 import type { PropertyInfo } from 'core/component/reflect';
 import { dynamicHandlers } from 'core/component/watch/const';
 
-import type { ComponentInterface } from 'core/component/interface';
+import type { ComponentInterface, ComponentField } from 'core/component/interface';
 import type { DynamicHandlers } from 'core/component/watch/interface';
 
 /**
  * Returns true if initialization of observation for the given property can be skipped.
  * For example, if it is a prop of a functional component or a prop that was not passed in the template, etc.
  *
- * @param property - the property information object
+ * @param propInfo - the property information object
  * @param [opts] - additional observation options
  */
 export function canSkipWatching(
-	property: Nullable<PropertyInfo>,
+	propInfo: Nullable<PropertyInfo>,
 	opts?: Nullable<WatchOptions>
 ): boolean {
-	if (property == null) {
+	if (propInfo == null || propInfo.type === 'mounted') {
 		return false;
 	}
 
-	let canSkipWatching = opts?.immediate !== true;
+	let skipWatching = opts?.immediate !== true;
 
-	// We cannot observe props and attributes on a component if it is a root component, a functional component,
-	// or if it does not accept such parameters in the template.
-	// Also, prop watching does not work during SSR.
-	if (canSkipWatching && (property.type === 'prop' || property.type === 'attr')) {
-		const {ctx, ctx: {unsafe: {meta, meta: {params}}}} = property;
+	if (skipWatching) {
+		const {ctx, ctx: {unsafe: {meta, meta: {params}}}} = propInfo;
 
-		canSkipWatching = SSR || params.root === true || params.functional === true;
+		const isFunctional = params.functional === true;
 
-		if (!canSkipWatching) {
-			const
-				prop = meta.props[property.name],
-				propName = prop?.forceUpdate !== false ? property.name : `on:${property.name}`;
+		if (propInfo.type === 'prop' || propInfo.type === 'attr') {
+			skipWatching = SSR || params.root === true || isFunctional;
 
-			canSkipWatching = ctx.getPassedProps?.().has(propName) === false;
+			if (!skipWatching) {
+				const
+					prop = meta.props[propInfo.name],
+					propName = prop?.forceUpdate !== false ? propInfo.name : `on:${propInfo.name}`;
+
+				skipWatching = ctx.getPassedProps?.().has(propName) === false;
+			}
+
+		} else {
+			skipWatching = false;
 		}
 
-	} else {
-		canSkipWatching = false;
+		if (!skipWatching && isFunctional) {
+			let field: Nullable<ComponentField>;
+
+			switch (propInfo.type) {
+				case 'system':
+					field = meta.systemFields[propInfo.name];
+					break;
+
+				case 'field':
+					field = meta.fields[propInfo.name];
+					break;
+
+				default:
+					// Do nothing
+			}
+
+			if (field != null) {
+				skipWatching = field.functional === false || field.functionalWatching === false;
+			}
+		}
 	}
 
-	return canSkipWatching;
+	return skipWatching;
 }
 
 /**
