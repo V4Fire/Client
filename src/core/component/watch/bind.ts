@@ -11,6 +11,7 @@ import { getPropertyInfo } from 'core/component/reflect';
 
 import { beforeHooks } from 'core/component/const';
 import { isCustomWatcher, customWatcherRgxp } from 'core/component/watch/const';
+import { canSkipWatching } from 'core/component/watch/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
 import type { BindRemoteWatchersParams } from 'core/component/watch/interface';
@@ -283,53 +284,34 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							return;
 						}
 
+						const info = p.info ?? getPropertyInfo(watchPath, component);
+
+						if (canSkipWatching(info, watchInfo)) {
+							return;
+						}
+
+						/* eslint-disable prefer-const */
+
 						let
 							link: Nullable<EventId>,
 							unwatch: Nullable<Function>;
 
-						const toWatch = p.info ?? getPropertyInfo(watchPath, component);
+						/* eslint-enable prefer-const */
 
-						let canSkipWatching = !watchInfo.immediate;
+						const emitter: EventEmitterLikeP = (_, wrappedHandler) => {
+							handler = Object.cast(wrappedHandler);
 
-						// We cannot observe props and attributes on a component if it is a root component, a functional component,
-						// or if it does not accept such parameters in the template.
-						// Also, prop watching does not work during SSR.
-						if (canSkipWatching && (toWatch.type === 'prop' || toWatch.type === 'attr')) {
-							const {ctx, ctx: {unsafe: {meta, meta: {params}}}} = toWatch;
+							$a.worker(() => {
+								if (link != null) {
+									$a.off(link);
+								}
+							}, asyncParams);
 
-							canSkipWatching = SSR || params.root === true || params.functional === true;
+							return () => unwatch?.();
+						};
 
-							if (!canSkipWatching) {
-								const
-									prop = meta.props[toWatch.name],
-									propName = prop?.forceUpdate !== false ? toWatch.name : `on:${toWatch.name}`;
-
-								canSkipWatching = ctx.getPassedProps?.().has(propName) === false;
-							}
-
-						} else {
-							canSkipWatching = false;
-						}
-
-						if (canSkipWatching) {
-							unwatch = () => undefined;
-
-						} else {
-							const emitter: EventEmitterLikeP = (_, wrappedHandler) => {
-								handler = Object.cast(wrappedHandler);
-
-								$a.worker(() => {
-									if (link != null) {
-										$a.off(link);
-									}
-								}, asyncParams);
-
-								return () => unwatch?.();
-							};
-
-							link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(asyncParams, 'watchers'));
-							unwatch = $watch.call(component, toWatch, watchInfo, handler);
-						}
+						link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(asyncParams, 'watchers'));
+						unwatch = $watch.call(component, info, watchInfo, handler);
 					}).catch(stderr);
 
 				} else {
@@ -361,53 +343,34 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						return;
 					}
 
+					const info = p.info ?? getPropertyInfo(watchPath, component);
+
+					if (canSkipWatching(info, watchInfo)) {
+						return;
+					}
+
+					/* eslint-disable prefer-const */
+
 					let
 						link: Nullable<EventId>,
 						unwatch: Nullable<Function>;
 
-					const toWatch = p.info ?? getPropertyInfo(watchPath, component);
+					/* eslint-enable prefer-const */
 
-					let canSkipWatching = !watchInfo.immediate;
+					const emitter: EventEmitterLikeP = (_, wrappedHandler) => {
+						handler = Object.cast(wrappedHandler);
 
-					// We cannot observe props and attributes on a component if it is a root component, a functional component,
-					// or if it does not accept such parameters in the template.
-					// Also, prop watching does not work during SSR.
-					if (canSkipWatching && (toWatch.type === 'prop' || toWatch.type === 'attr')) {
-						const {ctx, ctx: {unsafe: {meta, meta: {params}}}} = toWatch;
+						$a.worker(() => {
+							if (link != null) {
+								$a.off(link);
+							}
+						}, asyncParams);
 
-						canSkipWatching = SSR || params.root === true || params.functional === true;
+						return () => unwatch?.();
+					};
 
-						if (!canSkipWatching) {
-							const
-								prop = meta.props[toWatch.name],
-								propName = prop?.forceUpdate !== false ? toWatch.name : `on:${toWatch.name}`;
-
-							canSkipWatching = ctx.getPassedProps?.().has(propName) === false;
-						}
-
-					} else {
-						canSkipWatching = false;
-					}
-
-					if (canSkipWatching) {
-						unwatch = () => undefined;
-
-					} else {
-						const emitter: EventEmitterLikeP = (_, wrappedHandler) => {
-							handler = Object.cast(wrappedHandler);
-
-							$a.worker(() => {
-								if (link != null) {
-									$a.off(link);
-								}
-							}, asyncParams);
-
-							return () => unwatch?.();
-						};
-
-						link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(asyncParams, 'watchers'));
-						unwatch = $watch.call(component, toWatch, watchInfo, handler);
-					}
+					link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(asyncParams, 'watchers'));
+					unwatch = $watch.call(component, info, watchInfo, handler);
 				}
 			});
 		}

@@ -36,6 +36,7 @@ import {
 	getComponentName,
 	getPropertyInfo,
 
+	canSkipWatching,
 	bindRemoteWatchers,
 	isCustomWatcher,
 
@@ -514,29 +515,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 				info = Object.cast(path);
 			}
 
-			let canSkipWatching = !opts.immediate;
-
-			// We cannot observe props and attributes on a component if it is a root component, a functional component,
-			// or if it does not accept such parameters in the template.
-			// Also, prop watching does not work during SSR.
-			if (canSkipWatching && info != null && (info.type === 'prop' || info.type === 'attr')) {
-				const {ctx, ctx: {unsafe: {meta, meta: {params}}}} = info;
-
-				canSkipWatching = SSR || params.root === true || params.functional === true;
-
-				if (!canSkipWatching) {
-					const
-						prop = meta.props[info.name],
-						propName = prop?.forceUpdate !== false ? info.name : `on:${info.name}`;
-
-					canSkipWatching = ctx.getPassedProps?.().has(propName) === false;
-				}
-
-			} else {
-				canSkipWatching = false;
-			}
-
-			if (canSkipWatching) {
+			if (canSkipWatching(info, opts)) {
 				return;
 			}
 

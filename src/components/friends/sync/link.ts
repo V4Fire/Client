@@ -7,7 +7,7 @@
  */
 
 import { isProxy } from 'core/object/watch';
-import { getPropertyInfo, isBinding, isCustomWatcher, PropertyInfo } from 'core/component';
+import { getPropertyInfo, canSkipWatching, isBinding, isCustomWatcher, PropertyInfo } from 'core/component';
 
 import type iBlock from 'components/super/i-block/i-block';
 import type Sync from 'components/friends/sync/class';
@@ -391,29 +391,7 @@ export function link<D = unknown, R = D>(
 		return resolveVal;
 	};
 
-	let canSkipWatching = !resolvedOpts.immediate;
-
-	// We cannot observe props and attributes on a component if it is a root component, a functional component,
-	// or if it does not accept such parameters in the template.
-	// Also, prop watching does not work during SSR.
-	if (canSkipWatching && srcInfo != null && (srcInfo.type === 'prop' || srcInfo.type === 'attr')) {
-		const {ctx, ctx: {unsafe: {meta, meta: {params}}}} = srcInfo;
-
-		canSkipWatching = SSR || params.root === true || params.functional === true;
-
-		if (!canSkipWatching) {
-			const
-				prop = meta.props[srcInfo.name],
-				propName = prop?.forceUpdate !== false ? srcInfo.name : `on:${srcInfo.name}`;
-
-			canSkipWatching = ctx.getPassedProps?.().has(propName) === false;
-		}
-
-	} else {
-		canSkipWatching = false;
-	}
-
-	if (!canSkipWatching) {
+	if (!canSkipWatching(srcInfo, resolvedOpts)) {
 		if (getter != null && (getter.length > 1 || getter['originalLength'] > 1)) {
 			ctx.watch(srcInfo ?? normalizedPath, resolvedOpts, (val: unknown, oldVal: unknown, ...args: unknown[]) => {
 				if (customWatcher) {

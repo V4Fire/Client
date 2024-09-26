@@ -13,7 +13,7 @@ import { getPropertyInfo, isPrivateField, PropertyInfo } from 'core/component/re
 
 import { tiedWatchers, watcherInitializer } from 'core/component/watch/const';
 import { cloneWatchValue } from 'core/component/watch/clone';
-import { attachDynamicWatcher } from 'core/component/watch/helpers';
+import { attachDynamicWatcher, canSkipWatching } from 'core/component/watch/helpers';
 
 import type { ComponentMeta, ComponentField } from 'core/component/meta';
 import type { ComponentInterface, WatchPath, WatchOptions, RawWatchHandler } from 'core/component/interface';
@@ -23,10 +23,8 @@ import type { ComponentInterface, WatchPath, WatchOptions, RawWatchHandler } fro
  * @param component
  */
 export function createWatchFn(component: ComponentInterface): ComponentInterface['$watch'] {
-	const
-		watchCache = new Map();
+	const watchCache = new Map();
 
-	/* eslint-disable-next-line complexity */
 	return function watchFn(
 		this: ComponentInterface,
 		path: WatchPath | object,
@@ -87,26 +85,9 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			isFunctional = SSR || !isRoot && ctxParams.functional === true;
 		}
 
-		const isDefinedPath = Object.size(info.path) > 0;
+		let skipWatching = canSkipWatching(info);
 
-		let canSkipWatching = false;
-
-		// We cannot observe props and attributes on a component if it is a root component, a functional component,
-		// or if it does not accept such parameters in the template.
-		// Also, prop watching does not work during SSR.
-		if (info.type === 'prop' || info.type === 'attr') {
-			canSkipWatching = SSR || isRoot || isFunctional;
-
-			if (!canSkipWatching) {
-				const
-					prop = info.ctx.meta.props[info.name],
-					propName = prop?.forceUpdate !== false ? info.name : `on:${info.name}`;
-
-				canSkipWatching = info.ctx.getPassedProps?.().has(propName) === false;
-			}
-		}
-
-		if (!canSkipWatching && isFunctional) {
+		if (!skipWatching && isFunctional) {
 			let field: Nullable<ComponentField>;
 
 			switch (info.type) {
@@ -123,7 +104,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 
 			if (field != null) {
-				canSkipWatching = field.functional === false || field.functionalWatching === false;
+				skipWatching = field.functional === false || field.functionalWatching === false;
 			}
 		}
 
@@ -146,11 +127,14 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			needImmediate = Boolean(normalizedOpts.immediate),
 			needCache = (handler['originalLength'] ?? handler.length) > 1 && needCollapse;
 
-		if (canSkipWatching && !needImmediate) {
+		if (skipWatching && !needImmediate) {
 			return null;
 		}
 
+		const isDefinedPath = Object.size(info.path) > 0;
+
 		const {flush} = normalizedOpts;
+
 		delete normalizedOpts.flush;
 		normalizedOpts.immediate = flush === 'sync';
 
@@ -291,7 +275,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 		}
 
-		if (canSkipWatching) {
+		if (skipWatching) {
 			return null;
 		}
 

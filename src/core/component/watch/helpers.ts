@@ -15,6 +15,46 @@ import type { ComponentInterface } from 'core/component/interface';
 import type { DynamicHandlers } from 'core/component/watch/interface';
 
 /**
+ * Returns true if initialization of observation for the given property can be skipped.
+ * For example, if it is a prop of a functional component or a prop that was not passed in the template, etc.
+ *
+ * @param property - the property information object
+ * @param [opts] - additional observation options
+ */
+export function canSkipWatching(
+	property: Nullable<PropertyInfo>,
+	opts?: Nullable<WatchOptions>
+): boolean {
+	if (property == null) {
+		return false;
+	}
+
+	let canSkipWatching = opts?.immediate !== true;
+
+	// We cannot observe props and attributes on a component if it is a root component, a functional component,
+	// or if it does not accept such parameters in the template.
+	// Also, prop watching does not work during SSR.
+	if (canSkipWatching && (property.type === 'prop' || property.type === 'attr')) {
+		const {ctx, ctx: {unsafe: {meta, meta: {params}}}} = property;
+
+		canSkipWatching = SSR || params.root === true || params.functional === true;
+
+		if (!canSkipWatching) {
+			const
+				prop = meta.props[property.name],
+				propName = prop?.forceUpdate !== false ? property.name : `on:${property.name}`;
+
+			canSkipWatching = ctx.getPassedProps?.().has(propName) === false;
+		}
+
+	} else {
+		canSkipWatching = false;
+	}
+
+	return canSkipWatching;
+}
+
+/**
  * Attaches a dynamic watcher to the specified property.
  * This function is used to manage a situation when we are watching some accessor.
  *
