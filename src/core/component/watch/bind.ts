@@ -284,9 +284,9 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							return;
 						}
 
-						const info = p.info ?? getPropertyInfo(watchPath, component);
+						const propInfo = p.info ?? getPropertyInfo(watchPath, component);
 
-						if (canSkipWatching(info, watchInfo)) {
+						if (canSkipWatching(propInfo, watchInfo)) {
 							return;
 						}
 
@@ -311,7 +311,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						};
 
 						link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(asyncParams, 'watchers'));
-						unwatch = $watch.call(component, info, watchInfo, handler);
+						unwatch = $watch.call(component, propInfo, watchInfo, handler);
 					}).catch(stderr);
 
 				} else {
@@ -343,9 +343,9 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						return;
 					}
 
-					const info = p.info ?? getPropertyInfo(watchPath, component);
+					const propInfo = p.info ?? getPropertyInfo(watchPath, component);
 
-					if (canSkipWatching(info, watchInfo)) {
+					if (canSkipWatching(propInfo, watchInfo)) {
 						return;
 					}
 
@@ -370,7 +370,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 					};
 
 					link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(asyncParams, 'watchers'));
-					unwatch = $watch.call(component, info, watchInfo, handler);
+					unwatch = $watch.call(component, propInfo, watchInfo, handler);
 				}
 			});
 		}
