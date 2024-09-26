@@ -124,6 +124,13 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 
 		vnode.props ??= {};
 
+		// By default, mods are passed down from the parent (see `sharedMods`), but if there is actually nothing there,
+		// we remove them from the vnode to avoid registering empty handlers and watchers
+		if (vnode.props.modsProp == null) {
+			delete vnode.props.modsProp;
+			delete vnode.props['on:modsProp'];
+		}
+
 		vnode.props.getRoot ??= this.$getRoot(this);
 
 		vnode.props.getParent ??= () => vnode.virtualParent?.value != null ?
