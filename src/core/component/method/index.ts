@@ -18,10 +18,7 @@ import type { ComponentInterface } from 'core/component/interface';
  * @param component
  */
 export function attachMethodsFromMeta(component: ComponentInterface): void {
-	const {
-		meta,
-		meta: {methods}
-	} = component.unsafe;
+	const {meta, meta: {methods}} = component.unsafe;
 
 	const isFunctional = meta.params.functional === true;
 
