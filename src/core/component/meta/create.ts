@@ -36,7 +36,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		systemFields: {},
 		computedFields: {},
 
-		methods: {},
+		methods: new Map(),
 		accessors: {},
 		watchers: new Map(),
 
@@ -102,7 +102,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 				return cache.get(ctx)();
 			}
 
-			const render = meta.methods.render!.fn.call(unsafe, unsafe, ...args);
+			const render = meta.methods.get('render')!.fn.call(unsafe, unsafe, ...args);
 
 			if (!Object.isFunction(render)) {
 				return render;

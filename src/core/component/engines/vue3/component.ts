@@ -207,7 +207,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 				init.renderTriggeredState(ctx, ...args);
 			});
 
-			return meta.methods.setup?.fn(props, setupCtx);
+			return meta.methods.get('setup')?.fn(props, setupCtx);
 		}
 	};
 }

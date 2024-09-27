@@ -18,20 +18,17 @@ import type { ComponentInterface } from 'core/component/interface';
  * @param component
  */
 export function attachMethodsFromMeta(component: ComponentInterface): void {
-	const {
-		meta,
-		meta: {methods}
-	} = component.unsafe;
+	const {meta, meta: {methods}} = component.unsafe;
 
 	const isFunctional = meta.params.functional === true;
 
-	Object.entries(methods).forEach(([name, method]) => {
-		if (method == null || !SSR && isFunctional && method.functional === false) {
-			return;
+	for (const [name, method] of methods) {
+		if (!SSR && isFunctional && method.functional === false) {
+			continue;
 		}
 
 		component[name] = method.fn.bind(component);
-	});
+	}
 
 	if (isFunctional) {
 		component.render = Object.cast(meta.component.render);
@@ -42,7 +39,7 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
  * Invokes a specific method from the passed component instance
  *
  * @param component
- * @param method - the method name
+ * @param methodName - the method name
  * @param [args] - the method arguments to invoke
  *
  * @example
@@ -51,11 +48,28 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
  * callMethodFromComponent(calculator, 'calc', 1, 2);
  * ```
  */
-export function callMethodFromComponent(component: ComponentInterface, method: string, ...args: unknown[]): void {
-	const obj = component.unsafe.meta.methods[method];
+export function callMethodFromComponent(component: ComponentInterface, methodName: string, ...args: unknown[]): void {
+	const method = component.unsafe.meta.methods.get(methodName);
 
-	if (obj != null) {
-		const res = obj.fn.apply(component, args);
+	let res: unknown;
+
+	if (method != null) {
+		switch (args.length) {
+			case 0:
+				res = method.fn.call(component);
+				break;
+
+			case 1:
+				res = method.fn.call(component, args[0]);
+				break;
+
+			case 2:
+				res = method.fn.call(component, args[0], args[1]);
+				break;
+
+			default:
+				res = method.fn.apply(component, args);
+		}
 
 		if (Object.isPromise(res)) {
 			res.catch(stderr);

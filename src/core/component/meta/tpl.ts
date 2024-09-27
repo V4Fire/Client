@@ -16,7 +16,9 @@ import type { ComponentMeta } from 'core/component/interface';
  * @param [templates] - a dictionary containing the registered templates
  */
 export function attachTemplatesToMeta(meta: ComponentMeta, templates?: Dictionary): void {
-	const {methods, methods: {render}} = meta;
+	const {methods} = meta;
+
+	const render = methods.get('render');
 
 	// We have a custom render function
 	if (render != null && !render.wrapper) {
@@ -37,10 +39,10 @@ export function attachTemplatesToMeta(meta: ComponentMeta, templates?: Dictionar
 	const renderFactory = componentRenderFactories[meta.componentName] ?? templates.index();
 	componentRenderFactories[meta.componentName] = renderFactory;
 
-	methods.render = {
+	methods.set('render', {
 		wrapper: true,
 		watchers: {},
 		hooks: {},
 		fn: renderFactory
-	};
+	});
 }

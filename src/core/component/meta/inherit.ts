@@ -102,28 +102,24 @@ export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): Com
 	}
 
 	function inheritMethods(current: ComponentMeta['methods'], parent: ComponentMeta['methods']) {
-		Object.entries(parent).forEach(([methodName, parent]) => {
-			if (parent == null) {
-				return;
-			}
-
+		for (const [methodName, parentMethod] of parent) {
 			if (decoratedKeys == null || !decoratedKeys.has(methodName)) {
-				current[methodName] = {...parent};
-				return;
+				current.set(methodName, {...parentMethod});
+				continue;
 			}
 
 			const
 				watchers = {},
 				hooks = {};
 
-			if (parent.watchers != null) {
-				Object.entries(parent.watchers).forEach(([key, val]) => {
+			if (parentMethod.watchers != null) {
+				Object.entries(parentMethod.watchers).forEach(([key, val]) => {
 					watchers[key] = {...val};
 				});
 			}
 
-			if (parent.hooks != null) {
-				Object.entries(parent.hooks).forEach(([key, hook]) => {
+			if (parentMethod.hooks != null) {
+				Object.entries(parentMethod.hooks).forEach(([key, hook]) => {
 					hooks[key] = {
 						...hook,
 						after: Object.size(hook.after) > 0 ? new Set(hook.after) : undefined
@@ -131,8 +127,8 @@ export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): Com
 				});
 			}
 
-			current[methodName] = {...parent, watchers, hooks};
-		});
+			current.set(methodName, {...parentMethod, watchers, hooks});
+		}
 	}
 }
 

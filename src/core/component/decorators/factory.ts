@@ -90,7 +90,7 @@ export function paramsFactory<T = object>(
 
 				const
 					metaCluster = meta[metaKey],
-					info = metaCluster[key] ?? {src: meta.componentName};
+					info = (metaKey === 'methods' ? metaCluster.get(key) : metaCluster[key]) ?? {src: meta.componentName};
 
 				if (metaKey === 'methods') {
 					decorateMethod();
@@ -140,7 +140,7 @@ export function paramsFactory<T = object>(
 						});
 					}
 
-					metaCluster[key] = wrapOpts({...info, ...p, watchers, hooks});
+					metaCluster.set(key, wrapOpts({...info, ...p, watchers, hooks}));
 				}
 
 				function decorateAccessor() {
@@ -169,7 +169,7 @@ export function paramsFactory<T = object>(
 			}
 
 			function decorateProperty() {
-				delete meta.methods[key];
+				meta.methods.delete(key);
 				delete meta.accessors[key];
 				delete meta.computedFields[key];
 

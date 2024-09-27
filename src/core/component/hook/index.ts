@@ -40,18 +40,18 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 
 	unsafe.hook = hook;
 
-	const
-		m = component.unsafe.meta,
-		hooks: ComponentHook[] = [];
+	const {meta} = component.unsafe;
+
+	const hooks: ComponentHook[] = [];
 
 	if (hook === 'created' || hook === 'updated' || hook === 'mounted') {
-		hooks.push(...m.hooks[`before:${hook}`]);
+		hooks.push(...meta.hooks[`before:${hook}`]);
 	}
 
-	hooks.push(...m.hooks[hook]);
+	hooks.push(...meta.hooks[hook]);
 
 	if (hook === 'beforeDataCreate') {
-		hooks.push(...m.hooks[`after:${hook}`]);
+		hooks.push(...meta.hooks[`after:${hook}`]);
 	}
 
 	switch (hooks.length) {
@@ -81,7 +81,7 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 				const emitter = new QueueEmitter();
 
 				hooks.forEach((hook, i) => {
-					const nm = hook.name;
+					const hookName = hook.name;
 
 					if (hook.once) {
 						toDelete ??= [];
@@ -92,10 +92,10 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 						const res = args.length > 0 ? hook.fn.apply(component, args) : hook.fn.call(component);
 
 						if (Object.isPromise(res)) {
-							return res.then(() => nm != null ? emitter.emit(nm) : undefined);
+							return res.then(() => hookName != null ? emitter.emit(hookName) : undefined);
 						}
 
-						const tasks = nm != null ? emitter.emit(nm) : null;
+						const tasks = hookName != null ? emitter.emit(hookName) : null;
 
 						if (tasks != null) {
 							return tasks;

@@ -121,9 +121,9 @@ export interface ComponentMeta {
 	accessors: Dictionary<ComponentAccessor>;
 
 	/**
-	 * A dictionary containing the component methods
+	 * A map containing the component methods
 	 */
-	methods: Dictionary<ComponentMethod>;
+	methods: Map<string, ComponentMethod>;
 
 	/**
 	 * A map containing the component's watchers

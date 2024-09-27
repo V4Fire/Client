@@ -228,12 +228,20 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 
 	// Methods
 
-	Object.entries(methods).forEach(([methodName, method]) => {
-		if (method == null) {
-			return;
-		}
-
+	for (const [methodName, method] of methods) {
 		if (isFirstFill) {
+			// eslint-disable-next-line func-style
+			const wrapper = function wrapper(this: object, ...args: unknown[]) {
+				const ctx = getComponentContext(this);
+
+				switch (args.length) {
+					case 0: return method.fn.call(ctx);
+					case 1: return method.fn.call(ctx, args[0]);
+					case 2: return method.fn.call(ctx, args[0], args[1]);
+					default: return method.fn.apply(ctx, args);
+				}
+			};
+
 			component.methods[methodName] = wrapper;
 
 			if (wrapper.length !== method.fn.length) {
@@ -271,12 +279,7 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 				hooks[hookName].push({...hook, fn: method.fn});
 			});
 		}
-
-		function wrapper(this: object) {
-			// eslint-disable-next-line prefer-rest-params
-			return method!.fn.apply(getComponentContext(this), arguments);
-		}
-	});
+	}
 
 	// Modifiers
 

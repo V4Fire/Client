@@ -14,8 +14,7 @@
  */
 export function fakeMethods(...methods: string[]): ClassDecorator {
 	return (target) => {
-		const
-			{prototype} = target;
+		const {prototype} = target;
 
 		methods.forEach((method) => {
 			if (!Object.isFunction(prototype[method])) {
