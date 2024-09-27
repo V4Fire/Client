@@ -126,7 +126,7 @@ export interface ComponentMeta {
 	methods: Dictionary<ComponentMethod>;
 
 	/**
-	 * A dictionary with the component watchers
+	 * A dictionary containing the component watchers
 	 */
 	watchers: Dictionary<WatchObject[]>;
 
