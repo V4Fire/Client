@@ -13,13 +13,12 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { customWatcherRgxp } from 'core/component';
+import { isCustomWatcher, customWatcherRgxp } from 'core/component';
 import iBlock from 'components/super/i-block/i-block';
 
-const
-	$$ = symbolGenerator();
+const $$ = symbolGenerator();
 
-let baseInitLoad;
+let baseInitLoad: CanNull<typeof iBlock.prototype.initLoad> = null;
 
 /**
  * Initializes the listening of global application events for the component
@@ -112,50 +111,48 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
  * @param component
  */
 export function initRemoteWatchers(component: iBlock): void {
-	const {
-		watchProp,
-		meta: {watchers: watchMap}
-	} = component.unsafe;
+	const {watchProp, meta: {watchers}} = component.unsafe;
 
 	if (watchProp == null) {
 		return;
 	}
 
-	Object.entries(watchProp).forEach(([method, watchers]) => {
-		Array.toArray(watchers).forEach((watcher) => {
+	for (const method of Object.keys(watchProp)) {
+		for (const watcher of Array.toArray(watchProp[method])) {
 			if (Object.isString(watcher)) {
-				const
-					path = normalizePath(watcher),
-					wList = watchMap[path] ?? [];
+				const path = normalizePath(watcher);
 
-				watchMap[path] = wList;
-				wList.push({method, handler: method});
+				const watcherListeners = watchers.get(path) ?? [];
+				watchers.set(path, watcherListeners);
+
+				watcherListeners.push({method, handler: method});
 
 			} else {
-				const
-					path = normalizePath(watcher.path),
-					wList = watchMap[path] ?? [];
+				const path = normalizePath(watcher.path);
 
-				watchMap[path] = wList;
+				const watcherListeners = watchers.get(path) ?? [];
+				watchers.set(path, watcherListeners);
 
-				wList.push({
-					...watcher,
+				watcherListeners.push({
+					...Object.cast(watcher),
 					args: Array.toArray(watcher.args),
 					method,
 					handler: method
 				});
 			}
-		});
-	});
+		}
+	}
 
 	function normalizePath(field?: string): string {
 		if (field == null) {
 			return '';
 		}
 
-		if (RegExp.test(customWatcherRgxp, field)) {
-			const replacer = (str, prfx: string, emitter: string, event: string) =>
-				`${prfx + ['$parent'].concat(Object.isTruly(emitter) ? emitter : []).join('.')}:${event}`;
+		if (isCustomWatcher.test(field)) {
+			const replacer = (_: string, prefix: string, emitter: string, event: string) => {
+				const path = Array.toArray('$parent', Object.isTruly(emitter) ? emitter : []).join('.');
+				return `${prefix}${path}:${event}`;
+			};
 
 			return field.replace(customWatcherRgxp, replacer);
 		}
