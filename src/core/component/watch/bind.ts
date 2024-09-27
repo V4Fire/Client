@@ -155,8 +155,8 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 				const rawHandler = watchInfo.handler;
 
 				const asyncParams = {
-					label: watchInfo.label,
 					group: watchInfo.group,
+					label: watchInfo.label,
 					join: watchInfo.join
 				};
 
