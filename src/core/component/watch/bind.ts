@@ -46,51 +46,75 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 		isDeactivated = hook === 'deactivated',
 
 		// True if the component has not been created yet
-		isBeforeCreate = Boolean(beforeHooks[hook]);
-
-	const
-		watchersMap = p.watchers ?? meta.watchers,
+		isBeforeCreate = Boolean(beforeHooks[hook]),
 
 		// True if the method has been invoked with passing the custom async instance as a property
-		customAsync = $a !== unsafe.$async;
+		isCustomAsync = $a !== unsafe.$async;
+
+	const watchers = p.watchers ?? meta.watchers;
 
 	// Iterate over all registered watchers and listeners and initialize their
-	Object.entries(watchersMap).forEach(([watchPath, watchers]) => {
+	Object.entries(watchers).forEach(([watchPath, watchers]) => {
 		if (watchers == null) {
 			return;
 		}
 
-		let
-			// A link to the context of the watcher;
-			// by default, a component is passed to the function
-			watcherCtx = component,
+		// A link to the context of the watcher;
+		// by default, a component is passed to the function
+		let watcherCtx = component;
 
-			// True if this watcher can initialize only when the component is created
-			watcherNeedCreated = true,
+		// True if this watcher can initialize only when the component is created
+		let attachWatcherOnCreated = true;
 
-			// True if this watcher can initialize only when the component is mounted
-			watcherNeedMounted = false;
+		// True if this watcher can initialize only when the component is mounted
+		let attachWatcherOnMounted = false;
 
 		// Custom watchers look like ':foo', 'bla:foo', '?bla:foo'
-		// and are used to listen to custom events instead of property mutations.
+		// and are used to listen to custom events instead of property mutations
 		const customWatcher = isCustomWatcher.test(watchPath) ? customWatcherRgxp.exec(watchPath) : null;
 
+		// True if the watcher is handling the component's event
+		const isSelfComponentEvent = customWatcher != null && customWatcher[2] === '';
+
 		if (customWatcher != null) {
-			const m = customWatcher[1];
-			watcherNeedCreated = m === '';
-			watcherNeedMounted = m === '?';
+			const hookMod = customWatcher[1];
+			attachWatcherOnCreated = hookMod === '';
+			attachWatcherOnMounted = hookMod === '?';
 		}
 
-		// Add a listener to a component's created hook if the component has not yet been created
-		if (watcherNeedCreated && isBeforeCreate) {
-			hooks['before:created'].push({fn: attachWatcher});
-			return;
-		}
+		// Add a listener to the component's created hook if the component has not been created yet
+		if (attachWatcherOnCreated && isBeforeCreate) {
+			// Optimization of the most common use case
+			if (hook === 'beforeDataCreate' && watchers.length === 1) {
+				const watchInfo = watchers[0];
 
-		// Add a listener to a component's mounted/activated hook if the component has not yet been mounted or activated
-		if (watcherNeedMounted && (isBeforeCreate || component.$el == null)) {
+				if (watchInfo.shouldInit?.(component) === false) {
+					return;
+				}
+
+				if (customWatcher == null) {
+					const propInfo = p.info ?? getPropertyInfo(watchPath, component);
+
+					if (canSkipWatching(propInfo, watchInfo)) {
+						return;
+					}
+				}
+			}
+
+			// Such events can be registered before the created hook
+			if (isSelfComponentEvent) {
+				attachWatcher();
+
+			} else {
+				hooks['before:created'].push({fn: attachWatcher});
+			}
+
+		// Add a listener to the component's mounted/activated hook if the component has not been mounted or activated yet
+		} else if (attachWatcherOnMounted && (isBeforeCreate || component.$el == null)) {
 			hooks[isDeactivated ? 'activated' : 'mounted'].unshift({fn: attachWatcher});
-			return;
+
+		} else {
+			attachWatcher();
 		}
 
 		attachWatcher();
@@ -101,10 +125,10 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 			// ':foo' -> watcherCtx == ctx; key = 'foo'
 			// 'document:foo' -> watcherCtx == document; key = 'foo'
 			if (customWatcher != null) {
-				const l = customWatcher[2];
+				const pathToEmitter = customWatcher[2];
 
-				if (l !== '') {
-					watcherCtx = Object.get(component, l) ?? Object.get(globalThis, l) ?? component;
+				if (pathToEmitter !== '') {
+					watcherCtx = Object.get(component, pathToEmitter) ?? Object.get(globalThis, pathToEmitter) ?? component;
 					watchPath = customWatcher[3].toString();
 
 				} else {
@@ -119,6 +143,16 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 					return;
 				}
 
+				let propInfo = p.info;
+
+				if (customWatcher == null) {
+					propInfo ??= getPropertyInfo(watchPath, component);
+
+					if (canSkipWatching(propInfo, watchInfo)) {
+						return;
+					}
+				}
+
 				const rawHandler = watchInfo.handler;
 
 				const asyncParams = {
@@ -127,7 +161,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 					join: watchInfo.join
 				};
 
-				if (!customAsync) {
+				if (!isCustomAsync) {
 					if (asyncParams.label == null && !watchInfo.immediate) {
 						let defLabel: string;
 
@@ -257,36 +291,28 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						}
 
 						if (customWatcher) {
-							// True if the component itself can listen to an event,
-							// because watcherCtx does not appear to be an event emitter
-							const needDefEmitter =
+							const needUse$on =
 								watcherCtx === component &&
-								!Object.isFunction(watcherCtx['on']) &&
-								!Object.isFunction(watcherCtx['addListener']);
+								!('on' in watcherCtx) &&
+								!('addListener' in watcherCtx);
 
-							if (needDefEmitter) {
+							if (needUse$on) {
 								unsafe.$on(watchPath, handler);
 
 							} else {
-								const addListener = (watcherCtx: ComponentInterface & EventEmitterLike) =>
+								const addListener = (watcherCtx: ComponentInterface & EventEmitterLike) => {
 									$a.on(watcherCtx, watchPath, <AnyFunction>handler, eventParams, ...watchInfo.args ?? []);
+								};
 
 								if (Object.isPromise(watcherCtx)) {
-									$a.promise<ComponentInterface & EventEmitterLike>(Object.cast(watcherCtx), asyncParams)
-										.then(addListener)
-										.catch(stderr);
+									type PromiseType = ComponentInterface & EventEmitterLike;
+									$a.promise<PromiseType>(Object.cast(watcherCtx), asyncParams).then(addListener).catch(stderr);
 
 								} else {
 									addListener(watcherCtx);
 								}
 							}
 
-							return;
-						}
-
-						const propInfo = p.info ?? getPropertyInfo(watchPath, component);
-
-						if (canSkipWatching(propInfo, watchInfo)) {
 							return;
 						}
 
@@ -299,14 +325,8 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						/* eslint-enable prefer-const */
 
 						const emitter: EventEmitterLikeP = (_, wrappedHandler) => {
-							handler = Object.cast(wrappedHandler);
-
-							$a.worker(() => {
-								if (link != null) {
-									$a.off(link);
-								}
-							}, asyncParams);
-
+							handler = wrappedHandler;
+							$a.worker(() => link != null && $a.off(link), asyncParams);
 							return () => unwatch?.();
 						};
 
@@ -316,36 +336,28 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 				} else {
 					if (customWatcher) {
-						// True if the component itself can listen to an event,
-						// because watcherCtx does not appear to be an event emitter
-						const needDefEmitter =
+						const needUse$on =
 							watcherCtx === component &&
-							!Object.isFunction(watcherCtx['on']) &&
-							!Object.isFunction(watcherCtx['addListener']);
+							!('on' in watcherCtx) &&
+							!('addListener' in watcherCtx);
 
-						if (needDefEmitter) {
+						if (needUse$on) {
 							unsafe.$on(watchPath, handler);
 
 						} else {
-							const addListener = (watcherCtx: ComponentInterface & EventEmitterLike) =>
+							const addListener = (watcherCtx: ComponentInterface & EventEmitterLike) => {
 								$a.on(watcherCtx, watchPath, handler, eventParams, ...watchInfo.args ?? []);
+							};
 
 							if (Object.isPromise(watcherCtx)) {
-								$a.promise<ComponentInterface & EventEmitterLike>(Object.cast(watcherCtx), asyncParams)
-									.then(addListener)
-									.catch(stderr);
+								type PromiseType = ComponentInterface & EventEmitterLike;
+								$a.promise<PromiseType>(Object.cast(watcherCtx), asyncParams).then(addListener).catch(stderr);
 
 							} else {
 								addListener(watcherCtx);
 							}
 						}
 
-						return;
-					}
-
-					const propInfo = p.info ?? getPropertyInfo(watchPath, component);
-
-					if (canSkipWatching(propInfo, watchInfo)) {
 						return;
 					}
 
@@ -359,13 +371,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 					const emitter: EventEmitterLikeP = (_, wrappedHandler) => {
 						handler = Object.cast(wrappedHandler);
-
-						$a.worker(() => {
-							if (link != null) {
-								$a.off(link);
-							}
-						}, asyncParams);
-
+						$a.worker(() => link != null && $a.off(link), asyncParams);
 						return () => unwatch?.();
 					};
 
