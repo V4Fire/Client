@@ -502,7 +502,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 			return;
 		}
 
-		let info: CanNull<PropertyInfo>;
+		let info: CanNull<PropertyInfo> = null;
 
 		if (this.hook === 'beforeDataCreate') {
 			if (!canSkipWatching(getInfo(), opts)) {
@@ -521,14 +521,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 		}
 
 		function initWatcher() {
-			let info = Object.isString(path) ? getPropertyInfo(path, that) : null;
-
-			// TODO: Implement a more accurate check
-			if (info == null && !isProxy(path)) {
-				info = Object.cast(path);
-			}
-
-			if (canSkipWatching(info, opts)) {
+			if (info == null && canSkipWatching(getInfo(), opts)) {
 				return;
 			}
 
@@ -543,12 +536,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 				wrappedHandler['originalLength'] = handler['originalLength'] ?? handler.length;
 				handler = wrappedHandler;
 
-				$a.worker(() => {
-					if (link != null) {
-						$a.off(link);
-					}
-				}, opts);
-
+				$a.worker(() => link != null && $a.off(link), opts);
 				return () => unwatch?.();
 			};
 

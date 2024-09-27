@@ -93,9 +93,11 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 				if (customWatcher == null) {
 					const propInfo = p.info ?? getPropertyInfo(watchPath, component);
 
-					if (canSkipWatching(propInfo, watchInfo)) {
-						return;
+					if (!canSkipWatching(propInfo, watchInfo)) {
+						hooks['before:created'].push({fn: attachWatcher.bind(null, propInfo)});
 					}
+
+					return;
 				}
 			}
 
@@ -107,17 +109,18 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 				hooks['before:created'].push({fn: attachWatcher});
 			}
 
-		// Add a listener to the component's mounted/activated hook if the component has not been mounted or activated yet
-		} else if (attachWatcherOnMounted && (isBeforeCreate || component.$el == null)) {
-			hooks[isDeactivated ? 'activated' : 'mounted'].unshift({fn: attachWatcher});
+			return;
+		}
 
-		} else {
-			attachWatcher();
+		// Add a listener to the component's mounted/activated hook if the component has not been mounted or activated yet
+		if (attachWatcherOnMounted && (isBeforeCreate || component.$el == null)) {
+			hooks[isDeactivated ? 'activated' : 'mounted'].unshift({fn: attachWatcher});
+			return;
 		}
 
 		attachWatcher();
 
-		function attachWatcher() {
+		function attachWatcher(propInfo: typeof p.info = p.info) {
 			// If we have a custom watcher, we need to find a link to the event emitter.
 			// For instance:
 			// ':foo' -> watcherCtx == ctx; key = 'foo'
@@ -140,8 +143,6 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 				if (watchInfo.shouldInit?.(component) === false) {
 					return;
 				}
-
-				let propInfo = p.info;
 
 				if (customWatcher == null) {
 					propInfo ??= getPropertyInfo(watchPath, component);
