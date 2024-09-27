@@ -31,6 +31,8 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	 */
 	load?(routerCtx?: bRouter): Promise<unknown>;
 
+	prefetch?(routerCtx?: bRouter): Promise<unknown>;
+
 	/**
 	 * The path to the route.
 	 * Typically, this parameter is used to bind a route to a URL.

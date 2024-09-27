@@ -34,10 +34,14 @@ export * from 'core/init/interface';
 export default async function initApp(
 	rootComponent: Nullable<string>,
 	opts: InitAppOptions
-): Promise<App> {
+): Promise<App | State> {
 	const {state, createAppOpts} = getAppParams(opts);
 
 	await initDependencies(dependencies, state);
+
+	if (opts.initOnly) {
+		return state;
+	}
 
 	return createApp(rootComponent, createAppOpts, state);
 }
