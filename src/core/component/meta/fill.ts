@@ -204,8 +204,8 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 				}
 
 				const watcherListeners = watchers[fieldName] ?? [];
-
 				watchers[fieldName] = watcherListeners;
+
 				watcherListeners.push(watcher);
 			});
 		});
