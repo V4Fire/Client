@@ -105,6 +105,11 @@ export interface ComponentMeta {
 	tiedFields: Dictionary<string>;
 
 	/**
+	 * True, if the component needs to add fields watching
+	 */
+	needWatchFields: boolean;
+
+	/**
 	 * A dictionary that contains the accessor methods of the component that support caching or watching
 	 */
 	computedFields: Dictionary<ComponentAccessor>;

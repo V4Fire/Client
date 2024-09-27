@@ -156,7 +156,13 @@ export function fillMeta(
 	// Fields
 
 	[meta.systemFields, meta.fields].forEach((field) => {
+		let hasForceUpdateFields = false;
+
 		Object.entries(field).forEach(([key, field]) => {
+			if (field?.forceUpdate === true) {
+				hasForceUpdateFields = true;
+			}
+
 			field?.watchers?.forEach((watcher) => {
 				if (isFunctional && watcher.functional === false) {
 					return;
@@ -169,6 +175,8 @@ export function fillMeta(
 				watcherListeners.push(watcher);
 			});
 		});
+
+		meta.needWatchFields = hasForceUpdateFields;
 	});
 
 	// Computed fields

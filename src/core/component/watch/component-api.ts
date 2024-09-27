@@ -47,7 +47,7 @@ import type { ComponentInterface, RawWatchHandler } from 'core/component/interfa
 export function implementComponentWatchAPI(component: ComponentInterface): void {
 	const {
 		unsafe,
-		unsafe: {$async: $a, meta: {computedFields, watchDependencies, watchPropDependencies, params}},
+		unsafe: {$async: $a, meta: {computedFields, watchDependencies, watchPropDependencies, params, needWatchFields}},
 		$renderEngine: {proxyGetters}
 	} = component;
 
@@ -171,7 +171,7 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 	let
 		fieldsWatcher;
 
-	if (isFunctional) {
+	if (isFunctional || !needWatchFields) {
 		// Don't force watching of fields until it becomes necessary
 		fieldsInfo.value[watcherInitializer] = () => {
 			delete fieldsInfo.value[watcherInitializer];
