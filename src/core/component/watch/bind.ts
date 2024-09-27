@@ -37,9 +37,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 		{unsafe} = component,
 		{$watch, meta, hook, meta: {hooks}} = unsafe;
 
-	const
-		componentAsync = unsafe.$async,
-		$a = p.async ?? componentAsync;
+	const $a = p.async ?? unsafe.$async;
 
 	const
 		// True if the component is currently deactivated
