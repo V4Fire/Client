@@ -323,19 +323,19 @@ export function beforeCreateState(
 		// we need to register a "fake" watcher to enforce watching
 		watchSet.forEach((info) => {
 			const needToForceWatching =
-				watchers[info.name] == null &&
-				watchers[info.originalPath] == null &&
-				watchers[info.path] == null;
+				!watchers.has(info.name) &&
+				!watchers.has(info.originalPath) &&
+				!watchers.has(info.path);
 
 			if (needToForceWatching) {
-				watchers[info.name] = [
+				watchers.set(info.name, [
 					{
 						deep: true,
 						immediate: true,
 						provideArgs: false,
 						handler: fakeHandler
 					}
-				];
+				]);
 			}
 		});
 	}
@@ -352,20 +352,20 @@ export function beforeCreateState(
 			accessor = accessors[normalizedName],
 			computed = accessor == null ? computedFields[normalizedName] : null;
 
-		const needForceWatch = watchers[name] == null && (
+		const needForceWatch = !watchers.has(name) && (
 			accessor != null && accessor.dependencies?.length !== 0 ||
 			computed != null && computed.cache !== 'forever' && computed.dependencies?.length !== 0
 		);
 
 		if (needForceWatch) {
-			watchers[name] = [
+			watchers.set(name, [
 				{
 					deep: true,
 					immediate: true,
 					provideArgs: false,
 					handler: fakeHandler
 				}
-			];
+			]);
 		}
 	});
 

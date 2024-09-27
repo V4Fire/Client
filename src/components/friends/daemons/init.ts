@@ -117,9 +117,8 @@ export function attachWatcher(this: Daemons, name: string, watcher: DaemonWatche
 		watchDaemon.flush = 'sync';
 	}
 
-	const
-		w = watchers[watchPath] ?? [];
+	const w = watchers.get(watchPath) ?? [];
+	watchers.set(watchPath, w);
 
-	watchers[watchPath] = w;
 	w.push(watchDaemon);
 }
