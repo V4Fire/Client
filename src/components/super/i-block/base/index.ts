@@ -40,8 +40,10 @@ import {
 	bindRemoteWatchers,
 	isCustomWatcher,
 
-	RawWatchHandler,
+	PropertyInfo,
+
 	WatchPath,
+	RawWatchHandler,
 
 	SetupContext
 
@@ -128,24 +130,20 @@ export default abstract class iBlockBase extends iBlockFriends {
 			});
 		}
 
-		if (!o.isFunctional) {
-			o.watch('activatedProp', (val: CanUndef<boolean>) => {
-				val = val !== false;
+		return o.sync.link('activatedProp', (isActivated: CanUndef<boolean>) => {
+			isActivated = isActivated !== false;
 
-				if (o.hook !== 'beforeDataCreate') {
-					if (val) {
-						o.activate();
+			if (o.hook !== 'beforeDataCreate') {
+				if (isActivated) {
+					o.activate();
 
-					} else {
-						o.deactivate();
-					}
+				} else {
+					o.deactivate();
 				}
+			}
 
-				o.isActivated = val;
-			});
-		}
-
-		return o.activatedProp;
+			return isActivated;
+		});
 	})
 
 	isActivated!: boolean;
@@ -485,37 +483,39 @@ export default abstract class iBlockBase extends iBlockFriends {
 		}
 
 		if (Object.isString(path) && isCustomWatcher.test(path)) {
-			bindRemoteWatchers(this, {
-				async: $a,
-				watchers: {
-					[path]: [
-						{
-							handler: (_: unknown, ...args: unknown[]) => handler.call(this, ...args),
-							...opts
-						}
-					]
-				}
-			});
+			const watchers = new Map();
 
+			watchers.set(path, [
+				{
+					handler: (_: unknown, ...args: unknown[]) => handler.call(this, ...args),
+					...opts
+				}
+			]);
+
+			bindRemoteWatchers(this, {async: $a, watchers});
 			return;
 		}
 
-		if (this.lfc.isBeforeCreate()) {
-			hooks['before:created'].push({fn: initWatcher});
+		let info: CanNull<PropertyInfo>;
+
+		if (this.hook === 'beforeDataCreate') {
+			if (!canSkipWatching(getInfo(), opts)) {
+				attachWatcher();
+			}
+
+		} else if (this.lfc.isBeforeCreate()) {
+			attachWatcher();
 
 		} else {
 			initWatcher();
 		}
 
+		function attachWatcher() {
+			hooks['before:created'].push({fn: initWatcher});
+		}
+
 		function initWatcher() {
-			let info = Object.isString(path) ? getPropertyInfo(path, that) : null;
-
-			// TODO: Implement a more accurate check
-			if (info == null && !isProxy(path)) {
-				info = Object.cast(path);
-			}
-
-			if (canSkipWatching(info, opts)) {
+			if (info == null && canSkipWatching(getInfo(), opts)) {
 				return;
 			}
 
@@ -540,7 +540,18 @@ export default abstract class iBlockBase extends iBlockFriends {
 			};
 
 			link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(opts, 'watchers'));
-			unwatch = that.$watch(Object.cast(path), opts, handler);
+			unwatch = that.$watch(info ?? Object.cast(path), opts, handler);
+		}
+
+		function getInfo() {
+			info ??= Object.isString(path) ? getPropertyInfo(path, that) : null;
+
+			// TODO: Implement a more accurate check
+			if (info == null && !isProxy(path)) {
+				info = Object.cast(path);
+			}
+
+			return info;
 		}
 	}
 

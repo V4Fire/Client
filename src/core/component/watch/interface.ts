@@ -23,7 +23,7 @@ export interface BindRemoteWatchersParams<A extends object = ComponentInterface>
 	/**
 	 * A dictionary with watchers
 	 */
-	watchers?: Dictionary<WatchObject[]>;
+	watchers?: Map<string, WatchObject[]>;
 
 	/**
 	 * Information object of a property to watch

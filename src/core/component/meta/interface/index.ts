@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { WatchPath } from 'core/object/watch';
+
 import type { PropOptions } from 'core/component/decorators';
 import type { RenderFunction, WritableComputedOptions } from 'core/component/engines';
 
@@ -21,9 +23,7 @@ import type {
 	ComponentAccessor,
 	ComponentHooks,
 
-	ComponentDirectiveOptions,
-	ComponentWatchDependencies,
-	ComponentWatchPropDependencies
+	ComponentDirectiveOptions
 
 } from 'core/component/meta/interface/types';
 
@@ -126,19 +126,19 @@ export interface ComponentMeta {
 	methods: Dictionary<ComponentMethod>;
 
 	/**
-	 * A dictionary with the component watchers
+	 * A map containing the component's watchers
 	 */
-	watchers: Dictionary<WatchObject[]>;
+	watchers: Map<string, WatchObject[]>;
 
 	/**
-	 * A dictionary containing the component dependencies to watch to invalidate the cache of computed fields
+	 * A map containing the component dependencies to watch to invalidate the cache of computed fields.
 	 */
-	watchDependencies: ComponentWatchDependencies;
+	watchDependencies: Map<WatchPath, WatchPath[]>;
 
 	/**
-	 * A dictionary containing the component prop dependencies to watch to invalidate the cache of computed fields
+	 * A map containing the component prop dependencies to watch to invalidate the cache of computed fields
 	 */
-	watchPropDependencies: ComponentWatchPropDependencies;
+	watchPropDependencies: Map<WatchPath, Set<string>>;
 
 	/**
 	 * A dictionary containing the component hook listeners,

@@ -55,7 +55,7 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 
 		Object.assign(meta, {
 			hooks,
-			watchers: {...blueprint.watchers}
+			watchers: new Map(blueprint.watchers)
 		});
 	}
 
@@ -151,9 +151,9 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 			}
 		}
 
-		if (prop.watchers != null && Object.size(prop.watchers) > 0) {
-			const watcherListeners = watchers[propName] ?? [];
-			watchers[propName] = watcherListeners;
+		if (prop.watchers != null && prop.watchers.size > 0) {
+			const watcherListeners = watchers.get(propName) ?? [];
+			watchers.set(propName, watcherListeners);
 
 			prop.watchers.forEach((watcher) => {
 				if (isFunctional && watcher.functional === false || !canWatchProps && !watcher.immediate) {
@@ -203,9 +203,9 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 					return;
 				}
 
-				const watcherListeners = watchers[fieldName] ?? [];
+				const watcherListeners = watchers.get(fieldName) ?? [];
+				watchers.set(fieldName, watcherListeners);
 
-				watchers[fieldName] = watcherListeners;
 				watcherListeners.push(watcher);
 			});
 		});
@@ -247,8 +247,8 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 					return;
 				}
 
-				const watcherListeners = watchers[watcherName] ?? [];
-				watchers[watcherName] = watcherListeners;
+				const watcherListeners = watchers.get(watcherName) ?? [];
+				watchers.set(watcherName, watcherListeners);
 
 				watcherListeners.push({
 					...watcher,

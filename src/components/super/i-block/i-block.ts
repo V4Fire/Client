@@ -92,10 +92,10 @@ export default abstract class iBlock extends iBlockProviders {
 	 * Handler: fixes the issue where the teleported component
 	 * and its DOM nodes were rendered before the teleport container was ready
 	 */
-	@watch<iBlock>({
-		path: 'r.shouldMountTeleports',
-		flush: 'post'
-	})
+	// @watch<iBlock>({
+	// 	path: 'r.shouldMountTeleports',
+	// 	flush: 'post'
+	// })
 
 	@hook('before:mounted')
 	protected onMountTeleports(): void {

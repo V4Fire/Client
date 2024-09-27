@@ -25,13 +25,11 @@ export function forkMeta(base: ComponentMeta): ComponentMeta {
 		meta.hooks[name] = handlers.slice();
 	});
 
-	meta.watchers = {};
+	meta.watchers = new Map();
 
-	Object.entries(base.watchers).forEach(([name, watchers]) => {
-		if (watchers != null) {
-			meta.watchers[name] = watchers.slice();
-		}
-	});
+	for (const [name, watchers] of base.watchers) {
+		meta.watchers.set(name, watchers.slice());
+	}
 
 	return meta;
 }
