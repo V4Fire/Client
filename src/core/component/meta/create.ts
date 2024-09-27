@@ -34,10 +34,10 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		fields: {},
 		tiedFields: {},
 		systemFields: {},
-		computedFields: {},
+		computedFields: new Map(),
 
 		methods: new Map(),
-		accessors: {},
+		accessors: new Map(),
 		watchers: new Map(),
 
 		watchDependencies: new Map(),

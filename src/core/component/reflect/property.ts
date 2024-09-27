@@ -183,11 +183,11 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		accessorType: CanUndef<AccessorType>,
 		accessor: CanUndef<string>;
 
-	if (computedFields[name] != null) {
+	if (computedFields.has(name)) {
 		accessorType = 'computed';
 		accessor = name;
 
-	} else if (accessors[name] != null) {
+	} else if (accessors.has(name)) {
 		accessorType = 'accessor';
 		accessor = name;
 	}
@@ -232,7 +232,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 	}
 
 	if (accessorType != null) {
-		if ((computedFields[name] ?? accessors[name])!.watchable) {
+		if ((computedFields.get(name) ?? accessors.get(name))!.watchable) {
 			let ctxPath: ObjectPropertyPath;
 
 			if (chunks != null) {

@@ -349,8 +349,8 @@ export function beforeCreateState(
 		}
 
 		const
-			accessor = accessors[normalizedName],
-			computed = accessor == null ? computedFields[normalizedName] : null;
+			accessor = accessors.get(normalizedName),
+			computed = accessor == null ? computedFields.get(normalizedName) : null;
 
 		const needForceWatch = !watchers.has(name) && (
 			accessor != null && accessor.dependencies?.length !== 0 ||

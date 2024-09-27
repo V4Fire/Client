@@ -67,8 +67,8 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 
 			// Computed fields are cached by default
 			if (
-				name in computedFields ||
-				!(name in accessors) && (tiedWith = props[propKey] ?? fields[storeKey] ?? systemFields[storeKey])
+				computedFields.has(name) ||
+				!accessors.has(name) && (tiedWith = props[propKey] ?? fields[storeKey] ?? systemFields[storeKey])
 			) {
 				metaKey = 'computedFields';
 
@@ -98,7 +98,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 			}
 
 			const
-				old = store[name],
+				old = store.get(name),
 				set = desc.set ?? old?.set,
 				get = desc.get ?? old?.get;
 
@@ -128,13 +128,13 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				});
 			}
 
-			const acc = Object.assign(store[name] ?? {}, {
+			const acc = Object.assign(store.get(name) ?? {}, {
 				src,
 				get: desc.get ?? old?.get,
 				set
 			});
 
-			store[name] = acc;
+			store.set(name, acc);
 
 			// eslint-disable-next-line eqeqeq
 			if (acc.functional === undefined && meta.params.functional === null) {

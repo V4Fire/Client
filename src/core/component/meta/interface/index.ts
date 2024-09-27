@@ -111,14 +111,14 @@ export interface ComponentMeta {
 	/**
 	 * A dictionary containing the accessor methods of the component that support caching or watching
 	 */
-	computedFields: Dictionary<ComponentAccessor>;
+	computedFields: Map<string, ComponentAccessor>;
 
 	/**
 	 * A dictionary containing the simple component accessors,
 	 * which are typically used for retrieving or modifying the value of a non-reactive property
 	 * that does not require caching or watching
 	 */
-	accessors: Dictionary<ComponentAccessor>;
+	accessors: Map<string, ComponentAccessor>;
 
 	/**
 	 * A map containing the component methods

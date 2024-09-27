@@ -90,7 +90,7 @@ export function paramsFactory<T = object>(
 
 				const
 					metaCluster = meta[metaKey],
-					info = (metaKey === 'methods' ? metaCluster.get(key) : metaCluster[key]) ?? {src: meta.componentName};
+					info = (Object.isMap(metaCluster) ? metaCluster.get(key) : metaCluster[key]) ?? {src: meta.componentName};
 
 				if (metaKey === 'methods') {
 					decorateMethod();
@@ -144,22 +144,22 @@ export function paramsFactory<T = object>(
 				}
 
 				function decorateAccessor() {
-					delete meta.accessors[key];
-					delete meta.computedFields[key];
+					meta.accessors.delete(key);
+					meta.computedFields.delete(key);
 
 					const needOverrideComputed = metaKey === 'accessors' ?
 						key in meta.computedFields :
 						!('cache' in p) && key in meta.accessors;
 
 					if (needOverrideComputed) {
-						metaCluster[key] = wrapOpts({...meta.computedFields[key], ...p, cache: false});
+						metaCluster.set(key, wrapOpts({...meta.computedFields.get(key), ...p, cache: false}));
 
 					} else {
-						metaCluster[key] = wrapOpts({
+						metaCluster.set(key, wrapOpts({
 							...info,
 							...p,
 							cache: metaKey === 'computedFields' ? p.cache ?? true : false
-						});
+						}));
 					}
 
 					if (p.dependencies != null && p.dependencies.length > 0) {
@@ -170,16 +170,16 @@ export function paramsFactory<T = object>(
 
 			function decorateProperty() {
 				meta.methods.delete(key);
-				delete meta.accessors[key];
-				delete meta.computedFields[key];
+				meta.accessors.delete(key);
+				meta.computedFields.delete(key);
 
-				const accessors = meta.accessors[key] ?
+				const accessors = meta.accessors.has(key) ?
 					meta.accessors :
 					meta.computedFields;
 
-				if (accessors[key]) {
+				if (accessors.has(key)) {
 					Object.defineProperty(meta.constructor.prototype, key, defProp);
-					delete accessors[key];
+					accessors.delete(key);
 				}
 
 				const

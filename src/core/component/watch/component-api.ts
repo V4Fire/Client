@@ -349,7 +349,7 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 
 			// If there has been changed properties that can affect memoized computed fields,
 			// then we need to invalidate these caches
-			if (computedFields[rootKey]?.get != null) {
+			if (computedFields.get(rootKey)?.get != null) {
 				delete Object.getOwnPropertyDescriptor(component, rootKey)?.get?.[cacheStatus];
 			}
 

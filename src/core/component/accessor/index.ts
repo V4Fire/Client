@@ -76,11 +76,8 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 	const isFunctional = meta.params.functional === true;
 
-	Object.entries(meta.accessors).forEach(([name, accessor]) => {
-		const canSkip =
-			accessor == null ||
-			component[name] != null ||
-			!SSR && isFunctional && accessor.functional === false;
+	for (const [name, accessor] of meta.accessors) {
+		const canSkip = component[name] != null || !SSR && isFunctional && accessor.functional === false;
 
 		if (canSkip) {
 			const tiedWith = tiedFields[name];
@@ -90,7 +87,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 				delete tiedFields[name];
 			}
 
-			return;
+			continue;
 		}
 
 		delete tiedFields[name];
@@ -101,13 +98,12 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 			get: accessor.get,
 			set: accessor.set
 		});
-	});
+	}
 
 	const cachedAccessors = new Set<Function>();
 
-	Object.entries(meta.computedFields).forEach(([name, computed]) => {
+	for (const [name, computed] of meta.computedFields) {
 		const canSkip =
-			computed == null ||
 			component[name] != null ||
 			computed.cache === 'auto' ||
 			!SSR && isFunctional && computed.functional === false;
@@ -123,7 +119,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 				delete tiedFields[name];
 			}
 
-			return;
+			continue;
 		}
 
 		// In the `tiedFields` dictionary,
@@ -220,7 +216,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 			get: computed.get != null ? get : undefined,
 			set: computed.set
 		});
-	});
+	}
 
 	// Register a worker to clean up memory upon component destruction
 	$destructors.push(() => {

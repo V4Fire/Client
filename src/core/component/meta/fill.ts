@@ -167,7 +167,7 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 		if (canWatchProps) {
 			const normalizedName = isBinding.test(propName) ? isBinding.replace(propName) : propName;
 
-			if ((computedFields[normalizedName] ?? accessors[normalizedName]) != null) {
+			if (computedFields.has(normalizedName) || accessors.has(normalizedName)) {
 				const props = watchPropDependencies.get(normalizedName) ?? new Set();
 
 				props.add(propName);
@@ -214,16 +214,16 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 	// Computed fields
 
 	if (isFirstFill) {
-		Object.entries(computedFields).forEach(([name, computed]) => {
-			if (computed == null || computed.cache !== 'auto') {
-				return;
+		for (const [name, computed] of computedFields) {
+			if (computed.cache !== 'auto') {
+				continue;
 			}
 
 			component.computed[name] = {
 				get: computed.get,
 				set: computed.set
 			};
-		});
+		}
 	}
 
 	// Methods

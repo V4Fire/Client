@@ -96,9 +96,9 @@ export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): Com
 	}
 
 	function inheritAccessors(current: ComponentMeta['accessors'], parent: ComponentMeta['accessors']) {
-		Object.entries(parent).forEach(([accessorName, parent]) => {
-			current[accessorName] = {...parent!};
-		});
+		for (const [accessorName, parentAccessor] of parent) {
+			current.set(accessorName, {...parentAccessor});
+		}
 	}
 
 	function inheritMethods(current: ComponentMeta['methods'], parent: ComponentMeta['methods']) {
