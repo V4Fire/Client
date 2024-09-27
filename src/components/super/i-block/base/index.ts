@@ -502,27 +502,19 @@ export default abstract class iBlockBase extends iBlockFriends {
 			return;
 		}
 
-		let info: CanNull<PropertyInfo> = null;
-
-		if (this.hook === 'beforeDataCreate') {
-			if (!canSkipWatching(getInfo(), opts)) {
-				attachWatcher();
-			}
-
-		} else if (this.lfc.isBeforeCreate()) {
-			attachWatcher();
+		if (this.lfc.isBeforeCreate()) {
+			hooks['before:created'].push({fn: initWatcher});
 
 		} else {
 			initWatcher();
 		}
 
-		function attachWatcher() {
-			hooks['before:created'].push({fn: initWatcher});
-		}
-
 		function initWatcher() {
-			if (info == null && canSkipWatching(getInfo(), opts)) {
-				return;
+			let info = Object.isString(path) ? getPropertyInfo(path, that) : null;
+
+			// TODO: Implement a more accurate check
+			if (info == null && !isProxy(path)) {
+				info = Object.cast(path);
 			}
 
 			let
@@ -542,17 +534,6 @@ export default abstract class iBlockBase extends iBlockFriends {
 
 			link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(opts, 'watchers'));
 			unwatch = that.$watch(info ?? Object.cast(path), opts, handler);
-		}
-
-		function getInfo() {
-			info ??= Object.isString(path) ? getPropertyInfo(path, that) : null;
-
-			// TODO: Implement a more accurate check
-			if (info == null && !isProxy(path)) {
-				info = Object.cast(path);
-			}
-
-			return info;
 		}
 	}
 

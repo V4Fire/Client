@@ -71,9 +71,6 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 		// and are used to listen to custom events instead of property mutations
 		const customWatcher = isCustomWatcher.test(watchPath) ? customWatcherRgxp.exec(watchPath) : null;
 
-		// True if the watcher is handling the component's event
-		const isSelfComponentEvent = customWatcher != null && customWatcher[2] === '';
-
 		if (customWatcher != null) {
 			const hookMod = customWatcher[1];
 			attachWatcherOnCreated = hookMod === '';
@@ -82,33 +79,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 		// Add a listener to the component's created hook if the component has not been created yet
 		if (attachWatcherOnCreated && isBeforeCreate) {
-			// Optimization of the most common use case
-			if (hook === 'beforeDataCreate' && watchers.length === 1) {
-				const watchInfo = watchers[0];
-
-				if (watchInfo.shouldInit?.(component) === false) {
-					return;
-				}
-
-				if (customWatcher == null) {
-					const propInfo = p.info ?? getPropertyInfo(watchPath, component);
-
-					if (!canSkipWatching(propInfo, watchInfo)) {
-						hooks['before:created'].push({fn: attachWatcher.bind(null, propInfo)});
-					}
-
-					return;
-				}
-			}
-
-			// Such events can be registered before the created hook
-			if (isSelfComponentEvent) {
-				attachWatcher();
-
-			} else {
-				hooks['before:created'].push({fn: attachWatcher});
-			}
-
+			hooks['before:created'].push({fn: attachWatcher});
 			return;
 		}
 
@@ -120,7 +91,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 		attachWatcher();
 
-		function attachWatcher(propInfo: typeof p.info = p.info) {
+		function attachWatcher() {
 			// If we have a custom watcher, we need to find a link to the event emitter.
 			// For instance:
 			// ':foo' -> watcherCtx == ctx; key = 'foo'
@@ -137,6 +108,8 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 					watchPath = customWatcher[3].dasherize();
 				}
 			}
+
+			let propInfo: typeof p.info = p.info;
 
 			// Iterates over all registered handlers for this watcher
 			watchers!.forEach((watchInfo) => {
