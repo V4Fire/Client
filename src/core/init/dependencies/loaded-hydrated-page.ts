@@ -35,12 +35,7 @@ export async function loadedHydratedPage(state: State): Promise<void> {
 			Object.mixin({propsToCopy: 'new'}, route.params, route.meta.params);
 			Object.mixin({propsToCopy: 'new'}, route.query, route.meta.query);
 
-			if (state.initOnly) {
-				await route.meta.prefetch?.();
-
-			} else {
-				await route.meta.load?.();
-			}
+			await route.meta.load?.();
 
 			// eslint-disable-next-line require-atomic-updates
 			state.route = route;
