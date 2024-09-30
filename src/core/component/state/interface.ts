@@ -99,6 +99,4 @@ export interface State {
 
 	/** {@link Async} */
 	async: Async;
-
-	initOnly: boolean;
 }

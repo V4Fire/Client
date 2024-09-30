@@ -31,10 +31,21 @@ export function getAppParams(opts: InitAppOptions): {
 	state: State;
 	createAppOpts: Pick<InitAppOptions, keyof CreateAppOptions>;
 } {
-	let {route} = opts;
+	let {route, hydrationStore} = opts;
 
 	if (route == null && SSR) {
 		route = opts.location.pathname + opts.location.search;
+	}
+
+	if (hydrationStore != null) {
+		const store = new HydrationStore();
+		Object.assign(store, hydrationStore);
+		hydrationStore = store;
+
+	} else {
+		hydrationStore = new HydrationStore();
+		// Disable clear store
+		hydrationStore.clear = () => {};
 	}
 
 	const resolvedState = {
@@ -60,7 +71,7 @@ export function getAppParams(opts: InitAppOptions): {
 
 		pageMetaData: opts.pageMetaData ?? new PageMetaData(opts.location),
 
-		hydrationStore: opts.hydrationStore ?? new HydrationStore()
+		hydrationStore
 	};
 
 	resolvedState.async.worker(() => {

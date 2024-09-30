@@ -76,6 +76,4 @@ export type InitAppOptions = CreateAppOptions & Overwrite<State, {
 
 	/** {@link Async} */
 	async?: State['async'];
-
-	initOnly?: boolean;
 }>;
