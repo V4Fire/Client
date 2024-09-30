@@ -273,7 +273,7 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	 */
 	@watch<iData>({
 		path: 'componentConverter',
-		shouldInit: (ctx) => ctx.componentConverter != null
+		shouldInit: (o) => o.componentConverter != null
 	})
 
 	protected initRemoteData(): CanUndef<unknown> {

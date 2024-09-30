@@ -575,7 +575,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	@watch({
 		path: 'proxyCall',
 		immediate: true,
-		shouldInit: (ctx) => ctx.proxyCall != null
+		shouldInit: (o) => o.proxyCall != null
 	})
 
 	protected initCallChildListener(enable: boolean): void {
