@@ -84,11 +84,14 @@ export function implementEventEmitterAPI(component: object): void {
 		writable: false,
 
 		value(event: string, ...args: unknown[]) {
-			if (!event.startsWith('[[')) {
-				nativeEmit?.(event, ...args);
+			if (regularEmitter.hasListeners(event) === true) {
+				if (!event.startsWith('[[')) {
+					nativeEmit?.(event, ...args);
+				}
+
+				regularEmitter.emit(event, ...args);
 			}
 
-			regularEmitter.emit(event, ...args);
 			return this;
 		}
 	});
