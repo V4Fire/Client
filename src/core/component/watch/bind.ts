@@ -53,7 +53,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 		// True if the method has been invoked with passing the custom async instance as a property
 		customAsync = $a !== unsafe.$async;
 
-	// Iterate over all registered watchers and listeners and initialize their
+	// Iterate over all registered watchers and listeners and initialize them
 	Object.entries(watchersMap).forEach(([watchPath, watchers]) => {
 		if (watchers == null) {
 			return;
@@ -139,7 +139,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 				// Currently, we need to create a wrapper for our handler because there
 				// are some conditions associated with the watcher:
 				//
-				// 1. It may or may doesn't provide arguments from the listened event.
+				// 1. It may or may not provide arguments from the listened event.
 				// 2. The handler can be specified either as a function or as a component method name.
 				//
 				// Additionally, we have two different scenarios:

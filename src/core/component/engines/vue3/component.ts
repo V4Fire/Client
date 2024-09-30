@@ -45,15 +45,17 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			ctx.$vueWatch = this.$watch.bind(this);
 			init.beforeDataCreateState(ctx);
 
-			const emitter: Function = (_: unknown, handler: WatchHandler) => {
-				// eslint-disable-next-line @v4fire/unbound-method
-				const {unwatch} = watch(ctx.$fields, {deep: true, immediate: true}, handler);
-				return unwatch;
-			};
+			if (meta.hasForceUpdateFields) {
+				const emitter: Function = (_: unknown, handler: WatchHandler) => {
+					// eslint-disable-next-line @v4fire/unbound-method
+					const {unwatch} = watch(ctx.$fields, {deep: true, immediate: true}, handler);
+					return unwatch;
+				};
 
-			ctx.$async.on(emitter, 'mutation', watcher, {
-				group: 'watchers:suspend'
-			});
+				ctx.$async.on(emitter, 'mutation', watcher, {
+					group: 'watchers:suspend'
+				});
+			}
 
 			return SSR ? {} : ctx.$fields;
 

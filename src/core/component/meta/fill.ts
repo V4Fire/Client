@@ -157,6 +157,10 @@ export function fillMeta(
 
 	[meta.systemFields, meta.fields].forEach((field) => {
 		Object.entries(field).forEach(([key, field]) => {
+			if (field?.forceUpdate === true) {
+				meta.hasForceUpdateFields = true;
+			}
+
 			field?.watchers?.forEach((watcher) => {
 				if (isFunctional && watcher.functional === false) {
 					return;

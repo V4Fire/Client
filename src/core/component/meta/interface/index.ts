@@ -105,6 +105,11 @@ export interface ComponentMeta {
 	tiedFields: Dictionary<string>;
 
 	/**
+	 * True, if the component has fields with force update option
+	 */
+	hasForceUpdateFields: boolean;
+
+	/**
 	 * A dictionary that contains the accessor methods of the component that support caching or watching
 	 */
 	computedFields: Dictionary<ComponentAccessor>;
