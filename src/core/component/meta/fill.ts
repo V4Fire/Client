@@ -155,12 +155,12 @@ export function fillMeta(
 
 	// Fields
 
-	[meta.systemFields, meta.fields].forEach((field) => {
-		let hasForceUpdateFields = false;
+	meta.hasForceUpdateFields = false;
 
+	[meta.systemFields, meta.fields].forEach((field) => {
 		Object.entries(field).forEach(([key, field]) => {
 			if (field?.forceUpdate === true) {
-				hasForceUpdateFields = true;
+				meta.hasForceUpdateFields = true;
 			}
 
 			field?.watchers?.forEach((watcher) => {
@@ -175,8 +175,6 @@ export function fillMeta(
 				watcherListeners.push(watcher);
 			});
 		});
-
-		meta.needWatchFields = hasForceUpdateFields;
 	});
 
 	// Computed fields

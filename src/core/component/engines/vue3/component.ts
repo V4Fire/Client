@@ -45,7 +45,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			ctx.$vueWatch = this.$watch.bind(this);
 			init.beforeDataCreateState(ctx);
 
-			if (meta.needWatchFields) {
+			if (meta.hasForceUpdateFields) {
 				const emitter: Function = (_: unknown, handler: WatchHandler) => {
 					// eslint-disable-next-line @v4fire/unbound-method
 					const {unwatch} = watch(ctx.$fields, {deep: true, immediate: true}, handler);
