@@ -36,11 +36,8 @@ import {
 	getComponentName,
 	getPropertyInfo,
 
-	canSkipWatching,
 	bindRemoteWatchers,
 	isCustomWatcher,
-
-	PropertyInfo,
 
 	WatchPath,
 	RawWatchHandler,
