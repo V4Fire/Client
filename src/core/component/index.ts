@@ -32,6 +32,10 @@ export {
 	isComponent,
 	rootComponents,
 
+	beforeHooks,
+	beforeRenderHooks,
+	beforeMountHooks,
+
 	V4_COMPONENT,
 	ASYNC_RENDER_ID,
 	PARENT
