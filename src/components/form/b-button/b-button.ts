@@ -153,7 +153,12 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 	}
 
 	protected override syncDataProviderWatcher(initLoad: boolean = true): void {
-		if (this.href != null || this.dataProviderProp !== 'Provider') {
+		if (
+			this.href != null ||
+			this.request != null ||
+			this.dataProviderProp !== 'Provider' ||
+			this.dataProviderOptions != null
+		) {
 			super.syncDataProviderWatcher(initLoad);
 		}
 	}
