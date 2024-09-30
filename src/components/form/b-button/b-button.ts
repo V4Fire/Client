@@ -65,8 +65,7 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 	 */
 	@computed({dependencies: ['type', 'form', 'href', 'hasDropdown']})
 	get attrs(): Dictionary {
-		const
-			attrs = {...this.attrsProp};
+		const attrs = {...this.attrsProp};
 
 		if (this.type === 'link') {
 			attrs.href = this.href;
@@ -87,8 +86,7 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 	/** {@link iAccess.prototype.isFocused} */
 	@computed({dependencies: ['mods.focused']})
 	get isFocused(): boolean {
-		const
-			{button} = this.$refs;
+		const {button} = this.$refs;
 
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (button != null) {
@@ -141,8 +139,7 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 	 */
 	@wait('ready')
 	reset(): CanPromise<void> {
-		const
-			{file} = this.$refs;
+		const {file} = this.$refs;
 
 		if (file != null) {
 			file.value = '';
@@ -155,16 +152,23 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 		iOpenToggle.initCloseHelpers(this, events);
 	}
 
+	protected override syncDataProviderWatcher(initLoad: boolean = true): void {
+		if (this.href != null || this.dataProviderProp !== 'Provider') {
+			super.syncDataProviderWatcher(initLoad);
+		}
+	}
+
 	protected override initModEvents(): void {
-		const
-			{localEmitter: $e} = this;
+		const {localEmitter: $e} = this;
 
 		super.initModEvents();
 
 		iProgress.initModEvents(this);
 		iProgress.initDisableBehavior(this);
+
 		iAccess.initModEvents(this);
 		iOpenToggle.initModEvents(this);
+
 		iVisible.initModEvents(this);
 
 		$e.on('block.mod.*.opened.*', (e: ModEvent) => this.waitComponentStatus('ready', () => {
@@ -173,10 +177,7 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 		}));
 
 		$e.on('block.mod.*.disabled.*', (e: ModEvent) => this.waitComponentStatus('ready', () => {
-			const {
-				button,
-				file
-			} = this.$refs;
+			const {button, file} = this.$refs;
 
 			const disabled = e.value !== 'false' && e.type !== 'remove';
 			button.disabled = disabled;
@@ -187,8 +188,7 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 		}));
 
 		$e.on('block.mod.*.focused.*', (e: ModEvent) => this.waitComponentStatus('ready', () => {
-			const
-				{button} = this.$refs;
+			const {button} = this.$refs;
 
 			if (e.value !== 'false' && e.type !== 'remove') {
 				button.focus();
