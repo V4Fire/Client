@@ -35,6 +35,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		tiedFields: {},
 		systemFields: {},
 		computedFields: {},
+		hasForceUpdateFields: false,
 
 		methods: {},
 		accessors: {},
