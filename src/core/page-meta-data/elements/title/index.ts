@@ -24,8 +24,11 @@ export class Title extends AbstractElement<HTMLTitleElement> {
 		this.attrs.text = value;
 	}
 
-	protected override tag!: 'title';
-	protected override attrs!: TitleAttributes;
+	/** @inheritDoc */
+	declare protected tag: 'title';
+
+	/** @inheritDoc */
+	declare protected attrs: TitleAttributes;
 
 	constructor(engine: Engine, attrs: TitleAttributes) {
 		super(engine, 'title', attrs);

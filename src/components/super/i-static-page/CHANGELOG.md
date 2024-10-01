@@ -11,7 +11,7 @@ Changelog
 
 ## v4.0.0-beta.129 (2024-09-04)
 
-* #### :nail_care: Polish
+#### :nail_care: Polish
 
 * Now, if an external link is passed to `initLibs()`, `PUBLIC_PATH` won't be added to it.
 

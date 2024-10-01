@@ -8,7 +8,7 @@ Consequently, in TypeScript, we have to implement every method in our classes,
 even if the implementation remains unchanged.
 This is where traits become useful.
 
-## How it works?
+## How Does It Work?
 
 Let's list the steps to create a trait.
 

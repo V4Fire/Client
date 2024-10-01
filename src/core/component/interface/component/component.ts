@@ -15,6 +15,7 @@ import type Async from 'core/async';
 import type { BoundFn, ProxyCb, EventId } from 'core/async';
 import type { AbstractCache } from 'core/cache';
 
+import { V4_COMPONENT } from 'core/component/const';
 import type { ComponentMeta } from 'core/component/meta';
 import type { VNode, Slots, ComponentOptions, SetupContext } from 'core/component/engines';
 
@@ -42,23 +43,29 @@ export abstract class ComponentInterface {
 	readonly Component!: ComponentInterface;
 
 	/**
+	 * A unique symbol used to identify a V4Fire component
+	 */
+	readonly [V4_COMPONENT]: true;
+
+	/**
 	 * References to the instance of the entire application and its state
 	 */
 	readonly app!: ComponentApp;
 
 	/**
 	 * The unique component identifier.
+	 *
 	 * The value for this prop is automatically generated during the build process,
 	 * but it can also be manually specified.
 	 * If the prop is not provided, the ID will be generated at runtime.
 	 */
-	readonly componentIdProp?: string;
+	abstract readonly componentIdProp?: string;
 
 	/**
 	 * The unique component identifier.
 	 * The value is formed based on the passed prop or dynamically.
 	 */
-	readonly componentId!: string;
+	abstract readonly componentId: string;
 
 	/**
 	 * The component name in dash-style without special postfixes like `-functional`
@@ -69,7 +76,7 @@ export abstract class ComponentInterface {
 	 * The unique or global name of the component.
 	 * Used to synchronize component data with various external storages.
 	 */
-	readonly globalName?: string;
+	abstract readonly globalName?: string;
 
 	/**
 	 * True if the component renders as a regular one, but can be rendered as a functional.
@@ -279,6 +286,11 @@ export abstract class ComponentInterface {
 	protected readonly $syncLinkCache!: SyncLinkCache;
 
 	/**
+	 * A stub for the correct functioning of `$parent`
+	 */
+	protected $restArgs!: unknown;
+
+	/**
 	 * An API for binding and managing asynchronous operations
 	 */
 	protected readonly async!: Async<ComponentInterface>;
@@ -288,6 +300,11 @@ export abstract class ComponentInterface {
 	 * This property is used by restricted/private consumers, such as private directives or component engines.
 	 */
 	protected readonly $async!: Async<ComponentInterface>;
+
+	/**
+	 * A list of functions that should be called when the component is destroyed
+	 */
+	protected readonly $destructors!: Function[];
 
 	/**
 	 * Cache for rendered SSR templates

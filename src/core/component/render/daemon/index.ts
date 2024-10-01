@@ -19,8 +19,7 @@ import type { Task } from 'core/component/render/daemon/interface';
 export * from 'core/component/render/daemon/const';
 export * from 'core/component/render/daemon/interface';
 
-const
-	opts = config.asyncRender;
+const opts = config.asyncRender;
 
 let
 	inProgress = false,
@@ -82,8 +81,7 @@ function run(): void {
 				continue;
 			}
 
-			const
-				canRender = val.task();
+			const canRender = val.task();
 
 			const exec = (canRender: unknown) => {
 				if (Object.isTruly(canRender)) {

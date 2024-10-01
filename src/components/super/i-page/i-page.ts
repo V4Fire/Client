@@ -29,8 +29,7 @@ import type {
 export * from 'components/super/i-data/i-data';
 export * from 'components/super/i-page/interface';
 
-const
-	$$ = symbolGenerator();
+const $$ = symbolGenerator();
 
 @component({inheritMods: false})
 export default abstract class iPage extends iData implements iVisible {
@@ -43,7 +42,7 @@ export default abstract class iPage extends iData implements iVisible {
 
 	/**
 	 * The current page title.
-	 * Basically this title is set via `document.title`.
+	 * Basically, this title is set via `document.title`.
 	 * If the prop value is defined as a function, it will be called (the result will be used as the title).
 	 */
 	@prop({type: [String, Function]})
@@ -51,7 +50,7 @@ export default abstract class iPage extends iData implements iVisible {
 
 	/**
 	 * The current page description.
-	 * Basically this description is set via `<meta name="description" content="..."/>`.
+	 * Basically, this description is set via `<meta name="description" content="..."/>`.
 	 * If the prop value is defined as a function, it will be called (the result will be used as the description content).
 	 */
 	@prop({type: [String, Function]})
@@ -80,7 +79,7 @@ export default abstract class iPage extends iData implements iVisible {
 
 	/**
 	 * Sets a new page title.
-	 * Basically this title is set via `document.title`.
+	 * Basically, this title is set via `document.title`.
 	 *
 	 * @param value
 	 */
@@ -98,7 +97,7 @@ export default abstract class iPage extends iData implements iVisible {
 	 */
 	@computed({cache: true})
 	get scrollToProxy(): this['scrollTo'] {
-		return (...args) => {
+		return (...args: any[]) => {
 			this.async.setImmediate(() => this.scrollTo(...args), {
 				label: $$.scrollTo
 			});
@@ -180,8 +179,7 @@ export default abstract class iPage extends iData implements iVisible {
 		}
 
 		if (this.stage != null) {
-			let
-				v = stageTitles[this.stage];
+			let v = stageTitles[this.stage];
 
 			if (v == null) {
 				v = stageTitles['[[DEFAULT]]'];

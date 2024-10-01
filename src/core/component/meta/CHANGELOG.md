@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added the `partial` parameter for the declaration of components consisting of multiple classes
+
 ## v4.0.0-beta.137 (2024-09-24)
 
 #### :house: Internal

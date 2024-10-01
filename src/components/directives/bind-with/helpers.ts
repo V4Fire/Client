@@ -26,12 +26,12 @@ export function getElementId(el: Element): string {
  * @param el - the element to which the directive is applied
  * @param ctx - the directive context
  */
-export function clearElementBindings(el: Element, ctx: Nullable<ComponentInterface>): void {
+export function clearElementBindings(el: Element, ctx: Nullable<ComponentInterface['unsafe']>): void {
 	if (ctx == null) {
 		return;
 	}
 
-	ctx.unsafe.async.clearAll({group: new RegExp(`:${getElementId(el)}`)});
+	ctx.async.clearAll({group: new RegExp(`:${getElementId(el)}`)});
 }
 
 /**
@@ -44,7 +44,7 @@ export function clearElementBindings(el: Element, ctx: Nullable<ComponentInterfa
 export function bindListenerToElement(
 	listener: Nullable<DirectiveValue>,
 	el: Element,
-	ctx: Nullable<ComponentInterface>
+	ctx: Nullable<ComponentInterface['unsafe']>
 ): void {
 	if (ctx == null || listener == null) {
 		return;
@@ -53,16 +53,13 @@ export function bindListenerToElement(
 	const
 		id = getElementId(el);
 
-	const {
-		unsafe,
-		unsafe: {async: $a}
-	} = ctx;
+	const {async: $a} = ctx;
 
 	$a.clearAll({
 		group: new RegExp(`:${id}`)
 	});
 
-	Array.concat([], listener).forEach((listener: Listener) => {
+	Array.toArray(listener).forEach((listener: Listener) => {
 		const group = {
 			group: `${listener.group ?? ''}:${id}`
 		};
@@ -70,7 +67,7 @@ export function bindListenerToElement(
 		if ('path' in listener) {
 			const
 				opts = listener.options ?? {},
-				watcher = unsafe.$watch(listener.path, opts, handler);
+				watcher = ctx.$watch(listener.path, opts, handler);
 
 			if (watcher != null) {
 				$a.worker(watcher, group);
@@ -90,9 +87,9 @@ export function bindListenerToElement(
 		}
 
 		const emitter = listener.emitter ?? {
-			on: unsafe.$on.bind(ctx),
-			once: unsafe.$once.bind(ctx),
-			off: unsafe.$off.bind(ctx)
+			on: ctx.$on.bind(ctx),
+			once: ctx.$once.bind(ctx),
+			off: ctx.$off.bind(ctx)
 		};
 
 		if (listener.on != null) {

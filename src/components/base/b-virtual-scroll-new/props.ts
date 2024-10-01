@@ -32,7 +32,7 @@ import type { Observer } from 'components/base/b-virtual-scroll-new/modules/obse
 
 import iData, { component, prop } from 'components/super/i-data/i-data';
 
-@component()
+@component({partial: 'bVirtualScrollNew'})
 export default abstract class iVirtualScrollProps extends iData {
 	/** {@link iItems.item} */
 	readonly Item!: object;
@@ -243,7 +243,8 @@ export default abstract class iVirtualScrollProps extends iData {
 
 	readonly itemsProcessors?: ItemsProcessors;
 
-	override readonly DB!: ComponentDb;
+	/** @inheritDoc */
+	declare readonly DB: ComponentDb;
 
 	/**
 	 * A function that returns the GET parameters for a request. This function is called for each request. It receives the

@@ -33,16 +33,14 @@ export function attachDynamicWatcher(
 ): Function {
 	// eslint-disable-next-line @typescript-eslint/typedef
 	const wrapper = <MultipleWatchHandler>function wrapper(this: unknown, mutations, ...args) {
-		const
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			isPacked = args.length === 0;
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		const isPacked = args.length === 0;
 
 		if (!isPacked) {
 			mutations = [Object.cast([mutations, ...args])];
 		}
 
-		const
-			filteredMutations: unknown[] = [];
+		const filteredMutations: unknown[] = [];
 
 		mutations.forEach((mutation) => {
 			const
@@ -92,23 +90,20 @@ export function attachDynamicWatcher(
 		};
 
 	} else {
-		let
-			handlersStore = store.get(prop.ctx);
+		let handlersStore = store.get(prop.ctx);
 
 		if (!handlersStore) {
 			handlersStore = Object.createDict();
 			store.set(prop.ctx, handlersStore);
 		}
 
-		const
-			nm = prop.accessor ?? prop.name;
+		const name = prop.accessor ?? prop.name;
 
-		let
-			handlersSet = handlersStore[nm];
+		let handlersSet = handlersStore[name];
 
-		if (!handlersSet) {
+		if (handlersSet == null) {
 			handlersSet = new Set<Function>();
-			handlersStore[nm] = handlersSet;
+			handlersStore[name] = handlersSet;
 		}
 
 		handlersSet.add(wrapper);
@@ -118,10 +113,7 @@ export function attachDynamicWatcher(
 		};
 	}
 
-	// Every worker that passed to Async have a counter with a number of consumers of this worker,
-	// but in this case this behaviour is redundant and can produce an error,
-	// that why we wrap original destructor with a new function
-	component.unsafe.$async.worker(() => destructor());
+	component.unsafe.$destructors.push(destructor);
 
 	return destructor;
 }

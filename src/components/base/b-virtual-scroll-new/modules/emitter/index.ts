@@ -18,7 +18,7 @@ export * from 'components/base/b-virtual-scroll-new/modules/emitter/interface';
  * Provides methods for interacting with the `selfEmitter` using typed events
  * @param ctx
  */
-export function componentTypedEmitter(ctx: bVirtualScrollNew): ComponentTypedEmitter {
+export function componentTypedEmitter(ctx: bVirtualScrollNew['unsafe']): ComponentTypedEmitter {
 	const once = <EVENT extends ComponentEvents>(
 		event: EVENT,
 		handler: (...args: LocalEventPayload<EVENT>) => void,

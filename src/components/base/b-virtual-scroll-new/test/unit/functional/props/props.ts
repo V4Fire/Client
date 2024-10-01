@@ -55,7 +55,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 			await component.waitForChildCountEqualsTo(chunkSize * 3);
 
 			const
-				produceSpy = await component.getSpy((ctx) => ctx.componentFactory.produceComponentItems);
+				produceSpy = await component.getSpy((ctx) => ctx.unsafe.componentFactory.produceComponentItems);
 
 			test.expect(provider.mock.mock.calls.length).toBe(3);
 			await test.expect(produceSpy.calls).resolves.toHaveLength(2);

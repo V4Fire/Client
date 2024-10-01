@@ -9,6 +9,14 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :house: Internal
+
+* Set all friend classes now through getters with `cache: 'forever'`
+* Modules for friend classes are now loaded lazily
+* Performance improvements
+
 ## v4.0.0-beta.137 (2024-09-24)
 
 #### :bug: Bug Fix

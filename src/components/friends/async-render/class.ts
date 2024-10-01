@@ -11,6 +11,10 @@ import Friend, { fakeMethods } from 'components/friends/friend';
 import type iBlock from 'components/super/i-block/i-block';
 import type { TaskOptions } from 'components/friends/async-render/api';
 
+//#if runtime has dummyComponents
+import('components/friends/async-render/test/b-friends-async-render-dummy');
+//#endif
+
 interface AsyncRender {
 	waitForceRender(elementToDrop?: string | ((ctx: Friend['component']) => CanPromise<CanUndef<string | Element>>)): void;
 	forceRender(): void;

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { propGetterRgxp } from 'core/component/reflect';
+import { isPropGetter } from 'core/component/reflect';
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
@@ -17,10 +17,7 @@ import type { ComponentInterface } from 'core/component/interface';
  * @param component
  */
 export function attachAttrPropsListeners(component: ComponentInterface): void {
-	const {
-		unsafe,
-		unsafe: {meta}
-	} = component;
+	const {unsafe, unsafe: {meta}} = component;
 
 	if (unsafe.meta.params.functional === true) {
 		return;
@@ -50,11 +47,11 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 				}
 			}
 
-			if (!attrName.startsWith(propPrefix)) {
+			if (!isPropGetter.test(attrName)) {
 				return;
 			}
 
-			const propName = attrName.replace(propGetterRgxp, '');
+			const propName = isPropGetter.replace(attrName);
 
 			if (meta.props[propName]?.forceUpdate === false) {
 				propValuesToUpdate.push([propName, attrName]);
@@ -67,7 +64,7 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 
 		if (propValuesToUpdate.length > 0) {
 			nonFunctionalParent.$on('hook:beforeUpdate', updatePropsValues);
-			unsafe.$async.worker(() => nonFunctionalParent.$off('hook:beforeUpdate', updatePropsValues));
+			unsafe.$destructors.push(() => nonFunctionalParent.$off('hook:beforeUpdate', updatePropsValues));
 		}
 
 		async function updatePropsValues() {
@@ -78,7 +75,7 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 			}
 
 			// For functional components, their complete mounting into the DOM is additionally awaited
-			if (parent.isFunctional === true) {
+			if (parent.meta.params.functional === true) {
 				await parent.$nextTick();
 			}
 
@@ -91,28 +88,4 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 			});
 		}
 	}
-}
-
-/**
- * Returns true if the given prop type can be a function.
- *
- * @param type
- *
- * @example
- * ```js
- * console.log(isTypeCanBeFunc(Boolean));             // false
- * console.log(isTypeCanBeFunc(Function));            // true
- * console.log(isTypeCanBeFunc([Function, Boolean])); // true
- * ```
- */
-export function isTypeCanBeFunc(type: CanUndef<CanArray<Function | FunctionConstructor>>): boolean {
-	if (!type) {
-		return false;
-	}
-
-	if (Object.isArray(type)) {
-		return type.some((type) => type === Function);
-	}
-
-	return type === Function;
 }

@@ -92,7 +92,7 @@ test.describe('<i-block> calling a component\'s destructor', () => {
 		test('when it is called directly more than once', async ({page, consoleTracker}) => {
 			const
 				target = await renderDestructorDummy(page),
-				dynamicChild = await target.evaluateHandle<iBlock>((ctx) => ctx.$refs.child?.[1]),
+				dynamicChild = await target.evaluateHandle<iBlock>((ctx) => ctx.unsafe.$refs.child?.[1]),
 				destructor = await dynamicChild.evaluateHandle((ctx) => ctx.unsafe.$destroy.bind(ctx));
 
 			await destructor.evaluate((destroy) => destroy(false));
@@ -112,7 +112,7 @@ test.describe('<i-block> calling a component\'s destructor', () => {
 			async ({page, consoleTracker}) => {
 				const
 					target = await renderDestructorDummy(page),
-					dynamicChild = await target.evaluateHandle<iBlock>((ctx) => ctx.$refs.child?.[1]);
+					dynamicChild = await target.evaluateHandle<iBlock>((ctx) => ctx.unsafe.$refs.child?.[1]);
 
 				await dynamicChild.evaluate((ctx) => {
 					ctx.unsafe.$destroy({recursive: false});

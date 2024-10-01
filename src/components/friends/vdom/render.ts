@@ -48,7 +48,7 @@ export function render(this: Friend, vnode: VNode, group?: string): Node;
 export function render(this: Friend, vnodes: VNode[], group?: string): Node[];
 
 export function render(this: Friend, vnode: CanArray<VNode>, group?: string): CanArray<Node> {
-	return this.ctx.$renderEngine.r.render(Object.cast(vnode), this.ctx, group);
+	return this.ctx.$renderEngine.r.render(Object.cast(vnode), this.component, group);
 }
 
 /**
@@ -127,7 +127,7 @@ export function getRenderFactory(this: Friend, path: string): CanUndef<RenderFac
 export function getRenderFn(
 	this: Friend,
 	factoryOrPath: CanUndef<RenderFactory> | string,
-	ctx: ComponentInterface = this.ctx
+	ctx: ComponentInterface = this.component
 ): RenderFn {
 	const
 		factory = Object.isString(factoryOrPath) ? getRenderFactory.call(this, factoryOrPath) : factoryOrPath;

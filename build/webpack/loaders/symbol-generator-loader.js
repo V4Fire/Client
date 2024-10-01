@@ -8,9 +8,7 @@
 
 'use strict';
 
-const
-	config = require('@config/config'),
-	$C = require('collection.js');
+const $C = require('collection.js');
 
 const
 	fs = require('node:fs'),
@@ -37,10 +35,6 @@ const
  * ```
  */
 module.exports = function symbolGeneratorLoader(str) {
-	if (!/ES[35]$/.test(config.es())) {
-		return str;
-	}
-
 	if (
 		!$C(this.query.modules)
 			.some((src) => isPathInside(fs.realpathSync(this.context), fs.realpathSync(src)))
@@ -48,8 +42,7 @@ module.exports = function symbolGeneratorLoader(str) {
 		return str;
 	}
 
-	const
-		names = new Set();
+	const names = new Set();
 
 	let res;
 

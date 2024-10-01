@@ -21,12 +21,11 @@ import iBlockEvent from 'components/super/i-block/event';
 
 export * from 'components/super/i-block/mods/interface';
 
-@component()
+@component({partial: 'iBlock'})
 export default abstract class iBlockMods extends iBlockEvent {
 	@system({merge: mergeMods, init: initMods})
 	override readonly mods!: ModsDict;
 
-	@computed({dependencies: ['mods']})
 	override get sharedMods(): CanNull<ModsDict> {
 		const m = this.mods;
 

@@ -62,7 +62,7 @@ import type { DecoratorFieldWatcher, DecoratorMethodWatcher } from 'core/compone
  * }
  * ```
  *
- * In order to listen to an event, you should use the special delimiter `:` within a watch path.
+ * To listen to an event, you should use the special delimiter `:` within a watch path.
  * You can also specify an event emitter to listen to by writing a link before `:`.
  * Here are some examples:
  *

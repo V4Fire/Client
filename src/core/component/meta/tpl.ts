@@ -16,8 +16,7 @@ import type { ComponentMeta } from 'core/component/interface';
  * @param [templates] - a dictionary containing the registered templates
  */
 export function attachTemplatesToMeta(meta: ComponentMeta, templates?: Dictionary): void {
-	const
-		{methods, methods: {render}} = meta;
+	const {methods, methods: {render}} = meta;
 
 	// We have a custom render function
 	if (render != null && !render.wrapper) {

@@ -29,7 +29,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		params: component.params,
 
 		props: {},
-		mods: getComponentMods(component),
+		mods: component.params.partial == null ? getComponentMods(component) : {},
 
 		fields: {},
 		tiedFields: {},
@@ -85,24 +85,23 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		cache = new Map();
 
 	meta.component[SSR ? 'ssrRender' : 'render'] = Object.cast((ctx: object, ...args: unknown[]) => {
-		const unsafe = getComponentContext(ctx);
+		const {unsafe} = getComponentContext(ctx, true);
 
 		unsafe.$emit('[[RENDER]]');
 
-		const result = callRenderFunction();
+		const res = callRenderFunction();
 
 		// @ts-ignore (unsafe)
 		unsafe['$renderCounter'] = unsafe.$renderCounter + 1;
 
-		return result;
+		return res;
 
 		function callRenderFunction() {
 			if (cache.has(ctx)) {
 				return cache.get(ctx)();
 			}
 
-			const
-				render = meta.methods.render!.fn.call(unsafe, unsafe, ...args);
+			const render = meta.methods.render!.fn.call(unsafe, unsafe, ...args);
 
 			if (!Object.isFunction(render)) {
 				return render;
@@ -114,17 +113,14 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 
 			if (needCacheRenderFn) {
 				cache.set(ctx, render);
-
-				unsafe.$async.worker(() => {
-					cache.delete(ctx);
-				}, {label});
+				unsafe.$async.worker(() => cache.delete(ctx), {label});
 			}
 
 			return render();
 		}
 	});
 
-	if (component.parentMeta) {
+	if (component.parentMeta != null) {
 		inheritMeta(meta, component.parentMeta);
 	}
 

@@ -69,8 +69,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 		ctx.componentStatus = 'loading';
 
 		if (needRouterSync || globalName != null) {
-			const tasks = Array.concat(
-				[],
+			const tasks = Array.toArray(
 				needRouterSync ? $s.resetRouter() : null,
 				globalName != null ? $s.resetStorage() : null
 			);
@@ -83,8 +82,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 
 	$e.on('reset.silence', waitNextTickForReset(async () => {
 		if (needRouterSync || globalName != null) {
-			const tasks = Array.concat(
-				[],
+			const tasks = Array.toArray(
 				needRouterSync ? $s.resetRouter() : null,
 				globalName != null ? $s.resetStorage() : null
 			);
@@ -125,7 +123,7 @@ export function initRemoteWatchers(component: iBlock): void {
 	}
 
 	Object.entries(watchProp).forEach(([method, watchers]) => {
-		Array.concat([], watchers).forEach((watcher) => {
+		Array.toArray(watchers).forEach((watcher) => {
 			if (Object.isString(watcher)) {
 				const
 					path = normalizePath(watcher),
@@ -143,7 +141,7 @@ export function initRemoteWatchers(component: iBlock): void {
 
 				wList.push({
 					...watcher,
-					args: Array.concat([], watcher.args),
+					args: Array.toArray(watcher.args),
 					method,
 					handler: method
 				});

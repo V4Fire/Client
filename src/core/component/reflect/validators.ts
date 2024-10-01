@@ -7,11 +7,23 @@
  */
 
 /**
- * This regular expression can be used to determine whether a component is a "smart" component based on its name
+ * This API can be used to determine whether a component is a "smart" component based on its name
  */
-export const isSmartComponent = /-functional$/;
+export const isSmartComponent = {
+	replace(component: string): string {
+		return component.slice(0, component.length - '-functional'.length);
+	},
+
+	test(component: string): boolean {
+		return component.endsWith('-functional');
+	}
+};
 
 /**
- * This regular expression allows you to determine if a component is abstract based on its name
+ * This API allows you to determine if a component is abstract based on its name
  */
-export const isAbstractComponent = /^[iv]-/;
+export const isAbstractComponent = {
+	test(component: string): boolean {
+		return component.startsWith('i-') || component.startsWith('v-');
+	}
+};

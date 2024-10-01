@@ -7,7 +7,7 @@
  */
 
 import { isProxy } from 'core/object/watch';
-import { bindingRgxp, customWatcherRgxp, getPropertyInfo } from 'core/component';
+import { getPropertyInfo, isBinding, isCustomWatcher, PropertyInfo } from 'core/component';
 
 import type iBlock from 'components/super/i-block/i-block';
 import type Sync from 'components/friends/sync/class';
@@ -18,12 +18,16 @@ import type { LinkDecl, LinkGetter, AsyncWatchOptions } from 'components/friends
 /**
  * Sets a reference to a property that is logically connected to the current field.
  *
- * Simply put, if field A refers to field B, then it has the same value and will automatically update when B changes.
- * You can refer to a value as a whole or to a part of it. Just pass a special getter function that will take
- * parameters from the link and return the value to the original field.
+ * For example, if field A refers to field B,
+ * then it will have the same value and will automatically update when B changes.
+ * If the link is set to an event, every time this event fires,
+ * the value of A will change to the value of the event object.
  *
- * Logical connection is based on a name convention: properties that match the patterns
- * "${property} -> ${property}Prop" or "${property}Store -> ${property}Prop" are connected with each other.
+ * You can refer to a value as a whole or to a part of it.
+ * Pass a special getter function that will take parameters from the link and return the value to the original field.
+ *
+ * Logical connection is based on a naming convention: properties that match the patterns
+ * "${property} → ${property}Prop" or "${property}Store → ${property}Prop" are connected with each other.
  *
  * Mind, this function can be used only within a property decorator.
  *
@@ -55,14 +59,18 @@ export function link<D = unknown, R = D>(
 ): CanUndef<R>;
 
 /**
- * Sets a reference to a property that is logically connected to the current field.
+ * Sets a link to a property that is logically connected to the current field.
  *
- * Simply put, if field A refers to field B, then it has the same value and will automatically update when B changes.
- * You can refer to a value as a whole or to a part of it. Just pass a special getter function that will take
- * parameters from the link and return the value to the original field.
+ * For example, if field A refers to field B,
+ * then it will have the same value and will automatically update when B changes.
+ * If the link is set to an event, every time this event fires,
+ * the value of A will change to the value of the event object.
  *
- * Logical connection is based on a name convention: properties that match the patterns
- * "${property} -> ${property}Prop" or "${property}Store -> ${property}Prop" are connected with each other.
+ * You can refer to a value as a whole or to a part of it.
+ * Pass a special getter function that will take parameters from the link and return the value to the original field.
+ *
+ * Logical connection is based on a naming convention: properties that match the patterns
+ * "${property} → ${property}Prop" or "${property}Store → ${property}Prop" are connected with each other.
  *
  * Mind, this method can be used only within a property decorator.
  *
@@ -92,13 +100,16 @@ export function link<D = unknown, R = D>(
 /**
  * Sets a link to a component/object property or event by the specified path.
  *
- * Simply put, if field A refers to field B, then it has the same value and will automatically update when B changes.
- * If the link is set to an event, then every time this event fires, then the value of A will change to the value of
- * the event object. You can refer to a value as a whole or to a part of it. Just pass a special getter function
- * that will take parameters from the link and return the value to the original field.
+ * For example, if field A refers to field B,
+ * then it will have the same value and will automatically update when B changes.
+ * If the link is set to an event, every time this event fires,
+ * the value of A will change to the value of the event object.
  *
- * To listen an event you need to use the special delimiter ":" within a path.
- * Also, you can specify an event emitter to listen by writing a link before ":".
+ * You can refer to a value as a whole or to a part of it.
+ * Pass a special getter function that will take parameters from the link and return the value to the original field.
+ *
+ * To listen to an event, you need to use the special delimiter ":" within a path.
+ * Additionally, you can specify an event emitter to listen to by writing a link before the ":" delimiter.
  *
  * {@link iBlock.watch}
  *
@@ -161,15 +172,18 @@ export function link<D = unknown, R = D>(
 ): CanUndef<R>;
 
 /**
- * Sets a link to a component/object property or event by the specified path.
+ * Sets a link to a component/object property or event at the specified path.
  *
- * Simply put, if field A refers to field B, then it has the same value and will automatically update when B changes.
- * If the link is set to an event, then every time this event fires, then the value of A will change to the value of
- * the event object. You can refer to a value as a whole or to a part of it. Just pass a special getter function
- * that will take parameters from the link and return the value to the original field.
+ * For example, if field A refers to field B,
+ * then it will have the same value and will automatically update when B changes.
+ * If the link is set to an event, every time this event fires,
+ * the value of A will change to the value of the event object.
  *
- * To listen an event you need to use the special delimiter ":" within a path.
- * Also, you can specify an event emitter to listen by writing a link before ":".
+ * You can refer to a value as a whole or to a part of it.
+ * Pass a special getter function that will take parameters from the link and return the value to the original field.
+ *
+ * To listen to an event, you need to use the special delimiter ":" within a path.
+ * Additionally, you can specify an event emitter to listen to by writing a link before the ":" delimiter.
  *
  * {@link iBlock.watch}
  *
@@ -240,7 +254,7 @@ export function link<D = unknown, R = D>(
 	getter?: LinkGetter<Sync['C'], D>
 ): CanUndef<R> {
 	let
-		destPath,
+		destPath: CanUndef<string>,
 		resolvedPath: CanUndef<LinkDecl>;
 
 	if (Object.isArray(path)) {
@@ -275,11 +289,10 @@ export function link<D = unknown, R = D>(
 		return;
 	}
 
-	let
-		resolvedOpts: AsyncWatchOptions = {};
+	let resolvedOpts: AsyncWatchOptions = {};
 
 	if (path == null) {
-		resolvedPath = `${destPath.replace(bindingRgxp, '')}Prop`;
+		resolvedPath = `${isBinding.test(destPath) ? isBinding.replace(destPath) : destPath}Prop`;
 
 	} else if (Object.isString(path) || isProxy(path) || 'ctx' in path) {
 		resolvedPath = path;
@@ -297,53 +310,53 @@ export function link<D = unknown, R = D>(
 	}
 
 	let
-		info,
+		srcInfo,
 		normalizedPath: CanUndef<ObjectPropertyPath>,
 		topPathIndex = 1;
 
 	let
-		isMountedWatcher = false,
-		isCustomWatcher = false;
+		mountedWatcher = false,
+		customWatcher = false;
 
-	if (!Object.isString(resolvedPath)) {
-		isMountedWatcher = true;
+	if (Object.isString(resolvedPath)) {
+		normalizedPath = resolvedPath;
 
-		if (isProxy(resolvedPath)) {
-			info = {ctx: resolvedPath};
-			normalizedPath = undefined;
+		if (isCustomWatcher.test(normalizedPath)) {
+			customWatcher = true;
 
 		} else {
-			info = resolvedPath;
-			normalizedPath = info.path;
-			topPathIndex = 0;
+			srcInfo = getPropertyInfo(normalizedPath, this.component);
+
+			if (srcInfo.type === 'mounted') {
+				mountedWatcher = true;
+				normalizedPath = srcInfo.path;
+				topPathIndex = Object.size(srcInfo.path) > 0 ? 0 : 1;
+			}
 		}
 
 	} else {
-		normalizedPath = resolvedPath;
+		mountedWatcher = true;
 
-		if (RegExp.test(customWatcherRgxp, normalizedPath)) {
-			isCustomWatcher = true;
+		if (isProxy(resolvedPath)) {
+			srcInfo = {ctx: resolvedPath};
+			normalizedPath = undefined;
 
 		} else {
-			info = getPropertyInfo(normalizedPath, this.ctx);
-
-			if (info.type === 'mounted') {
-				isMountedWatcher = true;
-				normalizedPath = info.path;
-				topPathIndex = Object.size(info.path) > 0 ? 0 : 1;
-			}
+			srcInfo = resolvedPath;
+			normalizedPath = srcInfo.path;
+			topPathIndex = 0;
 		}
 	}
 
-	const isAccessor = info != null ?
-		Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor) :
+	const isAccessor = srcInfo != null ?
+		Boolean(srcInfo.type === 'accessor' || srcInfo.type === 'computed' || srcInfo.accessor) :
 		false;
 
 	if (isAccessor) {
 		resolvedOpts.immediate = resolvedOpts.immediate !== false;
 	}
 
-	if (!isCustomWatcher) {
+	if (!customWatcher) {
 		if (
 			normalizedPath != null && (
 				Object.isArray(normalizedPath) && normalizedPath.length > topPathIndex ||
@@ -362,21 +375,29 @@ export function link<D = unknown, R = D>(
 
 	linksCache[destPath] = {};
 
-	const sync = (val?, oldVal?) => {
-		const res = getter ? getter.call(this.component, val, oldVal) : val;
-		this.field.set(destPath, res);
-		return res;
+	let destInfo: CanUndef<PropertyInfo>;
+
+	const sync = (val?: unknown, oldVal?: unknown) => {
+		const resolveVal = getter ? getter.call(this.component, val, oldVal) : val;
+
+		if (destPath == null) {
+			return resolveVal;
+		}
+
+		destInfo ??= getPropertyInfo(destPath, this.component);
+		this.field.set(destInfo, resolveVal);
+
+		return resolveVal;
 	};
 
 	if (getter != null && (getter.length > 1 || getter['originalLength'] > 1)) {
-		ctx.watch(info ?? normalizedPath, resolvedOpts, (val, oldVal, ...args) => {
-			if (isCustomWatcher) {
+		ctx.watch(srcInfo ?? normalizedPath, resolvedOpts, (val: unknown, oldVal: unknown, ...args: unknown[]) => {
+			if (customWatcher) {
 				oldVal = undefined;
 
 			} else {
 				if (args.length === 0 && Object.isArray(val) && val.length > 0) {
-					const
-						mutation = <[unknown, unknown]>val[val.length - 1];
+					const mutation = <[unknown, unknown]>val[val.length - 1];
 
 					val = mutation[0];
 					oldVal = mutation[1];
@@ -391,11 +412,11 @@ export function link<D = unknown, R = D>(
 		});
 
 	} else {
-		ctx.watch(info ?? normalizedPath, resolvedOpts, (val, ...args) => {
+		ctx.watch(srcInfo ?? normalizedPath, resolvedOpts, (val: unknown, ...args: unknown[]) => {
 			let
 				oldVal: unknown = undefined;
 
-			if (!isCustomWatcher) {
+			if (!customWatcher) {
 				if (args.length === 0 && Object.isArray(val) && val.length > 0) {
 					const
 						mutation = <[unknown, unknown]>val[val.length - 1];
@@ -417,62 +438,55 @@ export function link<D = unknown, R = D>(
 	}
 
 	{
-		let
-			key;
+		let key: Nullable<string | object>;
 
-		if (isMountedWatcher) {
-			const o = info?.originalPath;
-			key = Object.isString(o) ? o : info?.ctx ?? normalizedPath;
+		if (mountedWatcher) {
+			const o = srcInfo?.originalPath;
+			key = Object.isString(o) ? o : srcInfo?.ctx ?? normalizedPath;
 
 		} else {
 			key = normalizedPath;
 		}
 
-		syncLinkCache.set(key, Object.assign(syncLinkCache.get(key) ?? {}, {
-			[destPath]: {
-				path: destPath,
-				sync
-			}
-		}));
+		if (key != null) {
+			syncLinkCache.set(key, Object.assign(syncLinkCache.get(key) ?? {}, {
+				[destPath]: {
+					path: destPath,
+					sync
+				}
+			}));
+		}
 	}
 
-	if (isCustomWatcher) {
+	if (customWatcher) {
 		return sync();
 	}
 
-	const
-		needCollapse = resolvedOpts.collapse !== false;
+	const needCollapse = resolvedOpts.collapse !== false;
 
-	if (isMountedWatcher) {
-		const
-			obj = info?.ctx;
+	if (mountedWatcher) {
+		const obj = srcInfo?.ctx;
 
-		if (needCollapse || Object.size(normalizedPath) === 0) {
+		if (needCollapse || normalizedPath == null || normalizedPath.length === 0) {
 			return sync(obj);
 		}
 
-		return sync(Object.get(obj, normalizedPath!));
+		return sync(Object.get(obj, normalizedPath));
 	}
 
-	const initSync = () => sync(
-		this.field.get(needCollapse ? info.originalTopPath : info.originalPath)
-	);
+	const initSync = () => {
+		const {path} = srcInfo;
+
+		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+		if (path.includes('.')) {
+			return sync(this.field.get(needCollapse ? srcInfo.originalTopPath : srcInfo.originalPath));
+		}
+
+		return sync(srcInfo.type === 'field' ? this.field.getFieldsStore(srcInfo.ctx)[path] : srcInfo.ctx[path]);
+	};
 
 	if (this.lfc.isBeforeCreate('beforeDataCreate')) {
-		const
-			name = '[[SYNC]]',
-			hooks = meta.hooks.beforeDataCreate;
-
-		let
-			pos = 0;
-
-		hooks.forEach((hook, i) => {
-			if (hook.name === name) {
-				pos = i + 1;
-			}
-		});
-
-		hooks.splice(pos, 0, {fn: initSync, name});
+		meta.hooks.beforeDataCreate.splice(this.lastSyncIndex++, 0, {fn: initSync});
 		return;
 	}
 

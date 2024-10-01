@@ -11,8 +11,9 @@
  * @packageDocumentation
  */
 
+import type { ModsProp, ModsDict } from 'core/component';
+
 import type iBlock from 'components/super/i-block/i-block';
-import type { ComponentInterface, ModsProp, ModsDict } from 'core/component';
 
 export * from 'components/super/i-block/modules/mods/interface';
 
@@ -23,34 +24,32 @@ export * from 'components/super/i-block/modules/mods/interface';
  *
  * @param component
  */
-export function initMods(component: iBlock): ModsDict {
-	const
-		ctx = component.unsafe,
-		declMods = ctx.meta.component.mods;
+export function initMods(component: iBlock['unsafe']): ModsDict {
+	const declMods = component.meta.component.mods;
 
 	const
 		attrMods: Array<[string, () => CanUndef<string>]> = [],
 		modVal = (val: unknown) => val != null ? String(val) : undefined;
 
-	Object.keys(ctx.$attrs).forEach((attrName) => {
+	Object.keys(component.$attrs).forEach((attrName) => {
 		const modName = attrName.camelize(false);
 
 		if (modName in declMods) {
 			let el: Nullable<Node>;
 
-			ctx.watch(`$attrs.${attrName}`, (attrs: Dictionary = {}) => {
-				el ??= ctx.$el;
+			component.watch(`$attrs.${attrName}`, (attrs: Dictionary = {}) => {
+				el ??= component.$el;
 
 				if (el instanceof Element) {
 					el.removeAttribute(attrName);
 				}
 
-				void ctx.setMod(modName, modVal(attrs[attrName]));
+				void component.setMod(modName, modVal(attrs[attrName]));
 			});
 
-			ctx.meta.hooks['before:mounted'].push({
+			component.meta.hooks['before:mounted'].push({
 				fn: () => {
-					el = ctx.$el;
+					el = component.$el;
 
 					if (el instanceof Element) {
 						el.removeAttribute(attrName);
@@ -58,16 +57,16 @@ export function initMods(component: iBlock): ModsDict {
 				}
 			});
 
-			attrMods.push([modName, () => modVal(ctx.$attrs[attrName])]);
+			attrMods.push([modName, () => modVal(component.$attrs[attrName])]);
 		}
 	});
 
-	return Object.cast(ctx.sync.link(link));
+	return Object.cast(component.sync.link(link));
 
 	function link(propMods: CanUndef<ModsProp>): ModsDict {
 		const
-			isModsInitialized = Object.isDictionary(ctx.mods),
-			mods = isModsInitialized ? ctx.mods : {...declMods};
+			isModsInitialized = Object.isDictionary(component.mods),
+			mods = isModsInitialized ? component.mods : {...declMods};
 
 		if (propMods != null) {
 			Object.entries(propMods).forEach(([key, val]) => {
@@ -85,7 +84,7 @@ export function initMods(component: iBlock): ModsDict {
 			}
 		});
 
-		const {experiments} = ctx.r.remoteState;
+		const {experiments} = component.r.remoteState;
 
 		if (Object.isArray(experiments)) {
 			experiments.forEach((exp) => {
@@ -107,8 +106,8 @@ export function initMods(component: iBlock): ModsDict {
 			val = modVal(mods[name]);
 			mods[name] = val;
 
-			if (ctx.hook !== 'beforeDataCreate') {
-				void ctx.setMod(name, val);
+			if (component.hook !== 'beforeDataCreate') {
+				void component.setMod(name, val);
 			}
 		});
 
@@ -127,8 +126,8 @@ export function initMods(component: iBlock): ModsDict {
  * @param [link] - the reference name which takes its value based on the current field
  */
 export function mergeMods(
-	component: iBlock,
-	oldComponent: iBlock,
+	component: iBlock['unsafe'],
+	oldComponent: iBlock['unsafe'],
 	name: string,
 	link?: string
 ): void {
@@ -136,9 +135,7 @@ export function mergeMods(
 		return;
 	}
 
-	const
-		ctx = component.unsafe,
-		cache = ctx.$syncLinkCache.get(link);
+	const cache = component.$syncLinkCache.get(link);
 
 	if (cache == null) {
 		return;
@@ -151,11 +148,11 @@ export function mergeMods(
 	}
 
 	const
-		modsProp = getExpandedModsProp(ctx),
+		modsProp = getExpandedModsProp(component),
 		mods = {...oldComponent.mods};
 
 	Object.keys(mods).forEach((key) => {
-		if (ctx.sync.syncModCache[key]) {
+		if (component.sync.syncModCache[key] != null) {
 			delete mods[key];
 		}
 	});
@@ -167,24 +164,22 @@ export function mergeMods(
 		l.sync(Object.assign(mods, modsProp));
 	}
 
-	function getExpandedModsProp(component: ComponentInterface): ModsDict {
-		const {unsafe} = component;
-
+	function getExpandedModsProp(component: iBlock['unsafe']): ModsDict {
 		if (link == null) {
 			return {};
 		}
 
-		const modsProp = unsafe.$props[link];
+		const modsProp = component.$props[link];
 
 		if (!Object.isDictionary(modsProp)) {
 			return {};
 		}
 
 		const
-			declMods = unsafe.meta.component.mods,
+			declMods = component.meta.component.mods,
 			res = <ModsDict>{...modsProp};
 
-		Object.entries(unsafe.$attrs).forEach(([name, attr]) => {
+		Object.entries(component.$attrs).forEach(([name, attr]) => {
 			if (name in declMods) {
 				if (attr != null) {
 					res[name] = attr;

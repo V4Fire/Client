@@ -84,7 +84,7 @@ export async function selectValue(page: Page, target: JSHandle<bSelect>, value: 
 	} else {
 		await input.focus();
 
-		const promises = Array.concat([], value)
+		const promises = Array.toArray(value)
 			.map((hasText) => page.locator(createSelector('item')).filter({hasText}).click());
 
 		await Promise.all(promises);

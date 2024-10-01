@@ -16,6 +16,7 @@ import * as gc from 'core/component/gc';
 import { deprecate } from 'core/functools/deprecation';
 
 import { beforeHooks } from 'core/component/const';
+import { getFieldsStore } from 'core/component/field';
 import { cacheStatus } from 'core/component/watch';
 
 import type { ComponentInterface } from 'core/component/interface';
@@ -65,11 +66,12 @@ import type { ComponentInterface } from 'core/component/interface';
  */
 export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	const {
-		async: $a,
-
 		meta,
+
 		// eslint-disable-next-line deprecation/deprecation
-		meta: {params: {deprecatedProps}}
+		meta: {params: {deprecatedProps}, fields, tiedFields},
+
+		$destructors
 	} = component.unsafe;
 
 	const isFunctional = meta.params.functional === true;
@@ -81,8 +83,17 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 			!SSR && isFunctional && accessor.functional === false;
 
 		if (canSkip) {
+			const tiedWith = tiedFields[name];
+
+			if (tiedWith != null) {
+				delete tiedFields[tiedWith];
+				delete tiedFields[name];
+			}
+
 			return;
 		}
+
+		delete tiedFields[name];
 
 		Object.defineProperty(component, name, {
 			configurable: true,
@@ -96,23 +107,43 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 	Object.entries(meta.computedFields).forEach(([name, computed]) => {
 		const canSkip =
+			computed == null ||
 			component[name] != null ||
-			computed == null || computed.cache === 'auto' ||
+			computed.cache === 'auto' ||
 			!SSR && isFunctional && computed.functional === false;
 
 		if (canSkip) {
+			const tiedWith = tiedFields[name];
+
+			// If the getter is not initialized,
+			// then the related fields should also be removed to avoid registering a watcher for cache invalidation,
+			// as it will not be used
+			if (tiedWith != null) {
+				delete tiedFields[tiedWith];
+				delete tiedFields[name];
+			}
+
 			return;
 		}
 
+		// In the `tiedFields` dictionary,
+		// the names of the getters themselves are also stored as keys with their related fields as values.
+		// This is done for convenience.
+		// However, watchers for cache invalidation of the getter will be created for all keys in `tiedFields`.
+		// Since it's not possible to watch the getter itself, we need to remove the key with its name.
+		delete tiedFields[name];
+
 		// eslint-disable-next-line func-style
 		const get = function get(this: typeof component): unknown {
-			const {hook} = this;
+			const {unsafe, hook} = this;
 
-			// We should not use the getter's cache until the component is fully created,
-			// because until that moment, we cannot track changes to dependent entities
-			// and reset the cache when they change.
+			const canUseForeverCache = computed.cache === 'forever';
+
+			// We should not use the getter's cache until the component is fully created.
+			// Because until that moment, we cannot track changes to dependent entities and reset the cache when they change.
 			// This can lead to hard-to-detect errors.
-			const canUseCache = beforeHooks[hook] == null;
+			// Please note that in case of forever caching, we cache immediately.
+			const canUseCache = canUseForeverCache || beforeHooks[hook] == null;
 
 			if (canUseCache && cacheStatus in get) {
 				// If a getter already has a cached result and is used inside a template,
@@ -121,15 +152,47 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 				// but the template is not.
 				// To avoid this problem, we explicitly touch all dependent entities.
 				// For functional components, this problem does not exist, as no change in state can trigger their re-render.
-				if (!isFunctional && hook !== 'created') {
+				const needEffect = !canUseForeverCache && !isFunctional && hook !== 'created';
+
+				if (needEffect) {
 					meta.watchDependencies.get(name)?.forEach((path) => {
-						// @ts-ignore (effect)
-						void this[path];
+						let firstChunk: string;
+
+						if (Object.isString(path)) {
+							if (path.includes('.')) {
+								const chunks = path.split('.');
+
+								firstChunk = path[0];
+
+								if (chunks.length === 1) {
+									path = firstChunk;
+								}
+
+							} else {
+								firstChunk = path;
+							}
+
+						} else {
+							firstChunk = path[0];
+
+							if (path.length === 1) {
+								path = firstChunk;
+							}
+						}
+
+						const store = fields[firstChunk] != null ? getFieldsStore(unsafe) : unsafe;
+
+						if (Object.isArray(path)) {
+							void Object.get(store, path);
+
+						} else if (path in store) {
+							// @ts-ignore (effect)
+							void store[path];
+						}
 					});
 
 					['Store', 'Prop'].forEach((postfix) => {
-						const
-							path = name + postfix;
+						const path = name + postfix;
 
 						if (path in this) {
 							// @ts-ignore (effect)
@@ -143,10 +206,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 			const value = computed.get!.call(this);
 
-			// Due-to-context inheritance in functional components,
-			// we should not cache the computed value until the component is created
-			// @see https://github.com/V4Fire/Client/issues/1292
-			if (!SSR && (canUseCache || !isFunctional)) {
+			if (canUseForeverCache || !SSR && (canUseCache || !isFunctional)) {
 				cachedAccessors.add(get);
 				get[cacheStatus] = value;
 			}
@@ -163,7 +223,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	});
 
 	// Register a worker to clean up memory upon component destruction
-	$a.worker(() => {
+	$destructors.push(() => {
 		// eslint-disable-next-line require-yield
 		gc.add(function* destructor() {
 			cachedAccessors.forEach((getter) => {

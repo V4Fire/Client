@@ -15,7 +15,3 @@ export { default } from 'components/friends/vdom/class';
 
 export * from 'components/friends/vdom/api';
 export * from 'components/friends/vdom/interface';
-
-//#if runtime has dummyComponents
-import('components/friends/vdom/test/b-friends-vdom-dummy');
-//#endif

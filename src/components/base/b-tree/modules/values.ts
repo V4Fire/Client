@@ -13,7 +13,8 @@ import type bTree from 'components/base/b-tree/b-tree';
 import type { Item } from 'components/base/b-tree/b-tree';
 
 export default class Values extends Friend {
-	override readonly C!: bTree;
+	/** @inheritDoc */
+	declare readonly C: bTree;
 
 	/**
 	 * A map of the item indexes and their values
@@ -95,7 +96,7 @@ export default class Values extends Friend {
 				}
 
 				if (activeItem != null) {
-					iActiveItems.initItem(ctx, activeItem);
+					iActiveItems.initItem(this.component, activeItem);
 				}
 			}
 

@@ -25,7 +25,7 @@ This module provides a trait for a component that extends the "opening/closing" 
   class bButton extends iBlock implements iOpenToggle {
     static override readonly mods: ModsDecl = {
       ...iOpenToggle.mods
-    }
+    };
 
     protected override initModEvents(): void {
       super.initModEvents();

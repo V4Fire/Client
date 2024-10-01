@@ -11,6 +11,7 @@ import Async from 'core/async';
 import * as gc from 'core/component/gc';
 import watch from 'core/object/watch';
 
+import { V4_COMPONENT } from 'core/component/const';
 import { getComponentContext } from 'core/component/context';
 
 import { forkMeta } from 'core/component/meta';
@@ -31,8 +32,13 @@ import { destroyedState } from 'core/component/init/states/destroyed';
 import type { ComponentInterface, ComponentMeta, ComponentElement, ComponentDestructorOptions } from 'core/component/interface';
 import type { InitBeforeCreateStateOptions } from 'core/component/init/interface';
 
+const
+	$getRoot = Symbol('$getRoot'),
+	$getParent = Symbol('$getParent');
+
 /**
- * Initializes the "beforeCreate" state to the specified component instance
+ * Initializes the "beforeCreate" state to the specified component instance.
+ * The function returns a function for transitioning to the beforeCreate hook.
  *
  * @param component
  * @param meta - the component metaobject
@@ -45,14 +51,22 @@ export function beforeCreateState(
 ): void {
 	meta = forkMeta(meta);
 
+	const isFunctional = meta.params.functional === true;
+
 	// To avoid TS errors marks all properties as editable
 	const unsafe = Object.cast<Writable<ComponentInterface['unsafe']>>(component);
+	unsafe[V4_COMPONENT] = true;
 
+	// @ts-ignore (unsafe)
 	unsafe.unsafe = unsafe;
 	unsafe.componentName = meta.componentName;
-
 	unsafe.meta = meta;
-	unsafe.instance = Object.cast(meta.instance);
+
+	Object.defineProperty(unsafe, 'instance', {
+		configurable: true,
+		enumerable: true,
+		get: () => meta.instance
+	});
 
 	unsafe.$fields = {};
 	unsafe.$systemFields = {};
@@ -64,6 +78,7 @@ export function beforeCreateState(
 
 	unsafe.async = new Async(component);
 	unsafe.$async = new Async(component);
+	unsafe.$destructors = [];
 
 	Object.defineProperty(unsafe, '$destroy', {
 		configurable: true,
@@ -91,8 +106,6 @@ export function beforeCreateState(
 			return `${String(ref)}:${unsafe.componentId}`;
 		}
 	});
-
-	const $getRoot = Symbol('$getRoot');
 
 	Object.defineProperty(unsafe, '$getRoot', {
 		configurable: true,
@@ -129,8 +142,6 @@ export function beforeCreateState(
 			return r;
 		}
 	});
-
-	const $getParent = Symbol('$getParent');
 
 	Object.defineProperty(unsafe, '$getParent', {
 		configurable: true,
@@ -198,8 +209,7 @@ export function beforeCreateState(
 	unsafe.$normalParent = getNormalParent(component);
 
 	['$root', '$parent', '$normalParent'].forEach((key) => {
-		const
-			val = unsafe[key];
+		const val = unsafe[key];
 
 		if (val != null) {
 			Object.defineProperty(unsafe, key, {
@@ -215,8 +225,7 @@ export function beforeCreateState(
 		configurable: true,
 		enumerable: true,
 		get() {
-			const
-				{$el} = unsafe;
+			const {$el} = unsafe;
 
 			// If the component node is null or a node that cannot have children (such as a text or comment node)
 			if ($el?.querySelectorAll == null) {
@@ -229,7 +238,7 @@ export function beforeCreateState(
 		}
 	});
 
-	unsafe.$async.worker(() => {
+	unsafe.$destructors.push(() => {
 		// eslint-disable-next-line require-yield
 		gc.add(function* destructor() {
 			for (const key of ['$root', '$parent', '$normalParent', '$children']) {
@@ -274,6 +283,7 @@ export function beforeCreateState(
 	});
 
 	attachAttrPropsListeners(component);
+
 	attachAccessorsFromMeta(component);
 
 	runHook('beforeRuntime', component).catch(stderr);
@@ -294,9 +304,7 @@ export function beforeCreateState(
 	const fakeHandler = () => undefined;
 
 	if (watchDependencies.size > 0) {
-		const
-			isFunctional = meta.params.functional === true,
-			watchSet = new Set<PropertyInfo>();
+		const watchSet = new Set<PropertyInfo>();
 
 		watchDependencies.forEach((deps) => {
 			deps.forEach((dep) => {
@@ -340,12 +348,16 @@ export function beforeCreateState(
 			return;
 		}
 
-		const needToForceWatching = watchers[name] == null && (
-			accessors[normalizedName] != null ||
-			computedFields[normalizedName] != null
+		const
+			accessor = accessors[normalizedName],
+			computed = accessor == null ? computedFields[normalizedName] : null;
+
+		const needForceWatch = watchers[name] == null && (
+			accessor != null && accessor.dependencies?.length !== 0 ||
+			computed != null && computed.cache !== 'forever' && computed.dependencies?.length !== 0
 		);
 
-		if (needToForceWatching) {
+		if (needForceWatch) {
 			watchers[name] = [
 				{
 					deep: true,

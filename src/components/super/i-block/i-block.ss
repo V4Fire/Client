@@ -96,7 +96,7 @@
 
 		: &
 			buble = require('buble'),
-			paths = Array.concat([], path),
+			paths = Array.toArray(path),
 			wait = opts.wait
 		.
 

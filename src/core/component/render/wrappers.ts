@@ -8,11 +8,11 @@
 
 /* eslint-disable prefer-spread */
 
-import { app, isComponent, componentRenderFactories, destroyedHooks, ASYNC_RENDER_ID } from 'core/component/const';
+import { app, isComponent, componentRenderFactories, ASYNC_RENDER_ID } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 
 import { isSmartComponent } from 'core/component/reflect';
-import { createVirtualContext } from 'core/component/functional';
+import { createVirtualContext, VHookLifeCycle } from 'core/component/functional';
 
 import type {
 
@@ -48,10 +48,11 @@ import {
 	isHandler,
 
 	resolveAttrs,
-	normalizePatchFlagUsingProps,
 	normalizeComponentAttrs,
 
+	normalizePatchFlagUsingProps,
 	setVNodePatchFlags,
+
 	mergeProps as merge
 
 } from 'core/component/render/helpers';
@@ -59,7 +60,7 @@ import {
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
- * Wrapper for the component library `createVNode` function
+ * A wrapper for the component library `createVNode` function
  * @param original
  */
 export function wrapCreateVNode<T extends typeof createVNode>(original: T): T {
@@ -67,7 +68,7 @@ export function wrapCreateVNode<T extends typeof createVNode>(original: T): T {
 }
 
 /**
- * Wrapper for the component library `createElementVNode` function
+ * A wrapper for the component library `createElementVNode` function
  * @param original
  */
 export function wrapCreateElementVNode<T extends typeof createElementVNode>(original: T): T {
@@ -78,18 +79,12 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
 }
 
 /**
- * Wrapper for the component library `createBlock` function
+ * A wrapper for the component library `createBlock` function
  * @param original
  */
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
-		let [
-			name,
-			attrs,
-			slots,
-			patchFlag,
-			dynamicProps
-		] = args;
+		let [name, attrs, slots, patchFlag, dynamicProps] = args;
 
 		let component: CanNull<ComponentMeta> = null;
 
@@ -151,21 +146,20 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			attachTemplatesToMeta(component, TPLS[componentName]);
 		}
 
-		const virtualCtx = createVirtualContext(component, {
-			parent: this,
-			props: attrs,
-			slots
-		});
-
+		const virtualCtx = createVirtualContext(component, {parent: this, props: attrs, slots});
 		vnode.virtualComponent = virtualCtx;
 
 		const
 			declaredProps = component.props,
-			functionalVNode = virtualCtx.render(virtualCtx, []);
+			filteredAttrs = {};
 
-		const filteredAttrs = Object.fromEntries(
-			Object.entries({...vnode.props}).filter(([key]) => declaredProps[key.camelize(false)] == null)
-		);
+		Object.entries(vnode.props).forEach(([key, val]) => {
+			if (declaredProps[key.camelize(false)] == null) {
+				filteredAttrs[key] = val;
+			}
+		});
+
+		const functionalVNode = virtualCtx.render(virtualCtx, []);
 
 		vnode.type = functionalVNode.type;
 		vnode.props = merge(filteredAttrs, functionalVNode.props ?? {});
@@ -173,42 +167,17 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		vnode.children = functionalVNode.children;
 		vnode.dynamicChildren = functionalVNode.dynamicChildren;
 
-		vnode.dirs = Array.concat([], vnode.dirs, functionalVNode.dirs);
+		vnode.dirs = Array.toArray(vnode.dirs, functionalVNode.dirs);
+
 		vnode.dirs.push({
-			dir: Object.cast(r.resolveDirective.call(virtualCtx, 'hook')),
+			dir: r.resolveDirective.call(virtualCtx, 'hook'),
 
 			modifiers: {},
 			arg: undefined,
 
-			value: {
-				created: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'created', n),
-
-				beforeMount: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeMount', n),
-				mounted: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'mounted', n),
-
-				beforeUpdate: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeUpdate', n),
-				updated: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'updated', n),
-
-				beforeUnmount: (n: Element) => {
-					// A component might have already been removed by explicitly calling $destroy
-					if (destroyedHooks[virtualCtx.hook] != null) {
-						return;
-					}
-
-					virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeDestroy', n);
-				},
-
-				unmounted: (n: Element) => {
-					// A component might have already been removed by explicitly calling $destroy
-					if (destroyedHooks[virtualCtx.hook] != null) {
-						return;
-					}
-
-					virtualCtx.$emit('[[COMPONENT_HOOK]]', 'destroyed', n);
-				}
-			},
-
+			value: new VHookLifeCycle(virtualCtx),
 			oldValue: undefined,
+
 			instance: Object.cast(virtualCtx)
 		});
 
@@ -222,11 +191,13 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			vnode.patchFlag |= functionalVNode.patchFlag;
 		}
 
-		if (!SSR && Object.size(functionalVNode.dynamicProps) > 0) {
-			vnode.dynamicProps ??= [];
-			functionalVNode.dynamicProps?.forEach((propName) => {
+		if (!SSR && functionalVNode.dynamicProps != null && functionalVNode.dynamicProps.length > 0) {
+			const dynamicProps = vnode.dynamicProps ?? [];
+			vnode.dynamicProps = dynamicProps;
+
+			functionalVNode.dynamicProps.forEach((propName) => {
 				if (isHandler.test(propName)) {
-					vnode.dynamicProps!.push(propName);
+					dynamicProps.push(propName);
 					setVNodePatchFlags(vnode, 'props');
 				}
 			});
@@ -243,7 +214,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 }
 
 /**
- * Wrapper for the component library `createElementBlock` function
+ * A wrapper for the component library `createElementBlock` function
  * @param original
  */
 export function wrapCreateElementBlock<T extends typeof createElementBlock>(original: T): T {
@@ -254,7 +225,7 @@ export function wrapCreateElementBlock<T extends typeof createElementBlock>(orig
 }
 
 /**
- * Wrapper for the component library `resolveComponent` or `resolveDynamicComponent` functions
+ * A wrapper for the component library `resolveComponent` or `resolveDynamicComponent` functions
  * @param original
  */
 export function wrapResolveComponent<T extends typeof resolveComponent | typeof resolveDynamicComponent>(
@@ -262,11 +233,10 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 ): T {
 	return Object.cast(function resolveComponent(this: ComponentInterface, name: string) {
 		if (SSR) {
-			name = name.replace(isSmartComponent, '');
+			name = isSmartComponent.test(name) ? isSmartComponent.replace(name) : name;
 		}
 
-		const
-			component = registerComponent(name);
+		const component = registerComponent(name);
 
 		if (component?.params.functional === true) {
 			return name;
@@ -283,7 +253,7 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 }
 
 /**
- * Wrapper for the component library `resolveDirective` function
+ * A wrapper for the component library `resolveDirective` function
  * @param original
  */
 export function wrapResolveDirective<T extends typeof resolveDirective>(
@@ -296,13 +266,12 @@ export function wrapResolveDirective<T extends typeof resolveDirective>(
 }
 
 /**
- * Wrapper for the component library `mergeProps` function
+ * A wrapper for the component library `mergeProps` function
  * @param original
  */
 export function wrapMergeProps<T extends typeof mergeProps>(original: T): T {
 	return Object.cast(function mergeProps(this: ComponentInterface, ...args: Parameters<T>) {
-		const
-			props = original.apply(null, args);
+		const props = original.apply(null, args);
 
 		if (SSR) {
 			return resolveAttrs.call(this, {props}).props;
@@ -313,7 +282,7 @@ export function wrapMergeProps<T extends typeof mergeProps>(original: T): T {
 }
 
 /**
- * Wrapper for the component library `renderList` function
+ * A wrapper for the component library `renderList` function
  *
  * @param original
  * @param withCtx
@@ -321,7 +290,7 @@ export function wrapMergeProps<T extends typeof mergeProps>(original: T): T {
 export function wrapRenderList<T extends typeof renderList, C extends typeof withCtx>(original: T, withCtx: C): T {
 	return Object.cast(function renderList(
 		this: ComponentInterface,
-		src: Iterable<unknown> | Dictionary | number | undefined | null,
+		src: Nullable<Iterable<unknown> | Dictionary | number>,
 		cb: AnyFunction
 	) {
 		const
@@ -350,26 +319,19 @@ export function wrapRenderList<T extends typeof renderList, C extends typeof wit
 }
 
 /**
- * Wrapper for the component library `renderSlot` function
+ * A wrapper for the component library `renderSlot` function
  * @param original
  */
 export function wrapRenderSlot<T extends typeof renderSlot>(original: T): T {
 	return Object.cast(function renderSlot(this: ComponentInterface, ...args: Parameters<T>) {
-		const
-			{r} = this.$renderEngine;
+		const {r} = this.$renderEngine;
 
 		if (this.meta.params.functional === true) {
 			try {
 				return original.apply(null, args);
 
 			} catch {
-				const [
-					slots,
-					name,
-					props,
-					fallback
-				] = args;
-
+				const [slots, name, props, fallback] = args;
 				const children = slots[name]?.(props) ?? fallback?.() ?? [];
 				return r.createBlock.call(this, r.Fragment, {key: props?.key ?? `_${name}`}, children);
 			}
@@ -380,7 +342,7 @@ export function wrapRenderSlot<T extends typeof renderSlot>(original: T): T {
 }
 
 /**
- * Wrapper for the component library `withCtx` function
+ * A wrapper for the component library `withCtx` function
  * @param original
  */
 export function wrapWithCtx<T extends typeof withCtx>(original: T): T {
@@ -395,16 +357,17 @@ export function wrapWithCtx<T extends typeof withCtx>(original: T): T {
 			// If the original function expects more arguments than provided, we explicitly set them to `undefined`,
 			// to then add another, "unregistered" argument
 			if (fn.length - args.length > 0) {
-				args = args.concat(new Array(fn.length - args.length).fill(undefined));
+				args.push(...new Array(fn.length - args.length).fill(undefined));
 			}
 
-			return fn(...args.concat(args[0]));
+			args.push(args[0]);
+			return fn(...args);
 		});
 	});
 }
 
 /**
- * Wrapper for the component library `withDirectives` function
+ * A wrapper for the component library `withDirectives` function
  * @param _
  */
 export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
@@ -424,8 +387,7 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 			this;
 
 		dirs.forEach((decl) => {
-			const
-				[dir, value, arg, modifiers] = decl;
+			const [dir, value, arg, modifiers] = decl;
 
 			const binding: DirectiveBinding = {
 				dir: Object.isFunction(dir) ? {created: dir, mounted: dir} : dir,
@@ -446,8 +408,7 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 			}
 
 			if (Object.isFunction(dir.beforeCreate)) {
-				const
-					newVnode = dir.beforeCreate(binding, vnode);
+				const newVnode = dir.beforeCreate(binding, vnode);
 
 				if (newVnode != null) {
 					vnode = newVnode;

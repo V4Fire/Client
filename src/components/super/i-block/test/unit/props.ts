@@ -183,7 +183,7 @@ test.describe('<i-block> props', () => {
 	});
 
 	test.describe('`watchProp` should call `setStage` method', () => {
-		test('when the parent\'s `stage` property changes', async ({page}) => {
+		test("when the parent's `stage` property changes", async ({page}) => {
 			const target = await renderDummy(page, {
 				watchProp: {
 					setStage: 'stage'

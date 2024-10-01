@@ -8,10 +8,10 @@
 
 import { defProp } from 'core/const/props';
 
-import { storeRgxp } from 'core/component/reflect';
+import { isStore } from 'core/component/reflect';
 import { initEmitter } from 'core/component/event';
 
-import { metaPointers } from 'core/component/const';
+import { componentDecoratedKeys } from 'core/component/const';
 import { invertedFieldMap, tiedFieldMap } from 'core/component/decorators/const';
 
 import type { ComponentMeta, ComponentProp, ComponentField } from 'core/component/interface';
@@ -25,7 +25,7 @@ import type {
 } from 'core/component/decorators/interface';
 
 /**
- * Factory to create component property decorators
+ * Factory for creating component property decorators
  *
  * @param cluster - the property cluster to decorate, like `fields` or `systemFields`
  * @param [transformer] - a transformer for the passed decorator parameters
@@ -35,17 +35,12 @@ export function paramsFactory<T = object>(
 	transformer?: ParamsFactoryTransformer
 ): FactoryTransformer<T> {
 	return (params: Dictionary<any> = {}) => (_: object, key: string, desc?: PropertyDescriptor) => {
-		initEmitter.once('bindConstructor', (componentName) => {
-			metaPointers[componentName] = metaPointers[componentName] ?? Object.createDict();
+		initEmitter.once('bindConstructor', (componentName, regEvent) => {
+			const decoratedKeys = componentDecoratedKeys[componentName] ?? new Set();
+			componentDecoratedKeys[componentName] = decoratedKeys;
 
-			const link = metaPointers[componentName];
-
-			if (link == null) {
-				return;
-			}
-
-			link[key] = true;
-			initEmitter.once(`constructor.${componentName}`, decorate);
+			decoratedKeys.add(key);
+			initEmitter.once(regEvent, decorate);
 		});
 
 		function decorate({meta}: {meta: ComponentMeta}): void {
@@ -80,6 +75,7 @@ export function paramsFactory<T = object>(
 				} else if (
 					p.cache === true ||
 					p.cache === 'auto' ||
+					p.cache === 'forever' ||
 					p.cache !== false && (Object.isArray(p.dependencies) || key in meta.computedFields)
 				) {
 					metaKey = 'computedFields';
@@ -106,15 +102,12 @@ export function paramsFactory<T = object>(
 				function decorateMethod() {
 					const name = key;
 
-					let {
-						watchers,
-						hooks
-					} = info;
+					let {watchers, hooks} = info;
 
 					if (p.watch != null) {
 						watchers ??= {};
 
-						Array.concat([], p.watch).forEach((watcher) => {
+						Array.toArray(p.watch).forEach((watcher) => {
 							if (Object.isPlainObject(watcher)) {
 								const path = String(watcher.path ?? watcher.field);
 								watchers[path] = wrapOpts({...p.watchParams, ...watcher, path});
@@ -128,7 +121,7 @@ export function paramsFactory<T = object>(
 					if (p.hook != null) {
 						hooks ??= {};
 
-						Array.concat([], p.hook).forEach((hook) => {
+						Array.toArray(p.hook).forEach((hook) => {
 							if (Object.isSimpleObject(hook)) {
 								const
 									hookName = Object.keys(hook)[0],
@@ -169,7 +162,7 @@ export function paramsFactory<T = object>(
 						});
 					}
 
-					if (p.dependencies != null) {
+					if (p.dependencies != null && p.dependencies.length > 0) {
 						meta.watchDependencies.set(key, p.dependencies);
 					}
 				}
@@ -199,20 +192,16 @@ export function paramsFactory<T = object>(
 					p = transformer(p, metaKey);
 				}
 
-				const
-					info = metaCluster[key] ?? {src: meta.componentName};
+				const info = metaCluster[key] ?? {src: meta.componentName};
 
-				let {
-					watchers,
-					after
-				} = info;
+				let {watchers, after} = info;
 
 				if (p.after != null) {
 					after = new Set([].concat(p.after));
 				}
 
 				if (p.watch != null) {
-					Array.concat([], p.watch).forEach((watcher) => {
+					Array.toArray(p.watch).forEach((watcher) => {
 						watchers ??= new Map();
 
 						if (Object.isPlainObject(watcher)) {
@@ -258,47 +247,45 @@ export function paramsFactory<T = object>(
 					};
 				}
 
-				if (tiedFieldMap[metaKey] != null && RegExp.test(storeRgxp, key)) {
-					meta.tiedFields[key] = key.replace(storeRgxp, '');
+				if (tiedFieldMap[metaKey] != null && isStore.test(key)) {
+					const tiedWith = isStore.replace(key);
+					meta.tiedFields[key] = tiedWith;
+					meta.tiedFields[tiedWith] = key;
 				}
 
 				function inheritFromParent() {
-					const
-						invertedMetaKeys = invertedFieldMap[metaKey];
+					const invertedMetaKeys: CanUndef<string[]> = invertedFieldMap[metaKey];
 
-					if (invertedMetaKeys != null) {
-						for (let i = 0; i < invertedMetaKeys.length; i++) {
-							const
-								invertedMetaKey = invertedMetaKeys[i],
-								invertedMetaCluster = meta[invertedMetaKey];
+					invertedMetaKeys?.some((invertedMetaKey) => {
+						const invertedMetaCluster = meta[invertedMetaKey];
 
-							if (key in invertedMetaCluster) {
-								const info = {...invertedMetaCluster[key]};
-								delete info.functional;
+						if (key in invertedMetaCluster) {
+							const info = {...invertedMetaCluster[key]};
+							delete info.functional;
 
-								if (invertedMetaKey === 'prop') {
-									if (Object.isFunction(info.default)) {
-										(<ComponentField>info).init = info.default;
-										delete info.default;
-									}
-
-								} else if (metaKey === 'prop') {
-									delete (<ComponentField>info).init;
+							if (invertedMetaKey === 'prop') {
+								if (Object.isFunction(info.default)) {
+									(<ComponentField>info).init = info.default;
+									delete info.default;
 								}
 
-								metaCluster[key] = info;
-								delete invertedMetaCluster[key];
-
-								break;
+							} else if (metaKey === 'prop') {
+								delete (<ComponentField>info).init;
 							}
+
+							metaCluster[key] = info;
+							delete invertedMetaCluster[key];
+
+							return true;
 						}
-					}
+
+						return false;
+					});
 				}
 			}
 
 			function wrapOpts<T extends Dictionary & DecoratorFunctionalOptions>(opts: T): T {
-				const
-					p = meta.params;
+				const p = meta.params;
 
 				// eslint-disable-next-line eqeqeq
 				if (opts.functional === undefined && p.functional === null) {

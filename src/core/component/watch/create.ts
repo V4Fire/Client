@@ -9,7 +9,7 @@
 /* eslint-disable max-lines-per-function */
 
 import watch, { mute, unmute, unwrap, getProxyType, isProxy, WatchHandlerParams } from 'core/object/watch';
-import { getPropertyInfo, privateFieldRgxp, PropertyInfo } from 'core/component/reflect';
+import { getPropertyInfo, isPrivateField, PropertyInfo } from 'core/component/reflect';
 
 import { tiedWatchers, watcherInitializer } from 'core/component/watch/const';
 import { cloneWatchValue } from 'core/component/watch/clone';
@@ -149,7 +149,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				cacheKey = [info.originalPath];
 
 			} else {
-				cacheKey = Array.concat([info.ctx], info.path);
+				cacheKey = Array.toArray(info.ctx, Object.cast(info.path));
 			}
 
 			if (Object.has(watchCache, cacheKey)) {
@@ -269,7 +269,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				};
 
 			} else if (flush === 'post') {
-				handler = (...args) => component.$nextTick().then(() => originalHandler.call(this, ...args));
+				handler = (...args: unknown[]) => component.$nextTick().then(() => originalHandler.call(this, ...args));
 			}
 
 			if (needImmediate) {
@@ -453,14 +453,14 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 					};
 
 					const externalWatchHandler = (value: unknown, oldValue: unknown, i?: WatchHandlerParams) => {
-						const fromSystem = i != null && Object.isString(i.path[0]) && i.path[0].startsWith('[[');
+						const fromSystem = i != null && Object.isString(i.path[0]) && isPrivateField.test(i.path[0]);
 
 						// This situation occurs when the root observable object has changed,
 						// and we need to remove the watchers of all its "nested parts", but leave the root watcher intact
 						destructors.splice(1, destructors.length).forEach((destroy) => destroy());
 
 						if (fromSystem) {
-							i.path = [String(i.path[0]).replace(privateFieldRgxp, '$1'), ...i.path.slice(1)];
+							i.path = [isPrivateField.replace(String(i.path[0])), ...i.path.slice(1)];
 							attachDeepProxy(false);
 
 						} else {
@@ -595,16 +595,18 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 		function wrapDestructor<T>(destructor: T): T {
 			if (Object.isFunction(destructor)) {
-				// Every worker passed to Async has a counter that tracks the number of consumers of this worker.
-				// However, in this case, this behavior is redundant and could lead to an error.
-				// That's why we wrap the original destructor with a new function.
-				component.unsafe.$async.worker(() => {
-					watchCache.clear();
-					return destructor();
-				});
+				component.unsafe.$destructors.push(wrappedDestructor);
 			}
 
 			return destructor;
+
+			function wrappedDestructor() {
+				watchCache.clear();
+
+				if (Object.isFunction(destructor)) {
+					return destructor();
+				}
+			}
 		}
 	};
 }

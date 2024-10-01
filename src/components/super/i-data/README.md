@@ -170,7 +170,7 @@ interface MyData {
 
 @component()
 export default class bExample extends iData {
-  override readonly DB!: MyData;
+  declare readonly DB: MyData;
 
   override dataProviderProp: DataProviderProp = 'User';
 
@@ -357,7 +357,7 @@ import iData, { component, field, TitleValue, RequestParams, DataProviderProp } 
 
 @component()
 export default class bExample extends iData {
-  override readonly DB!: Data;
+  declare readonly DB: Data;
 
   override readonly dataProviderProp: DataProviderProp = 'api.User';
 
@@ -382,7 +382,7 @@ export default class bExample extends iData {
     ['wait', 'canRequestData']
   ]))
 
-  protected override readonly requestParams!: RequestParams;
+  declare readonly requestParams: RequestParams;
 
   /**
    * Returns true if the component can load remote data

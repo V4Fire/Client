@@ -2,7 +2,7 @@
 
 This module provides an API for convenient work with component states.
 
-## Component lifecycle
+## Component Lifecycle
 
 Each V4Fire component instance undergoes a series of initialization steps when it's created;
 for instance, it needs to set up data observation, compile the template, mount the instance to the DOM,
@@ -10,7 +10,7 @@ and update the DOM when data changes.
 Throughout the process, it also initiates functions called lifecycle hooks,
 allowing users to incorporate their own code at specific stages.
 
-### Supported hooks
+### Supported Hooks
 
 V4Fire components follow a standard life cycle: the component is created, the component is mounted to the DOM,
 the component is unmounted from the DOM, and so on.
@@ -54,7 +54,7 @@ protected initBaseAPI() {
 In other words, before `beforeCreate`,
 there's a special method that is invoked to explicitly set the most essential API,
 which the component should always possess.
-There aren't many methods that can be used before the `created` hook,
+There are few methods that can be used before the `created` hook,
 and usually, all of them are registered in `iBlock.initBaseAPI`.
 However, if your component has a new method that needs to be used in this manner,
 the `initBaseAPI` method can always be overridden.
@@ -64,7 +64,7 @@ the `initBaseAPI` method can always be overridden.
 Often, it is crucial to perform some modifications to watchable fields (like normalization) before creating a component,
 because once created, any change to these fields can trigger re-rendering and potentially be detrimental to performance.
 We have links, initializers, and API to manage the order of initialization, but in case we need to access the entire
-watchable store and modify it in a complex manner, the `beforeDataCreate` hook comes to the rescue.
+watchable store and modify it complexly, the `beforeDataCreate` hook comes to the rescue.
 This hook is exactly triggered when all observable properties have been formulated
 but are not yet linked to the component.
 Therefore, we can safely alter them without worrying about repercussions.
@@ -97,7 +97,7 @@ so there is no need for special methods or hooks to access them.
 Typically, it's better to use link mechanisms for establishing relationships during initialization and normalization.
 However, `beforeDataCreate` can still prove to be quite useful.
 
-### Hook change events
+### Hook Change Events
 
 Every time a component hook value changes,
 the component triggers a series of events that can be listened to both internally and externally to the component.
@@ -107,7 +107,7 @@ the component triggers a series of events that can be listened to both internall
 | `hook:$name` | The component switched to a hook named $name | The new hook value; The previous hook value | `string`; `string` |
 | `hookChange` | The component switched to a new hook         | The new hook value; The previous hook value | `string`; `string` |
 
-### Registering lifecycle hooks
+### Registering Lifecycle Hooks
 
 To bind a method to a specific hook, there are three ways:
 
@@ -165,7 +165,7 @@ To bind a method to a specific hook, there are three ways:
    }
    ```
 
-### Component hook accessor
+### Component Hook Accessor
 
 All V4Fire components have a hook accessor that indicates the current hook of the component.
 
@@ -182,7 +182,7 @@ class bExample extends iBlock {
 }
 ```
 
-### Hook handler execution order
+### Hook Handler Execution Order
 
 All hook handlers are executed in a queue: those added through the decorator are executed first
 (in the order of addition), followed by the execution of the associated methods (if any).
@@ -216,13 +216,13 @@ export default class bExample extends iBlock {
 }
 ```
 
-### Asynchronous handlers
+### Asynchronous Handlers
 
 Certain hooks support asynchronous handlers: `mounted`, `updated`, `destroyed`, `renderTriggered`, and `errorCaptured`.
 That is, if one of the hook handlers returns a Promise,
 then the rest will wait for its resolution to maintain the initialization order.
 
-## Component status
+## Component Status
 
 V4Fire provides a special status for components that reflects their state: whether the component is loading, ready,
 and so on.
@@ -253,7 +253,7 @@ This property can assume the following values:
 6. `destroyed` - the component has been destroyed:
    this status might coincide with certain component hooks such as `beforeDestroy` or `destroyed`.
 
-### Component status change events
+### Component Status Change Events
 
 Each time a component status value changes,
 the component emits a series of events that can be listened to both internally and externally to the component.
@@ -280,7 +280,7 @@ export default class bExample extends iBlock {
 }
 ```
 
-### Component status accessor
+### Component Status Accessor
 
 All V4Fire components have a status accessor that indicates the current status of the component.
 
@@ -295,7 +295,7 @@ class bExample extends iBlock {
 }
 ```
 
-### The `@wait` decorator
+### The `@wait` Decorator
 
 This decorator addresses the issue of invoking component methods when the component is not yet ready for it.
 Refer to the documentation for the `components/super/i-block/decorators` module.
@@ -332,7 +332,7 @@ class bExample extends iBlock {
 }
 ```
 
-## Synchronizing component state with external sources
+## Syncing Component State with External Sources
 
 Any component can bind its state to the state of another external module.
 For instance, a component may store some of its properties in local storage.
@@ -341,7 +341,7 @@ and conversely, when the component initializes, we must read its value from the 
 This is precisely what this module does — it provides a set of APIs to synchronize external states with
 the component state.
 
-### How does synchronization work?
+### How Synchronization Works
 
 Synchronization operates using two-way connector methods.
 For instance, when a component is initializing, it invokes the special `syncStorageState` method,

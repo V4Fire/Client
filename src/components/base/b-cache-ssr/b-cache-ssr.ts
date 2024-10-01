@@ -34,18 +34,16 @@ export default class bCacheSSR extends iBlock {
 		return `${this.globalName}-default`;
 	}
 
-	@system((ctx) => {
+	@system(() => ssrCache)
+	protected override readonly $ssrCache!: AbstractCache<string>;
+
+	protected override get state(): SuperState {
 		class State extends SuperState {
 			override initFromStorage(): CanPromise<boolean> {
 				return false;
 			}
 		}
 
-		return new State(ctx);
-	})
-
-	protected override readonly state!: SuperState;
-
-	@system(() => ssrCache)
-	protected override readonly $ssrCache!: AbstractCache<string>;
+		return new State(this);
+	}
 }

@@ -11,6 +11,10 @@ import Friend, { fakeMethods } from 'components/friends/friend';
 import type iBlock from 'components/super/i-block/i-block';
 import type { WrappedDaemonsDict } from 'components/friends/daemons/interface';
 
+//#if runtime has dummyComponents
+import('components/friends/daemons/test/b-friends-daemons-dummy');
+//#endif
+
 interface Daemons {
 	run<T = unknown>(this: Daemons, name: string, ...args: unknown[]): CanUndef<T>;
 }
@@ -22,11 +26,6 @@ class Daemons extends Friend {
 	 */
 	protected get daemons(): WrappedDaemonsDict {
 		return Object.cast((<typeof iBlock>this.ctx.instance.constructor).daemons);
-	}
-
-	constructor(component: iBlock) {
-		super(component);
-		this.init();
 	}
 
 	init(): void {

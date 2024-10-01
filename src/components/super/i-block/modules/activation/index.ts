@@ -13,7 +13,9 @@
 
 import symbolGenerator from 'core/symbol';
 
+import { Namespaces } from 'core/async';
 import { unwrap } from 'core/object/watch';
+
 import { runHook, callMethodFromComponent } from 'core/component';
 
 import type iBlock from 'components/super/i-block/i-block';
@@ -22,12 +24,9 @@ import { statuses } from 'components/super/i-block/const';
 import {
 
 	suspendRgxp,
-
 	readyStatuses,
 	inactiveStatuses,
-
-	asyncNames,
-	nonMuteAsyncLinkNames
+	nonMuteAsyncNamespaces
 
 } from 'components/super/i-block/modules/activation/const';
 
@@ -220,15 +219,15 @@ export function onDeactivated(component: iBlock): void {
 	];
 
 	async.forEach(($a) => {
-		Object.keys(asyncNames).forEach((key) => {
-			if (nonMuteAsyncLinkNames[key]) {
+		Object.entries(Namespaces).forEach(([key, namespace]) => {
+			if (Object.isNumber(namespace) && nonMuteAsyncNamespaces[namespace]) {
 				return;
 			}
 
-			const fn = $a[`mute-${asyncNames[key]}`.camelize(false)];
+			const method = $a[`mute-${key}`.camelize(false)];
 
-			if (Object.isFunction(fn)) {
-				fn.call($a);
+			if (Object.isFunction(method)) {
+				method.call($a);
 			}
 		});
 

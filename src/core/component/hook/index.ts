@@ -18,7 +18,7 @@ import type { Hook, ComponentHook, ComponentInterface } from 'core/component/int
 
 /**
  * Runs a hook on the specified component instance.
- * The function returns a promise that is resolved when all hook handlers are executed.
+ * The function returns a promise resolved when all hook handlers are executed.
  *
  * @param hook - the hook name to run
  * @param component - the tied component instance
@@ -44,13 +44,13 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 		m = component.unsafe.meta,
 		hooks: ComponentHook[] = [];
 
-	if (`before:${hook}` in m.hooks) {
+	if (hook === 'created' || hook === 'updated' || hook === 'mounted') {
 		hooks.push(...m.hooks[`before:${hook}`]);
 	}
 
 	hooks.push(...m.hooks[hook]);
 
-	if (`after:${hook}` in m.hooks) {
+	if (hook === 'beforeDataCreate') {
 		hooks.push(...m.hooks[`after:${hook}`]);
 	}
 
@@ -75,45 +75,89 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 		}
 
 		default: {
-			const
-				emitter = new QueueEmitter(),
-				filteredHooks: ComponentHook[] = [];
+			let toDelete: CanNull<number[]> = null;
 
-			hooks.forEach((hook) => {
-				const
-					nm = hook.name;
+			if (hooks.some((hook) => hook.after != null && hook.after.size > 0)) {
+				const emitter = new QueueEmitter();
 
-				if (!hook.once) {
-					filteredHooks.push(hook);
+				hooks.forEach((hook, i) => {
+					const nm = hook.name;
+
+					if (hook.once) {
+						toDelete ??= [];
+						toDelete.push(i);
+					}
+
+					emitter.on(hook.after, () => {
+						const res = args.length > 0 ? hook.fn.apply(component, args) : hook.fn.call(component);
+
+						if (Object.isPromise(res)) {
+							return res.then(() => nm != null ? emitter.emit(nm) : undefined);
+						}
+
+						const tasks = nm != null ? emitter.emit(nm) : null;
+
+						if (tasks != null) {
+							return tasks;
+						}
+					});
+				});
+
+				removeFromHooks(toDelete);
+
+				const tasks = emitter.drain();
+
+				if (Object.isPromise(tasks)) {
+					return tasks;
 				}
 
-				emitter.on(hook.after, () => {
-					const
-						res = args.length > 0 ? hook.fn.apply(component, args) : hook.fn.call(component);
+			} else {
+				let tasks: CanNull<Array<Promise<unknown>>> = null;
+
+				hooks.forEach((hook, i) => {
+					let res: unknown;
+
+					switch (args.length) {
+						case 0:
+							res = hook.fn.call(component);
+							break;
+
+						case 1:
+							res = hook.fn.call(component, args[0]);
+							break;
+
+						default:
+							res = hook.fn.apply(component, args);
+					}
+
+					if (hook.once) {
+						toDelete ??= [];
+						toDelete.push(i);
+					}
 
 					if (Object.isPromise(res)) {
-						return res.then(() => nm != null ? emitter.emit(nm) : undefined);
-					}
-
-					const
-						tasks = nm != null ? emitter.emit(nm) : null;
-
-					if (tasks != null) {
-						return tasks;
+						tasks ??= [];
+						tasks.push(res);
 					}
 				});
-			});
 
-			m.hooks[hook] = filteredHooks;
+				removeFromHooks(toDelete);
 
-			const
-				tasks = emitter.drain();
-
-			if (Object.isPromise(tasks)) {
-				return tasks;
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				if (tasks != null) {
+					return Promise.all(tasks).then(() => undefined);
+				}
 			}
 		}
 	}
 
 	return SyncPromise.resolve();
+
+	function removeFromHooks(toDelete: CanNull<number[]>) {
+		if (toDelete != null) {
+			toDelete.reverse().forEach((i) => {
+				hooks.splice(i, 1);
+			});
+		}
+	}
 }

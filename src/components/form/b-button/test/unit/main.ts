@@ -95,7 +95,7 @@ test.describe('<b-button>', () => {
 				iconName = 'foo';
 
 			await renderButton(page, {
-				preIcon: iconName
+				icon: iconName
 			});
 
 			const
@@ -107,7 +107,7 @@ test.describe('<b-button>', () => {
 
 		test('`undefined`', async ({page}) => {
 			await renderButton(page, {
-				preIcon: undefined
+				icon: undefined
 			});
 
 			const icon = await $el.$('svg');

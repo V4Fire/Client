@@ -23,8 +23,7 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
 		meta: {methods}
 	} = component.unsafe;
 
-	const
-		isFunctional = meta.params.functional === true;
+	const isFunctional = meta.params.functional === true;
 
 	Object.entries(methods).forEach(([name, method]) => {
 		if (method == null || !SSR && isFunctional && method.functional === false) {
@@ -53,20 +52,13 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
  * ```
  */
 export function callMethodFromComponent(component: ComponentInterface, method: string, ...args: unknown[]): void {
-	const
-		obj = component.unsafe.meta.methods[method];
+	const obj = component.unsafe.meta.methods[method];
 
 	if (obj != null) {
-		try {
-			const
-				res = obj.fn.apply(component, args);
+		const res = obj.fn.apply(component, args);
 
-			if (Object.isPromise(res)) {
-				res.catch(stderr);
-			}
-
-		} catch (err) {
-			stderr(err);
+		if (Object.isPromise(res)) {
+			res.catch(stderr);
 		}
 	}
 }
