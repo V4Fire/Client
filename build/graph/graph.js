@@ -223,7 +223,7 @@ async function buildProjectGraph() {
 						if (!usedLibs.has(el)) {
 							usedLibs.add(el);
 							
-							str += invokeByRegisterEvent(`require('${el}');\n`, name); // ok
+							str += `require('${el}');\n`;
 						}
 					});
 				}
