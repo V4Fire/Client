@@ -116,7 +116,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 			await component.waitForLifecycleDone();
 
 			const
-				spy = await component.getSpy((ctx) => ctx.emit),
+				spy = await component.getSpy((ctx) => ctx.strictEmit),
 				results = filterEmitterResults(await spy.results, true, ['initLoadStart', 'initLoad']);
 
 			test.expect(results).toEqual([
