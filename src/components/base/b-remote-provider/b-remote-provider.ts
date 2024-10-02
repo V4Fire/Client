@@ -100,10 +100,9 @@ export default class bRemoteProvider extends iData {
 	 * @emits `error(err:Error |` [[RequestError]]`, retry:` [[RetryRequestFn]]`)`
 	 */
 	protected override onRequestError(err: Error | RequestError, retry: RetryRequestFn): void {
-		const
-			a = this.$attrs;
+		const a = this.getPassedHandlers?.();
 
-		if (a.onError == null && a.onOnError == null) {
+		if (a != null && (a.has('error') || a.has('error:component') || a.has('onError'))) {
 			super.onRequestError(err, retry);
 		}
 
@@ -117,10 +116,9 @@ export default class bRemoteProvider extends iData {
 	 * @emits `addData(data: unknown)`
 	 */
 	protected override onAddData(data: unknown): void {
-		const
-			a = this.$attrs;
+		const a = this.getPassedHandlers?.();
 
-		if (a.onAddData == null && a.onOnAddData == null) {
+		if (a != null && (a.has('addData') || a.has('addData:component') || a.has('onAddData'))) {
 			return super.onAddData(data);
 		}
 
@@ -134,10 +132,9 @@ export default class bRemoteProvider extends iData {
 	 * @emits `updateData(data: unknown)`
 	 */
 	protected override onUpdateData(data: unknown): void {
-		const
-			a = this.$attrs;
+		const a = this.getPassedHandlers?.();
 
-		if (a.onUpdateData == null && a.onOnUpdateData == null) {
+		if (a != null && (a.has('updateData') || a.has('updateData:component') || a.has('onUpdateData'))) {
 			return super.onUpdateData(data);
 		}
 
@@ -151,10 +148,9 @@ export default class bRemoteProvider extends iData {
 	 * @emits `deleteData(data: unknown)`
 	 */
 	protected override onDeleteData(data: unknown): void {
-		const
-			a = this.$attrs;
+		const a = this.getPassedHandlers?.();
 
-		if (a.onDeleteData == null && a.onOnDeleteData == null) {
+		if (a != null && (a.has('deleteData') || a.has('deleteData:component') || a.has('onDeleteData'))) {
 			return super.onDeleteData(data);
 		}
 

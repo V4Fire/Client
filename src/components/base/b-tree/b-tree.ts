@@ -185,11 +185,8 @@ class bTree extends iTreeProps implements iActiveItems, iFoldable {
 			renderFilter
 		};
 
-		const
-			a = this.$attrs;
-
-		if (a.onFold != null) {
-			opts['@fold'] = a.onFold;
+		if (this.getPassedHandlers?.().has('fold')) {
+			opts['@fold'] = this.$attrs.onFold;
 		}
 
 		return opts;
