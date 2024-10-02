@@ -179,8 +179,10 @@ export function mergeMods(
 			declMods = component.meta.component.mods,
 			res = <ModsDict>{...modsProp};
 
-		Object.entries(component.$attrs).forEach(([name, attr]) => {
+		component.getPassedProps?.().forEach((name) => {
 			if (name in declMods) {
+				const attr = component.$attrs[name];
+
 				if (attr != null) {
 					res[name] = attr;
 				}

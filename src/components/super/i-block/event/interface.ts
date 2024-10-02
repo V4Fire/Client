@@ -9,78 +9,117 @@
 import type { LogLevel } from 'core/log';
 
 export type InferEvents<
-	I extends Array<[string, ...any[]]>,
-	P extends Dictionary = {},
-	R extends Dictionary = {}
+	Scheme extends Array<[string, ...any[]]>,
+	Parent extends Dictionary = {},
+	Result extends Dictionary = {}
 > = {
-	0: InferEvents<TB.Tail<I>, P, (TB.Head<I> extends [infer E, ...infer A] ?
-		E extends string ? {
-			Args: {[K in E]: A};
+	0: InferEvents<TB.Tail<Scheme>, Parent, (TB.Head<Scheme> extends [infer E, ...infer A] ? E extends string ? {
+		on(event: E, cb: (...args: A) => void): void;
+		once(event: E, cb: (...args: A) => void): void;
+		promisifyOnce(event: E): Promise<CanUndef<TB.Head<A>>>;
 
-			on(event: E, cb: (...args: A) => void): void;
-			once(event: E, cb: (...args: A) => void): void;
-			promisifyOnce(event: E): Promise<CanUndef<TB.Head<A>>>;
+		off(event: E | string, handler?: Function): void;
 
-			off(event: E | string, handler?: Function): void;
+		strictEmit(event: E, ...args: A): void;
+		emit(event: E, ...args: A): void;
+		emit(event: string, ...args: unknown[]): void;
+	} : {} : {}) & Result>;
 
-			strictEmit(event: E, ...args: A): void;
-			emit(event: E, ...args: A): void;
-			emit(event: string, ...args: unknown[]): void;
-		} : {} : {}) & R>;
-
-	1: R & P;
-}[TB.Length<I> extends 0 ? 1 : 0];
+	1: Result & Parent;
+}[TB.Length<Scheme> extends 0 ? 1 : 0];
 
 export interface ComponentEvent<E extends string = string> {
 	event: E;
 	logLevel?: LogLevel;
 }
 
+type UnionToIntersection<T> = (T extends any ? (k: T) => void : never) extends (k: infer R) => void ? R : never;
+
+type EventToTuple<Event, Result extends any[] = []> =
+	UnionToIntersection<Event extends any ? () => Event : never> extends (() => infer T) ?
+		[...EventToTuple<Exclude<Event, T>, Result>, [T, ...Result]] :
+		[];
+
+export type FlatEvents<Events extends any[], Result extends any[] = []> = {
+	0: TB.Head<Events> extends [infer E, ...infer A] ?
+		FlatEvents<TB.Tail<Events>, [...EventToTuple<E, A>, ...Result]> :
+		[];
+
+	1: Result;
+}[TB.Length<Events> extends 0 ? 1 : 0];
+
 export type InferComponentEvents<
-	C,
-	I extends Array<[string, ...any[]]>,
-	P extends Dictionary = {},
-	R extends Dictionary = {}
+	Ctx,
+	Scheme extends Array<[string, ...any[]]>,
+	Parent extends Dictionary = {}
+> = _InferComponentEvents<Ctx, FlatEvents<Scheme>, Parent>;
+
+export type _InferComponentEvents<
+	Ctx,
+	Scheme extends any[],
+	Parent extends Dictionary = {},
+	Events extends any[] = [],
+	Result extends Dictionary = {}
 > = {
-	0: InferComponentEvents<C, TB.Tail<I>, P, (TB.Head<I> extends [infer E, ...infer A] ? E extends string ? {
-		Args: {[K in E]: A};
+	0: _InferComponentEvents<
+		Ctx,
 
-		on(event: `on${Capitalize<E>}`, cb: (...args: A) => void): void;
-		on(event: E | `${E}:component`, cb: (component: C, ...args: A) => void): void;
+		TB.Tail<Scheme>,
 
-		once(event: `on${Capitalize<E>}`, cb: (...args: A) => void): void;
-		once(event: E | `${E}:component`, cb: (component: C, ...args: A) => void): void;
+		Parent,
 
-		promisifyOnce(event: `on${Capitalize<E>}`): Promise<CanUndef<TB.Head<A>>>;
-		promisifyOnce(event: E | `${E}:component`): Promise<CanUndef<C>>;
+		TB.Head<Scheme> extends [infer E, ...infer A] ? [...Events, [E, ...A]] : Events,
 
-		off(event: E | `${E}:component` | `on${Capitalize<E>}` | string, handler?: Function): void;
+		(TB.Head<Scheme> extends [infer E, ...infer A] ? E extends string ? {
+			on(event: `on${Capitalize<E>}`, cb: (...args: A) => void): void;
+			on(event: E | `${E}:component`, cb: (component: Ctx, ...args: A) => void): void;
 
-		strictEmit(event: E | ComponentEvent<E>, ...args: A): void;
-		emit(event: E | ComponentEvent<E>, ...args: A): void;
-		emit(event: string | ComponentEvent, ...args: unknown[]): void;
-	} : {} : {}) & R>;
+			once(event: `on${Capitalize<E>}`, cb: (...args: A) => void): void;
+			once(event: E | `${E}:component`, cb: (component: Ctx, ...args: A) => void): void;
 
-	1: R & OverrideParentComponentEvents<C, P>;
-}[TB.Length<I> extends 0 ? 1 : 0];
+			promisifyOnce(event: `on${Capitalize<E>}`): Promise<CanUndef<TB.Head<A>>>;
+			promisifyOnce(event: E | `${E}:component`): Promise<CanUndef<Ctx>>;
 
-export type OverrideParentComponentEvents<C, P extends Dictionary, A = P['Args']> = A extends Record<string, any[]> ? {
-	[E in keyof A]: E extends string ? {
-		Args: A;
+			off(event: E | `${E}:component` | `on${Capitalize<E>}` | string, handler?: Function): void;
 
-		on(event: `on${Capitalize<E>}`, cb: (...args: A[E]) => void): void;
-		on(event: E | `${E}:component`, cb: (component: C, ...args: A[E]) => void): void;
+			strictEmit(event: E | ComponentEvent<E>, ...args: A): void;
+			emit(event: E | ComponentEvent<E>, ...args: A): void;
+			emit(event: string | ComponentEvent, ...args: unknown[]): void;
+		} : {} : {}) & Result>;
 
-		once(event: `on${Capitalize<E>}`, cb: (...args: A[E]) => void): void;
-		once(event: E | `${E}:component`, cb: (component: C, ...args: A[E]) => void): void;
+	1: Parent extends {Events: infer ParentEvents} ? ParentEvents extends any[] ?
+		Overwrite<
+			Result & OverrideParentComponentEvents<Ctx, Parent, ParentEvents>,
+			{Events: [...ParentEvents, ...Events]}
+		> :
 
-		promisifyOnce(event: `on${Capitalize<E>}`): Promise<CanUndef<TB.Head<A[E]>>>;
-		promisifyOnce(event: E | `${E}:component`): Promise<CanUndef<C>>;
+		Result & {Events: Events} : Result & {Events: Events};
 
-		off(event: E | `${E}:component` | `on${Capitalize<E>}` | string, handler?: Function): void;
+}[TB.Length<Scheme> extends 0 ? 1 : 0];
 
-		strictEmit(event: E | ComponentEvent<E>, ...args: A[E]): void;
-		emit(event: E | ComponentEvent<E>, ...args: A[E]): void;
-		emit(event: string | ComponentEvent, ...args: unknown[]): void;
-	} : {};
-}[keyof A] : {};
+export type OverrideParentComponentEvents<
+	Ctx,
+	Parent extends Dictionary,
+	Events extends any[],
+	Result extends Dictionary = {}
+> = {
+	0: TB.Head<Events> extends [infer E, ...infer A] ? E extends string ?
+		OverrideParentComponentEvents<Ctx, Parent, TB.Tail<Events>, Result & {
+			on(event: `on${Capitalize<E>}`, cb: (...args: A) => void): void;
+			on(event: E | `${E}:component`, cb: (component: Ctx, ...args: A) => void): void;
+
+			once(event: `on${Capitalize<E>}`, cb: (...args: A) => void): void;
+			once(event: E | `${E}:component`, cb: (component: Ctx, ...args: A) => void): void;
+
+			promisifyOnce(event: `on${Capitalize<E>}`): Promise<CanUndef<TB.Head<A>>>;
+			promisifyOnce(event: E | `${E}:component`): Promise<CanUndef<Ctx>>;
+
+			off(event: E | `${E}:component` | `on${Capitalize<E>}` | string, handler?: Function): void;
+
+			strictEmit(event: E | ComponentEvent<E>, ...args: A): void;
+			emit(event: E | ComponentEvent<E>, ...args: A): void;
+			emit(event: string | ComponentEvent, ...args: unknown[]): void;
+		}> : Result : Result;
+
+	1: Result;
+}[TB.Length<Events> extends 0 ? 1 : 0];

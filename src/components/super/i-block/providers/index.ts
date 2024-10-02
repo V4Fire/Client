@@ -32,6 +32,8 @@ import { system, hook } from 'components/super/i-block/decorators';
 import type { InitLoadCb, InitLoadOptions } from 'components/super/i-block/interface';
 
 import iBlockState from 'components/super/i-block/state';
+
+import type { InferComponentEvents } from 'components/super/i-block/event';
 import type { DataProviderProp } from 'components/super/i-block/providers/interface';
 
 export * from 'components/super/i-block/providers/interface';
@@ -41,6 +43,13 @@ const
 
 @component({partial: 'iBlock'})
 export default abstract class iBlockProviders extends iBlockState {
+	/** @inheritDoc */
+	// @ts-ignore (override)
+	declare readonly SelfEmitter: InferComponentEvents<this, [
+		['initLoadStart', InitLoadOptions],
+		[event: 'initLoad', data: unknown, opts: InitLoadOptions]
+	], iBlockState['SelfEmitter']>;
+
 	/** {@link iBlock.dontWaitRemoteProvidersProp} */
 	@system((o) => o.sync.link((val) => {
 		if (val == null) {
@@ -109,7 +118,7 @@ export default abstract class iBlockProviders extends iBlockState {
 
 		try {
 			if (opts.emitStartEvent !== false) {
-				this.emit('initLoadStart', opts);
+				this.strictEmit('initLoadStart', opts);
 			}
 
 			if (!opts.silent) {
@@ -228,7 +237,7 @@ export default abstract class iBlockProviders extends iBlockState {
 				}
 
 				function emitInitLoad() {
-					that.emit('initLoad', get(), opts);
+					that.strictEmit('initLoad', get(), opts);
 				}
 			}
 

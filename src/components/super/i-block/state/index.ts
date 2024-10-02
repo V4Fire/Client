@@ -30,12 +30,27 @@ import { readyStatuses } from 'components/super/i-block/modules/activation';
 import { field, system, computed, wait, hook, WaitDecoratorOptions } from 'components/super/i-block/decorators';
 
 import type iBlock from 'components/super/i-block/i-block';
+
+import type { InferComponentEvents } from 'components/super/i-block/event';
 import type { Stage, ComponentStatus, ComponentStatuses } from 'components/super/i-block/interface';
 
 import iBlockMods from 'components/super/i-block/mods';
 
 @component({partial: 'iBlock'})
 export default abstract class iBlockState extends iBlockMods {
+	/** @inheritDoc */
+	// @ts-ignore (override)
+	declare readonly SelfEmitter: InferComponentEvents<this, [
+		[`hook:${Hook}`, Hook, Hook],
+		['hookChange', Hook, Hook],
+
+		[`componentStatus:${ComponentStatus}`, ComponentStatus, ComponentStatus],
+		['componentStatusChange', ComponentStatus, ComponentStatus],
+
+		[`stage:${string}`, CanUndef<Stage>, CanUndef<Stage>],
+		['stageChange', CanUndef<Stage>, CanUndef<Stage>]
+	], iBlockMods['SelfEmitter']>;
+
 	/**
 	 * A list of additional dependencies to load during the component's initialization
 	 * {@link iBlock.dependenciesProp}
@@ -217,8 +232,8 @@ export default abstract class iBlockState extends iBlockMods {
 			}
 		}
 
-		this.emit(`componentStatus:${value}`, value, oldValue);
-		this.emit('componentStatusChange', value, oldValue);
+		this.strictEmit(<any>`componentStatus:${value}`, value, oldValue);
+		this.strictEmit('componentStatusChange', value, oldValue);
 	}
 
 	// eslint-disable-next-line jsdoc/require-param
@@ -290,10 +305,10 @@ export default abstract class iBlockState extends iBlockMods {
 		}
 
 		if (value != null) {
-			this.emit(`stage:${value}`, value, oldValue);
+			this.strictEmit(`stage:${value}`, value, oldValue);
 		}
 
-		this.emit('stageChange', value, oldValue);
+		this.strictEmit('stageChange', value, oldValue);
 	}
 
 	/**
@@ -377,8 +392,8 @@ export default abstract class iBlockState extends iBlockMods {
 		this.hookStore = value;
 
 		if ('lfc' in this && !this.lfc.isBeforeCreate('beforeDataCreate')) {
-			this.emit(`hook:${value}`, value, oldValue);
-			this.emit('hookChange', value, oldValue);
+			this.strictEmit(<any>`hook:${value}`, value, oldValue);
+			this.strictEmit('hookChange', value, oldValue);
 		}
 	}
 

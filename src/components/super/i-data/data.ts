@@ -173,7 +173,7 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	 * @emits `dbChange(value: CanUndef<this['DB']>)`
 	 */
 	set db(value: CanUndef<this['DB']>) {
-		this.emit('dbCanChange', value);
+		this.strictEmit('dbCanChange', value);
 
 		if (value === this.db) {
 			return;
@@ -194,7 +194,7 @@ abstract class iDataData extends iBlock implements iDataProvider {
 			});
 		}
 
-		this.emit('dbChange', value);
+		this.strictEmit('dbChange', value);
 	}
 
 	static override readonly mods: ModsDecl = {

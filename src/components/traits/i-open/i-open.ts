@@ -53,8 +53,7 @@ export default abstract class iOpen {
 
 	/** {@link iOpen.prototype.onTouchClose} */
 	static onTouchClose: AddSelf<iOpen['onTouchClose'], iBlock & iOpen> = async (component, e) => {
-		const
-			target = <CanUndef<Element>>e.target;
+		const target = <CanUndef<Element>>e.target;
 
 		if (target == null) {
 			return;
@@ -80,10 +79,7 @@ export default abstract class iOpen {
 		events: CloseHelperEvents = {},
 		eventOpts: AddEventListenerOptions = {}
 	): void {
-		const {
-			async: $a,
-			localEmitter: $e
-		} = component.unsafe;
+		const {async: $a, localEmitter: $e} = component.unsafe;
 
 		const
 			helpersGroup = {group: 'closeHelpers'},
@@ -144,7 +140,7 @@ export default abstract class iOpen {
 				return;
 			}
 
-			component.emit(e.value === 'false' || e.type === 'remove' ? 'close' : 'open');
+			component.strictEmit(e.value === 'false' || e.type === 'remove' ? 'close' : 'open');
 		});
 	}
 
