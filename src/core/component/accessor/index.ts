@@ -17,6 +17,7 @@ import { deprecate } from 'core/functools/deprecation';
 
 import { beforeHooks } from 'core/component/const';
 import { getPropertyInfo } from 'core/component/reflect';
+
 import { getFieldsStore } from 'core/component/field';
 import { cacheStatus } from 'core/component/watch';
 

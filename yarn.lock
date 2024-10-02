@@ -5731,7 +5731,7 @@ __metadata:
     "@types/webpack-env": "npm:1.18.1"
     "@v4fire/cli": "npm:1.6.0"
     "@v4fire/config": "npm:1.0.0"
-    "@v4fire/core": "github:V4Fire/Core#speedup"
+    "@v4fire/core": "npm:4.0.0-alpha.47.speedup"
     "@v4fire/design-system": "npm:1.23.0"
     "@v4fire/linters": "git+https://github.com/v4fire/linters#rework_rules"
     "@v4fire/storybook": "npm:0.8.0"
@@ -5838,7 +5838,7 @@ __metadata:
     webpack: "npm:5.91.0"
     webpack-cli: "npm:5.1.4"
   peerDependencies:
-    "@v4fire/core": ^4.0.0-alpha.37
+    "@v4fire/core": ^4.0.0-alpha.47.speedup
     webpack: ^5.82.1
   dependenciesMeta:
     "@pzlr/build-core":
@@ -6007,9 +6007,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@v4fire/core@github:V4Fire/Core#speedup":
-  version: 4.0.0-alpha.43
-  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=587449c7d4cdfb70b2b09890e1def5214adb35ac"
+"@v4fire/core@npm:4.0.0-alpha.47.speedup":
+  version: 4.0.0-alpha.47.speedup
+  resolution: "@v4fire/core@npm:4.0.0-alpha.47.speedup"
   dependencies:
     "@babel/core": "npm:7.17.5"
     "@babel/helper-module-transforms": "npm:7.16.7"
@@ -6152,7 +6152,7 @@ __metadata:
       optional: true
     xhr2:
       optional: true
-  checksum: aff8db42ef8bce993c0a0450de973852ac59adc97af149f51e7726410381b1c91991ac394d235f554f03b49568ed80589d0e2ddb9b4e2df733175131270a9037
+  checksum: 4ab6fc3c0add89cb2cdfffe32f5284e69d0ea8dd55036745637e31d9eea9a732268d9ac38a25b5b9aa58a67ef5e7673c648ba68597e95aec0551e172002deff3
   languageName: node
   linkType: hard
 
