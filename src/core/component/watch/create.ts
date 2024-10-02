@@ -347,13 +347,13 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						destructors: Function[] = [];
 
 					const attachDeepProxy = (forceUpdate = true) => {
-						const getAccessors: CanUndef<ReturnType<ComponentInterface['createPropAccessors']>> = Object.cast(
-							this.$attrs[`on:${prop}`]
-						);
-
-						let accessors: Nullable<ReturnType<NonNullable<typeof getAccessors>>>;
+						let accessors: Nullable<ReturnType<ReturnType<ComponentInterface['createPropAccessors']>>>;
 
 						if (!forceUpdate) {
+							const getAccessors: CanUndef<ReturnType<ComponentInterface['createPropAccessors']>> = Object.cast(
+								this.$attrs[`on:${prop}`]
+							);
+
 							accessors = getAccessors?.();
 						}
 

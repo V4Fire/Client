@@ -38,10 +38,7 @@ export function initProps(
 		...opts
 	};
 
-	const {
-		store,
-		from
-	} = p;
+	const {store, from} = p;
 
 	const
 		isFunctional = meta.params.functional === true,
@@ -60,10 +57,12 @@ export function initProps(
 
 		let propValue = (from ?? component)[propName];
 
-		const getAccessors = unsafe.$attrs[`on:${propName}`];
+		if (propValue === undefined && unsafe.getPassedHandlers?.().has(`:${propName}`)) {
+			const getAccessors = unsafe.$attrs[`on:${propName}`];
 
-		if (propValue === undefined && Object.isFunction(getAccessors)) {
-			propValue = getAccessors()[0];
+			if (Object.isFunction(getAccessors)) {
+				propValue = getAccessors()[0];
+			}
 		}
 
 		let needSaveToStore = opts.saveToStore;
