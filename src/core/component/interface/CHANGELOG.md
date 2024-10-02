@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added a new default prop `getPassedProps`, which allows identifying which props were passed through the template
+
 ## v4.0.0-beta.121.the-phantom-menace (2024-08-05)
 
 #### :boom: Breaking Change

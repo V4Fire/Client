@@ -11,6 +11,23 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added a new default prop `getPassedProps`, which allows identifying which props were passed through the template `core/component`
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the removal of modifiers from a comment node `components/friends/block`
+
+#### :house: Internal
+
+* Performance improvements `components/friends/sync` `iBlock`
+* `core/component/engines/vue3`:
+  * Migration to the Composition API
+  * Added support for the `renderTracked` hook
+
 ## v4.0.0-beta.138.dsl-speedup (2024-10-01)
 
 #### :boom: Breaking Change
