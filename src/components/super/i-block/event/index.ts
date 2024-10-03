@@ -673,5 +673,9 @@ function getComponentEventName(event: string): string {
 }
 
 function normalizeEventName(event: string): string {
-	return event.camelize(false);
+	if (event.includes('-')) {
+		return event.camelize(false);
+	}
+
+	return event;
 }
