@@ -122,12 +122,24 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			isRegular = params.functional !== true,
 			vnode = createVNode(name, attrs, isRegular ? slots : null, patchFlag, dynamicProps);
 
-		vnode.props ??= {};
-		vnode.props.getRoot ??= this.$getRoot(this);
+		let props = vnode.props ?? {};
+		vnode.props = props;
 
-		vnode.props.getParent ??= () => vnode.virtualParent?.value != null ?
+		// By default, mods are passed down from the parent (see `sharedMods`), but if there is actually nothing there,
+		// we remove them from the vnode to avoid registering empty handlers and watchers
+		if ('modsProp' in props && props.modsProp == null) {
+			delete vnode.props.modsProp;
+			delete vnode.props['on:modsProp'];
+		}
+
+		props.getRoot ??= this.$getRoot(this);
+
+		props.getParent ??= () => vnode.virtualParent?.value != null ?
 			vnode.virtualParent.value :
 			this;
+
+		let passedProps: CanNull<Set<string>> = null;
+		props.getPassedProps ??= () => passedProps ??= new Set(attrs != null ? Object.keys(attrs) : []);
 
 		// For refs within functional components,
 		// it is necessary to explicitly set a reference to the instance of the component
@@ -153,7 +165,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			declaredProps = component.props,
 			filteredAttrs = {};
 
-		Object.entries(vnode.props).forEach(([key, val]) => {
+		Object.entries(props).forEach(([key, val]) => {
 			if (declaredProps[key.camelize(false)] == null) {
 				filteredAttrs[key] = val;
 			}
@@ -162,7 +174,9 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		const functionalVNode = virtualCtx.render(virtualCtx, []);
 
 		vnode.type = functionalVNode.type;
-		vnode.props = merge(filteredAttrs, functionalVNode.props ?? {});
+
+		props = merge(filteredAttrs, functionalVNode.props ?? {});
+		vnode.props = props;
 
 		vnode.children = functionalVNode.children;
 		vnode.dynamicChildren = functionalVNode.dynamicChildren;

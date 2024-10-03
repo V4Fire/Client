@@ -13,7 +13,7 @@
 
 import { component, PARENT } from 'core/component';
 
-import { field, system, computed, hook } from 'components/super/i-block/decorators';
+import { field, system, computed } from 'components/super/i-block/decorators';
 import { initMods, mergeMods, getReactiveMods, ModsDict, ModsDecl } from 'components/super/i-block/modules/mods';
 
 import type iBlock from 'components/super/i-block/i-block';
@@ -200,13 +200,5 @@ export default abstract class iBlockMods extends iBlockEvent {
 	 */
 	removeRootMod(name: string, value?: unknown): boolean {
 		return this.r.removeRootMod(name, value, Object.cast(this));
-	}
-
-	/**
-	 * Initializes modifier event listeners
-	 */
-	@hook('beforeCreate')
-	protected initModEvents(): void {
-		this.sync.mod('stage', 'stageStore', (v) => v == null ? v : String(v));
 	}
 }

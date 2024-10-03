@@ -12,8 +12,12 @@
  */
 
 export * from 'core/component/watch/const';
+export { canSkipWatching } from 'core/component/watch/helpers';
+
 export * from 'core/component/watch/bind';
 export * from 'core/component/watch/clone';
+
 export * from 'core/component/watch/component-api';
 export * from 'core/component/watch/create';
+
 export * from 'core/component/watch/interface';

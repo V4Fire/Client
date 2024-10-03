@@ -634,6 +634,17 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
+	 * Initializes modifier event listeners
+	 */
+	@hook('beforeCreate')
+	protected initModEvents(): void {
+		this.sync.mod('stage', ':stageChange', {immediate: true}, () => {
+			const v = this.stage;
+			return v == null ? v : String(v);
+		});
+	}
+
+	/**
 	 * Hook handler: the component is preparing to be destroyed
 	 */
 	protected beforeDestroy(): void {

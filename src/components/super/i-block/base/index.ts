@@ -14,6 +14,7 @@
 import symbolGenerator from 'core/symbol';
 
 import log, { LogMessageOptions } from 'core/log';
+import { isProxy } from 'core/object/watch';
 
 import type Async from 'core/async';
 
@@ -33,7 +34,9 @@ import {
 
 	component,
 	getComponentName,
+	getPropertyInfo,
 
+	canSkipWatching,
 	bindRemoteWatchers,
 	isCustomWatcher,
 
@@ -464,7 +467,9 @@ export default abstract class iBlockBase extends iBlockFriends {
 			return;
 		}
 
-		const {async: $a} = this;
+		const that = this;
+
+		const {meta: {hooks}, async: $a} = this;
 
 		let
 			handler: RawWatchHandler<this, T>,
@@ -495,7 +500,25 @@ export default abstract class iBlockBase extends iBlockFriends {
 			return;
 		}
 
-		void this.lfc.execCbAfterComponentCreated(() => {
+		if (this.lfc.isBeforeCreate()) {
+			hooks['before:created'].push({fn: initWatcher});
+
+		} else {
+			initWatcher();
+		}
+
+		function initWatcher() {
+			let info = Object.isString(path) ? getPropertyInfo(path, that) : null;
+
+			// TODO: Implement a more accurate check
+			if (info == null && !isProxy(path)) {
+				info = Object.cast(path);
+			}
+
+			if (canSkipWatching(info, opts)) {
+				return;
+			}
+
 			let
 				// eslint-disable-next-line prefer-const
 				link: Nullable<CanArray<IdObject>>,
@@ -503,7 +526,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 				// eslint-disable-next-line prefer-const
 				unwatch: Nullable<Function>;
 
-			const emitter: Function = (_: any, wrappedHandler: RawWatchHandler<this, T>) => {
+			const emitter: Function = (_: any, wrappedHandler: RawWatchHandler<typeof that, T>) => {
 				wrappedHandler['originalLength'] = handler['originalLength'] ?? handler.length;
 				handler = wrappedHandler;
 
@@ -517,8 +540,8 @@ export default abstract class iBlockBase extends iBlockFriends {
 			};
 
 			link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(opts, 'watchers'));
-			unwatch = this.$watch(Object.cast(path), opts, handler);
-		});
+			unwatch = that.$watch(Object.cast(path), opts, handler);
+		}
 	}
 
 	/**
