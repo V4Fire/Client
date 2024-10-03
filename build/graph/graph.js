@@ -261,10 +261,6 @@ async function buildProjectGraph() {
 						importScript = `require('${entryPath}');\n`;
 					}
 
-					// console.log({entryPath: component?.logic});
-
-					console.log({entryPath: path.join(__filename, entryPath)})
-
 					str += !isComponentPath(entryPath) ?
 						importScript :
 						invokeByRegisterEvent(importScript, getLayerName(component?.logic), name);
