@@ -389,7 +389,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 				this.dispatch(event, ...args);
 			}
 
-			if (!Object.isString(event)) {
+			if (this.verbose || eventDecl.logLevel !== 'info') {
 				const logArgs = args.slice();
 
 				if (eventDecl.logLevel === 'error') {
@@ -469,17 +469,15 @@ export default abstract class iBlockEvent extends iBlockBase {
 			let {globalName, componentName, $parent: parent} = this;
 
 			const
-				log = Object.isString(event),
+				log = this.verbose || eventDecl.logLevel !== 'info',
 				logArgs = log ? args.slice() : args;
 
-			if (log) {
-				if (eventDecl.logLevel === 'error') {
-					logArgs.forEach((el, i) => {
-						if (Object.isFunction(el)) {
-							logArgs[i] = () => el;
-						}
-					});
-				}
+			if (log && eventDecl.logLevel === 'error') {
+				logArgs.forEach((el, i) => {
+					if (Object.isFunction(el)) {
+						logArgs[i] = () => el;
+					}
+				});
 			}
 
 			while (parent != null) {
