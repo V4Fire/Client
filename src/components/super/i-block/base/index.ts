@@ -36,6 +36,7 @@ import {
 	getComponentName,
 	getPropertyInfo,
 
+	canSkipWatching,
 	bindRemoteWatchers,
 	isCustomWatcher,
 
@@ -508,6 +509,10 @@ export default abstract class iBlockBase extends iBlockFriends {
 			// TODO: Implement a more accurate check
 			if (info == null && !isProxy(path)) {
 				info = Object.cast(path);
+			}
+
+			if (canSkipWatching(info, opts)) {
+				return;
 			}
 
 			let

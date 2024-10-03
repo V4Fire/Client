@@ -288,6 +288,12 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							return;
 						}
 
+						const propInfo = p.info ?? getPropertyInfo(watchPath, component);
+
+						if (canSkipWatching(propInfo, watchInfo)) {
+							return;
+						}
+
 						/* eslint-disable prefer-const */
 
 						let
@@ -330,6 +336,12 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							}
 						}
 
+						return;
+					}
+
+					const propInfo = p.info ?? getPropertyInfo(watchPath, component);
+
+					if (canSkipWatching(propInfo, watchInfo)) {
 						return;
 					}
 
