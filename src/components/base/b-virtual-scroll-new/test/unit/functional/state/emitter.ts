@@ -45,7 +45,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 	});
 
 	test.describe('all data has been loaded after the initial load', () => {
-		test.only('state at the time of emitting events must be correct', async () => {
+		test('state at the time of emitting events must be correct', async () => {
 			const chunkSize = 12;
 
 			const states = [
