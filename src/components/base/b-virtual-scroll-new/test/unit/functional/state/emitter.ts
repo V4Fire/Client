@@ -452,9 +452,9 @@ test.describe('<b-virtual-scroll-new>', () => {
 				state.reset();
 
 				await component.evaluate((ctx) => {
-					const original = Object.cast<Function>(ctx.emit);
+					const original = Object.cast<Function>(ctx.strictEmit);
 
-					ctx.emit = jestMock.mock((...args) => {
+					ctx.strictEmit = jestMock.mock((...args) => {
 						original(...args);
 						return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
 					});
