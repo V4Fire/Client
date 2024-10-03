@@ -287,9 +287,9 @@ test.describe('<b-virtual-scroll-new>', () => {
 						chunkSize,
 						request: {get: {test: 1}},
 						'@hook:beforeDataCreate': (ctx) => {
-							const original = ctx.emit;
+							const original = ctx.strictEmit;
 
-							ctx.emit = jestMock.mock((...args) => {
+							ctx.strictEmit = jestMock.mock((...args) => {
 								original(...args);
 								return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
 							});

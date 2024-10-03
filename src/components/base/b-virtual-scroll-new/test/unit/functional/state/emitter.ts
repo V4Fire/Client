@@ -45,7 +45,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 	});
 
 	test.describe('all data has been loaded after the initial load', () => {
-		test('state at the time of emitting events must be correct', async () => {
+		test.only('state at the time of emitting events must be correct', async () => {
 			const chunkSize = 12;
 
 			const states = [
@@ -79,9 +79,9 @@ test.describe('<b-virtual-scroll-new>', () => {
 					chunkSize,
 					shouldStopRequestingData: () => true,
 					'@hook:beforeDataCreate': (ctx) => {
-						const original = ctx.emit;
+						const original = ctx.strictEmit;
 
-						ctx.emit = jestMock.mock((...args) => {
+						ctx.strictEmit = jestMock.mock((...args) => {
 							original(...args);
 							return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
 						});
@@ -163,9 +163,9 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withProps({
 					chunkSize,
 					'@hook:beforeDataCreate': (ctx) => {
-						const original = ctx.emit;
+						const original = ctx.strictEmit;
 
-						ctx.emit = jestMock.mock((...args) => {
+						ctx.strictEmit = jestMock.mock((...args) => {
 							original(...args);
 							return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
 						});
@@ -295,9 +295,9 @@ test.describe('<b-virtual-scroll-new>', () => {
 						Object.get(state, 'lastLoadedRawData.total') === state.data.length,
 
 					'@hook:beforeDataCreate': (ctx) => {
-						const original = ctx.emit;
+						const original = ctx.strictEmit;
 
-						ctx.emit = jestMock.mock((...args) => {
+						ctx.strictEmit = jestMock.mock((...args) => {
 							original(...args);
 							return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
 						});
@@ -382,9 +382,9 @@ test.describe('<b-virtual-scroll-new>', () => {
 					items: state.data.getDataChunk(0),
 
 					'@hook:beforeDataCreate': (ctx) => {
-						const original = ctx.emit;
+						const original = ctx.strictEmit;
 
-						ctx.emit = jestMock.mock((...args) => {
+						ctx.strictEmit = jestMock.mock((...args) => {
 							original(...args);
 							return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
 						});
