@@ -109,6 +109,7 @@ export function component(opts?: ComponentOptions): Function {
 
 			components.set(componentName, meta);
 			initEmitter.emit(`constructor.${componentName}`, {meta, parentMeta});
+			initEmitter.emit(`registerComponent.${componentInfo.layer}.${componentName}`);
 
 			const noNeedToRegisterAsComponent =
 				target.hasOwnProperty(OVERRIDDEN) ||

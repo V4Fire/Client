@@ -59,10 +59,6 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 		return sourceFile;
 	}
 
-	if (isInitAppFile) {	
-		console.log('yes' * 100);
-	}
-
 	let layer = getLayerName(sourceFile.path);
 
 	if (isInitAppFile) {
@@ -89,8 +85,6 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 
 		if (ts.isReturnStatement(node) && isInitAppFile && expr.expression.escapedText === 'createApp') {
 			const newArgument = factory.createStringLiteral(layer);
-
-			// console.log('arguments', expr.arguments);
 
 			const updatedCallExpression = factory.createReturnStatement(
 				factory.createCallExpression(

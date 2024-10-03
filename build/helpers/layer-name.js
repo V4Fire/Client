@@ -18,5 +18,7 @@ exports.getLayerName = function(filePath) {
 
 	const res = require(`${pathToRootDir}/package.json`).name;
 
+	// console.log('getLayerName', {res, pathToRootDir, file});
+
 	return res;
 }

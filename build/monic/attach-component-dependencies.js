@@ -138,7 +138,7 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 						expr = `require('${src}');`
 					}
 
-					decl += `try { ${invokeByRegisterEvent(expr, component.name)} } catch (err) { stderr(err); }`;
+					decl += `try { ${invokeByRegisterEvent(expr, getLayerName(filePath), component.name)} } catch (err) { stderr(err); }`;
 				}
 
 			} catch {}

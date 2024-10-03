@@ -12,6 +12,8 @@ exports.invokeByRegisterEvent = function(script, layerName, componentName) {
 		return script;
 	}
 
+	console.log(`registerComponent.${layerName}.${componentName}`);
+
 	return `\n
 		{
 			const {initEmitter} = require('core/component/event');
