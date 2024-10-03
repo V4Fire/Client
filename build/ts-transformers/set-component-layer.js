@@ -81,9 +81,9 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 	 */
 	const visitor = (node) => {
 		const
-			expr = node.expression;
+			expr = node?.expression;
 
-		if (ts.isReturnStatement(node) && isInitAppFile && expr.expression.escapedText === 'createApp') {
+		if (ts.isReturnStatement(node) && isInitAppFile && expr?.expression?.escapedText === 'createApp') {
 			const newArgument = factory.createStringLiteral(layer);
 
 			const updatedCallExpression = factory.createReturnStatement(
