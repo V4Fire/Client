@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-10-??)
+
+#### :bug: Bug Fix
+
+* Do not call destructor recursively on before unmount `core/component/engines/vue3`
+
 ## v4.0.0-beta.140 (2024-10-03)
 
 #### :bug: Bug Fix
