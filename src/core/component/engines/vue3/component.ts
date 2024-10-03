@@ -165,7 +165,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 					return;
 				}
 
-				init.beforeDestroyState(ctx, {recursive: true});
+				init.beforeDestroyState(ctx, {recursive: false});
 			});
 
 			onUnmounted(() => {

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-10-??)
+
+#### :bug: Bug Fix
+
+* Do not call destructor recursively on before unmount
+
 ## v4.0.0-beta.139.dsl-speedup-2 (2024-10-03)
 
 #### :house: Internal
