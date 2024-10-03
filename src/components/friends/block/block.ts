@@ -214,7 +214,7 @@ export function removeMod(this: Block, name: string, value?: unknown, reason: Mo
 		return false;
 	}
 
-	if (node != null) {
+	if (node instanceof Element) {
 		node.classList.remove(this.getFullBlockName(name, currentValue));
 	}
 

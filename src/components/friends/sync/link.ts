@@ -7,7 +7,7 @@
  */
 
 import { isProxy } from 'core/object/watch';
-import { getPropertyInfo, isBinding, isCustomWatcher, PropertyInfo } from 'core/component';
+import { getPropertyInfo, canSkipWatching, isBinding, isCustomWatcher, PropertyInfo } from 'core/component';
 
 import type iBlock from 'components/super/i-block/i-block';
 import type Sync from 'components/friends/sync/class';
@@ -390,51 +390,53 @@ export function link<D = unknown, R = D>(
 		return resolveVal;
 	};
 
-	if (getter != null && (getter.length > 1 || getter['originalLength'] > 1)) {
-		ctx.watch(srcInfo ?? normalizedPath, resolvedOpts, (val: unknown, oldVal: unknown, ...args: unknown[]) => {
-			if (customWatcher) {
-				oldVal = undefined;
-
-			} else {
-				if (args.length === 0 && Object.isArray(val) && val.length > 0) {
-					const mutation = <[unknown, unknown]>val[val.length - 1];
-
-					val = mutation[0];
-					oldVal = mutation[1];
-				}
-
-				if (Object.isTruly(compareNewAndOldValue.call(this, val, oldVal, destPath, resolvedOpts))) {
-					return;
-				}
-			}
-
-			sync(val, oldVal);
-		});
-
-	} else {
-		ctx.watch(srcInfo ?? normalizedPath, resolvedOpts, (val: unknown, ...args: unknown[]) => {
-			let
-				oldVal: unknown = undefined;
-
-			if (!customWatcher) {
-				if (args.length === 0 && Object.isArray(val) && val.length > 0) {
-					const
-						mutation = <[unknown, unknown]>val[val.length - 1];
-
-					val = mutation[0];
-					oldVal = mutation[1];
+	if (!canSkipWatching(srcInfo, resolvedOpts)) {
+		if (getter != null && (getter.length > 1 || getter['originalLength'] > 1)) {
+			ctx.watch(srcInfo ?? normalizedPath, resolvedOpts, (val: unknown, oldVal: unknown, ...args: unknown[]) => {
+				if (customWatcher) {
+					oldVal = undefined;
 
 				} else {
-					oldVal ??= args[0];
+					if (args.length === 0 && Object.isArray(val) && val.length > 0) {
+						const mutation = <[unknown, unknown]>val[val.length - 1];
+
+						val = mutation[0];
+						oldVal = mutation[1];
+					}
+
+					if (Object.isTruly(compareNewAndOldValue.call(this, val, oldVal, destPath, resolvedOpts))) {
+						return;
+					}
 				}
 
-				if (Object.isTruly(compareNewAndOldValue.call(this, val, oldVal, destPath, resolvedOpts))) {
-					return;
-				}
-			}
+				sync(val, oldVal);
+			});
 
-			sync(val, oldVal);
-		});
+		} else {
+			ctx.watch(srcInfo ?? normalizedPath, resolvedOpts, (val: unknown, ...args: unknown[]) => {
+				let
+					oldVal: unknown = undefined;
+
+				if (!customWatcher) {
+					if (args.length === 0 && Object.isArray(val) && val.length > 0) {
+						const
+							mutation = <[unknown, unknown]>val[val.length - 1];
+
+						val = mutation[0];
+						oldVal = mutation[1];
+
+					} else {
+						oldVal ??= args[0];
+					}
+
+					if (Object.isTruly(compareNewAndOldValue.call(this, val, oldVal, destPath, resolvedOpts))) {
+						return;
+					}
+				}
+
+				sync(val, oldVal);
+			});
+		}
 	}
 
 	{

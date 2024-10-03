@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.139.dsl-speedup-2 (2024-10-03)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the removal of modifiers from a comment node
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change

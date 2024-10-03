@@ -11,11 +11,11 @@ import { runHook } from 'core/component/hook';
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
- * Initializes the "renderTriggered" state to the specified component instance
+ * Initializes the "renderCaptured" state to the specified component instance
  *
  * @param component
  * @param args - additional arguments
  */
-export function renderTriggeredState(component: ComponentInterface, ...args: unknown[]): void {
-	runHook('renderTriggered', component, ...args).catch(stderr);
+export function renderTrackedState(component: ComponentInterface, ...args: unknown[]): void {
+	runHook('renderTracked', component, ...args).catch(stderr);
 }

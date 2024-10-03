@@ -75,9 +75,15 @@ export default class Lfc extends Friend {
 	 */
 	execCbAtTheRightTime<R = unknown>(cb: Cb<this['C'], R>, opts?: AsyncOptions): CanPromise<CanVoid<R>> {
 		if (this.isBeforeCreate('beforeDataCreate')) {
-			return this.async.promise(new SyncPromise<R>((r) => {
+			const promise = new SyncPromise<R>((r) => {
 				this.meta.hooks.beforeDataCreate.push({fn: () => r(cb.call(this.component))});
-			}), opts).catch(stderr);
+			});
+
+			if (opts != null) {
+				return this.async.promise(promise, opts).catch(stderr);
+			}
+
+			return promise;
 		}
 
 		if (this.hook === 'beforeDataCreate') {
@@ -143,9 +149,15 @@ export default class Lfc extends Friend {
 	 */
 	execCbAfterComponentCreated<R = unknown>(cb: Cb<this['C'], R>, opts?: AsyncOptions): CanPromise<CanVoid<R>> {
 		if (this.isBeforeCreate()) {
-			return this.async.promise(new SyncPromise<R>((r) => {
+			const promise = new SyncPromise<R>((r) => {
 				this.meta.hooks['before:created'].push({fn: () => r(cb.call(this.component))});
-			}), opts).catch(stderr);
+			});
+
+			if (opts != null) {
+				return this.async.promise(promise, opts).catch(stderr);
+			}
+
+			return promise;
 		}
 
 		if (statuses[this.componentStatus] >= 0) {

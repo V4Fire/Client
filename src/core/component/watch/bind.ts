@@ -11,6 +11,7 @@ import { getPropertyInfo } from 'core/component/reflect';
 
 import { beforeHooks } from 'core/component/const';
 import { isCustomWatcher, customWatcherRgxp } from 'core/component/watch/const';
+import { canSkipWatching } from 'core/component/watch/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
 import type { BindRemoteWatchersParams } from 'core/component/watch/interface';
@@ -283,6 +284,12 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							return;
 						}
 
+						const propInfo = p.info ?? getPropertyInfo(watchPath, component);
+
+						if (canSkipWatching(propInfo, watchInfo)) {
+							return;
+						}
+
 						/* eslint-disable prefer-const */
 
 						let
@@ -304,9 +311,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						};
 
 						link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(asyncParams, 'watchers'));
-
-						const toWatch = p.info ?? getPropertyInfo(watchPath, component);
-						unwatch = $watch.call(component, toWatch, watchInfo, handler);
+						unwatch = $watch.call(component, propInfo, watchInfo, handler);
 					}).catch(stderr);
 
 				} else {
@@ -338,6 +343,12 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						return;
 					}
 
+					const propInfo = p.info ?? getPropertyInfo(watchPath, component);
+
+					if (canSkipWatching(propInfo, watchInfo)) {
+						return;
+					}
+
 					/* eslint-disable prefer-const */
 
 					let
@@ -359,9 +370,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 					};
 
 					link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(asyncParams, 'watchers'));
-
-					const toWatch = p.info ?? getPropertyInfo(watchPath, component);
-					unwatch = $watch.call(component, toWatch, watchInfo, handler);
+					unwatch = $watch.call(component, propInfo, watchInfo, handler);
 				}
 			});
 		}
