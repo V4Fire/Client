@@ -120,7 +120,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 
 		const
 			isRegular = params.functional !== true,
-			vnode = createVNode(name, attrs, isRegular ? slots : [], patchFlag, dynamicProps);
+			vnode = createVNode(name, attrs, isRegular ? slots : null, patchFlag, dynamicProps);
 
 		vnode.props ??= {};
 		vnode.props.getRoot ??= this.$getRoot(this);
