@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.140 (2024-10-03)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect `shapeFlag` on a functional vnode `core/component/render`
+
 ## v4.0.0-beta.139.dsl-speedup-2 (2024-10-03)
 
 #### :rocket: New Feature
