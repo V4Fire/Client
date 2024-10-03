@@ -101,12 +101,12 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 				if (pathToEmitter !== '') {
 					watcherCtx = Object.get(component, pathToEmitter) ?? Object.get(globalThis, pathToEmitter) ?? component;
-					watchPath = customWatcher[3].toString();
 
 				} else {
 					watcherCtx = component;
-					watchPath = customWatcher[3].dasherize();
 				}
+
+				watchPath = customWatcher[3];
 			}
 
 			let propInfo: typeof p.info = p.info;
