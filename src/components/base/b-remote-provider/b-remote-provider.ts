@@ -118,7 +118,7 @@ export default class bRemoteProvider extends iData {
 	protected override onAddData(data: unknown): void {
 		const a = this.getPassedHandlers?.();
 
-		if (a != null && (a.has('addData') || a.has('addData:component') || a.has('onAddData'))) {
+		if (a == null || !a.has('addData') && !a.has('addData:component') && !a.has('onAddData')) {
 			return super.onAddData(data);
 		}
 
@@ -134,7 +134,7 @@ export default class bRemoteProvider extends iData {
 	protected override onUpdateData(data: unknown): void {
 		const a = this.getPassedHandlers?.();
 
-		if (a != null && (a.has('updateData') || a.has('updateData:component') || a.has('onUpdateData'))) {
+		if (a != null && !a.has('updateData') && !a.has('updateData:component') && !a.has('onUpdateData')) {
 			return super.onUpdateData(data);
 		}
 
@@ -150,7 +150,7 @@ export default class bRemoteProvider extends iData {
 	protected override onDeleteData(data: unknown): void {
 		const a = this.getPassedHandlers?.();
 
-		if (a != null && (a.has('deleteData') || a.has('deleteData:component') || a.has('onDeleteData'))) {
+		if (a == null || !a.has('deleteData') && !a.has('deleteData:component') && !a.has('onDeleteData')) {
 			return super.onDeleteData(data);
 		}
 
