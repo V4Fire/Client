@@ -14,7 +14,7 @@ const
 
 const
 	graph = include('build/graph'),
-	{invokeByRegisterEvent} = include('build/helpers');
+	{invokeByRegisterEvent, getLayerName} = include('build/helpers');
 
 const importRgxp = new RegExp(
 	`\\bimport${commentExpr}\\((${commentExpr})(["'])((?:.*?[\\\\/]|)([bp]-[^.\\\\/"')]+)+)\\2${commentExpr}\\)`,
@@ -39,8 +39,8 @@ const
  * });
  * ```
  */
-module.exports = async function dynamicComponentImportReplacer(str) {
-	const {entryDeps} = await graph;
+module.exports = async function dynamicComponentImportReplacer(str, filePath) {
+	const { entryDeps } = await graph;
 
 	return str.replace(importRgxp, (str, magicComments, q, resourcePath, resourceName) => {
 		const
@@ -65,13 +65,13 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 				if (isESImport) {
 					// decl = `import(${magicComments} '${fullPath}')`;
 					decl = `new Promise((resolve) => {
-						${invokeByRegisterEvent(`resolve(import(${magicComments} '${fullPath}'))`, resourceName)}
+						${invokeByRegisterEvent(`resolve(import(${magicComments} '${fullPath}'))`, getLayerName(filePath), resourceName)}
 					})`;
 
 				} else {
 					// decl = `new Promise(function (r) { return r(require('${fullPath}')); })`; // сделать резолв внутри обработчика!!!!!!!
 					decl = `new Promise((resolve) => {
-						${invokeByRegisterEvent(`resolve(require('${fullPath}'))`, resourceName)}
+						${invokeByRegisterEvent(`resolve(require('${fullPath}'))`, getLayerName(filePath), resourceName)}
 					})`;
 				}
 
@@ -84,7 +84,7 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 		{
 			const
 				tplPath = `${fullPath}.ss`,
-				regTpl = `function (module) { ${invokeByRegisterEvent(`TPLS['${resourceName}'] = module${isESImport ? '.default' : ''}['${resourceName}'];`, resourceName)} return module; }`;
+				regTpl = `function (module) { ${invokeByRegisterEvent(`TPLS['${resourceName}'] = module${isESImport ? '.default' : ''}['${resourceName}'];`, getLayerName(filePath), resourceName)} return module; }`;
 
 			let
 				decl;

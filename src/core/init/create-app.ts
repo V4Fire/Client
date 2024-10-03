@@ -34,9 +34,11 @@ import type { CreateAppOptions, App } from 'core/init/interface';
 export async function createApp(
 	rootComponentName: Nullable<string>,
 	opts: CreateAppOptions,
-	state: State
+	state: State,
+	layer?: string
 ): Promise<App> {
-	initEmitter.emit(`registerComponent.${rootComponentName}`);
+	initEmitter.emit(`registerComponent.${layer}.${rootComponentName}`);
+
 	const rootComponentParams = await getRootComponentParams(rootComponentName);
 	opts.setup?.(Object.cast(rootComponentParams));
 

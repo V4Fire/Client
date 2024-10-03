@@ -12,6 +12,7 @@
 
 const ts = require('typescript');
 const {validators} = require('@pzlr/build-core');
+const {getLayerName} = include('build/helpers');
 
 /**
  * @typedef {import('typescript').TransformationContext} Context
@@ -21,7 +22,6 @@ const {validators} = require('@pzlr/build-core');
  */
 
 const
-	pathToRootRgxp = /(?<path>.+)[/\\]src[/\\]/,
 	isComponentPath = new RegExp(`\\/(${validators.blockTypeList.join('|')})-.+?\\/?`);
 
 /**
@@ -53,11 +53,28 @@ const
  * ```
  */
 const setComponentLayerTransformer = (context) => (sourceFile) => {
-	if (!isInsideComponent(sourceFile.path)) {
+	const isInitAppFile = sourceFile.path.endsWith('core/init/index.ts');
+
+	if (!isInsideComponent(sourceFile.path) && !isInitAppFile) {
 		return sourceFile;
 	}
 
-	const layer = getLayerName(sourceFile.path);
+	if (isInitAppFile) {	
+		console.log('yes' * 100);
+	}
+
+	let layer = getLayerName(sourceFile.path);
+
+	if (isInitAppFile) {
+		const pathToRootPackage = sourceFile.path.match(/(?<path>.+)[/\\]node_modules[/\\]/)?.groups?.path;
+
+		layer = pathToRootPackage != null ?
+			require(`${pathToRootPackage}/package.json`).name :
+			getLayerName(sourceFile.path);
+	} else {
+		return sourceFile;
+	}
+
 	const {factory} = context;
 
 	/**
@@ -67,10 +84,29 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 	 * @returns {Node}
 	 */
 	const visitor = (node) => {
-		if (ts.isDecorator(node) && isComponentCallExpression(node)) {
-			const
-				expr = node.expression;
+		const
+			expr = node.expression;
 
+		if (ts.isReturnStatement(node) && isInitAppFile && expr.expression.escapedText === 'createApp') {
+			const newArgument = factory.createStringLiteral(layer);
+
+			// console.log('arguments', expr.arguments);
+
+			const updatedCallExpression = factory.createReturnStatement(
+				factory.createCallExpression(
+					factory.createIdentifier("createApp"),
+					undefined,
+					[
+						...expr.arguments,
+						newArgument
+					]
+				)
+			);
+
+			console.log({updatedCallExpression: updatedCallExpression});
+
+			return updatedCallExpression;
+		} else if (ts.isDecorator(node) && isComponentCallExpression(node)) {
 			if (!ts.isCallExpression(expr)) {
 				return node;
 			}
@@ -117,10 +153,10 @@ module.exports = () => setComponentLayerTransformer;
  * @param {string} filePath
  * @returns {string}
  */
-function getLayerName(filePath) {
-	const pathToRootDir = filePath.match(pathToRootRgxp).groups.path;
-	return require(`${pathToRootDir}/package.json`).name;
-}
+// function getLayerName(filePath) {
+// 	const pathToRootDir = filePath.match(pathToRootRgxp).groups.path;
+// 	return require(`${pathToRootDir}/package.json`).name;
+// }
 
 /**
  * Returns true if the specified path is within the context of the component
@@ -146,4 +182,14 @@ function isComponentCallExpression(node) {
 	}
 
 	return expr.expression.escapedText === 'component';
+}
+
+function isCreateAppCallExpression(node) {
+	const expr = node.expression;
+
+	if (Boolean(expr) && ts.isCallExpression(expr) || !ts.isIdentifier(expr?.expression)) {
+		return false;
+	}
+
+	return expr.expression.escapedText === 'createApp';
 }

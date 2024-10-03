@@ -41,7 +41,8 @@ const {
 	cacheDir,
 	isStandalone,
 	tracer,
-	invokeByRegisterEvent
+	invokeByRegisterEvent,
+	getLayerName
 } = include('build/helpers');
 
 /**
@@ -262,7 +263,7 @@ async function buildProjectGraph() {
 
 					str += !isComponentPath(entryPath) ?
 						importScript :
-						invokeByRegisterEvent(importScript, name);
+						invokeByRegisterEvent(importScript, getLayerName(component.logic), name);
 				}
 
 				return str;

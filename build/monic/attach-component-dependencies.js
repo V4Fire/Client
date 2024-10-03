@@ -15,7 +15,7 @@ const
 const
 	path = require('upath'),
 	graph = include('build/graph'),
-	{invokeByRegisterEvent} = include('build/helpers');
+	{invokeByRegisterEvent, getLayerName} = include('build/helpers');
 
 const
 	decls = Object.create(null);
@@ -61,7 +61,7 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 
 	await $C([...deps].reverse()).async.forEach(forEach);
 	
-	return invokeByRegisterEvent(imports, component.name) + str;
+	return invokeByRegisterEvent(imports, getLayerName(filePath), component.name) + str;
 
 	async function forEach(dep) {
 		if (dep.startsWith('g-')) {
