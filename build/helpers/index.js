@@ -16,5 +16,6 @@ Object.assign(
 	include('build/helpers/i18n'),
 	include('build/helpers/tracer'),
 	include('build/helpers/invoke-by-register-component'),
-	include('build/helpers/layer-name.js')
+	include('build/helpers/layer-name'),
+	include('build/helpers/get-origin-layer')
 );

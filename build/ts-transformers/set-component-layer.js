@@ -12,7 +12,10 @@
 
 const ts = require('typescript');
 const {validators} = require('@pzlr/build-core');
-const {getLayerName} = include('build/helpers');
+const {
+	getLayerName,
+	getOriginLayerFromPath
+} = include('build/helpers');
 
 /**
  * @typedef {import('typescript').TransformationContext} Context
@@ -53,7 +56,9 @@ const
  * ```
  */
 const setComponentLayerTransformer = (context) => (sourceFile) => {
-	const isInitAppFile = sourceFile.path.endsWith('core/init/index.ts');
+	const
+		{factory} = context,
+		isInitAppFile = sourceFile.path.endsWith('core/init/index.ts');
 
 	if (!isInsideComponent(sourceFile.path) && !isInitAppFile) {
 		return sourceFile;
@@ -64,14 +69,8 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 	if (isInitAppFile) {
 		const pathToRootPackage = sourceFile.path.match(/(?<path>.+)[/\\]node_modules[/\\]/)?.groups?.path;
 
-		layer = pathToRootPackage != null ?
-			require(`${pathToRootPackage}/package.json`).name :
-			getLayerName(sourceFile.path);
-	} else {
-		return sourceFile;
+		layer = getOriginLayerFromPath(pathToRootPackage);
 	}
-
-	const {factory} = context;
 
 	/**
 	 * A visitor for the AST node
@@ -83,18 +82,19 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 		const
 			expr = node?.expression;
 
-		if (ts.isReturnStatement(node) && isInitAppFile && expr?.expression?.escapedText === 'createApp') {
-			const newArgument = factory.createStringLiteral(layer);
+		if (
+				ts.isCallExpression(node) &&
+				isInitAppFile &&
+				expr.escapedText === 'createApp'
+			) {
 
-			const updatedCallExpression = factory.createReturnStatement(
-				factory.createCallExpression(
-					factory.createIdentifier("createApp"),
-					undefined,
-					[
-						...expr.arguments,
-						newArgument
-					]
-				)
+			const updatedCallExpression = factory.createCallExpression(
+				factory.createIdentifier(expr.escapedText),
+				undefined,
+				[
+					...node.arguments,
+					factory.createStringLiteral(layer)
+				]
 			);
 
 			return updatedCallExpression;
@@ -139,18 +139,6 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 module.exports = () => setComponentLayerTransformer;
 
 /**
- * The function determines the package in which the module is defined and
- * returns the name of this package from the `package.json` file
- *
- * @param {string} filePath
- * @returns {string}
- */
-// function getLayerName(filePath) {
-// 	const pathToRootDir = filePath.match(pathToRootRgxp).groups.path;
-// 	return require(`${pathToRootDir}/package.json`).name;
-// }
-
-/**
  * Returns true if the specified path is within the context of the component
  *
  * @param {string} filePath
@@ -174,14 +162,4 @@ function isComponentCallExpression(node) {
 	}
 
 	return expr.expression.escapedText === 'component';
-}
-
-function isCreateAppCallExpression(node) {
-	const expr = node.expression;
-
-	if (Boolean(expr) && ts.isCallExpression(expr) || !ts.isIdentifier(expr?.expression)) {
-		return false;
-	}
-
-	return expr.expression.escapedText === 'createApp';
 }

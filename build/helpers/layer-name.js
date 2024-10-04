@@ -7,18 +7,11 @@
  */
 exports.getLayerName = function(filePath) {
 
-	if (filePath == null) {
-		console.trace('filepath is null');
-	}
-
-
 	const
 		pathToRootRgxp = /(?<path>.+)[/\\]src[/\\]/,
 		pathToRootDir = filePath.match(pathToRootRgxp)?.groups?.path;
 
 	const res = require(`${pathToRootDir}/package.json`).name;
-
-	// console.log('getLayerName', {res, pathToRootDir, file});
 
 	return res;
 }
