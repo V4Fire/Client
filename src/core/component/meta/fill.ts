@@ -10,9 +10,12 @@ import { DEFAULT_WRAPPER } from 'core/component/const';
 
 import { getComponentContext } from 'core/component/context';
 import { isAbstractComponent, isBinding } from 'core/component/reflect';
+
+import { addFieldsToMeta } from 'core/component/meta/field';
 import { addMethodsToMeta } from 'core/component/meta/method';
 
-import type { ComponentConstructor, ComponentMeta, ModVal } from 'core/component/interface';
+import type { ComponentConstructor, ModVal } from 'core/component/interface';
+import type { ComponentMeta } from 'core/component/meta/interface';
 
 const
 	INSTANCE = Symbol('The component instance'),
@@ -39,12 +42,16 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 		Object.defineProperty(meta, BLUEPRINT, {
 			value: {
 				watchers: meta.watchers,
-				hooks: meta.hooks
+				hooks: meta.hooks,
+				fieldInitializers: meta.fieldInitializers,
+				systemFieldInitializers: meta.systemFieldInitializers
 			}
 		});
 	}
 
-	const blueprint: CanNull<Pick<ComponentMeta, 'watchers' | 'hooks'>> = meta[BLUEPRINT];
+	type Blueprint = Pick<ComponentMeta, 'watchers' | 'hooks' | 'fieldInitializers' | 'systemFieldInitializers'>;
+
+	const blueprint: CanNull<Blueprint> = meta[BLUEPRINT];
 
 	if (blueprint != null) {
 		const hooks = {};
@@ -55,7 +62,9 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 
 		Object.assign(meta, {
 			hooks,
-			watchers: {...blueprint.watchers}
+			watchers: {...blueprint.watchers},
+			fieldInitializers: blueprint.fieldInitializers.slice(),
+			systemFieldInitializers: blueprint.systemFieldInitializers.slice()
 		});
 	}
 
@@ -194,22 +203,8 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 		}
 	});
 
-	// Fields
-
-	[meta.systemFields, meta.fields].forEach((field) => {
-		Object.entries(field).forEach(([fieldName, field]) => {
-			field?.watchers?.forEach((watcher) => {
-				if (isFunctional && watcher.functional === false) {
-					return;
-				}
-
-				const watcherListeners = watchers[fieldName] ?? [];
-				watchers[fieldName] = watcherListeners;
-
-				watcherListeners.push(watcher);
-			});
-		});
-	});
+	addFieldsToMeta('fields', meta);
+	addFieldsToMeta('systemFields', meta);
 
 	// Computed fields
 

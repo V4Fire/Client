@@ -6,10 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { sortedFields } from 'core/component/field/const';
-
-import type { ComponentField } from 'core/component/interface';
-import type { SortedFields } from 'core/component/field/interface';
+import type { ComponentField, ComponentFieldInitializers } from 'core/component/meta';
 
 /**
  * Returns the weight of a specified field from a given scope.
@@ -53,22 +50,19 @@ export function getFieldWeight(field: CanUndef<ComponentField>, scope: Dictionar
 
 /**
  * Sorts the specified fields and returns an array that is ordered and ready for initialization
+ *
  * @param fields
+ * @param scope
  */
-export function sortFields(fields: Dictionary<ComponentField>): SortedFields {
-	let val = sortedFields.get(fields);
+export function sortFields(
+	fields: ComponentFieldInitializers,
+	scope: Dictionary<ComponentField>
+): ComponentFieldInitializers {
+	return fields.sort(([aName], [bName]) => {
+		const
+			aWeight = getFieldWeight(scope[aName], scope),
+			bWeight = getFieldWeight(scope[bName], scope);
 
-	if (val == null) {
-		val = Object.entries(Object.cast<StrictDictionary<ComponentField>>(fields)).sort(([_1, a], [_2, b]) => {
-			const
-				aWeight = getFieldWeight(a, fields),
-				bWeight = getFieldWeight(b, fields);
-
-			return aWeight - bWeight;
-		});
-
-		sortedFields.set(fields, val);
-	}
-
-	return val;
+		return aWeight - bWeight;
+	});
 }

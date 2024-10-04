@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { sortFields } from 'core/component/field/helpers';
-import type { ComponentInterface, ComponentField } from 'core/component/interface';
+import type { ComponentMeta } from 'core/component/meta';
+import type { ComponentInterface } from 'core/component/interface';
 
 /**
  * Initializes all fields of a given component instance.
@@ -19,7 +19,7 @@ import type { ComponentInterface, ComponentField } from 'core/component/interfac
  * @param [store] - the store for initialized fields
  */
 export function initFields(
-	from: Dictionary<ComponentField>,
+	from: ComponentMeta['fieldInitializers'],
 	component: ComponentInterface,
 	store: Dictionary = {}
 ): Dictionary {
@@ -27,55 +27,20 @@ export function initFields(
 		component
 	);
 
-	const {
-		params,
-		instance
-	} = unsafe.meta;
-
-	const isFunctional = params.functional === true;
-
-	sortFields(from).forEach(([name, field]) => {
+	from.forEach(([name, init]) => {
 		const sourceVal = store[name];
 
-		const canSkip =
-			field == null || sourceVal !== undefined ||
-			!SSR && isFunctional && field.functional === false ||
-			field.init == null && field.default === undefined && instance[name] === undefined;
-
-		if (field == null || canSkip) {
+		if (init == null) {
 			store[name] = sourceVal;
 			return;
 		}
 
 		unsafe.$activeField = name;
 
-		let val: unknown;
+		init(component, store);
 
-		if (field.init != null) {
-			val = field.init(component.unsafe, store);
-		}
-
-		if (val === undefined) {
-			if (store[name] === undefined) {
-				// To prevent linking to the same type of component for non-primitive values,
-				// it's important to clone the default value from the component constructor.
-				if (field.default !== undefined) {
-					val = field.default;
-
-				} else {
-					const defValue = instance[name];
-					val = Object.isPrimitive(defValue) ? defValue : Object.fastClone(defValue);
-				}
-
-				store[name] = val;
-			}
-
-		} else {
-			store[name] = val;
-		}
+		unsafe.$activeField = undefined;
 	});
-
-	unsafe.$activeField = undefined;
 
 	return store;
 }

@@ -285,7 +285,7 @@ export function beforeCreateState(
 
 	runHook('beforeRuntime', component).catch(stderr);
 
-	initFields(meta.systemFields, component, unsafe);
+	initFields(meta.systemFieldInitializers, component, unsafe);
 
 	runHook('beforeCreate', component).catch(stderr);
 	callMethodFromComponent(component, 'beforeCreate');

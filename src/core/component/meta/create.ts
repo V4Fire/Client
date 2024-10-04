@@ -32,8 +32,12 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		mods: component.params.partial == null ? getComponentMods(component) : {},
 
 		fields: {},
-		tiedFields: {},
+		fieldInitializers: [],
+
 		systemFields: {},
+		systemFieldInitializers: [],
+
+		tiedFields: {},
 		computedFields: {},
 
 		methods: {},

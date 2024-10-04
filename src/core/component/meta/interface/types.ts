@@ -16,8 +16,10 @@ import type { ComponentInterface, FieldWatcher, MethodWatcher, Hook } from 'core
 export interface ComponentProp extends PropOptions {
 	forceUpdate: boolean;
 	forceDefault?: boolean;
+
 	watchers?: Map<string | Function, FieldWatcher>;
 	default?: unknown;
+
 	meta: Dictionary;
 }
 
@@ -42,6 +44,12 @@ export interface ComponentField<CTX extends ComponentInterface = ComponentInterf
 	forceUpdate?: boolean;
 	watchers?: Map<string | Function, FieldWatcher>;
 }
+
+export interface ComponentFieldInitializer {
+	(ctx: ComponentInterface, store: Dictionary): unknown;
+}
+
+export type ComponentFieldInitializers = Array<[string, CanNull<ComponentFieldInitializer>]>;
 
 export type ComponentAccessorCacheType =
 	boolean |
