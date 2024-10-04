@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.142 (2024-10-04)
+
+#### :bug: Bug Fix
+
+* Better fix for the exports in transpiled snakeskin modules `build/webpack`
+
 ## v4.0.0-beta.141 (2024-10-03)
 
 #### :bug: Bug Fix

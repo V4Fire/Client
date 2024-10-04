@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.142 (2024-10-04)
+
+#### :bug: Bug Fix
+
+* Better fix for the exports in transpiled snakeskin module
+
 ## v4.0.0-beta.138.dsl-speedup (2024-10-01)
 
 #### :house: Internal
