@@ -67,9 +67,7 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 	let layer = getLayerName(sourceFile.path);
 
 	if (isInitAppFile) {
-		const pathToRootPackage = sourceFile.path.match(/(?<path>.+)[/\\]node_modules[/\\]/)?.groups?.path;
-
-		layer = getOriginLayerFromPath(pathToRootPackage);
+		layer = getOriginLayerFromPath(sourceFile.path);
 	}
 
 	/**

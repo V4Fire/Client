@@ -4,7 +4,7 @@ exports.getOriginLayerFromPath = function(filePath) {
 	const
 		pathToOriginPackage = filePath.match(/(?<path>.+)[/\\]node_modules[/\\]/)?.groups?.path;
 
-	if (pathToRootPackage == null) {
+	if (pathToOriginPackage == null) {
 		return getLayerName(filePath);
 	}
 
