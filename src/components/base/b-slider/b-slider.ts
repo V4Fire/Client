@@ -172,7 +172,8 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	@field((o) => o.sync.link())
 	protected mode!: Mode;
 
-	protected override readonly $refs!: iSliderProps['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iSliderProps['$refs'] & {
 		view?: HTMLElement;
 		content?: HTMLElement;
 		contentWrapper?: HTMLElement;

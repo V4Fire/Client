@@ -2,7 +2,7 @@
 
 This module provides an API for initializing and loading external data to a component.
 
-## How does a component load its data?
+## How a Component Loads Its Data
 
 When a component is created, it calls its `initLoad` method. This method, depending on the component parameters,
 can either immediately switch it to `ready` (nothing needs to be loaded), or initialize the loading of resources:
@@ -15,7 +15,7 @@ initialize re-rendering (if necessary).
 
 #### [dependenciesProp]
 
-An iterable with additional dependencies to load when the component is initializing.
+An iterable object with additional component dependencies for initialization.
 
 ```typescript
 import iBlock, { component, Module } from 'components/super/i-block/i-block';
@@ -45,7 +45,7 @@ By default, this prop is automatically calculated based on component dependencie
 
 #### dependencies
 
-A list of additional dependencies to load when the component is initializing.
+A list of additional dependencies to load during the component's initialization.
 The parameter is tied with the `dependenciesProp` prop.
 
 #### dontWaitRemoteProviders

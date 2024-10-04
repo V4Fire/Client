@@ -14,9 +14,10 @@ import type { Stage } from 'components/super/i-block/interface';
 
 import type { ModsProp } from 'components/super/i-block/modules/mods';
 import { prop, DecoratorMethodWatcher } from 'components/super/i-block/decorators';
+
 import type { TransitionMethod } from 'components/base/b-router/interface';
 
-@component()
+@component({partial: 'iBlock'})
 export default abstract class iBlockProps extends ComponentInterface {
 	@prop({type: String, required: false})
 	override readonly componentIdProp?: string;
@@ -46,7 +47,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 * For example, let's say we have a component that implements an image upload form.
 	 * And we have two options for this form: uploading from a link or uploading from a computer.
 	 *
-	 * In order to differentiate between these two options and render different markups accordingly,
+	 * To differentiate between these two options and render different markups accordingly,
 	 * we can create two stage values: "link" and "file".
 	 * This way, we can modify the component's template based on the current stage value.
 	 */
@@ -193,7 +194,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 	readonly routerStateUpdateMethod: Exclude<TransitionMethod, 'event'> = 'push';
 
 	/**
-	 * A dictionary with remote component watchers.
+	 * A dictionary containing remote component watchers.
 	 * Using this prop is very similar to using the @watch decorator:
 	 *   1. As a key, we specify the name of the current component method we want to call.
 	 *   2. As a value, we specify the property path or event that we want to watch or listen to.
@@ -267,8 +268,8 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 * });
 	 * ```
 	 */
-	@prop(Boolean)
-	readonly proxyCall: boolean = false;
+	@prop({type: Boolean, required: false})
+	readonly proxyCall?: boolean;
 
 	/**
 	 * If set to true, the component event dispatching mode is enabled.
@@ -316,4 +317,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 
 	@prop({type: Function, required: false})
 	override readonly getParent?: () => this['$parent'];
+
+	@prop({type: Function, required: false})
+	override readonly getPassedProps?: () => Set<string>;
 }

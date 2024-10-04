@@ -13,11 +13,13 @@ import type iActiveItems from 'components/traits/i-active-items/i-active-items';
 import iInputText, { component, prop } from 'components/super/i-input-text/i-input-text';
 import type { Value, FormValue, Item } from 'components/form/b-select/interface';
 
-@component()
+@component({partial: 'bSelect'})
 export default abstract class iSelectProps extends iInputText {
-	override readonly Value!: Value;
+	/** @inheritDoc */
+	declare readonly Value: Value;
 
-	override readonly FormValue!: FormValue;
+	/** @inheritDoc */
+	declare readonly FormValue: FormValue;
 
 	/** {@link iItems.Item} */
 	readonly Item!: Item;
@@ -31,7 +33,8 @@ export default abstract class iSelectProps extends iInputText {
 	/** {@link iActiveItems.Active} */
 	readonly Active!: iActiveItems['Active'];
 
-	override readonly valueProp?: this['ActiveProp'];
+	/** @inheritDoc */
+	declare readonly valueProp?: this['ActiveProp'];
 
 	/**
 	 * @alias valueProp

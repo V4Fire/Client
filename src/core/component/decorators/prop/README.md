@@ -39,7 +39,7 @@ class bExample extends iBlock {
 }
 ```
 
-## Naming conventions and linking fields with props
+## Naming Conventions and Linking Fields with Props
 
 As mentioned earlier, component props cannot be changed from within the component.
 However, very often there is a need to violate this rule.
@@ -154,7 +154,7 @@ And calling our component from another template will be like this.
 
 As you can see, we got rid of unnecessary boilerplate code and the need to remember the name of the component prop.
 
-## Additional options
+## Additional Options
 
 ### [type]
 
@@ -284,7 +284,7 @@ Keep in mind that if you use this option, you must ensure that the prop is never
 implicitly in the template.
 
 For instance, consider a situation where you have a field bound to such a prop,
-and it is used in the template in conjunction with v-model.
+and it is used in the template in conjunction with `v-model`.
 This will lead to incorrect behavior (updating the prop will not lead to updating the value in the input).
 
 ```typescript

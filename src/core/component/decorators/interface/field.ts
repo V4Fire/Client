@@ -113,7 +113,7 @@ export interface DecoratorSystem<
 
 	/**
 	 * Indicates that property should be initialized before all non-atom properties.
-	 * This option is needed when you have a field that must be guaranteed to be initialized before other fields,
+	 * This option is necessary when you have a field that must be guaranteed to be initialized before other fields,
 	 * and you don't want to use `after` everywhere. But you can still use `after` along with other atomic fields.
 	 *
 	 * @default `false`
@@ -156,8 +156,7 @@ export interface DecoratorSystem<
 	 *
 	 *     // Also, see core/object/watch
 	 *     {
-	 *       // If set to false,
-	 *       // then a handler that is invoked on the watcher event does not take any arguments from the event
+	 *       // If set to false, the handler invoked on the watcher event does not take any arguments from the event
 	 *       provideArgs: false,
 	 *
 	 *       // How the event handler should be called:
@@ -240,7 +239,7 @@ export interface DecoratorField<
 > extends DecoratorSystem<CTX, A, B> {
 	/**
 	 * If set to true, property changes will cause the template to be guaranteed to be re-rendered.
-	 * Be aware that enabling this property may result in redundant redraws.
+	 * Be aware that enabling this property may result in redundant redrawing.
 	 *
 	 * @default `false`
 	 */
@@ -252,9 +251,9 @@ export interface InitFieldFn<CTX extends ComponentInterface = ComponentInterface
 }
 
 export interface MergeFieldFn<CTX extends ComponentInterface = ComponentInterface> {
-	(ctx: CTX['unsafe'], oldCtx: CTX, field: string, link?: string): unknown;
+	(ctx: CTX['unsafe'], oldCtx: CTX['unsafe'], field: string, link?: string): unknown;
 }
 
 export interface UniqueFieldFn<CTX extends ComponentInterface = ComponentInterface> {
-	(ctx: CTX['unsafe'], oldCtx: CTX): AnyToBoolean;
+	(ctx: CTX['unsafe'], oldCtx: CTX['unsafe']): AnyToBoolean;
 }

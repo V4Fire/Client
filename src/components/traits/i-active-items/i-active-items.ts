@@ -19,7 +19,7 @@ import type { Active, ActiveProp, Item } from 'components/traits/i-active-items/
 export * from 'components/traits/i-items/i-items';
 export * from 'components/traits/i-active-items/interface';
 
-type TraitComponent = iBlock & iActiveItems;
+type TraitComponent = (iBlock | iBlock['unsafe']) & iActiveItems;
 
 export default abstract class iActiveItems extends iItems {
 	/** {@link iItems.Item} */
@@ -105,7 +105,7 @@ export default abstract class iActiveItems extends iItems {
 						return ctx.activeStore;
 					}
 
-					return new Set(Array.concat([], ctx.activeStore));
+					return new Set(Array.toArray(ctx.activeStore));
 				}
 
 				return ctx.activeStore;
@@ -115,7 +115,7 @@ export default abstract class iActiveItems extends iItems {
 				newVal;
 
 			if (ctx.multiple) {
-				newVal = new Set(Object.isIterable(val) && !Object.isString(val) ? val : Array.concat([], val));
+				newVal = new Set(Object.isIterable(val) && !Object.isString(val) ? val : Array.toArray(val));
 
 				if (Object.fastCompare(newVal, ctx.activeStore)) {
 					return ctx.activeStore;
@@ -168,7 +168,7 @@ export default abstract class iActiveItems extends iItems {
 	 * @param ctx
 	 */
 	static initActiveStoreListeners(ctx: TraitComponent): void {
-		ctx.watch('activeStore', {deep: ctx.multiple}, (value) => {
+		(<iBlock['unsafe']>ctx).watch('activeStore', {deep: ctx.multiple}, (value) => {
 			ctx.emit(ctx.activeChangeEvent, value);
 		});
 	}

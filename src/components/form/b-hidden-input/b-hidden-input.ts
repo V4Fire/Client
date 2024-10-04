@@ -23,7 +23,8 @@ export * from 'components/super/i-input/i-input';
 })
 
 export default class bHiddenInput extends iInput {
-	protected override readonly $refs!: iInput['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iInput['$refs'] & {
 		input: HTMLInputElement;
 	};
 }

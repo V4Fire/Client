@@ -11,9 +11,10 @@
  * @packageDocumentation
  */
 
-import { component, hook, watch, UnsafeGetter } from 'core/component';
+import { component, UnsafeGetter } from 'core/component';
 import type { Classes } from 'components/friends/provide';
 
+import { hook, watch } from 'components/super/i-block/decorators';
 import type { ModVal, ModsDecl, ModsProp, ModsDict } from 'components/super/i-block/modules/mods';
 import type { UnsafeIBlock } from 'components/super/i-block/interface';
 
@@ -72,7 +73,8 @@ export default abstract class iBlock extends iBlockProviders {
 		stage: []
 	};
 
-	protected override readonly $refs!: {
+	/** @inheritDoc */
+	declare protected readonly $refs: {
 		$el?: Element;
 	};
 
@@ -90,26 +92,29 @@ export default abstract class iBlock extends iBlockProviders {
 	 * Handler: fixes the issue where the teleported component
 	 * and its DOM nodes were rendered before the teleport container was ready
 	 */
-	@watch({
+	@watch<iBlock>({
 		path: 'r.shouldMountTeleports',
 		flush: 'post'
 	})
 
 	@hook('before:mounted')
 	protected onMountTeleports(): void {
-		const getNode = () => this.$refs[this.$resolveRef('$el')] ?? this.$el;
-
 		const {
 			$el: originalNode,
 			$async: $a
 		} = this;
 
-		const
-			node = getNode(),
-			mountedAttrs = new Set<string>(),
-			mountedAttrsGroup = {group: 'mountedAttrs'};
+		if (originalNode == null) {
+			return;
+		}
 
-		if (originalNode != null && node != null && originalNode !== node) {
+		const getNode = () => this.$refs[this.$resolveRef('$el')] ?? this.$el;
+
+		const node = getNode();
+
+		let attrsStore: CanNull<Set<string>> = null;
+
+		if (node != null && originalNode !== node) {
 			// Fix the DOM element link to the component
 			originalNode.component = this;
 
@@ -126,11 +131,15 @@ export default abstract class iBlock extends iBlockProviders {
 		}
 
 		function mountAttrs(attrs: Dictionary<string>) {
+			const mountedAttrsGroup = {group: 'mountedAttrs'};
 			$a.terminateWorker(mountedAttrsGroup);
 
 			if (node == null || originalNode == null) {
 				return;
 			}
+
+			attrsStore ??= new Set<string>();
+			const mountedAttrs = attrsStore;
 
 			Object.entries(attrs).forEach(([name, attr]) => {
 				if (attr == null) {
@@ -162,5 +171,16 @@ export default abstract class iBlock extends iBlockProviders {
 				mountedAttrs.clear();
 			}, mountedAttrsGroup);
 		}
+	}
+
+	/**
+	 * Registers the handlers which will be called just before rendering the component
+	 */
+	@hook('beforeRuntime')
+	private registerRenderHandlers(): void {
+		this.$on('[[RENDER]]', () => {
+			this.vdom.saveRenderContext();
+			this.hydrateStyles();
+		});
 	}
 }

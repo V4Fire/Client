@@ -22,7 +22,7 @@ class bExample extends iBlock {
 }
 ```
 
-## What differences between fields and system fields?
+## What Are the Differences Between Fields and System Fields?
 
 The main difference between fields and system fields in V4Fire is that any changes to a regular field
 can trigger a re-render of the component template.
@@ -35,7 +35,7 @@ Regular fields are initialized in the `created` hook, while system fields are in
 By understanding the differences between regular fields and system fields,
 developers can design and optimize their components for optimal performance and behavior.
 
-## Field initialization order
+## Field Initialization Order
 
 Because the `init` function takes a reference to the field's store as the second argument, then we can generate field
 values from other fields.
@@ -84,7 +84,7 @@ Now, the code will work as expected.
 The `after` parameter specifies that property `a` should be initialized before property `b`,
 ensuring that the value of `a` is available when calculating the value of `b`.
 
-### Atomic properties
+### Atomic Properties
 
 When there are properties that are required for most other properties,
 it can become quite tedious to manually write the after parameter in each place.
@@ -118,7 +118,7 @@ Dependency on non-atoms can result in a deadlock.
 Using the atom parameter is a convenient way to guarantee the initialization order for properties that
 are required by most other properties, reducing the need for explicit after declarations.
 
-## Initialization loop and asynchronous operations
+## Initialization Loop and Asynchronous Operations
 
 It is important to note that all component properties are initialized synchronously,
 meaning you cannot return a Promise from a property initializer and expect the component to wait for it to resolve
@@ -130,7 +130,7 @@ Technically, a property initializer can return both a Promise and not return any
 In such cases, you can later change the value of the property.
 
 While the data is being loaded asynchronously,
-the component can display a loading indicator or handle the situation in a suitable manner.
+the component can display a loading indicator or handle the situation suitably.
 This approach is considered idiomatic and does not have any unpredictable consequences.
 
 Here's an example code snippet that demonstrates this behavior:
@@ -156,10 +156,10 @@ It is important to note that when working with asynchronous operations during in
 it is recommended to use the `field.set` method or directly modify the component instance
 (the first argument of the initializer function) to update the value of the property.
 
-By utilizing this approach, you can handle asynchronous data loading and modify property values once
+By using this approach, you can handle asynchronous data loading and modify property values once
 the data is available without negatively impacting the performance of the component.
 
-#### Additional options
+#### Additional Options
 
 ### [unique = `false`]
 
@@ -268,7 +268,7 @@ class bExample extends iBlock {
 ### [atom = `false`]
 
 This option indicates that property should be initialized before all non-atom properties.
-It is needed when you have a field that must be guaranteed to be initialized before other fields,
+It is necessary when you have a field that must be guaranteed to be initialized before other fields,
 and you don't want to use `after` everywhere.
 But you can still use `after` along with other atomic fields.
 
@@ -307,7 +307,7 @@ class bExample extends iBlock {
 
     // Also, see core/object/watch
     {
-      // If set to false, then a handler that is invoked on the watcher event does not take any arguments from the event
+      // If set to false, then a handler invoked on the watcher event does not take any arguments from the event
       provideArgs: false,
 
       // How the event handler should be called:
@@ -345,7 +345,7 @@ as regular or functional.
 This option is only relevant for functional components.
 The fact is that when a component state changes, all its child functional components are recreated from scratch.
 But we need to restore the state of such components. By default, properties are simply copied from old instances to
-new ones, but sometimes this strategy does not suit us. This option helps here - it allows you to declare that
+new ones, but sometimes this strategy does not suit us. This option helps here—it allows you to declare that
 a certain property should be mixed based on the old and new values.
 
 Set this property to true to enable the strategy of merging old and new values.

@@ -26,18 +26,15 @@ export function getFieldWeight(field: CanUndef<ComponentField>, scope: Dictionar
 		return 0;
 	}
 
-	const
-		{after} = field;
+	const {after} = field;
 
-	let
-		weight = 0;
+	let weight = 0;
 
 	if (after != null) {
 		weight += after.size;
 
 		after.forEach((name) => {
-			const
-				dep = scope[name];
+			const dep = scope[name];
 
 			if (dep == null) {
 				throw new ReferenceError(`The specified dependency ${dep} could not be found in the given scope`);
@@ -59,8 +56,7 @@ export function getFieldWeight(field: CanUndef<ComponentField>, scope: Dictionar
  * @param fields
  */
 export function sortFields(fields: Dictionary<ComponentField>): SortedFields {
-	let
-		val = sortedFields.get(fields);
+	let val = sortedFields.get(fields);
 
 	if (val == null) {
 		val = Object.entries(Object.cast<StrictDictionary<ComponentField>>(fields)).sort(([_1, a], [_2, b]) => {

@@ -241,7 +241,7 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 						});
 
 						gc.add(function* destructor() {
-							const vnodes = Object.isArray(vnode) ? vnode : [vnode];
+							const vnodes = Array.toArray(vnode);
 
 							for (const vnode of vnodes) {
 								destroy(vnode);

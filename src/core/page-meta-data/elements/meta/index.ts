@@ -33,8 +33,11 @@ export class Meta extends AbstractElement<HTMLMetaElement> {
 		this.attrs.name = value;
 	}
 
-	protected override tag!: 'meta';
-	protected override attrs!: MetaAttributes;
+	/** @inheritDoc */
+	declare protected tag: 'meta';
+
+	/** @inheritDoc */
+	declare protected attrs: MetaAttributes;
 
 	constructor(engine: Engine, attrs: MetaAttributes) {
 		super(engine, 'meta', attrs);

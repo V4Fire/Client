@@ -13,7 +13,8 @@ import type bList from 'components/base/b-list/b-list';
 import type { Item } from 'components/base/b-list/b-list';
 
 export default class Values extends Friend {
-	override readonly C!: bList;
+	/** @inheritDoc */
+	declare readonly C: bList;
 
 	/**
 	 * A map of the item indexes and their values
@@ -104,7 +105,7 @@ export default class Values extends Friend {
 			}
 
 			if (activeItem != null) {
-				iActiveItems.initItem(ctx, activeItem);
+				iActiveItems.initItem(this.component, activeItem);
 			}
 		}
 	}

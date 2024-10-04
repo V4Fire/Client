@@ -10,10 +10,9 @@ import type { ComponentInterface } from 'core/component/interface/component/comp
 
 /**
  * A helper structure to pack the unsafe interface.
- * It fixes some ambiguous TS warnings.
+ * It resolves some ambiguous TS warnings.
  */
-export type UnsafeGetter<U extends UnsafeComponentInterface = UnsafeComponentInterface> =
-	Dictionary & U['CTX'] & U & {unsafe: any};
+export type UnsafeGetter<U extends UnsafeComponentInterface = UnsafeComponentInterface> = U['CTX'] & U;
 
 /**
  * This is a special interface that provides access to protected properties and methods outside the primary class.
@@ -23,7 +22,7 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	/**
 	 * Type: the context type
 	 */
-	readonly CTX: CTX;
+	readonly CTX: Omit<CTX, 'unsafe'>;
 
 	// @ts-ignore (access)
 	meta: CTX['meta'];
@@ -38,10 +37,7 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	$modifiedFields: CTX['$modifiedFields'];
 
 	// Avoid using references to CTX for primitive types, as doing so may cause issues with TS
-
 	$activeField: CanUndef<string>;
-
-	$renderCounter: number;
 
 	// @ts-ignore (access)
 	$attrs: CTX['$attrs'];
@@ -60,6 +56,9 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 
 	// @ts-ignore (access)
 	$async: CTX['$async'];
+
+	// @ts-ignore (access)
+	$destructors: CTX['$destructors'];
 
 	// @ts-ignore (access)
 	$initializer: CTX['$initializer'];
@@ -86,12 +85,6 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	$delete: CTX['$delete'];
 
 	// @ts-ignore (access)
-	$forceUpdate: CTX['$forceUpdate'];
-
-	// @ts-ignore (access)
-	$nextTick: CTX['$nextTick'];
-
-	// @ts-ignore (access)
 	$destroy: CTX['$destroy'];
 
 	// @ts-ignore (access)
@@ -99,4 +92,10 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 
 	// @ts-ignore (access)
 	$withCtx: CTX['$withCtx'];
+
+	// @ts-ignore (access)
+	$restArgs: CTX['$restArgs'];
+
+	// @ts-ignore (access)
+	createPropAccessors: CTX['createPropAccessors'];
 }

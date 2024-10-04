@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.138.dsl-speedup (2024-10-01)
+
+#### :rocket: New Feature
+
+* Added the `test` parameter for fine-tuning watchers
+
+#### :house: Internal
+
+* Performance improvements
+
 ## v4.0.0-beta.121.the-phantom-menace (2024-08-05)
 
 #### :rocket: New Feature

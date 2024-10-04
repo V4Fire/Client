@@ -41,7 +41,8 @@ interface Mask {
 )
 
 class Mask extends Friend {
-	override readonly C!: iInputText;
+	/** @inheritDoc */
+	declare readonly C: iInputText;
 
 	/**
 	 * The compiled mask

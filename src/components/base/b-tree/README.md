@@ -36,11 +36,9 @@ import bTree, { component } from 'components/super/b-tree/b-tree';
 
 @component()
 export default class MyTree extends bTree {
-  /** @override */
-  readonly ActiveProp!: CanIter<number>;
+  declare readonly ActiveProp: CanIter<number>;
 
-  /** @override */
-  readonly Active!: number | Set<number>;
+  declare readonly Active: number | Set<number>;
 }
 ```
 
@@ -51,8 +49,7 @@ import bTree, { component } from 'components/super/b-tree/b-tree';
 
 @component()
 export default class MyTree extends bTree {
-  /** @override */
-  readonly Item!: MyItem;
+  declare readonly Item: MyItem;
 }
 ```
 

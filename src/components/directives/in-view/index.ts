@@ -55,7 +55,7 @@ function registerDirectiveValue(
 		return;
 	}
 
-	Array.concat([], value).forEach((dirOpts: Exclude<DirectiveValue, any[]>) => {
+	Array.toArray(value).forEach((dirOpts: Exclude<DirectiveValue, any[]>) => {
 		let
 			watchOpts: WatchOptions,
 			handler: WatchHandler;
@@ -90,7 +90,7 @@ function unregisterDirectiveValue(el: Element, value: Nullable<DirectiveValue>) 
 		return;
 	}
 
-	Array.concat([], value).forEach((opts: Exclude<DirectiveValue, any[]>) => {
+	Array.toArray(value).forEach((opts: Exclude<DirectiveValue, any[]>) => {
 		IntersectionWatcher.unwatch(el, Object.isFunction(opts) ? opts : opts.handler);
 	});
 }

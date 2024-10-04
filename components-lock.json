@@ -2115,7 +2115,7 @@
           },
           "type": "global",
           "mixin": false,
-          "logic": null,
+          "logic": "src/components/global/g-hint/g-hint.ts",
           "styles": [
             "src/components/global/g-hint/g-hint.styl"
           ],

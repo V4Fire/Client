@@ -14,6 +14,7 @@
 import type { EventListener } from 'core/component/queue-emitter/interface';
 
 export * from 'core/component/queue-emitter/interface';
+
 export default class QueueEmitter {
 	/**
 	 * A queue of event handlers that are ready to be executed
@@ -54,15 +55,13 @@ export default class QueueEmitter {
 	 * @param event
 	 */
 	emit(event: string): CanPromise<void> {
-		const
-			queue = this.listeners[event];
+		const queue = this.listeners[event];
 
 		if (queue == null) {
 			return;
 		}
 
-		const
-			tasks: Array<CanPromise<unknown>> = [];
+		const tasks: Array<CanPromise<unknown>> = [];
 
 		queue.forEach((el) => {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -74,8 +73,7 @@ export default class QueueEmitter {
 			ev.delete(event);
 
 			if (ev.size === 0) {
-				const
-					task = el.handler();
+				const task = el.handler();
 
 				if (Object.isPromise(task)) {
 					tasks.push(task);
@@ -94,15 +92,12 @@ export default class QueueEmitter {
 	 * the method will return a promise that will only be resolved once all internal promises are resolved.
 	 */
 	drain(): CanPromise<void> {
-		const
-			{queue} = this;
+		const {queue} = this;
 
-		const
-			tasks: Array<Promise<unknown>> = [];
+		const tasks: Array<Promise<unknown>> = [];
 
 		queue.forEach((el) => {
-			const
-				task = el();
+			const task = el();
 
 			if (Object.isPromise(task)) {
 				tasks.push(task);

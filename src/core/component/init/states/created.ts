@@ -8,14 +8,13 @@
 
 import { unmute } from 'core/object/watch';
 
+import { runHook } from 'core/component/hook';
 import { destroyedHooks } from 'core/component/const';
 import { callMethodFromComponent } from 'core/component/method';
-import { runHook } from 'core/component/hook';
 
 import type { ComponentDestructorOptions, ComponentInterface, Hook } from 'core/component/interface';
 
-const
-	remoteActivationLabel = Symbol('The remote activation label');
+const remoteActivationLabel = Symbol('The remote activation label');
 
 /**
  * Initializes the "created" state to the specified component instance
@@ -26,14 +25,7 @@ export function createdState(component: ComponentInterface): void {
 		return;
 	}
 
-	const {
-		unsafe,
-		unsafe: {
-			$root: r,
-			$async: $a,
-			$parent: parent
-		}
-	} = component;
+	const {unsafe, unsafe: {$parent: parent}} = component;
 
 	unmute(unsafe.$fields);
 	unmute(unsafe.$systemFields);
@@ -41,7 +33,7 @@ export function createdState(component: ComponentInterface): void {
 	if (parent != null) {
 		const
 			isRegularComponent = unsafe.meta.params.functional !== true,
-			isDynamicallyMountedComponent = '$remoteParent' in r;
+			isDynamicallyMountedComponent = '$remoteParent' in unsafe.$root;
 
 		const destroy = (opts: Required<ComponentDestructorOptions>) => {
 			// A component might have already been removed by explicitly calling $destroy
@@ -56,7 +48,7 @@ export function createdState(component: ComponentInterface): void {
 
 		parent.unsafe.$once('[[BEFORE_DESTROY]]', destroy);
 
-		unsafe.$async.worker(() => {
+		unsafe.$destructors.push(() => {
 			// A component might have already been removed by explicitly calling $destroy
 			if (destroyedHooks[parent.hook] != null) {
 				return;
@@ -81,21 +73,20 @@ export function createdState(component: ComponentInterface): void {
 					return;
 				}
 
-				$a.requestIdleCallback(component.activate.bind(component), {
+				unsafe.$async.requestIdleCallback(component.activate.bind(component), {
 					label: remoteActivationLabel,
 					timeout: 50
 				});
 			};
 
-			const
-				normalParent = unsafe.$normalParent!.unsafe;
+			const normalParent = unsafe.$normalParent!.unsafe;
 
 			if (activationHooks[normalParent.hook] != null) {
 				onActivation(normalParent.hook);
 			}
 
 			normalParent.$on('onHookChange', onActivation);
-			$a.worker(() => normalParent.$off('onHookChange', onActivation));
+			unsafe.$destructors.push(() => normalParent.$off('onHookChange', onActivation));
 		}
 	}
 

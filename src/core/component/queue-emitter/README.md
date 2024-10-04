@@ -1,8 +1,8 @@
 # core/component/queue-emitter
 
 This module provides a class for creating an EventEmitter with support for handler queue ordering.
-For example,
-it's possible to declare that a handler will only be executed after multiple specified events have been triggered.
+For example, it's possible to declare that a handler will only be executed after multiple specified
+events have been triggered.
 
 ## Usage
 

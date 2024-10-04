@@ -2,7 +2,7 @@
 
 This module re-exports the base decorators from `core/component/decorators` and also provides additional decorators.
 
-## Re-exported decorators
+## Re-exported Decorators
 
 * `@component` to register a new component;
 * `@prop` to declare a component input property (aka "prop");

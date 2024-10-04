@@ -277,8 +277,7 @@ Returns true if the specified value is selected.
 
 ```typescript
 class Test extends iData {
-  /** @override */
-  protected $refs!: {
+  declare protected readonly $refs: iData['$refs'] & {
     select: bSelect
   };
 
@@ -295,8 +294,7 @@ Selects an item with the specified value. If the component is in `multiple` mode
 
 ```typescript
 class Test extends iData {
-  /** @override */
-  protected $refs!: {
+  declare protected readonly $refs: iData['$refs'] & {
     select: bSelect
   };
 
@@ -312,8 +310,7 @@ Removes the selection from an item with the specified value. If the component is
 
 ```typescript
 class Test extends iData {
-  /** @override */
-  protected $refs!: {
+  declare protected readonly $refs: iData['$refs'] & {
     select: bSelect
   };
 
@@ -329,8 +326,7 @@ Toggles the selection of an item with the specified value. The method returns th
 
 ```typescript
 class Test extends iData {
-  /** @override */
-  protected $refs!: {
+  declare protected readonly $refs: iData['$refs'] & {
     select: bSelect
   };
 

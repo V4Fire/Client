@@ -21,6 +21,7 @@ interface bFriendsDaemonsDummy extends Dictionary {}
 
 @component()
 class bFriendsDaemonsDummy extends bDummy {
+	// @ts-ignore (override)
 	override get unsafe(): UnsafeGetter<UnsafeBFriendsDaemonsDummy<this>> {
 		return Object.cast(this);
 	}

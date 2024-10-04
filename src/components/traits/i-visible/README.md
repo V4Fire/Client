@@ -26,7 +26,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 export default class bButton extends iBlock implements iVisible {
   static override readonly mods: ModsDecl = {
     ...iVisible.mods
-  }
+  };
 }
 ```
 

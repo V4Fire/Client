@@ -138,7 +138,8 @@ class bTree extends iTreeProps implements iActiveItems, iFoldable {
 
 	protected itemsStore: this['Items'] = [];
 
-	protected override readonly $refs!: iData['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iData['$refs'] & {
 		children?: bTree[];
 	};
 
@@ -262,7 +263,7 @@ class bTree extends iTreeProps implements iActiveItems, iFoldable {
 
 		// Activate current active nodes
 		SyncPromise.resolve(this.activeElement).then((activeElement) => {
-			Array.concat([], activeElement).forEach((activeElement) => setActiveMod.call(top, activeElement, true));
+			Array.toArray(activeElement).forEach((activeElement) => setActiveMod.call(top, activeElement, true));
 		}).catch(stderr);
 
 		return true;

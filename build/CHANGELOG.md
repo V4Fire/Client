@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.138.dsl-speedup (2024-10-01)
+
+#### :house: Internal
+
+* Apply the `symbol-generator-loader` consistently to optimize Runtime performance
+
 ## v4.0.0-beta.125 (2024-08-12)
 
 #### :bug: Bug Fix

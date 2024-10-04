@@ -13,7 +13,8 @@ export * from 'components/dummies/b-dummy/b-dummy';
 
 @component()
 export class bScrollElementDummy extends bDummy {
-	override readonly $refs!: bDummy['$refs'] & {
+	/** @inheritDoc */
+	declare readonly $refs: bDummy['$refs'] & {
 		scrollable: HTMLUListElement;
 	};
 

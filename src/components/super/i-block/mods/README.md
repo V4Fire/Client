@@ -1,10 +1,10 @@
 # components/super/i-block/mods
 
-This module provides an API for working with components using
-the [BEM](https://en.bem.info/methodology/quick-start/) methodology.
+This module provides an API
+for working with components using the [BEM](https://en.bem.info/methodology/quick-start/) methodology.
 The implementation is delegated to the [[Block]] friendly class.
 
-## Basic concepts
+## Basic Concepts
 
 The BEM methodology describes how to apply a component-based approach to CSS when defining a widget.
 The methodology defines three main entities: block, element, and modifier.
@@ -14,15 +14,15 @@ block modifiers are its inputs, which also have a convention for adding necessar
 Additionally, elements can also have their own modifiers,
 which are conveniently applied at a micro level in the component's markup.
 
-### How to declare component props as modifiers?
+### Declaring Component Props as Modifiers
 
 To declare modifiers for a component, you need to use the static property `mods`.
-Simply pass it a dictionary where the keys are the modifier names and the values are lists representing their values.
+Pass it a dictionary where the keys are the modifier names and the values are lists representing their values.
 The modifier values are always converted to strings.
 However, when describing them, you can use numbers and boolean values.
 Additionally, all modifier names and values are forcibly normalized to kebab case,
 so you can use any style that suits you.
-To assign any of the default values, simply wrap it in another array.
+To assign any of the default values, wrap it in another array.
 
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
@@ -126,7 +126,7 @@ class Children extends Parent {
 }
 ```
 
-### How to pass modifiers when creating a component?
+### How to Pass Modifiers When Creating a Component?
 
 Any component modifier can be set externally when the component is created, just like a regular prop.
 
@@ -152,13 +152,13 @@ Of course, you can combine both methods.
 < b-example :theme = 'dark' | :mods = mods
 ```
 
-#### Automatically inherited modifiers
+#### Automatically Inherited Modifiers
 
 All V4Fire components have a getter called `sharedMods`,
 which returns a dictionary of modifiers that can be passed to any child components.
 If you don't explicitly pass the `mods` prop when creating a component,
 the `sharedMods` getter will be automatically passed to it.
-This is very useful when you need to propagate certain modifiers to all nested components.
+This is handy when you need to propagate certain modifiers to all nested components.
 By default, the getter returns a dictionary with only the `theme` modifier or undefined if it's not specified.
 
 ```
@@ -192,7 +192,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 class bExample extends iBlock {}
 ```
 
-### How to get component modifier value?
+### Getting a Component's Modifier Value
 
 All component's applied modifiers are stored in the `mods` read-only property.
 Therefore, to get the value of any modifier, simply access the desired key.
@@ -258,7 +258,7 @@ If you want to use modifiers within a component template, then use the `m` gette
   ...
 ```
 
-### How to set a new component's modifier value?
+### Setting a New Component's Modifier Value
 
 To set a new modifier value or remove an existing one, you can use the `setMod` and `removeMod` methods.
 
@@ -284,7 +284,7 @@ class bExample extends iBlock {
 }
 ```
 
-#### Modifier change events
+#### Modifier Change Events
 
 Whenever the value of any modifier changes,
 the component will emit a series of events that can be listened to both inside and outside the component.
@@ -320,7 +320,7 @@ class bExample extends iBlock {
 }
 ```
 
-##### Local events
+##### Local Events
 
 All set and remove operations for modifiers also trigger local component events that cannot be handled from the outside.
 Since all local component events can be listened to using placeholders,

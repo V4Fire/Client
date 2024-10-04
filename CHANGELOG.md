@@ -11,12 +11,68 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## 4.0.0-beta.?? (2024-09-??)
+## v4.0.0-beta.141 (2024-10-03)
+
+#### :bug: Bug Fix
+
+* Do not call destructor recursively on before unmount `core/component/engines/vue3`
+
+## v4.0.0-beta.140 (2024-10-03)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect `shapeFlag` on a functional vnode `core/component/render`
+
+## v4.0.0-beta.139.dsl-speedup-2 (2024-10-03)
+
+#### :rocket: New Feature
+
+* Added a new default prop `getPassedProps`, which allows identifying which props were passed through the template `core/component`
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the removal of modifiers from a comment node `components/friends/block`
+
+#### :house: Internal
+
+* Performance improvements `components/friends/sync` `iBlock`
+* `core/component/engines/vue3`:
+  * Migration to the Composition API
+  * Added support for the `renderTracked` hook
+
+## v4.0.0-beta.138.dsl-speedup (2024-10-01)
+
+#### :boom: Breaking Change
+
+* The `Async` module  has been moved to `V4/Core`
+
+#### :rocket: New Feature
+
+* Added the `partial` parameter for the declaration of components consisting of multiple classes `core/component/meta`
+* Added a new method for efficient access to the field store `getFieldsStore` `components/friends/field`
+* Introduced a new type of caching: `'forever'` `core/component/accessors`
+* Added the `test` parameter for fine-tuning watchers `core/component/decorators`
+
+#### :house: Internal
+
+* `iBlock`:
+  * Set all friend classes now through getters with `cache: 'forever'`
+  * Modules for friend classes are now loaded lazily
+
+* Apply the `symbol-generator-loader` consistently to optimize Runtime performance `build/webpack`
+* A lot of TypeScript type fixes
+* Performance improvements
+
+## 4.0.0-beta.137 (2024-09-24)
 
 #### :bug: Bug Fix
 
 * Fix the bug when the global event listener might be called after the component has been destroyed `iBlock`
 
+#### :house: Internal
+
+* Removed method calls from the `iBlock` template
+* Added a [[RENDER]] event before calling the component's render function `core/component/meta`
 
 ## 4.0.0-beta.136 (2024-09-17)
 
@@ -74,9 +130,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.129 (2024-09-04)
 
-* #### :nail_care: Polish
+#### :nail_care: Polish
 
-* Now, if an external link is passed to `initLibs()`, `PUBLIC_PATH` won't be added to it.
+* Now, if an external link is passed to `initLibs()`, `PUBLIC_PATH` won't be added to it
 
 ## v4.0.0-beta.128 (2024-09-03)
 

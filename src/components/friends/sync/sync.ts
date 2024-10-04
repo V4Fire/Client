@@ -7,10 +7,11 @@
  */
 
 import type Sync from 'components/friends/sync/class';
-import type { LinkDecl } from 'components/friends/sync/interface';
+
+import type { LinkDecl, ObjectLink } from 'components/friends/sync/interface';
 
 /**
- * Synchronizes component reference values with the values they are linked with
+ * Synchronizes component link values with the values they are linked with
  *
  * @param [path] - a path to the property/event we are referring to, or
  * [a path to the property containing the reference, a path to the property/event we are referring to]
@@ -48,8 +49,8 @@ import type { LinkDecl } from 'components/friends/sync/interface';
  */
 export function syncLinks(this: Sync, path?: LinkDecl, value?: unknown): void {
 	let
-		linkPath,
-		storePath;
+		linkPath: CanUndef<ObjectLink>,
+		storePath: CanUndef<string>;
 
 	if (Object.isArray(path)) {
 		storePath = path[0];
@@ -60,11 +61,18 @@ export function syncLinks(this: Sync, path?: LinkDecl, value?: unknown): void {
 	}
 
 	const
+		that = this,
 		cache = this.syncLinkCache;
 
-	const sync = (linkName) => {
-		const
-			o = cache.get(linkName);
+	if (linkPath != null) {
+		sync(linkPath);
+
+	} else {
+		cache.forEach((_, key) => sync(key));
+	}
+
+	function sync(linkName: string | object) {
+		const o = cache.get(linkName);
 
 		if (o == null) {
 			return;
@@ -76,17 +84,8 @@ export function syncLinks(this: Sync, path?: LinkDecl, value?: unknown): void {
 			}
 
 			if (storePath == null || key === storePath) {
-				el.sync(value ?? this.field.get(linkName));
+				el.sync(value ?? (Object.isString(linkName) ? that.field.get(linkName) : undefined));
 			}
 		});
-	};
-
-	if (linkPath != null) {
-		sync(linkPath);
-
-	} else {
-		for (let o = cache.keys(), el = o.next(); !el.done; el = o.next()) {
-			sync(el.value);
-		}
 	}
 }

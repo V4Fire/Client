@@ -70,7 +70,7 @@ export function waitForceRender(
 					el: Nullable<string | Element>;
 
 				if (Object.isFunction(elementToDrop)) {
-					el = await elementToDrop(this.ctx);
+					el = await elementToDrop(this.component);
 
 				} else {
 					el = elementToDrop;

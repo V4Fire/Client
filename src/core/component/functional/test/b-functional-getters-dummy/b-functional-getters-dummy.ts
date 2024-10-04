@@ -25,7 +25,8 @@ export default class bFunctionalGettersDummy extends bDummy {
 	@system({merge: true})
 	logStore: string[] = [];
 
-	protected override $refs!: bDummy['$refs'] & {
+	/** @inheritDoc */
+	protected declare $refs: bDummy['$refs'] & {
 		container: HTMLElement;
 	};
 

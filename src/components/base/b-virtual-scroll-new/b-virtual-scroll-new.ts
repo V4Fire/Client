@@ -12,13 +12,18 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import { derive } from 'core/functools/trait';
+
 import type { AsyncOptions } from 'core/async';
 import SyncPromise from 'core/promise/sync';
 
 import type iItems from 'components/traits/i-items/i-items';
 import DOM, { watchForIntersection } from 'components/friends/dom';
 import VDOM, { create, render } from 'components/friends/vdom';
-import { iVirtualScrollHandlers } from 'components/base/b-virtual-scroll-new/handlers';
+import iVirtualScrollProps from 'components/base/b-virtual-scroll-new/props';
+
+import iVirtualScrollHandlers from 'components/base/b-virtual-scroll-new/modules/handlers';
+
 import {
 
 	bVirtualScrollNewAsyncGroup,
@@ -48,8 +53,21 @@ import { ComponentInternalState } from 'components/base/b-virtual-scroll-new/mod
 import { SlotsStateController } from 'components/base/b-virtual-scroll-new/modules/slots';
 import { ComponentFactory } from 'components/base/b-virtual-scroll-new/modules/factory';
 import { Observer } from 'components/base/b-virtual-scroll-new/modules/observer';
+import { isAsyncReplaceError } from 'components/base/b-virtual-scroll-new/modules/helpers';
 
-import iData, { component, system, field, watch, wait, RequestParams, UnsafeGetter } from 'components/super/i-data/i-data';
+import iData, {
+
+	component,
+	field,
+	computed,
+
+	watch,
+	wait,
+
+	RequestParams,
+	UnsafeGetter
+
+} from 'components/super/i-data/i-data';
 
 export * from 'components/base/b-virtual-scroll-new/interface';
 export * from 'components/base/b-virtual-scroll-new/const';
@@ -60,30 +78,43 @@ const $$ = symbolGenerator();
 DOM.addToPrototype({watchForIntersection});
 VDOM.addToPrototype({create, render});
 
-@component()
-export default class bVirtualScrollNew extends iVirtualScrollHandlers implements iItems {
+interface bVirtualScrollNew extends Trait<typeof iVirtualScrollHandlers> {}
 
+@component()
+@derive(iVirtualScrollHandlers)
+class bVirtualScrollNew extends iVirtualScrollProps implements iItems {
 	/** {@link componentTypedEmitter} */
-	@system<bVirtualScrollNew>((ctx) => componentTypedEmitter(ctx))
-	protected readonly componentEmitter!: ComponentTypedEmitter;
+	@computed({cache: 'forever'})
+	protected get componentEmitter(): ComponentTypedEmitter {
+		return componentTypedEmitter(this.unsafe);
+	}
 
 	/** {@link SlotsStateController} */
-	@system<bVirtualScrollNew>((ctx) => new SlotsStateController(ctx))
-	protected readonly slotsStateController!: SlotsStateController;
+	@computed({cache: 'forever'})
+	protected get slotsStateController(): SlotsStateController {
+		return new SlotsStateController(this);
+	}
 
 	/** {@link ComponentInternalState} */
-	@system<bVirtualScrollNew>((ctx) => new ComponentInternalState(ctx))
-	protected readonly componentInternalState!: ComponentInternalState;
+	@computed({cache: 'forever'})
+	protected get componentInternalState(): ComponentInternalState {
+		return new ComponentInternalState(this);
+	}
 
 	/** {@link ComponentFactory} */
-	@system<bVirtualScrollNew>((ctx) => new ComponentFactory(ctx))
-	protected readonly componentFactory!: ComponentFactory;
+	@computed({cache: 'forever'})
+	protected get componentFactory(): ComponentFactory {
+		return new ComponentFactory(this);
+	}
 
 	/** {@link Observer} */
-	@system<bVirtualScrollNew>((ctx) => new Observer(ctx))
-	protected readonly observer!: Observer;
+	@computed({cache: 'forever'})
+	protected get observer(): Observer {
+		return new Observer(this);
+	}
 
-	protected override readonly $refs!: iData['$refs'] & $ComponentRefs;
+	/** @inheritDoc */
+	declare protected readonly $refs: iData['$refs'] & $ComponentRefs;
 
 	// @ts-ignore (getter instead readonly)
 	override get requestParams(): iData['requestParams'] {
@@ -253,6 +284,21 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 		}
 
 		this.onItemsInit(this.items);
+	}
+
+	protected override onRequestError(this: bVirtualScrollNew, ...args: Parameters<iData['onRequestError']>): ReturnType<iData['onRequestError']> {
+		const
+			err = args[0];
+
+		if (isAsyncReplaceError(err)) {
+			return;
+		}
+
+		const
+			state = this.getVirtualScrollState();
+
+		this.onDataLoadError(state.isInitialLoading);
+		return super.onRequestError(err, this.initLoad.bind(this));
 	}
 
 	protected override convertDataToDB<O>(data: unknown): O | this['DB'] {
@@ -513,3 +559,5 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 		}).catch(stderr);
 	}
 }
+
+export default bVirtualScrollNew;

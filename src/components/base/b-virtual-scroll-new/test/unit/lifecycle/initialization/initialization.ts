@@ -20,7 +20,6 @@ import type { VirtualScrollTestHelpers } from 'components/base/b-virtual-scroll-
 test.describe('<b-virtual-scroll-new>', () => {
 	let
 		component: VirtualScrollTestHelpers['component'],
-		initLoadSpy: VirtualScrollTestHelpers['initLoadSpy'],
 		provider: VirtualScrollTestHelpers['provider'],
 		state: VirtualScrollTestHelpers['state'];
 
@@ -37,7 +36,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 
-		({component, initLoadSpy, provider, state} = await createTestHelpers(page));
+		({component, provider, state} = await createTestHelpers(page));
 		await provider.start();
 	});
 
@@ -88,10 +87,6 @@ test.describe('<b-virtual-scroll-new>', () => {
 							test.expect.any(Object)
 						]
 					]);
-				});
-
-				test('should call `initLoad` once', async () => {
-					await test.expect(initLoadSpy.calls).resolves.toEqual([[]]);
 				});
 
 				test('should end the component lifecycle', async () => {

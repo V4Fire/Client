@@ -10,7 +10,8 @@ import { wrapWithSuspending, EventId, EventEmitterLike, EventEmitterLikeP } from
 import { getPropertyInfo } from 'core/component/reflect';
 
 import { beforeHooks } from 'core/component/const';
-import { customWatcherRgxp } from 'core/component/watch/const';
+import { isCustomWatcher, customWatcherRgxp } from 'core/component/watch/const';
+import { canSkipWatching } from 'core/component/watch/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
 import type { BindRemoteWatchersParams } from 'core/component/watch/interface';
@@ -72,15 +73,29 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 		// Custom watchers look like ':foo', 'bla:foo', '?bla:foo'
 		// and are used to listen to custom events instead of property mutations.
-		const customWatcher = customWatcherRgxp.exec(watchPath);
+		const customWatcher = isCustomWatcher.test(watchPath) ? customWatcherRgxp.exec(watchPath) : null;
 
-		if (customWatcher) {
+		if (customWatcher != null) {
 			const m = customWatcher[1];
 			watcherNeedCreated = m === '';
 			watcherNeedMounted = m === '?';
 		}
 
-		const attachWatcher = () => {
+		// Add a listener to a component's created hook if the component has not yet been created
+		if (watcherNeedCreated && isBeforeCreate) {
+			hooks['before:created'].push({fn: attachWatcher});
+			return;
+		}
+
+		// Add a listener to a component's mounted/activated hook if the component has not yet been mounted or activated
+		if (watcherNeedMounted && (isBeforeCreate || component.$el == null)) {
+			hooks[isDeactivated ? 'activated' : 'mounted'].unshift({fn: attachWatcher});
+			return;
+		}
+
+		attachWatcher();
+
+		function attachWatcher() {
 			// If we have a custom watcher, we need to find a link to the event emitter.
 			// For instance:
 			// ':foo' -> watcherCtx == ctx; key = 'foo'
@@ -99,7 +114,11 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 			}
 
 			// Iterates over all registered handlers for this watcher
-			watchers.forEach((watchInfo) => {
+			watchers!.forEach((watchInfo) => {
+				if (watchInfo.shouldInit?.(component) === false) {
+					return;
+				}
+
 				const rawHandler = watchInfo.handler;
 
 				const asyncParams = {
@@ -168,7 +187,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 				// }
 				//
 				// To address this issue, we can check if the handler requires a second argument by using the length property.
-				// If the second argument is needed, we can clone the old value and store it within a closure.
+				// If the second argument is necessary, we can clone the old value and store it within a closure.
 				//
 				// This covers the situations where we need to retain the old value
 				// (a property watcher with a handler length greater than one),
@@ -265,6 +284,12 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							return;
 						}
 
+						const propInfo = p.info ?? getPropertyInfo(watchPath, component);
+
+						if (canSkipWatching(propInfo, watchInfo)) {
+							return;
+						}
+
 						/* eslint-disable prefer-const */
 
 						let
@@ -286,9 +311,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						};
 
 						link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(asyncParams, 'watchers'));
-
-						const toWatch = p.info ?? getPropertyInfo(watchPath, component);
-						unwatch = $watch.call(component, toWatch, watchInfo, handler);
+						unwatch = $watch.call(component, propInfo, watchInfo, handler);
 					}).catch(stderr);
 
 				} else {
@@ -320,6 +343,12 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						return;
 					}
 
+					const propInfo = p.info ?? getPropertyInfo(watchPath, component);
+
+					if (canSkipWatching(propInfo, watchInfo)) {
+						return;
+					}
+
 					/* eslint-disable prefer-const */
 
 					let
@@ -341,25 +370,9 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 					};
 
 					link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(asyncParams, 'watchers'));
-
-					const toWatch = p.info ?? getPropertyInfo(watchPath, component);
-					unwatch = $watch.call(component, toWatch, watchInfo, handler);
+					unwatch = $watch.call(component, propInfo, watchInfo, handler);
 				}
 			});
-		};
-
-		// Add a listener to a component's created hook if the component has not yet been created
-		if (watcherNeedCreated && isBeforeCreate) {
-			hooks['before:created'].push({fn: attachWatcher});
-			return;
 		}
-
-		// Add a listener to a component's mounted/activated hook if the component has not yet been mounted or activated
-		if (watcherNeedMounted && (isBeforeCreate || component.$el == null)) {
-			hooks[isDeactivated ? 'activated' : 'mounted'].unshift({fn: attachWatcher});
-			return;
-		}
-
-		attachWatcher();
 	});
 }

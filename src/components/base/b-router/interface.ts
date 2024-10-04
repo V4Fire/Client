@@ -49,7 +49,6 @@ export type TransitionMethod = 'push' | 'replace' | 'event';
 export type ComputeParamFn = (ctx: bRouter) => unknown;
 export type RouteOption = Dictionary<unknown | ComputeParamFn>;
 
-// @ts-ignore (extend)
 export interface UnsafeBRouter<CTX extends bRouter = bRouter> extends UnsafeIData<CTX> {
 	// @ts-ignore (access)
 	engine: CTX['engine'];
@@ -59,4 +58,7 @@ export interface UnsafeBRouter<CTX extends bRouter = bRouter> extends UnsafeIDat
 
 	// @ts-ignore (access)
 	initRoute: CTX['initRoute'];
+
+	// @ts-ignore (access)
+	compileStaticRoutes: CTX['compileStaticRoutes'];
 }
