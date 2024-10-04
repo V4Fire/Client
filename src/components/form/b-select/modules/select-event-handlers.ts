@@ -32,7 +32,7 @@ export default abstract class SelectEventHandlers {
 
 		// Status: opened == false or opened == null
 		if (e.type === 'set' && e.value === 'false' || e.type === 'remove') {
-			if (openedSelect.link === unsafe) {
+			if (openedSelect.link === component) {
 				openedSelect.link = null;
 			}
 
@@ -50,7 +50,7 @@ export default abstract class SelectEventHandlers {
 				openedSelect.link.close().catch(() => undefined);
 			}
 
-			openedSelect.link = unsafe;
+			openedSelect.link = component;
 		}
 
 		component.handleKeydown(true);

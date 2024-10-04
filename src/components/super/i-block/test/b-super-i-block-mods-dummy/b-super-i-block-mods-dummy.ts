@@ -24,7 +24,8 @@ export default class bSuperIBlockModsDummy extends bDummy {
 		return this.$refs.dummy.mods;
 	}
 
-	protected override readonly $refs!: bDummy['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: bDummy['$refs'] & {
 		dummy: bDummy;
 	};
 }

@@ -26,17 +26,17 @@ export type ModDeclVal = CanArray<ModVal>;
 export type ExpandedModDeclVal = ModDeclVal | typeof PARENT;
 
 /**
- * A dictionary that contains modifiers to pass to the component
+ * A dictionary containing modifiers to pass to the component
  */
 export type ModsProp = Dictionary<ModVal>;
 
 /**
- * A dictionary that contains normalized modifiers
+ * A dictionary containing normalized modifiers
  */
 export type ModsDict = Dictionary<CanUndef<string>>;
 
 /**
- * A dictionary that contains predefined modifiers and their possible values
+ * A dictionary containing predefined modifiers and their possible values
  *
  * @example
  * ```typescript

@@ -19,8 +19,7 @@ import iBlock from 'components/super/i-block/i-block';
 const
 	$$ = symbolGenerator();
 
-let
-	baseInitLoad;
+let baseInitLoad;
 
 /**
  * Initializes the listening of global application events for the component
@@ -36,6 +35,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 		ctx = component.unsafe;
 
 	const {
+		async: $a,
 		globalName,
 		globalEmitter: $e,
 		state: $s,
@@ -68,8 +68,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 		ctx.componentStatus = 'loading';
 
 		if (needRouterSync || globalName != null) {
-			const tasks = Array.concat(
-				[],
+			const tasks = Array.toArray(
 				needRouterSync ? $s.resetRouter() : null,
 				globalName != null ? $s.resetStorage() : null
 			);
@@ -82,8 +81,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 
 	$e.on('reset.silence', waitNextTickForReset(async () => {
 		if (needRouterSync || globalName != null) {
-			const tasks = Array.concat(
-				[],
+			const tasks = Array.toArray(
 				needRouterSync ? $s.resetRouter() : null,
 				globalName != null ? $s.resetStorage() : null
 			);
@@ -94,7 +92,9 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 		await ctx.reload();
 	}));
 
-	function waitNextTickForReset(fn: Function) {
+	function waitNextTickForReset(rawFn: () => CanPromise<void>) {
+		const fn = $a.proxy(rawFn);
+
 		return async () => {
 			try {
 				await ctx.nextTick({label: $$.reset});
@@ -122,7 +122,7 @@ export function initRemoteWatchers(component: iBlock): void {
 	}
 
 	Object.entries(watchProp).forEach(([method, watchers]) => {
-		Array.concat([], watchers).forEach((watcher) => {
+		Array.toArray(watchers).forEach((watcher) => {
 			if (Object.isString(watcher)) {
 				const
 					path = normalizePath(watcher),
@@ -140,7 +140,7 @@ export function initRemoteWatchers(component: iBlock): void {
 
 				wList.push({
 					...watcher,
-					args: Array.concat([], watcher.args),
+					args: Array.toArray(watcher.args),
 					method,
 					handler: method
 				});

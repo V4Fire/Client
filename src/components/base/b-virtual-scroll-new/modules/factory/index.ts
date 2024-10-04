@@ -22,17 +22,19 @@ import * as vdomRender from 'components/base/b-virtual-scroll-new/modules/factor
  * specifically tailored for the `bVirtualScrollNew` class.
  */
 export class ComponentFactory extends Friend {
-	override readonly C!: bVirtualScrollNew;
+	/** @inheritDoc */
+	declare readonly C: bVirtualScrollNew;
 
 	/**
 	 * Produces component items based on the current state and context.
 	 * Returns an array of component items.
 	 */
 	produceComponentItems(): ComponentItem[] {
+		const {ctx} = this;
+
 		const
-			{ctx} = this,
 			normalize = this.normalizeComponentItem.bind(this),
-			componentItems = ctx.itemsFactory(ctx.getVirtualScrollState(), ctx);
+			componentItems = ctx.itemsFactory(ctx.getVirtualScrollState(), this.component);
 
 		return this.itemsProcessor(componentItems).map(normalize);
 	}
@@ -98,20 +100,20 @@ export class ComponentFactory extends Friend {
 	 * @param items - the list of items to process.
 	 */
 	protected itemsProcessor(items: ComponentItem[]): ComponentItem[] {
-		const
-			{ctx} = this,
-			itemsProcessors = ctx.getItemsProcessors();
+		const {ctx, component} = this;
+
+		const itemsProcessors = ctx.getItemsProcessors();
 
 		if (!itemsProcessors) {
 			return items;
 		}
 
 		if (Object.isFunction(itemsProcessors)) {
-			return itemsProcessors(items, ctx);
+			return itemsProcessors(items, component);
 		}
 
 		Object.forEach<ItemsProcessor>(itemsProcessors, (processor) => {
-			items = processor(items, ctx);
+			items = processor(items, component);
 		});
 
 		return items;
@@ -173,7 +175,7 @@ export class ComponentFactory extends Friend {
 		ctx.onRenderEngineStart();
 
 		const
-			res = vdomRender.render(ctx, descriptors);
+			res = vdomRender.render(this.component, descriptors);
 
 		ctx.onRenderEngineDone();
 

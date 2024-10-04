@@ -26,7 +26,8 @@ const
 	$$ = symbolGenerator();
 
 export default class History extends Friend {
-	override readonly C!: iHistory;
+	/** @inheritDoc */
+	declare readonly C: iHistory;
 
 	/**
 	 * Default configuration for a history item

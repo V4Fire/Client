@@ -63,8 +63,7 @@ export default abstract class iControlList {
 				return action.call(component);
 			}
 
-			const
-				fullArgs = Array.concat([], action.defArgs ? args : null, action.args);
+			const fullArgs = Array.toArray(action.defArgs ? args : null, action.args);
 
 			const
 				{handler, argsMap} = action,

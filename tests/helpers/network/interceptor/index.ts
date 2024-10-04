@@ -132,7 +132,6 @@ export default class RequestInterceptor {
 	 * @param at - the index of the request (starting from 0)
 	 */
 	request(at: number): CanUndef<InterceptedRequest> {
-		// eslint-disable-next-line no-restricted-syntax
 		const request: CanUndef<Request> = this.calls.at(at)?.[0]?.request();
 
 		if (request == null) {

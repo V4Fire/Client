@@ -373,7 +373,7 @@ To retrieve the component's state, you can use a special method called `getVirtu
 ```typescript
 @component()
 class pPage extends iDynamicPage {
-  protected override readonly $refs!: {
+  declare protected readonly $refs: {
     scroll: bVirtualScrollNew;
   };
 

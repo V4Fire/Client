@@ -9,8 +9,9 @@
 import type {
 
 	ComponentConstructor,
-	ComponentInterface,
 	ComponentOptions,
+
+	ComponentInterface,
 	ComponentMeta
 
 } from 'core/component/interface';
@@ -48,24 +49,24 @@ export interface ComponentConstructorInfo {
 	constructor: ComponentConstructor;
 
 	/**
-	 * A dictionary that contains the parameters provided to the `@component` decorator for the component
+	 * A dictionary containing the parameters provided to the `@component` decorator for the component
 	 */
 	params: ComponentOptions;
 
 	/**
 	 * A link to the parent component's constructor
 	 */
-	parent?: Function;
+	parent: CanNull<Function>;
 
 	/**
 	 * A dictionary containing the parent component's parameters that were passed to the @component decorator
 	 */
-	parentParams?: ComponentOptions;
+	parentParams: CanNull<ComponentOptions>;
 
 	/**
 	 * A link to the metaobject of the parent component
 	 */
-	parentMeta?: ComponentMeta;
+	parentMeta: CanNull<ComponentMeta>;
 
 	/**
 	 * The name of the NPM package in which the component is defined or overridden

@@ -26,7 +26,7 @@ import type {
 
 } from 'components/super/i-input/interface';
 
-@component()
+@component({partial: 'iInput'})
 export default abstract class iInputFields extends iInputProps {
 	/**
 	 * A list of component value(s) that cannot be submitted via the associated form
@@ -371,7 +371,8 @@ export default abstract class iInputFields extends iInputProps {
 	@system((o) => o.sync.link())
 	protected errorStore?: string;
 
-	protected override readonly $refs!: iInputProps['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iInputProps['$refs'] & {
 		input?: HTMLInputElement;
 	};
 

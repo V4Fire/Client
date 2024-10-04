@@ -32,11 +32,12 @@ const waitCtxRgxp = /([^:]+):(\w+)/;
  *
  * @component()
  * class bExample extends iBlock {
- *   @wait({defer: true}})
+ *   @wait({defer: true})
  *   doSomething() {
  *     // ...
  *     return 42;
  *   }
+ * }
  * ```
  */
 export function wait(opts: {defer: true} & WaitDecoratorOptions): Function;
@@ -89,6 +90,7 @@ export function wait<F extends AnyFunction>(
  *     // ...
  *     return 42;
  *   }
+ * }
  * ```
  */
 export function wait(componentStatus: WaitStatuses, opts?: WaitDecoratorOptions): Function;
@@ -154,7 +156,7 @@ export function wait(
 			resolvedHandler = handler;
 
 		const
-			getRoot = () => ctx != null ? this.field.get<iBlock>(ctx) : this,
+			getRoot = () => ctx != null ? this.field.get<iBlock['unsafe']>(ctx) : this,
 			root = getRoot();
 
 		if (join === undefined) {
@@ -175,7 +177,7 @@ export function wait(
 
 		return res;
 
-		function exec(ctx: CanUndef<iBlock>) {
+		function exec(ctx: CanUndef<iBlock['unsafe']>) {
 			const componentStatus = Number(statuses[that.componentStatus]);
 
 			let

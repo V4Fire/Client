@@ -24,7 +24,7 @@ import iDataProvider from 'components/traits/i-data-provider/i-data-provider';
 export default class bButton implements iDataProvider {
   static override readonly mods: ModsDecl = {
     ...iDataProvider.mods
-  }
+  };
 }
 ```
 

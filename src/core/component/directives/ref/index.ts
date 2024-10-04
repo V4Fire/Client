@@ -40,7 +40,7 @@ function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode
 	} = opts;
 
 	let ctx = getDirectiveContext(opts, vnode);
-	ctx = Object.cast(ctx?.unsafe.meta.params.functional === true ? ctx : instance);
+	ctx = Object.cast(ctx?.meta.params.functional === true ? ctx : instance);
 
 	if (
 		value == null ||

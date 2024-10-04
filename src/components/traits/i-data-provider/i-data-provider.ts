@@ -22,12 +22,11 @@ import type { DataProviderProp, DataProviderOptions } from 'components/friends/d
 import iProgress from 'components/traits/i-progress/i-progress';
 import type iBlock from 'components/super/i-block/i-block';
 
-import type { RequestParams } from 'components/traits/i-data-provider/interface';
+import type { RequestParams, RequestFilter } from 'components/traits/i-data-provider/interface';
 
 export * from 'components/traits/i-data-provider/interface';
 
-const
-	$$ = symbolGenerator();
+const $$ = symbolGenerator();
 
 export default abstract class iDataProvider implements iProgress {
 	/**
@@ -79,6 +78,14 @@ export default abstract class iDataProvider implements iProgress {
 	 * ```
 	 */
 	abstract readonly request?: RequestParams;
+
+	/**
+	 * A function to filter all "default" requests: all requests that were created implicitly, as the initial
+	 * request of a component, or requests that are initiated by changing parameters from `request` and `requestParams`.
+	 * If the filter returns negative value, the tied request will be aborted.
+	 * You can also set this parameter to true, and it will only pass requests with a payload.
+	 */
+	abstract readonly defaultRequestFilter?: RequestFilter;
 
 	/**
 	 * If true, all requests to the data provider are suspended till you manually resolve them.

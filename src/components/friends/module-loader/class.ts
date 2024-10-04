@@ -9,6 +9,10 @@
 import Friend, { fakeMethods } from 'components/friends/friend';
 import type { Module, Signal } from 'components/friends/module-loader/interface';
 
+//#if runtime has dummyComponents
+import('components/friends/module-loader/test/b-friends-module-loader-dummy');
+//#endif
+
 interface ModuleLoader {
 	load(...modules: Module[]): CanPromise<IterableIterator<Module[]>>;
 	loadBucket(bucketName: string, ...modules: Module[]): number;

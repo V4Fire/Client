@@ -44,8 +44,7 @@ export function set(this: Friend, data: Nullable<Dictionary>): Array<Promise<unk
 
 		// Is property setter
 		if (Object.isFunction(originalVal)) {
-			const
-				res = originalVal.call(this.ctx, ...Array.concat([], newVal));
+			const res = originalVal.call(this.ctx, ...Array.toArray(newVal));
 
 			if (Object.isPromise(res)) {
 				promises.push(res);

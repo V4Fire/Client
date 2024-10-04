@@ -176,8 +176,7 @@ export function createPictureElement(
 			const
 				picture: VNode = create('picture');
 
-			picture.children = Array.concat(
-				[],
+			picture.children = Array.toArray(
 				createSourceElements(imageParams, commonParams).toVNode(create),
 				createImgElement(imageParams, commonParams).toVNode(create)
 			);

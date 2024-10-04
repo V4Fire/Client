@@ -15,6 +15,10 @@ import * as api from 'components/friends/provide/api';
 
 import type { Mods } from 'components/friends/provide/interface';
 
+//#if runtime has dummyComponents
+import('components/friends/provide/test/b-friends-provide-dummy');
+//#endif
+
 interface Provide {
 	fullComponentName(): string;
 	// eslint-disable-next-line @typescript-eslint/unified-signatures

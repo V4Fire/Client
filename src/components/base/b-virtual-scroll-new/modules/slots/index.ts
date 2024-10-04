@@ -24,8 +24,8 @@ export const
  * A class that manages the visibility of slots based on different states.
  */
 export class SlotsStateController extends Friend {
-
-	override readonly C!: bVirtualScrollNew;
+	/** @inheritDoc */
+	declare readonly C: bVirtualScrollNew;
 
 	/**
 	 * Options for the asynchronous operations.

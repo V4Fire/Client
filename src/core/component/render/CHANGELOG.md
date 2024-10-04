@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.140 (2024-10-03)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect `shapeFlag` on a functional vnode
+
+## v4.0.0-beta.139.dsl-speedup-2 (2024-10-03)
+
+#### :rocket: New Feature
+
+* Added a new default prop `getPassedProps`, which allows identifying which props were passed through the template
+
 ## v4.0.0-beta.107 (2024-07-10)
 
 #### :bug: Bug Fix

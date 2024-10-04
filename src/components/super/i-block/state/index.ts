@@ -12,34 +12,35 @@
  */
 
 import SyncPromise from 'core/promise/sync';
-
 import type Async from 'core/async';
-import type { BoundFn } from 'core/async';
 
-import { i18nFactory } from 'core/prelude/i18n';
-import { component, app, Hook, State } from 'core/component';
+import type { BoundFn } from 'core/async';
+import type { Theme } from 'core/theme-manager';
+
+import { i18nFactory } from 'core/i18n';
 import { styles as hydratedStyles } from 'core/hydration-store';
 
+import { component, app, Hook, State } from 'core/component';
 import type bRouter from 'components/base/b-router/b-router';
-import type iBlock from 'components/super/i-block/i-block';
 
 import type { Module } from 'components/friends/module-loader';
 import type { ConverterCallType } from 'components/friends/state';
-import { readyStatuses } from 'components/super/i-block/modules/activation';
 
+import { readyStatuses } from 'components/super/i-block/modules/activation';
 import { field, system, computed, wait, hook, WaitDecoratorOptions } from 'components/super/i-block/decorators';
+
+import type iBlock from 'components/super/i-block/i-block';
 import type { Stage, ComponentStatus, ComponentStatuses } from 'components/super/i-block/interface';
 
 import iBlockMods from 'components/super/i-block/mods';
-import type { Theme } from 'core/theme-manager';
 
-@component()
+@component({partial: 'iBlock'})
 export default abstract class iBlockState extends iBlockMods {
 	/**
 	 * A list of additional dependencies to load during the component's initialization
 	 * {@link iBlock.dependenciesProp}
 	 */
-	@system((o) => o.sync.link((val: Iterable<Module>) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
+	@system((o) => o.sync.link((val?: Iterable<Module>) => val == null ? [] : [...val]))
 	dependencies!: Module[];
 
 	/**
@@ -77,9 +78,8 @@ export default abstract class iBlockState extends iBlockMods {
 	/**
 	 * If set to false, the component will not render its content during SSR.
 	 *
-	 * In a hydration context, the field value is determined by the value of the `renderOnHydration` flag,
-	 * which is stored in a `hydrationStore` during SSR for components that
-	 * have the `ssrRenderingProp` value set to false.
+	 * In a hydration context, the field value is determined by the value of the `renderOnHydration` flag, which
+	 * is stored in a `hydrationStore` during SSR for components that have the `ssrRenderingProp` value set to false.
 	 * In other cases, the field value is derived from the `ssrRenderingProp` property.
 	 */
 	@field((o) => {
@@ -130,6 +130,14 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
+	 * An API for working with the target document's URL
+	 */
+	@computed({cache: 'forever'})
+	get location(): URL {
+		return this.remoteState.location;
+	}
+
+	/**
 	 * A string value indicating the initialization status of the component:
 	 *
 	 *   1. `unloaded` - the component has been just created without any initialization:
@@ -153,23 +161,31 @@ export default abstract class iBlockState extends iBlockMods {
 	 *   6. `destroyed` - the component has been destroyed:
 	 *      this status might coincide with certain component hooks such as `beforeDestroy` or `destroyed`.
 	 */
-	@computed()
+	@computed({cache: false, dependencies: []})
 	get componentStatus(): ComponentStatus {
-		return this.shadowComponentStatusStore ?? this.field.get<ComponentStatus>('componentStatusStore') ?? 'unloaded';
+		if (this.shadowComponentStatusStore != null) {
+			return this.shadowComponentStatusStore;
+		}
+
+		const status = this.meta.fields.componentStatusStore != null ?
+			this.field.getFieldsStore().componentStatusStore :
+			this.componentStatusStore;
+
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		return status ?? 'unloaded';
 	}
 
 	/**
 	 * Sets a new status for the component.
 	 * Note that not all statuses will trigger the component to re-render:
-	 * statuses such as unloaded, inactive, and destroyed will only emit events.
+	 * statuses such as `unloaded`, `inactive`, and `destroyed` will only emit events.
 	 *
 	 * @param value
 	 * @emits `componentStatus:{$value}(value: ComponentStatus, oldValue: ComponentStatus)`
 	 * @emits `componentStatusChange(value: ComponentStatus, oldValue: ComponentStatus)`
 	 */
 	set componentStatus(value: ComponentStatus) {
-		const
-			oldValue = this.componentStatus;
+		const oldValue = this.componentStatus;
 
 		if (oldValue === value && value !== 'beforeReady') {
 			return;
@@ -188,7 +204,13 @@ export default abstract class iBlockState extends iBlockMods {
 
 		} else {
 			this.shadowComponentStatusStore = undefined;
-			this.field.set('componentStatusStore', value);
+
+			if (this.meta.fields.componentStatusStore != null) {
+				this.field.getFieldsStore().componentStatusStore = value;
+
+			} else {
+				this.componentStatusStore = value;
+			}
 
 			if (this.isReady && this.dependencies.length > 0) {
 				void this.forceUpdate();
@@ -235,9 +257,11 @@ export default abstract class iBlockState extends iBlockMods {
 	 *
 	 * {@link iBlock.stageProp}
 	 */
-	@computed()
+	@computed({cache: false, dependencies: []})
 	get stage(): CanUndef<Stage> {
-		return this.field.get('stageStore');
+		return this.meta.fields.stageStore != null ?
+			this.field.getFieldsStore().stageStore :
+			this.stageStore;
 	}
 
 	/**
@@ -250,15 +274,20 @@ export default abstract class iBlockState extends iBlockMods {
 	 * @emits `stageChange(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)`
 	 */
 	set stage(value: CanUndef<Stage>) {
-		const
-			oldValue = this.stage;
+		const oldValue = this.stage;
 
 		if (oldValue === value) {
 			return;
 		}
 
 		this.async.clearAll({group: this.stageGroup});
-		this.field.set('stageStore', value);
+
+		if (this.meta.fields.stageStore != null) {
+			this.field.getFieldsStore().stageStore = value;
+
+		} else {
+			this.stageStore = value;
+		}
 
 		if (value != null) {
 			this.emit(`stage:${value}`, value, oldValue);
@@ -278,15 +307,17 @@ export default abstract class iBlockState extends iBlockMods {
 	/**
 	 * A link to the application router
 	 */
+	@computed({cache: false, dependencies: []})
 	get router(): CanUndef<bRouter> {
-		return this.field.get('routerStore', this.r);
+		// @ts-ignore (unsafe)
+		return this.r.routerStore;
 	}
 
 	/**
 	 * A link to the current route object
 	 */
 	get route(): CanUndef<this['r']['CurrentPage']> {
-		return this.field.get('route', this.r);
+		return this.r.route;
 	}
 
 	/**
@@ -312,21 +343,21 @@ export default abstract class iBlockState extends iBlockMods {
 	protected shadowComponentStatusStore?: ComponentStatus;
 
 	/**
-	 * A string value that specifies the logical state in which the component should operate
+	 * A string value specifying the logical state in which the component should operate
 	 * {@link iBlock.stageProp}
 	 */
 	@field({
 		functionalWatching: false,
 		init: (o) => o.sync.link<CanUndef<Stage>>((val) => {
 			o.stage = val;
-			return o.field.get('stageStore');
+			return o.field.getFieldsStore().stageStore;
 		})
 	})
 
 	protected stageStore?: Stage;
 
 	/**
-	 * A string value that indicates which lifecycle hook the component is currently in
+	 * A string value indicating which lifecycle hook the component is currently in
 	 *
 	 * @see https://vuejs.org/guide/essentials/lifecycle.html
 	 * {@link iBlock.hook}
@@ -368,7 +399,7 @@ export default abstract class iBlockState extends iBlockMods {
 	/**
 	 * A function aimed at internationalizing texts within traits.
 	 * Since traits are invoked within the context of components, the standard `i18n` does not operate,
-	 * necessitating the explicit passing of the key set name (trait names).
+	 * requiring the explicit passing of the key set name (trait names).
 	 *
 	 * @param traitName - the name of the trait
 	 * @param text - the text to be internationalized
@@ -389,7 +420,6 @@ export default abstract class iBlockState extends iBlockMods {
 
 	/**
 	 * Returns a promise that will be resolved when the component transitions to the specified component status
-	 *
 	 * {@link Async.promise}
 	 *
 	 * @param status
@@ -419,8 +449,7 @@ export default abstract class iBlockState extends iBlockMods {
 		cbOrOpts?: F | WaitDecoratorOptions,
 		opts?: WaitDecoratorOptions
 	): CanPromise<undefined | ReturnType<F>> {
-		let
-			cb: CanUndef<AnyFunction>;
+		let cb: CanUndef<AnyFunction>;
 
 		if (Object.isFunction(cbOrOpts)) {
 			cb = cbOrOpts;
@@ -435,8 +464,7 @@ export default abstract class iBlockState extends iBlockMods {
 			return wait(status, {...opts, fn: cb}).call(this);
 		}
 
-		let
-			isResolved = false;
+		let isResolved = false;
 
 		const promise = new SyncPromise((resolve) => wait(status, {
 			...opts,
@@ -460,7 +488,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 */
 	@hook('created')
 	hydrateStyles(componentName: string = this.componentName): void {
-		if (!SSR) {
+		if (!SSR || !HYDRATION) {
 			return;
 		}
 
@@ -559,8 +587,7 @@ export default abstract class iBlockState extends iBlockMods {
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
-		const
-			i = this.instance;
+		const i = this.instance;
 
 		this.i18n = i.i18n.bind(this);
 		this.syncStorageState = i.syncStorageState.bind(this);
@@ -604,6 +631,17 @@ export default abstract class iBlockState extends iBlockMods {
 			await this.nextTick();
 			this.ssrRendering = true;
 		}
+	}
+
+	/**
+	 * Initializes modifier event listeners
+	 */
+	@hook('beforeCreate')
+	protected initModEvents(): void {
+		this.sync.mod('stage', ':stageChange', {immediate: true}, () => {
+			const v = this.stage;
+			return v == null ? v : String(v);
+		});
 	}
 
 	/**

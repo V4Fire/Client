@@ -12,10 +12,11 @@ import { saveRawComponentContext } from 'core/component/context';
 import { forkMeta, ComponentMeta } from 'core/component/meta';
 import { initProps } from 'core/component/prop';
 
-import { initDynamicComponentLifeCycle } from 'core/component/functional/helpers';
-
 import type { ComponentInterface } from 'core/component/interface';
 import type { VirtualContextOptions } from 'core/component/functional/interface';
+
+import { initDynamicComponentLifeCycle } from 'core/component/functional/life-cycle';
+import { isComponentEventHandler, isOnceEvent } from 'core/component/functional/context/helpers';
 
 /**
  * Creates a virtual context for the passed functional component
@@ -28,7 +29,7 @@ import type { VirtualContextOptions } from 'core/component/functional/interface'
  */
 export function createVirtualContext(
 	component: ComponentMeta,
-	{parent, props = {}, slots = {}}: VirtualContextOptions
+	{parent, props, slots}: VirtualContextOptions
 ): ComponentInterface {
 	const meta = forkMeta(component);
 	meta.params.functional = true;
@@ -37,42 +38,26 @@ export function createVirtualContext(
 		$props = {},
 		$attrs = {};
 
-	const
-		handlers: Array<[string, boolean, Function]> = [];
+	const handlers: Array<[string, boolean, Function]> = [];
 
 	if (props != null) {
-		const
-			isOnceEvent = /.Once(.|$)/,
-			isDOMEvent = /.(?:Passive|Capture)(.|$)/;
-
-		const isComponentEventHandler = (event: string, handler: unknown): handler is Function => {
-			if (!event.startsWith('on') || isDOMEvent.test(event) || !Object.isFunction(handler)) {
-				return false;
-			}
-
-			return handler.name !== 'withModifiers' && handler.name !== 'withKeys';
-		};
-
 		Object.entries(props).forEach(([name, prop]) => {
-			const
-				normalizedName = name.camelize(false);
+			const normalizedName = name.camelize(false);
 
 			if (normalizedName in meta.props) {
 				$props[normalizedName] = prop;
 
 			} else {
 				if (isComponentEventHandler(name, prop)) {
-					let
-						event = name.slice('on'.length).camelize(false);
+					let event = name.slice('on'.length).camelize(false);
 
-					const
-						once = isOnceEvent.test(name);
+					const isOnce = isOnceEvent.test(name);
 
-					if (once) {
-						event = event.replace(/Once$/, '');
+					if (isOnce) {
+						event = isOnceEvent.replace(event);
 					}
 
-					handlers.push([event, once, prop]);
+					handlers.push([event, isOnce, prop]);
 				}
 
 				$attrs[name] = prop;
@@ -80,8 +65,7 @@ export function createVirtualContext(
 		});
 	}
 
-	let
-		$options: {directives: Dictionary; components: Dictionary};
+	let $options: {directives: Dictionary; components: Dictionary};
 
 	if ('$options' in parent) {
 		const {
@@ -101,11 +85,14 @@ export function createVirtualContext(
 		};
 	}
 
-	const virtualCtx = Object.cast<ComponentInterface['unsafe'] & Dictionary>({
+	const virtualCtx = Object.cast<ComponentInterface & Dictionary>({
 		componentName: meta.componentName,
 
 		meta,
-		instance: Object.cast(meta.instance),
+
+		get instance(): typeof meta['instance'] {
+			return meta.instance;
+		},
 
 		$props,
 		$attrs,
@@ -133,6 +120,8 @@ export function createVirtualContext(
 		}
 	});
 
+	const unsafe = Object.cast<ComponentInterface['unsafe']>(virtualCtx);
+
 	// When extending the context of the original component (e.g., Vue), to avoid conflicts,
 	// we create an object with the original context in the prototype: `V4Context<__proto__: OriginalContext>`.
 	// However, for functional components, this approach is redundant and can lead to memory leaks.
@@ -152,10 +141,10 @@ export function createVirtualContext(
 
 	handlers.forEach(([event, once, handler]) => {
 		if (once) {
-			virtualCtx.$once(event, handler);
+			unsafe.$once(event, handler);
 
 		} else {
-			virtualCtx.$on(event, handler);
+			unsafe.$on(event, handler);
 		}
 	});
 

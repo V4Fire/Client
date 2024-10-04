@@ -7,17 +7,18 @@
  */
 
 import { unwrap } from 'core/object/watch';
+import { getPropertyInfo, V4_COMPONENT, PropertyInfo } from 'core/component';
 
 import type Friend from 'components/friends/friend';
-import iBlock, { getPropertyInfo } from 'components/super/i-block/i-block';
+import type iBlock from 'components/super/i-block/i-block';
 
 import type { KeyGetter } from 'components/friends/field/interface';
 
 /**
- * Sets a new component property by the specified path
+ * Sets a new component property at the specified path
  *
- * @param path - the property path, for instance `foo.bla.bar`
- * @param value - a value to set to the property
+ * @param path - the property path, for instance `foo.bla.bar`, or a property descriptor
+ * @param value - the value to set to the property
  * @param keyGetter - a function that returns the key to set
  *
  * @example
@@ -39,13 +40,13 @@ import type { KeyGetter } from 'components/friends/field/interface';
  * }
  * ```
  */
-export function setField<T = unknown>(this: Friend, path: string, value: T, keyGetter: KeyGetter): T;
+export function setField<T = unknown>(this: Friend, path: string | PropertyInfo, value: T, keyGetter: KeyGetter): T;
 
 /**
- * Sets a new property to the passed object by the specified path
+ * Sets a new property on the passed object at the specified path
  *
- * @param path - the property path, for instance `foo.bla.bar`
- * @param value - a value to set to the property
+ * @param path - the property path, for instance `foo.bla.bar`, or a property descriptor
+ * @param value - the value to set to the property
  * @param [obj] - the object to set the property
  * @param [keyGetter] - a function that returns the key to set
  *
@@ -62,7 +63,7 @@ export function setField<T = unknown>(this: Friend, path: string, value: T, keyG
  */
 export function setField<T = unknown>(
 	this: Friend,
-	path: string,
+	path: string | PropertyInfo,
 	value: T,
 	obj?: Nullable<object>,
 	keyGetter?: KeyGetter
@@ -70,7 +71,7 @@ export function setField<T = unknown>(
 
 export function setField<T = unknown>(
 	this: Friend,
-	path: string,
+	path: string | PropertyInfo,
 	value: T,
 	obj: Nullable<object> = this.ctx,
 	keyGetter?: KeyGetter
@@ -84,41 +85,37 @@ export function setField<T = unknown>(
 		return value;
 	}
 
-	let
-		{ctx} = this;
+	let {ctx} = this;
 
-	let
-		isComponent = false;
+	let isComponent = false;
 
-	if ((<Dictionary>obj).instance instanceof iBlock) {
+	if (typeof obj === 'object' && V4_COMPONENT in obj) {
 		ctx = (<iBlock>obj).unsafe;
 		isComponent = true;
 	}
 
 	let
-		sync,
+		sync: CanNull<() => T> = null,
 		needSetToWatch = isComponent;
 
 	let
 		ref = obj,
-		chunks;
+		chunks: string[];
 
 	if (isComponent) {
-		const
-			info = getPropertyInfo(path, ctx);
+		const info = Object.isString(path) ? getPropertyInfo(path, Object.cast(ctx)) : path;
 
 		ctx = Object.cast(info.ctx);
 		ref = ctx;
 
-		chunks = info.path.split('.');
+		chunks = info.path.includes('.') ? info.path.split('.') : [info.path];
 
 		if (info.accessor != null) {
 			needSetToWatch = false;
 			chunks[0] = info.accessor;
 
 		} else {
-			const
-				isReady = !ctx.lfc.isBeforeCreate();
+			const isReady = !ctx.lfc.isBeforeCreate();
 
 			const
 				isSystem = info.type === 'system',
@@ -138,7 +135,7 @@ export function setField<T = unknown>(
 					// Otherwise, we must synchronize these properties between the proxy object and the component instance
 					} else {
 						const name = chunks[0];
-						sync = () => Object.set(ctx.$systemFields, [name], ref[name]);
+						sync = () => ctx.$systemFields[name] = ref[name];
 					}
 
 				} else if (ctx.isFunctionalWatchers) {
@@ -148,7 +145,7 @@ export function setField<T = unknown>(
 					// we must synchronize these properties between the proxy object and the component instance
 					if (unwrap(ref) === ref) {
 						const name = chunks[0];
-						sync = () => Object.set(ctx, [name], ref[name]);
+						sync = () => ctx[name] = ref[name];
 					}
 
 				} else {
@@ -158,38 +155,69 @@ export function setField<T = unknown>(
 		}
 
 	} else {
-		chunks = path.split('.');
-	}
-
-	let
-		prop;
-
-	for (let i = 0; i < chunks.length; i++) {
-		prop = keyGetter ? keyGetter(chunks[i], ref) : chunks[i];
-
-		if (i + 1 === chunks.length) {
-			break;
+		if (!Object.isString(path)) {
+			path = path.originalPath;
 		}
 
-		let
-			newRef = Object.get(ref, [prop]);
+		chunks = path.includes('.') ? path.split('.') : [path];
+	}
 
-		if (newRef == null || typeof newRef !== 'object') {
-			newRef = isNaN(Number(chunks[i + 1])) ? {} : [];
+	let prop = keyGetter ? <PropertyKey>keyGetter(chunks[0], ref) : chunks[0];
 
-			if (needSetToWatch) {
-				ctx.$set(ref, prop, newRef);
+	if (chunks.length > 1) {
+		chunks.some((chunk, i) => {
+			prop = keyGetter ? <PropertyKey>keyGetter(chunk, ref) : chunk;
+
+			if (i + 1 === chunks.length) {
+				return true;
+			}
+
+			type AnyMap = Map<any, any>;
+
+			const isRefMap = Object.isMap(ref);
+
+			let newRef: unknown = isRefMap ? (<AnyMap>ref).get(prop) : ref[prop];
+
+			if (newRef == null || typeof newRef !== 'object') {
+				newRef = isNaN(Number(chunks[i + 1])) ? {} : [];
+
+				if (needSetToWatch) {
+					ctx.$set(ref, prop, newRef);
+
+				} else if (isRefMap) {
+					(<AnyMap>ref).set(prop, newRef);
+
+				} else {
+					ref[prop] = newRef;
+				}
+			}
+
+			if (isRefMap) {
+				ref = (<AnyMap>ref).get(prop);
 
 			} else {
-				Object.set(ref, [prop], newRef);
+				ref = ref[prop];
 			}
-		}
 
-		ref = Object.get(ref, [prop])!;
+			return false;
+		});
 	}
 
-	if (!needSetToWatch || !Object.isArray(ref) && Object.has(ref, [prop])) {
-		Object.set(ref, [prop], value);
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+	if (ref == null) {
+		return value;
+	}
+
+	if (Object.isMap(ref)) {
+		if (!needSetToWatch || ref.has(prop)) {
+			ref.set(prop, value);
+
+		} else {
+			ctx.$set(ref, prop, value);
+		}
+
+	} else if (!needSetToWatch || !Object.isArray(ref) && prop in ref) {
+		ref[prop] = value;
 
 	} else {
 		ctx.$set(ref, prop, value);

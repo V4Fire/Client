@@ -11,7 +11,7 @@ import type { ComponentInterface, ComponentField } from 'core/component/interfac
 
 /**
  * Initializes all fields of a given component instance.
- * This function returns a dictionary that contains the names of the initialized fields as keys,
+ * This function returns a dictionary containing the names of the initialized fields as keys,
  * with their corresponding initialized values as values.
  *
  * @param from - the dictionary where is stored the passed component fields, like `$fields` or `$systemFields`
@@ -32,12 +32,10 @@ export function initFields(
 		instance
 	} = unsafe.meta;
 
-	const
-		isFunctional = params.functional === true;
+	const isFunctional = params.functional === true;
 
 	sortFields(from).forEach(([name, field]) => {
-		const
-			sourceVal = store[name];
+		const sourceVal = store[name];
 
 		const canSkip =
 			field == null || sourceVal !== undefined ||
@@ -51,8 +49,7 @@ export function initFields(
 
 		unsafe.$activeField = name;
 
-		let
-			val: unknown;
+		let val: unknown;
 
 		if (field.init != null) {
 			val = field.init(component.unsafe, store);
@@ -62,16 +59,23 @@ export function initFields(
 			if (store[name] === undefined) {
 				// To prevent linking to the same type of component for non-primitive values,
 				// it's important to clone the default value from the component constructor.
-				val = field.default !== undefined ? field.default : Object.fastClone(instance[name]);
+				if (field.default !== undefined) {
+					val = field.default;
+
+				} else {
+					const defValue = instance[name];
+					val = Object.isPrimitive(defValue) ? defValue : Object.fastClone(defValue);
+				}
+
 				store[name] = val;
 			}
 
 		} else {
 			store[name] = val;
 		}
-
-		unsafe.$activeField = undefined;
 	});
+
+	unsafe.$activeField = undefined;
 
 	return store;
 }

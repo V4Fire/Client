@@ -904,7 +904,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			const
 				js = this.config.extend({}, base),
-				ss = this.config.extend({}, base);
+				ss = this.config.extend({}, base, {
+					jsc: {
+						externalHelpers: false
+					}
+				});
 
 			return {js, ts, ss};
 		}

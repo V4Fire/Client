@@ -9,6 +9,10 @@
 import Friend, { fakeMethods } from 'components/friends/friend';
 import iBlock from 'components/super/i-block/i-block';
 
+//#if runtime has dummyComponents
+import('components/friends/state/test/b-friends-state-dummy');
+//#endif
+
 let
 	baseSyncRouterState;
 
@@ -43,7 +47,7 @@ class State extends Friend {
 	get needRouterSync(): boolean {
 		// @ts-ignore (access)
 		baseSyncRouterState ??= iBlock.prototype.syncRouterState;
-		return baseSyncRouterState !== this.instance.syncRouterState;
+		return baseSyncRouterState !== Object.cast<typeof this.instance['unsafe']>(this.instance).syncRouterState;
 	}
 
 	/** {@link iBlock.instance} */

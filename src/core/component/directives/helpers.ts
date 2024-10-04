@@ -61,11 +61,10 @@ export function getDirectiveComponent(vnode: Nullable<VNode>): CanNull<Component
 		return Object.cast(vnode.virtualComponent);
 	}
 
-	const
-		component = vnode.component?.['ctx'];
+	const component = vnode.component?.['ctx'];
 
 	if (component != null) {
-		return getComponentContext(component);
+		return getComponentContext(component, true).unsafe;
 	}
 
 	return null;

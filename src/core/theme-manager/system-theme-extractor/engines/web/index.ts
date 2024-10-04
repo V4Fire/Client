@@ -29,7 +29,7 @@ export class SystemThemeExtractorWeb implements SystemThemeExtractor {
 	protected readonly emitter!: EventEmitterLikeP;
 
 	/** {@link Async} */
-	protected readonly async: Async<this> = new Async(this);
+	protected readonly async: Async = new Async();
 
 	constructor() {
 		if (SSR) {

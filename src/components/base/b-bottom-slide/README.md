@@ -97,8 +97,7 @@ __b-modal.ts__
 ```typescript
 @component()
 export default class bModal extends iBlock {
-  /** @override */
-  protected $refs!: {
+  declare protected readonly $refs: iBlock['$refs'] & {
     bottomSlide: bBottomSlide;
   };
 
@@ -135,8 +134,7 @@ __p-root.ts__
 ```typescript
 @component({root: true})
 export default class pV4ComponentsDemo extends iStaticPage {
-  /** @override */
-  protected $refs!: {
+  declare protected readonly $refs: iStaticPage['$refs'] & {
     modal: bModal;
   };
 
@@ -188,8 +186,7 @@ export default class bModal extends iBlock {
   @field()
   text?: string;
 
-  /** @override */
-  protected $refs!: {
+  declare protected readonly $refs: iBlock['$refs'] & {
     bottomSlide: HTMLElement;
   };
 

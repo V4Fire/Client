@@ -14,7 +14,6 @@ import type { ComponentInterface } from 'core/component/interface';
 
 /**
  * Initializes the "beforeDataCreate" state to the specified component instance
- *
  * @param component
  */
 export function beforeDataCreateState(component: ComponentInterface): void {

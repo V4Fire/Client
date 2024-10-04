@@ -307,7 +307,7 @@ export function object(
 			isCustomWatcher = true;
 
 		} else {
-			info = getPropertyInfo(watchPath, this.ctx);
+			info = getPropertyInfo(watchPath, this.component);
 
 			if (info.type === 'mounted') {
 				isMountedWatcher = true;
@@ -394,8 +394,7 @@ export function object(
 		}
 
 		{
-			let
-				key;
+			let key;
 
 			if (isMountedWatcher) {
 				const o = info?.originalPath;

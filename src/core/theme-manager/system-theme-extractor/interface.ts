@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { AsyncOptions, ClearOptions } from 'core/async/modules/base/interface';
+import type { AsyncOptions, ClearOptions } from 'core/async';
 
 /**
  * An API for retrieving and monitoring the system's visual appearance theme

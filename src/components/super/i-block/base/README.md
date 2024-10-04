@@ -1,10 +1,10 @@
 # components/super/i-block/base
 
-This module offers a unified API for working with components
+This module offers a unified API for working with components.
 
 ## API
 
-### Associated types
+### Associated Types
 
 The class declares two associated types, **Root** and **Component**, which are used to specify the types of components.
 
@@ -18,7 +18,7 @@ import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 @component()
 export default class bExample extends iBlock {
-  override readonly Root!: iStaticPage;
+  declare readonly Root: iStaticPage;
 }
 ```
 
@@ -31,7 +31,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock {
-  override readonly Component!: iBlock;
+  declare readonly Component: iBlock;
 }
 ```
 
@@ -141,7 +141,7 @@ A link to the root component.
 
 #### rootAttrs
 
-A dictionary with additional attributes for the component's root element.
+A dictionary containing additional attributes for the component's root element.
 
 #### t
 
@@ -172,11 +172,11 @@ export default class bExample extends iBlock {
 
 #### $refs
 
-A dictionary with references to component elements that have the "ref" attribute.
+A dictionary containing references to component elements that have the `ref` attribute.
 
 #### $slots
 
-A dictionary with available render slots.
+A dictionary containing available render slots.
 
 #### $root
 
@@ -277,7 +277,7 @@ as it automatically synchronizes with the `keep-alive` mode or a specific compon
 
 #### watch
 
-Sets a watcher to the component/object property or event by the specified path.
+Sets a watcher to the component/object property or event at the specified path.
 
 When you observe changes to certain properties,
 the event handler function can accept a second argument that references the old value of the property.
@@ -339,8 +339,8 @@ An empty reference '' is a reference to the component itself.
 Also, if you are listening to an event, you can control when to start listening to the event by using special
 characters at the beginning of the path string:
 
-1. `'!'` - start listening to an event on the "beforeCreate" hook, e.g.: `'!rootEmitter:reset'`;
-2. `'?'` - start listening to an event on the "mounted" hook, e.g.: `'?$el:click'`.
+1. `'!'` - start listening to an event on the "beforeCreate" hook, e.g., `'!rootEmitter:reset'`;
+2. `'?'` - start listening to an event on the "mounted" hook, e.g., `'?$el:click'`.
 
 By default, all events start listening on the "created" hook.
 

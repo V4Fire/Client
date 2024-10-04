@@ -15,15 +15,15 @@ export * from 'components/dummies/b-dummy/b-dummy';
 
 @component()
 export default class bSuperIBlockDestructorDummy extends bDummy {
-	override $refs!: bDummy['$refs'] & {
-		child?: CanArray<iBlock>;
-	};
-
 	@field()
 	content: boolean = true;
 
 	@system()
 	store: iBlock[] = [];
+
+	declare protected readonly $refs: bDummy['$refs'] & {
+		child?: CanArray<iBlock>;
+	};
 
 	pushToStore(component: iBlock): void {
 		this.store.push(component);

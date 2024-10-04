@@ -16,7 +16,8 @@ const
 	$$ = symbolGenerator();
 
 export default class Animation extends Friend {
-	override readonly C!: bBottomSlide;
+	/** @inheritDoc */
+	declare readonly C: bBottomSlide;
 
 	/**
 	 * True if all animations need to use `requestAnimationFrame`

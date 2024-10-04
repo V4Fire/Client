@@ -133,7 +133,8 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 		]
 	};
 
-	protected override readonly $refs!: iButtonProps['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iButtonProps['$refs'] & {
 		button: HTMLButtonElement;
 		file?: HTMLInputElement;
 		dropdown?: Element;
