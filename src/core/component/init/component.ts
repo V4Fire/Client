@@ -41,6 +41,7 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
 
 		if (parentComponent) {
 			const p = componentParams.get(parentComponent);
+			initEmitter.emit('parent', `registerComponent.${p?.layer}.${parentName}`);
 			parentName = p?.name;
 		}
 	}
@@ -76,17 +77,14 @@ export function registerComponent(name: CanUndef<string>, layer?: string): CanNu
 		return null;
 	}
 
-<<<<<<< HEAD
 	const component = components.get(name);
 
 	let componentName = (component?.componentName || name).replaceAll('-functional', '');	
+	console.log('EMITT:', `registerComponent.${component?.layer || layer}.${componentName}`);
 	initEmitter.emit(`registerComponent.${component?.layer || layer}.${componentName}`);
 
 	const
 		regComponent = componentRegInitializers[name];
-=======
-	const regComponent = componentRegInitializers[name];
->>>>>>> 90b6fe5867f089d0a8e10967bc1eac085f961718
 
 	if (regComponent != null) {
 		regComponent.forEach((reg) => reg());

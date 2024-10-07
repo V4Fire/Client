@@ -13,12 +13,13 @@ exports.invokeByRegisterEvent = function(script, layerName, componentName) {
 	}
 
 	return `\n
-		{
+		if (globalThis.initEmitter == null) {
 			const {initEmitter} = require('core/component/event');
-			initEmitter.once('registerComponent.${layerName}.${componentName}', () => {
-				console.log('registerComponent.${layerName}.${componentName}');
-				${script}
-			});
-		}\n
+			globalThis.initEmitter = initEmitter;
+		}
+		globalThis.initEmitter.once('registerComponent.${layerName}.${componentName}', () => {
+			console.log('invoked from handler', 'registerComponent.${layerName}.${componentName}');
+			${script}
+		});\n
 	`;
 }

@@ -120,10 +120,10 @@ export function component(opts?: ComponentOptions): Function {
 			!Object.isTruly(componentFullName);
 
 		if (needRegisterImmediate) {
-			registerComponent(componentFullName);
+			registerComponent(componentFullName, componentInfo.layer);
 
 		} else {
-			requestIdleCallback(registerComponent.bind(null, componentFullName));
+			requestIdleCallback(registerComponent.bind(null, componentFullName, componentInfo.layer));
 		}
 
 		// If we have a smart component,

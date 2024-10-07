@@ -261,7 +261,7 @@ async function buildProjectGraph() {
 						importScript = `require('${entryPath}');\n`;
 					}
 
-					str += !isComponentPath(entryPath) ?
+					str += "/** GRAP CO */" + !isComponentPath(entryPath) ?
 						importScript :
 						invokeByRegisterEvent(importScript, getLayerName(component?.logic), name);
 				}
