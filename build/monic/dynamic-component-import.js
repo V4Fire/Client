@@ -12,9 +12,13 @@ const
 	{typescript, webpack, webpack: {ssr}} = require('@config/config'),
 	{commentModuleExpr: commentExpr} = include('build/const');
 
+const {
+	invokeByRegisterEvent,
+	getLayerName
+} = include('build/helpers');
+
 const
-	graph = include('build/graph'),
-	{invokeByRegisterEvent, getLayerName} = include('build/helpers');
+	graph = include('build/graph');
 
 const importRgxp = new RegExp(
 	`\\bimport${commentExpr}\\((${commentExpr})(["'])((?:.*?[\\\\/]|)([bp]-[^.\\\\/"')]+)+)\\2${commentExpr}\\)`,
@@ -63,16 +67,11 @@ module.exports = async function dynamicComponentImportReplacer(str, filePath) {
 
 			} else {
 				if (isESImport) {
-					// decl = `import(${magicComments} '${fullPath}')`;
-					decl = `new Promise((resolve) => {
-						${invokeByRegisterEvent(`resolve(import(${magicComments} '${fullPath}'))`, getLayerName(filePath), resourceName)}
-					})`;
+					const importExpr = `import(${magicComments} '${fullPath}')`;
+					decl = `new Promise(function (r) {${invokeByRegisterEvent(`r(${importExpr})`, getLayerName(filePath), resourceName)}})`;
 
 				} else {
-					// decl = `new Promise(function (r) { return r(require('${fullPath}')); })`; // сделать резолв внутри обработчика!!!!!!!
-					decl = `new Promise((resolve) => {
-						${invokeByRegisterEvent(`resolve(require('${fullPath}'))`, getLayerName(filePath), resourceName)}
-					})`;
+					decl = `new Promise(function (r) { ${invokeByRegisterEvent(`r(require('${fullPath}'));`, getLayerName(filePath), resourceName)} })`; // сделать резолв внутри обработчика!!!!!!!
 				}
 
 				decl += '.catch(function (err) { stderr(err) })';
@@ -84,20 +83,23 @@ module.exports = async function dynamicComponentImportReplacer(str, filePath) {
 		{
 			const
 				tplPath = `${fullPath}.ss`,
-				regTpl = `function (module) { ${invokeByRegisterEvent(`TPLS['${resourceName}'] = module${isESImport ? '.default' : ''}['${resourceName}'];`, getLayerName(filePath), resourceName)} return module; }`;
+				regTpl = `function (module) { TPLS['${resourceName}'] = module${isESImport ? '.default' : ''}['${resourceName}']; return module; }`;
 
 			let
 				decl;
 
 			if (ssr) {
-				decl = `(${regTpl})(require('${tplPath}'))`;
+				decl = invokeByRegisterEvent(`(${regTpl})(require('${tplPath}'))`, getLayerName(filePath), resourceName);
 
 			} else {
 				if (isESImport) {
-					decl = `import(${magicComments} '${tplPath}').then(${regTpl})`;
+					const
+						importExpr = `import(${magicComments} '${tplPath}')`,
+						promise = `new Promise(function (r) {${invokeByRegisterEvent(`r(${importExpr})`, getLayerName(filePath), resourceName)}})`;
+					decl = `${promise}.then(${regTpl})`;
 
 				} else {
-					decl = `new Promise(function (r) { return r(require('${tplPath}')); }).then(${regTpl})`;
+					decl = `new Promise(function (r) { ${invokeByRegisterEvent(`r(require('${tplPath}'));`, getLayerName(filePath), resourceName)} }).then(${regTpl})`;
 				}
 
 				decl += '.catch(function (err) { stderr(err) })';
@@ -117,15 +119,9 @@ module.exports = async function dynamicComponentImportReplacer(str, filePath) {
 
 			if (ssr || isESImport) {
 				decl = `import(${magicComments} '${stylPath}')`;
-				// decl = `new Promise((resolve) => {
-				// 	${invokeByRegisterEvent(`resolve(import(${magicComments} '${stylPath}'))`, resourceName)}
-				// })`;
 
 			} else {
 				decl = `new Promise(function (r) { return r(require('${stylPath}')); })`;
-				// decl = `new Promise((resolve) => {
-				// 	${invokeByRegisterEvent(`resolve(require('${stylPath}'))`, resourceName)}
-				// })`;
 			}
 
 			if (ssr) {
@@ -140,7 +136,6 @@ module.exports = async function dynamicComponentImportReplacer(str, filePath) {
 			imports[0] = `TPLS['${resourceName}'] ? ${(imports[0])} : ${imports[0]}.then(${decl}, function (err) { stderr(err); return ${decl}(); })`;
 		}
 
-		// return invokeByRegisterEvent(`Promise.all([${imports.join(',')}])`, resourceName); //вызывает синтакс. ошибки, некоторые результаты импортов присваиваются переменным :(
 		return `Promise.all([${imports.join(',')}])`;
 	});
 };

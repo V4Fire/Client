@@ -224,7 +224,7 @@ async function buildProjectGraph() {
 						if (!usedLibs.has(el)) {
 							usedLibs.add(el);
 							
-							str += `require('${el}');\n`;
+							str += invokeByRegisterEvent(`require('${el}');\n`, getLayerName(logic), component.name);
 						}
 					});
 				}
@@ -232,10 +232,6 @@ async function buildProjectGraph() {
 				const needRequireAsLogic = component ?
 					logic :
 					/^$|^\.(?:js|ts)(?:\?|$)/.test(path.extname(name));
-
-				const isComponentPath = (path) =>
-					new RegExp(`\\/(${validators.blockTypeList.join('|')})-.+?\\/?`)
-					.test(path);
 
 				if (needRequireAsLogic) {
 					let
@@ -261,9 +257,7 @@ async function buildProjectGraph() {
 						importScript = `require('${entryPath}');\n`;
 					}
 
-					str += "/** GRAP CO */" + !isComponentPath(entryPath) ?
-						importScript :
-						invokeByRegisterEvent(importScript, getLayerName(component?.logic), name);
+					str += importScript;
 				}
 
 				return str;
