@@ -9,8 +9,6 @@
 import test from 'tests/config/unit/test';
 import { Component, RequestInterceptor } from 'tests/helpers';
 
-import type bSuperIDataEffectDummy from 'components/super/i-data/test/b-super-i-data-effect-dummy/b-super-i-data-effect-dummy';
-
 test.describe('<i-data> component', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
@@ -22,9 +20,8 @@ test.describe('<i-data> component', () => {
 			.response(200, {root: true}, {delay: 100})
 			.start();
 
-		const target = await Component.createComponent<bSuperIDataEffectDummy>(page, 'b-dummy', {
+		const target = await Component.createComponent(page, 'b-dummy', {
 			attrs: {
-				'data-id': 'target',
 				dataProvider: 'Provider'
 			}
 		});
