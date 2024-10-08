@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added the mock agent itself in `SpyObject.agent` `tests/helpers/mock`
+* Added `JSHandle` representing the mock agent in `SpyObject.handle` `tests/helpers/mock`
 
 #### :bug: Bug Fix
 

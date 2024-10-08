@@ -33,7 +33,7 @@ test.describe('<i-data> component', () => {
 			ctx.on('onComponentStatusChange', mock);
 
 			ctx.unsafe.$destroy();
-		}, mockStatusChange.agent);
+		}, mockStatusChange.handle);
 
 		test.expect(await mockStatusChange.calls).toEqual([['destroyed', 'loading']]);
 	});

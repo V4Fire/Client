@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added the mock agent itself in `SpyObject.agent`
+* Added `JSHandle` representing the mock agent in `SpyObject.handle`
 
 ## v4.0.0 (2023-04-19)
 
