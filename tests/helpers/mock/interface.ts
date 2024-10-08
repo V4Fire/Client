@@ -14,6 +14,11 @@ import type { ModuleMocker } from 'jest-mock';
  */
 export interface SpyObject {
 	/**
+	 * The spy object itself.
+	 */
+	readonly agent: JSHandle<ReturnType<ModuleMocker['fn']> | ReturnType<ModuleMocker['spyOn']>>;
+
+	/**
 	 * The array of arguments passed to the spy function on each call.
 	 */
 	readonly calls: Promise<any[][]>;

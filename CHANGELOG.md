@@ -13,9 +13,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2024-10-??)
 
+#### :rocket: New Feature
+
+* Added the mock agent itself in `SpyObject.agent` `tests/helpers/mock`
+
 #### :bug: Bug Fix
 
-* Fixed an issue with updating the `componentStatus` after destroying the component `components/super/i-data`
+* Fixed an issue with updating the `componentStatus` after destroying the component `iData`
 
 ## v4.0.0-beta.142 (2024-10-04)
 

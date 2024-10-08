@@ -8,6 +8,7 @@
 
 import test from 'tests/config/unit/test';
 import { Component, RequestInterceptor } from 'tests/helpers';
+import { createMockFn } from 'tests/helpers/mock';
 
 test.describe('<i-data> component', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -26,14 +27,14 @@ test.describe('<i-data> component', () => {
 			}
 		});
 
-		const mockStatusChange = await target.evaluateHandle(() => jestMock.mock());
+		const mockStatusChange = await createMockFn(page, (...args) => args);
 
-		await target.evaluate((ctx, mockStatusChange) => {
-			ctx.on('onComponentStatusChange', mockStatusChange);
+		await target.evaluate((ctx, mock) => {
+			ctx.on('onComponentStatusChange', mock);
 
 			ctx.unsafe.$destroy();
-		}, mockStatusChange);
+		}, mockStatusChange.agent);
 
-		test.expect(await mockStatusChange.evaluate((fn) => fn.mock.calls)).toEqual([['destroyed', 'loading']]);
+		test.expect(await mockStatusChange.calls).toEqual([['destroyed', 'loading']]);
 	});
 });
