@@ -14,7 +14,7 @@ import type { ModuleMocker } from 'jest-mock';
  */
 export interface SpyObject {
 	/**
-	 * The {@link JSHandle} representing the spy object.
+	 * The {@link JSHandle} representing the spy object
 	 */
 	readonly handle: JSHandle<ReturnType<ModuleMocker['fn']> | ReturnType<ModuleMocker['spyOn']>>;
 
