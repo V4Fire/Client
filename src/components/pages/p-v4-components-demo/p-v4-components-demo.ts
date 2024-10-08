@@ -51,4 +51,11 @@ export default class pV4ComponentsDemo extends iStaticPage {
 			this.stage = decodeURIComponent(matches[1]);
 		}
 	}
+
+	/**
+	 * Название активной страницы
+	 */
+	override get activePage(): CanUndef<string> {
+		return this.route && this.field.get<string>('route.meta.component');
+	}
 }

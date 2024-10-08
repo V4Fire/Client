@@ -36,11 +36,7 @@ package('p-v4-components-demo')
 		'b-hidden-input',
 		'b-textarea',
 		'b-select',
-		'b-select-date',
-
-		'p-v4-dynamic-page1',
-		'p-v4-dynamic-page2',
-		'p-v4-dynamic-page3'
+		'b-select-date'
 	)
 
 	.libs(

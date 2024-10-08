@@ -414,8 +414,15 @@ export default class bDynamicPage extends iDynamicPage {
 
 				if (pageElFromCache == null) {
 					const handler = () => {
+						void that.router?.push('page2');
+						console.log(performance.now(), 'async render finished for route:', that.route?.name);
+
 						if (!newPageStrategy.isLoopback) {
-							return SyncPromise.resolve(that.component).then((c) => c.activate(true));
+
+							return SyncPromise.resolve(that.component).then((c) => {
+								console.log(performance.now(), 'activating', c.componentName);
+								c.activate(true);
+							});
 						}
 					};
 

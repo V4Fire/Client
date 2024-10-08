@@ -15,5 +15,7 @@ import iDynamicPage, { component } from 'components/super/i-dynamic-page/i-dynam
 
 export * from 'components/super/i-dynamic-page/i-dynamic-page';
 
+console.log(performance.now(), 'import page1');
+
 @component()
 export default class pV4DynamicPage1 extends iDynamicPage {}

@@ -9,5 +9,20 @@
 import type { StaticRoutes } from 'components/base/b-router/b-router';
 
 export default <StaticRoutes>{
-
+	page1: {
+		component: 'p-v4-dynamic-page1',
+		path: 'page1',
+		default: true,
+		load: () => import('components/pages/p-v4-dynamic-page1')
+	},
+	page2: {
+		component: 'p-v4-dynamic-page2',
+		path: 'page2',
+		load: () => import('components/pages/p-v4-dynamic-page2')
+	},
+	page3: {
+		component: 'p-v4-dynamic-page3',
+		path: 'page3',
+		load: () => import('components/pages/p-v4-dynamic-page3')
+	}
 };
