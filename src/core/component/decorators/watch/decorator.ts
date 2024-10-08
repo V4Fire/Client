@@ -10,13 +10,7 @@ import { createComponentDecorator, normalizeFunctionalParams } from 'core/compon
 
 import type { PartDecorator } from 'core/component/decorators/interface';
 
-import type {
-
-	DecoratorWatcher,
-	DecoratorMethodWatcher,
-	DecoratorFieldWatcher
-
-} from 'core/component/decorators/watch/interface';
+import type { DecoratorFieldWatcher, DecoratorMethodWatcher } from 'core/component/decorators/watch/interface';
 
 /**
  * Attaches a watcher of a component property/event to a component method or property.
@@ -128,8 +122,8 @@ import type {
  *
  * @param watcher - parameters for observation
  */
-export function watch(watcher: DecoratorWatcher): PartDecorator {
-	return createComponentDecorator(({meta}, key, desc?) => {
+export function watch(watcher: DecoratorFieldWatcher | DecoratorMethodWatcher): PartDecorator {
+	return createComponentDecorator(({meta}, key, desc) => {
 		if (desc == null) {
 			decorateField();
 
