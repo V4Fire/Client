@@ -8,6 +8,8 @@
 
 import { createComponentDecorator, normalizeFunctionalParams } from 'core/component/decorators/helpers';
 
+import type { ComponentProp, ComponentField, ComponentMethod } from 'core/component/interface';
+
 import type { PartDecorator } from 'core/component/decorators/interface';
 
 import type { DecoratorFieldWatcher, DecoratorMethodWatcher } from 'core/component/decorators/watch/interface';
@@ -134,7 +136,7 @@ export function watch(watcher: DecoratorFieldWatcher | DecoratorMethodWatcher): 
 		function decorateMethod() {
 			const methodWatchers = Array.toArray(<DecoratorMethodWatcher>watcher);
 
-			const method = meta.methods[key] ?? {
+			const method: ComponentMethod = meta.methods[key] ?? {
 				src: meta.componentName,
 				fn: Object.throw,
 				watchers: {}
@@ -169,10 +171,8 @@ export function watch(watcher: DecoratorFieldWatcher | DecoratorMethodWatcher): 
 				store = meta.systemFields;
 			}
 
-			const field = store[key] ?? {
+			const field: ComponentProp | ComponentField = store[key] ?? {
 				src: meta.componentName,
-				handler: Object.throw,
-				watchers: new Map(),
 				meta: {}
 			};
 
