@@ -37,9 +37,6 @@ export async function createApp(
 	state: State,
 	layer?: string
 ): Promise<App> {
-	console.log({
-		layer
-	})
 	initEmitter.emit(`registerComponent.${layer}.${rootComponentName}`);
 
 	const rootComponentParams = await getRootComponentParams(rootComponentName);

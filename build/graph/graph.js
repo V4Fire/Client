@@ -42,7 +42,7 @@ const {
 	isStandalone,
 	tracer,
 	invokeByRegisterEvent,
-	getLayerName
+	getOriginLayerFromPath
 } = include('build/helpers');
 
 /**
@@ -224,7 +224,7 @@ async function buildProjectGraph() {
 						if (!usedLibs.has(el)) {
 							usedLibs.add(el);
 							
-							str += invokeByRegisterEvent(`require('${el}');\n`, getLayerName(logic), component.name);
+							str += invokeByRegisterEvent(`require('${el}');\n`, getOriginLayerFromPath(component.index), name);
 						}
 					});
 				}
@@ -249,6 +249,11 @@ async function buildProjectGraph() {
 
 					const entryPath = getEntryPath(entry);
 					let importScript;
+
+					const
+						componentName = component?.name ?? name,
+						isComponent = new RegExp(`\(${validators.blockTypeList.join('|')})-.+?/?`).test(componentName);
+
 					
 					if (webpack.ssr) {
 						importScript = `Object.assign(module.exports, require('${entryPath}'));\n`;
@@ -257,7 +262,9 @@ async function buildProjectGraph() {
 						importScript = `require('${entryPath}');\n`;
 					}
 
-					str += importScript;
+					str += isComponent ? 
+						invokeByRegisterEvent(importScript, getOriginLayerFromPath(entry), componentName) :
+						importScript;
 				}
 
 				return str;

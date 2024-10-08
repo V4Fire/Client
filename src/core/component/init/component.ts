@@ -41,7 +41,7 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
 
 		if (parentComponent) {
 			const p = componentParams.get(parentComponent);
-			initEmitter.emit('parent', `registerComponent.${p?.layer}.${parentName}`);
+			initEmitter.emit(`registerComponent.${p?.layer}.${parentName}`);
 			parentName = p?.name;
 		}
 	}
@@ -80,8 +80,7 @@ export function registerComponent(name: CanUndef<string>, layer?: string): CanNu
 	const component = components.get(name);
 
 	let componentName = (component?.componentName || name).replaceAll('-functional', '');	
-	console.log('EMITT:', `registerComponent.${component?.layer || layer}.${componentName}`);
-	initEmitter.emit(`registerComponent.${component?.layer || layer}.${componentName}`);
+	initEmitter.emit(`registerComponent.${layer}.${componentName}`);
 
 	const
 		regComponent = componentRegInitializers[name];

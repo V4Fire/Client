@@ -14,7 +14,7 @@ const
 
 const {
 	invokeByRegisterEvent,
-	getLayerName
+	getOriginLayerFromPath
 } = include('build/helpers');
 
 const
@@ -63,15 +63,15 @@ module.exports = async function dynamicComponentImportReplacer(str, filePath) {
 				decl;
 
 			if (ssr) {
-				decl = `require('${fullPath}')`;
+				decl = invokeByRegisterEvent(`require('${fullPath}')`, getOriginLayerFromPath(filePath), resourceName);
 
 			} else {
 				if (isESImport) {
 					const importExpr = `import(${magicComments} '${fullPath}')`;
-					decl = `new Promise(function (r) {${invokeByRegisterEvent(`r(${importExpr})`, getLayerName(filePath), resourceName)}})`;
+					decl = `new Promise(function (r) {${invokeByRegisterEvent(`r(${importExpr})`, getOriginLayerFromPath(filePath), resourceName)}})`;
 
 				} else {
-					decl = `new Promise(function (r) { ${invokeByRegisterEvent(`r(require('${fullPath}'));`, getLayerName(filePath), resourceName)} })`; // сделать резолв внутри обработчика!!!!!!!
+					decl = `new Promise(function (r) { ${invokeByRegisterEvent(`r(require('${fullPath}'));`, getOriginLayerFromPath(filePath), resourceName)} })`;
 				}
 
 				decl += '.catch(function (err) { stderr(err) })';
@@ -83,23 +83,23 @@ module.exports = async function dynamicComponentImportReplacer(str, filePath) {
 		{
 			const
 				tplPath = `${fullPath}.ss`,
-				regTpl = `function (module) { TPLS['${resourceName}'] = module${isESImport ? '.default' : ''}['${resourceName}']; return module; }`;
+				regTpl = `function (module) { ${invokeByRegisterEvent(`TPLS['${resourceName}'] = module${isESImport ? '.default' : ''}['${resourceName}'];`, getOriginLayerFromPath(filePath), resourceName)} return module; }`;
 
 			let
 				decl;
 
 			if (ssr) {
-				decl = invokeByRegisterEvent(`(${regTpl})(require('${tplPath}'))`, getLayerName(filePath), resourceName);
+				decl = invokeByRegisterEvent(`(${regTpl})(require('${tplPath}'))`, getOriginLayerFromPath(filePath), resourceName);
 
 			} else {
 				if (isESImport) {
 					const
 						importExpr = `import(${magicComments} '${tplPath}')`,
-						promise = `new Promise(function (r) {${invokeByRegisterEvent(`r(${importExpr})`, getLayerName(filePath), resourceName)}})`;
+						promise = `new Promise(function (r) {${invokeByRegisterEvent(`r(${importExpr})`, getOriginLayerFromPath(filePath), resourceName)}})`;
 					decl = `${promise}.then(${regTpl})`;
 
 				} else {
-					decl = `new Promise(function (r) { ${invokeByRegisterEvent(`r(require('${tplPath}'));`, getLayerName(filePath), resourceName)} }).then(${regTpl})`;
+					decl = `new Promise(function (r) { ${invokeByRegisterEvent(`r(require('${tplPath}'));`, getOriginLayerFromPath(filePath), resourceName)} }).then(${regTpl})`;
 				}
 
 				decl += '.catch(function (err) { stderr(err) })';
