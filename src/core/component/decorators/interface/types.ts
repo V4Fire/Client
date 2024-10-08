@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { ComponentMeta } from 'core/component/meta';
+
 export interface DecoratorFunctionalOptions {
 	/**
 	 * If set to false, this value can't be used with a functional component
@@ -14,10 +16,15 @@ export interface DecoratorFunctionalOptions {
 	functional?: boolean;
 }
 
-export interface ParamsFactoryTransformer {
-	(params: object, cluster: string): Dictionary<any>;
+interface ComponentDescriptor {
+	meta: ComponentMeta;
+	parentMeta: CanNull<ComponentMeta>;
 }
 
-export interface FactoryTransformer<T = object> {
-	(params?: T): Function;
+export interface ComponentPartDecorator {
+	(component: ComponentDescriptor, partKey: string, partDesc?: PropertyDescriptor): void;
+}
+
+export interface PartDecorator {
+	(target: object, partKey: string, partDesc?: PropertyDescriptor): void;
 }
