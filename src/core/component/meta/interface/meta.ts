@@ -18,6 +18,7 @@ import type {
 
 	ComponentProp,
 	ComponentField,
+	ComponentSystemField,
 	ComponentFieldInitializers,
 
 	ComponentMethod,
@@ -100,7 +101,7 @@ export interface ComponentMeta {
 	 * It's important to identify and distinguish these non-reactive fields from the reactive ones,
 	 * and to use them appropriately to optimize the performance of the component.
 	 */
-	systemFields: Dictionary<ComponentField>;
+	systemFields: Dictionary<ComponentSystemField>;
 
 	/**
 	 * A sorted array of system fields and functions for their initialization on the component

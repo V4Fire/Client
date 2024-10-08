@@ -23,7 +23,7 @@ export interface ComponentProp extends PropOptions {
 	meta: Dictionary;
 }
 
-export interface ComponentSystemField<CTX extends ComponentInterface = ComponentInterface> {
+export interface ComponentSystemField<Ctx extends ComponentInterface = ComponentInterface> {
 	src: string;
 	meta: Dictionary;
 
@@ -31,18 +31,19 @@ export interface ComponentSystemField<CTX extends ComponentInterface = Component
 	after?: Set<string>;
 
 	default?: unknown;
-	unique?: boolean | UniqueFieldFn<CTX>;
+	unique?: boolean | UniqueFieldFn<Ctx>;
 
 	functional?: boolean;
 	functionalWatching?: boolean;
 
-	init?: InitFieldFn<CTX>;
-	merge?: MergeFieldFn<CTX> | boolean;
+	init?: InitFieldFn<Ctx>;
+	merge?: MergeFieldFn<Ctx> | boolean;
+
+	watchers?: Map<string | Function, string | FieldWatcher>;
 }
 
-export interface ComponentField<CTX extends ComponentInterface = ComponentInterface> extends ComponentSystemField<CTX> {
+export interface ComponentField<Ctx extends ComponentInterface = ComponentInterface> extends ComponentSystemField<Ctx> {
 	forceUpdate?: boolean;
-	watchers?: Map<string | Function, FieldWatcher>;
 }
 
 export interface ComponentFieldInitializer {
