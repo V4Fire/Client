@@ -16,7 +16,8 @@ export type DecoratorHook =
 export type DecoratorHookOptions = {
 	[hook in Hook]?: DecoratorFunctionalOptions & {
 		/**
-		 * A method name or a list of names after which this handler should be invoked on a registered hook event
+		 * A method name or a list of method names after which
+		 * this handler should be invoked during a registered hook event
 		 *
 		 * @example
 		 * ```typescript
