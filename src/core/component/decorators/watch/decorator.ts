@@ -22,6 +22,11 @@ import type { DecoratorFieldWatcher, DecoratorMethodWatcher } from 'core/compone
  * If the object being watched isn't primitive, the old value will be cloned from the original old value.
  * This helps avoid issues that may arise from having two references to the same object.
  *
+ * @decorator
+ * @param watcher - parameters for observation
+ *
+ * @example
+ *
  * ```typescript
  * import iBlock, { component, field, watch } from 'components/super/i-block/i-block';
  *
@@ -121,8 +126,6 @@ import type { DecoratorFieldWatcher, DecoratorMethodWatcher } from 'core/compone
  *   }
  * }
  * ```
- *
- * @param watcher - parameters for observation
  */
 export function watch(watcher: DecoratorFieldWatcher | DecoratorMethodWatcher): PartDecorator {
 	return createComponentDecorator(({meta}, key, desc) => {

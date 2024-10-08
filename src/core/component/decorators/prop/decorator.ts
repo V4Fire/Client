@@ -19,9 +19,8 @@ import type { DecoratorProp, PropType } from 'core/component/decorators/prop/int
 /**
  * Marks a class property as a component prop
  *
- * @param [typeOrParams] - a constructor of the prop type or an object with prop parameters
- *
  * @decorator
+ * @param [typeOrParams] - a constructor of the prop type or an object with prop parameters
  *
  * @example
  * ```typescript

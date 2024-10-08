@@ -21,10 +21,10 @@ import type { InitFieldFn, DecoratorSystem, DecoratorField } from 'core/componen
  * Marks a class property as a system field.
  * Mutations to a system field never cause components to re-render.
  *
+ * @decorator
+ *
  * @param [initOrParams] - a function to initialize the field value or an object with field parameters
  * @param [type] - the type of the registered field: `systemFields` or `fields`
- *
- * @decorator
  *
  * @example
  * ```typescript

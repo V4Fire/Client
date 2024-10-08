@@ -15,9 +15,8 @@ import type { InitFieldFn, DecoratorField } from 'core/component/decorators/fiel
  * Marks a class property as a component field.
  * In non-functional components, field property mutations typically cause the component to re-render.
  *
- * @param [initOrParams] - a function to initialize the field value or an object with field parameters
- *
  * @decorator
+ * @param [initOrParams] - a function to initialize the field value or an object with field parameters
  *
  * @example
  * ```typescript
