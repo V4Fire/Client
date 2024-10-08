@@ -7,7 +7,7 @@
  */
 
 import type { ComponentInterface } from 'core/component/interface';
-import type { DecoratorFieldWatcher } from 'core/component/decorators/interface/watcher';
+import type { DecoratorFieldWatcher } from 'core/component/decorators/watch';
 
 /**
  * Options of a component prop
@@ -214,7 +214,7 @@ export interface DecoratorProp<
 
 export type Prop<T = unknown> =
 	{(): T} |
-	{new(...args: any[]): T & object} |
-	{new(...args: string[]): Function};
+	{new (...args: any[]): T & object} |
+	{new (...args: string[]): Function};
 
 export type PropType<T = unknown> = CanArray<Prop<T>>;

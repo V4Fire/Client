@@ -8,10 +8,6 @@
 
 import type { ComponentInterface, MethodWatcher, WatchHandlerParams, WatchOptions } from 'core/component/interface';
 
-export type DecoratorWatcher<Ctx extends ComponentInterface = ComponentInterface, A = unknown, B = A> =
-	DecoratorMethodWatcher<Ctx, A, B> |
-	DecoratorFieldWatcher<Ctx, A, B>;
-
 export type DecoratorMethodWatcher<Ctx extends ComponentInterface = ComponentInterface, A = unknown, B = A> =
 	string |
 	MethodWatcher<Ctx, A, B> & {path: string} |

@@ -17,7 +17,7 @@ export interface ComponentProp extends PropOptions {
 	forceUpdate: boolean;
 	forceDefault?: boolean;
 
-	watchers?: Map<string | Function, FieldWatcher>;
+	watchers?: Map<string | Function, string | FieldWatcher>;
 	default?: unknown;
 
 	meta: Dictionary;

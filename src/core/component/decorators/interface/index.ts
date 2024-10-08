@@ -8,7 +8,6 @@
 
 export * from 'core/component/decorators/interface/watcher';
 export * from 'core/component/decorators/interface/hook';
-export * from 'core/component/decorators/interface/prop';
 export * from 'core/component/decorators/interface/field';
 export * from 'core/component/decorators/interface/method';
 export * from 'core/component/decorators/interface/accessor';
