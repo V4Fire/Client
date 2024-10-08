@@ -7,9 +7,9 @@
  */
 
 import type { WatchPath, ComponentAccessorCacheType } from 'core/component/interface';
-import type { DecoratorFunctionalOptions } from 'core/component/decorators/interface/types';
+import type { DecoratorFunctionalOptions } from 'core/component/decorators/interface';
 
-export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
+export interface DecoratorComputed extends DecoratorFunctionalOptions {
 	/**
 	 * If set to true, the accessor value will be cached after the first touch.
 	 *
