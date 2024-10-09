@@ -72,8 +72,8 @@ export function system(
 
 		// Handling the situation when a field changes type during inheritance,
 		// for example, it was a @prop in the parent component and became a @system
-		for (const key of ['props', type === 'fields' ? 'systemFields' : 'fields']) {
-			const cluster = meta[key];
+		for (const anotherType of ['props', type === 'fields' ? 'systemFields' : 'fields']) {
+			const cluster = meta[anotherType];
 
 			if (key in cluster) {
 				const field: ComponentField = {...cluster[key]};

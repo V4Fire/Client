@@ -60,8 +60,8 @@ export function prop(typeOrParams?: PropType | DecoratorProp): PartDecorator {
 
 		// Handling the situation when a field changes type during inheritance,
 		// for example, it was a @system in the parent component and became a @prop
-		for (const key of ['fields', 'systemFields']) {
-			const cluster = meta[key];
+		for (const anotherType of ['fields', 'systemFields']) {
+			const cluster = meta[anotherType];
 
 			if (key in cluster) {
 				const field: ComponentField = {...cluster[key]};

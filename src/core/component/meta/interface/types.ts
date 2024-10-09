@@ -16,7 +16,7 @@ export interface ComponentProp extends PropOptions {
 	forceUpdate: boolean;
 	forceDefault?: boolean;
 
-	watchers?: Map<string | Function, string | FieldWatcher>;
+	watchers?: Map<string | Function, FieldWatcher>;
 	default?: unknown;
 
 	meta: Dictionary;
@@ -38,7 +38,7 @@ export interface ComponentSystemField<Ctx extends ComponentInterface = Component
 	init?: InitFieldFn<Ctx>;
 	merge?: MergeFieldFn<Ctx> | boolean;
 
-	watchers?: Map<string | Function, string | FieldWatcher>;
+	watchers?: Map<string | Function, FieldWatcher>;
 }
 
 export interface ComponentField<Ctx extends ComponentInterface = ComponentInterface> extends ComponentSystemField<Ctx> {
