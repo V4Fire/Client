@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-10-??)
+
+#### :rocket: New Feature
+
+* Added `JSHandle` representing the mock agent in `SpyObject.handle` `tests/helpers/mock`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with updating the `componentStatus` after destroying the component `iData`
+
 ## v4.0.0-beta.142 (2024-10-04)
 
 #### :bug: Bug Fix

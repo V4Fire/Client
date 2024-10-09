@@ -27,6 +27,10 @@ export function wrapAsSpy<T extends object>(agent: JSHandle<ReturnType<ModuleMoc
 			get: () => agent.evaluate((ctx) => ctx.mock.calls)
 		},
 
+		handle: {
+			get: () => agent
+		},
+
 		callsCount: {
 			get: () => agent.evaluate((ctx) => ctx.mock.calls.length)
 		},
