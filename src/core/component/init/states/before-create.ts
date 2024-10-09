@@ -249,10 +249,6 @@ export function beforeCreateState(
 		}());
 	});
 
-	if (opts?.addMethods) {
-		attachMethodsFromMeta(component);
-	}
-
 	if (opts?.implementEventAPI) {
 		implementEventEmitterAPI(component);
 	}

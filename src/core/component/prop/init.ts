@@ -44,13 +44,15 @@ export function initProps(
 		isFunctional = meta.params.functional === true,
 		source: typeof props = p.forceUpdate ? props : attrs;
 
-	Object.entries(source).forEach(([propName, prop]) => {
+	for (const propName of Object.keys(source)) {
+		const prop = source[propName];
+
 		const canSkip =
 			prop == null ||
 			!SSR && isFunctional && prop.functional === false;
 
 		if (canSkip) {
-			return;
+			continue;
 		}
 
 		unsafe.$activeField = propName;
@@ -111,7 +113,7 @@ export function initProps(
 				get: () => opts.forceUpdate ? propValue : store[privateField]
 			});
 		}
-	});
+	}
 
 	unsafe.$activeField = undefined;
 	return store;

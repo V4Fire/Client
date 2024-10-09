@@ -70,7 +70,6 @@ export interface ComponentMethod {
 
 	src?: string;
 	wrapper?: boolean;
-	functional?: boolean;
 
 	watchers?: Dictionary<MethodWatcher>;
 	hooks?: ComponentMethodHooks;
