@@ -155,8 +155,8 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	readonly checkDBEquality: CheckDBEquality = true;
 
 	/** {@link iDataProvider.requestParams} */
-	@system({merge: true})
-	readonly requestParams: RequestParams = {get: {}};
+	@system({merge: true, init: () => ({get: {}})})
+	readonly requestParams!: RequestParams;
 
 	/**
 	 * The raw component data from the data provider
