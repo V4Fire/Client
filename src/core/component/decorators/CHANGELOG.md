@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-10-??)
+
+#### :bug: Bug Fix
+
+* Override a component name in the shared meta
+
 ## v4.0.0-beta.138.dsl-speedup (2024-10-01)
 
 #### :rocket: New Feature

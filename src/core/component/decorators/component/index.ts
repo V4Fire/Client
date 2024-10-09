@@ -172,8 +172,17 @@ export function component(opts?: ComponentOptions): Function {
 						enumerable: true,
 						writable: true,
 						value: componentInfo.params
+					},
+
+					name: {
+						configurable: true,
+						enumerable: true,
+						writable: true,
+						value: componentInfo.name
 					}
 				});
+
+				rawMeta!.component.name = componentInfo.name;
 
 				if (rawMeta != null && componentInfo.parentMeta != null) {
 					inheritParams(rawMeta, componentInfo.parentMeta);

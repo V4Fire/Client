@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-10-??)
+
+#### :bug: Bug Fix
+
+* Override a component name in the shared meta `core/component/decorators`
+
 ## v4.0.0-beta.143 (2024-10-09)
 
 #### :rocket: New Feature
