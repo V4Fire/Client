@@ -179,10 +179,22 @@ export function component(opts?: ComponentOptions): Function {
 						enumerable: true,
 						writable: true,
 						value: componentInfo.name
+					},
+
+					component: {
+						configurable: true,
+						enumerable: true,
+						writable: true,
+						value: Object.create(rawMeta.component, {
+							name: {
+								configurable: true,
+								enumerable: true,
+								writable: true,
+								value: componentInfo.name
+							}
+						})
 					}
 				});
-
-				rawMeta!.component.name = componentInfo.name;
 
 				if (rawMeta != null && componentInfo.parentMeta != null) {
 					inheritParams(rawMeta, componentInfo.parentMeta);
