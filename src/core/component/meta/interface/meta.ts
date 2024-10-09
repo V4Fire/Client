@@ -154,6 +154,12 @@ export interface ComponentMeta {
 	hooks: ComponentHooks;
 
 	/**
+	 * A dictionary containing functions to initialize the component metaobject.
+	 * The keys in the dictionary are the component entities: props, fields, methods, etc.
+	 */
+	metaInitializers: Dictionary<(meta: ComponentMeta) => void>;
+
+	/**
 	 * A less abstract representation of the component would typically include the following elements,
 	 * which are useful for building component libraries:
 	 */

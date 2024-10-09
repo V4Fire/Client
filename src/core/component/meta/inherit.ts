@@ -22,6 +22,7 @@ export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): Com
 	const decoratedKeys = componentDecoratedKeys[meta.componentName];
 
 	Object.assign(meta.tiedFields, parentMeta.tiedFields);
+	Object.assign(meta.metaInitializers, parentMeta.metaInitializers);
 
 	if (parentMeta.watchDependencies.size > 0) {
 		meta.watchDependencies = new Map(parentMeta.watchDependencies);
@@ -37,6 +38,7 @@ export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): Com
 	inheritAccessors(meta.computedFields, parentMeta.computedFields);
 
 	inheritMethods(meta.methods, parentMeta.methods);
+	Object.assign(meta.component.methods, parentMeta.component.methods);
 
 	if (meta.params.partial == null) {
 		inheritMods(meta, parentMeta);
@@ -45,85 +47,85 @@ export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): Com
 	return meta;
 
 	function inheritProp(current: ComponentMeta['props'], parent: ComponentMeta['props']) {
-		Object.entries(parent).forEach(([propName, parent]) => {
-			if (parent == null) {
-				return;
+		for (const [propName, parentProp] of Object.entries(parent)) {
+			if (parentProp == null) {
+				continue;
 			}
 
 			if (decoratedKeys == null || !decoratedKeys.has(propName)) {
-				current[propName] = parent;
-				return;
+				current[propName] = parentProp;
+				continue;
 			}
 
 			let watchers: CanUndef<Map<FieldWatcher['handler'], FieldWatcher>>;
 
-			parent.watchers?.forEach((watcher: FieldWatcher) => {
+			parentProp.watchers?.forEach((watcher: FieldWatcher) => {
 				watchers ??= new Map();
 				watchers.set(watcher.handler, {...watcher});
 			});
 
-			current[propName] = {...parent, watchers};
-		});
+			current[propName] = {...parentProp, watchers};
+		}
 	}
 
 	function inheritField(current: ComponentMeta['fields'], parent: ComponentMeta['fields']) {
-		Object.entries(parent).forEach(([fieldName, parent]) => {
-			if (parent == null) {
-				return;
+		for (const [fieldName, parentField] of Object.entries(parent)) {
+			if (parentField == null) {
+				continue;
 			}
 
 			if (decoratedKeys == null || !decoratedKeys.has(fieldName)) {
-				current[fieldName] = parent;
-				return;
+				current[fieldName] = parentField;
+				continue;
 			}
 
 			let
 				after: CanUndef<Set<string>>,
 				watchers: CanUndef<Map<FieldWatcher['handler'], FieldWatcher>>;
 
-			parent.watchers?.forEach((watcher: FieldWatcher) => {
+			parentField.watchers?.forEach((watcher: FieldWatcher) => {
 				watchers ??= new Map();
 				watchers.set(watcher.handler, {...watcher});
 			});
 
-			parent.after?.forEach((name: string) => {
+			parentField.after?.forEach((name: string) => {
 				after ??= new Set();
 				after.add(name);
 			});
 
-			current[fieldName] = {...parent, after, watchers};
-		});
+			current[fieldName] = {...parentField, after, watchers};
+		}
 	}
 
 	function inheritAccessors(current: ComponentMeta['accessors'], parent: ComponentMeta['accessors']) {
-		Object.entries(parent).forEach(([accessorName, parent]) => {
-			current[accessorName] = {...parent!};
-		});
+		for (const [accessorName, parentAccessor] of Object.entries(parent)) {
+			current[accessorName] = {...parentAccessor!};
+		}
 	}
 
 	function inheritMethods(current: ComponentMeta['methods'], parent: ComponentMeta['methods']) {
-		Object.entries(parent).forEach(([methodName, parent]) => {
-			if (parent == null) {
-				return;
+		for (const [methodName, parentMethod] of Object.entries(parent)) {
+			if (parentMethod == null) {
+				continue;
 			}
 
 			if (decoratedKeys == null || !decoratedKeys.has(methodName)) {
-				current[methodName] = {...parent};
-				return;
+				current[methodName] = {...parentMethod};
+				continue;
 			}
 
 			const
 				watchers = {},
 				hooks = {};
 
-			if (parent.watchers != null) {
-				Object.entries(parent.watchers).forEach(([key, val]) => {
+			if (parentMethod.watchers != null) {
+				Object.entries(parentMethod.watchers).forEach(([key, val]) => {
 					watchers[key] = {...val};
 				});
 			}
 
-			if (parent.hooks != null) {
-				Object.entries(parent.hooks).forEach(([key, hook]) => {
+			if (parentMethod.hooks != null) {
+				Object.entries(parentMethod.hooks).forEach(([key, hook]) => {
 					hooks[key] = {
 						...hook,
 						after: Object.size(hook.after) > 0 ? new Set(hook.after) : undefined
@@ -131,8 +133,8 @@ export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): Com
 				});
 			}
 
-			current[methodName] = {...parent, watchers, hooks};
-		});
+			current[methodName] = {...parentMethod, watchers, hooks};
+		}
 	}
 }
 

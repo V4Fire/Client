@@ -22,13 +22,13 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
 
 	const isFunctional = meta.params.functional === true;
 
-	Object.entries(methods).forEach(([name, method]) => {
+	for (const [name, method] of Object.entries(methods)) {
 		if (method == null || !SSR && isFunctional && method.functional === false) {
-			return;
+			continue;
 		}
 
 		component[name] = method.fn.bind(component);
-	});
+	}
 
 	if (isFunctional) {
 		component.render = Object.cast(meta.component.render);

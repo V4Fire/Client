@@ -8,7 +8,6 @@
 
 import { DEFAULT_WRAPPER } from 'core/component/const';
 
-import { getComponentContext } from 'core/component/context';
 import { isAbstractComponent, isBinding } from 'core/component/reflect';
 
 import { addFieldsToMeta } from 'core/component/meta/field';
@@ -72,13 +71,10 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 		component,
 		params,
 
-		methods,
 		accessors,
 		computedFields,
 
 		watchers,
-		hooks,
-
 		watchDependencies,
 		watchPropDependencies
 	} = meta;
@@ -206,71 +202,8 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 	addFieldsToMeta('fields', meta);
 	addFieldsToMeta('systemFields', meta);
 
-	// Computed fields
-
-	if (isFirstFill) {
-		Object.entries(computedFields).forEach(([name, computed]) => {
-			if (computed == null || computed.cache !== 'auto') {
-				return;
-			}
-
-			component.computed[name] = {
-				get: computed.get,
-				set: computed.set
-			};
-		});
-	}
-
-	// Methods
-
-	Object.entries(methods).forEach(([methodName, method]) => {
-		if (method == null) {
-			return;
-		}
-
-		if (isFirstFill) {
-			component.methods[methodName] = wrapper;
-
-			if (wrapper.length !== method.fn.length) {
-				Object.defineProperty(wrapper, 'length', {get: () => method.fn.length});
-			}
-		}
-
-		if (method.watchers != null) {
-			Object.entries(method.watchers).forEach(([watcherName, watcher]) => {
-				if (watcher == null || isFunctional && watcher.functional === false) {
-					return;
-				}
-
-				const watcherListeners = watchers[watcherName] ?? [];
-				watchers[watcherName] = watcherListeners;
-
-				watcherListeners.push({
-					...watcher,
-					method: methodName,
-					args: Array.toArray(watcher.args),
-					handler: Object.cast(method.fn)
-				});
-			});
-		}
-
-		// Method hooks
-
-		if (method.hooks) {
-			Object.entries(method.hooks).forEach(([hookName, hook]) => {
-				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-				if (hook == null || isFunctional && hook.functional === false) {
-					return;
-				}
-
-				hooks[hookName].push({...hook, fn: method.fn});
-			});
-		}
-
-		function wrapper(this: object) {
-			// eslint-disable-next-line prefer-rest-params
-			return method!.fn.apply(getComponentContext(this), arguments);
-		}
+	Object.values(meta.metaInitializers).forEach((init) => {
+		init?.(meta);
 	});
 
 	// Modifiers

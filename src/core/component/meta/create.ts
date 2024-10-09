@@ -69,6 +69,8 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			renderTriggered: []
 		},
 
+		metaInitializers: {},
+
 		component: {
 			name: component.name,
 
