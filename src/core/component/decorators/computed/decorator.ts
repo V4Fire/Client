@@ -34,15 +34,15 @@ import type { DecoratorComputed } from 'core/component/decorators/computed/inter
  * ```
  */
 export function computed(params?: DecoratorComputed): PartDecorator {
-	return createComponentDecorator(({meta}, key, desc) => {
+	return createComponentDecorator(({meta}, accessorName, desc) => {
 		if (desc == null) {
 			return;
 		}
 
 		params = {...params};
 
-		delete meta.accessors[key];
-		delete meta.computedFields[key];
+		delete meta.accessors[accessorName];
+		delete meta.computedFields[accessorName];
 
 		let type: 'accessors' | 'computedFields' = 'accessors';
 
@@ -50,24 +50,24 @@ export function computed(params?: DecoratorComputed): PartDecorator {
 			params.cache === true ||
 			params.cache === 'auto' ||
 			params.cache === 'forever' ||
-			params.cache !== false && (Object.isArray(params.dependencies) || key in meta.computedFields)
+			params.cache !== false && (Object.isArray(params.dependencies) || accessorName in meta.computedFields)
 		) {
 			type = 'computedFields';
 		}
 
-		const accessor: ComponentAccessor = meta[type][key] ?? {
+		let accessor: ComponentAccessor = meta[type][accessorName] ?? {
 			src: meta.componentName,
 			cache: false
 		};
 
 		const needOverrideComputed = type === 'accessors' ?
-			key in meta.computedFields :
-			!('cache' in params) && key in meta.accessors;
+			accessorName in meta.computedFields :
+			!('cache' in params) && accessorName in meta.accessors;
 
 		if (needOverrideComputed) {
-			const computed = meta.computedFields[key];
+			const computed = meta.computedFields[accessorName];
 
-			meta[type][key] = normalizeFunctionalParams({
+			accessor = normalizeFunctionalParams({
 				...computed,
 				...params,
 				src: computed?.src ?? accessor.src,
@@ -75,15 +75,17 @@ export function computed(params?: DecoratorComputed): PartDecorator {
 			}, meta);
 
 		} else {
-			meta[type][key] = normalizeFunctionalParams({
+			accessor = normalizeFunctionalParams({
 				...accessor,
 				...params,
 				cache: type === 'computedFields' ? params.cache ?? true : false
 			}, meta);
 		}
 
+		meta[type][accessorName] = accessor;
+
 		if (params.dependencies != null && params.dependencies.length > 0) {
-			meta.watchDependencies.set(key, params.dependencies);
+			meta.watchDependencies.set(accessorName, params.dependencies);
 		}
 	});
 }

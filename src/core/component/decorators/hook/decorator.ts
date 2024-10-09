@@ -35,14 +35,14 @@ import type { DecoratorHook } from 'core/component/decorators/hook/interface';
  * ```
  */
 export function hook(hook: DecoratorHook): PartDecorator {
-	return createComponentDecorator(({meta}, key, desc) => {
+	return createComponentDecorator(({meta}, methodName, desc) => {
 		if (desc == null) {
 			return;
 		}
 
 		const methodHooks = Array.toArray(hook);
 
-		const method: ComponentMethod = meta.methods[key] ?? {
+		const method: ComponentMethod = meta.methods[methodName] ?? {
 			src: meta.componentName,
 			fn: Object.throw,
 			hooks: {}
@@ -58,16 +58,16 @@ export function hook(hook: DecoratorHook): PartDecorator {
 
 				hooks[hookName] = normalizeFunctionalParams({
 					...hookParams,
-					name: key,
+					name: methodName,
 					hook: hookName,
 					after: hookParams.after != null ? new Set(Array.toArray(hookParams.after)) : undefined
 				}, meta);
 
 			} else {
-				hooks[hook] = normalizeFunctionalParams({name: key, hook}, meta);
+				hooks[hook] = normalizeFunctionalParams({name: methodName, hook}, meta);
 			}
 		}
 
-		meta.methods[key] = normalizeFunctionalParams({...method}, meta);
+		meta.methods[methodName] = normalizeFunctionalParams({...method}, meta);
 	});
 }

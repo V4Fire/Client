@@ -54,20 +54,20 @@ export function system(
 	initOrParams?: InitFieldFn | DecoratorSystem | DecoratorField,
 	type: 'fields' | 'systemFields' = 'systemFields'
 ): PartDecorator {
-	return createComponentDecorator(({meta}, key) => {
+	return createComponentDecorator(({meta}, fieldName) => {
 		const params = Object.isFunction(initOrParams) ? {init: initOrParams} : {...initOrParams};
 
-		delete meta.methods[key];
-		delete meta.accessors[key];
-		delete meta.computedFields[key];
+		delete meta.methods[fieldName];
+		delete meta.accessors[fieldName];
+		delete meta.computedFields[fieldName];
 
-		const accessors = meta.accessors[key] != null ?
+		const accessors = meta.accessors[fieldName] != null ?
 			meta.accessors :
 			meta.computedFields;
 
-		if (accessors[key] != null) {
-			Object.defineProperty(meta.constructor.prototype, key, defProp);
-			delete accessors[key];
+		if (accessors[fieldName] != null) {
+			Object.defineProperty(meta.constructor.prototype, fieldName, defProp);
+			delete accessors[fieldName];
 		}
 
 		// Handling the situation when a field changes type during inheritance,
@@ -75,27 +75,27 @@ export function system(
 		for (const anotherType of ['props', type === 'fields' ? 'systemFields' : 'fields']) {
 			const cluster = meta[anotherType];
 
-			if (key in cluster) {
-				const field: ComponentField = {...cluster[key]};
+			if (fieldName in cluster) {
+				const field: ComponentField = {...cluster[fieldName]};
 
 				// Do not inherit the `functional` option in this case
 				delete field.functional;
 
-				if (key === 'props') {
+				if (fieldName === 'props') {
 					if (Object.isFunction(field.default)) {
 						field.init = field.default;
 						delete field.default;
 					}
 				}
 
-				meta[type][key] = field;
-				delete cluster[key];
+				meta[type][fieldName] = field;
+				delete cluster[fieldName];
 
 				break;
 			}
 		}
 
-		const field: ComponentField = meta[type][key] ?? {
+		const field: ComponentField = meta[type][fieldName] ?? {
 			src: meta.componentName,
 			meta: {}
 		};
@@ -121,7 +121,7 @@ export function system(
 			}
 		}
 
-		meta[type][key] = normalizeFunctionalParams({
+		meta[type][fieldName] = normalizeFunctionalParams({
 			...field,
 			...params,
 
@@ -134,10 +134,10 @@ export function system(
 			}
 		}, meta);
 
-		if (isStore.test(key)) {
-			const tiedWith = isStore.replace(key);
-			meta.tiedFields[key] = tiedWith;
-			meta.tiedFields[tiedWith] = key;
+		if (isStore.test(fieldName)) {
+			const tiedWith = isStore.replace(fieldName);
+			meta.tiedFields[fieldName] = tiedWith;
+			meta.tiedFields[tiedWith] = fieldName;
 		}
 	});
 }
