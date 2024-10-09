@@ -78,7 +78,9 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 	const isFunctional = meta.params.functional === true;
 
-	Object.entries(meta.accessors).forEach(([name, accessor]) => {
+	for (const name of Object.keys(meta.accessors)) {
+		const accessor = meta.accessors[name];
+
 		const tiedWith = tiedFields[name];
 
 		// In the `tiedFields` dictionary,
@@ -101,23 +103,13 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 				delete tiedFields[tiedWith];
 			}
 
-			return;
+			continue;
 		}
 
 		let getterInitialized = false;
 
-		Object.defineProperty(component, name, {
-			configurable: true,
-			enumerable: true,
-			get: accessor.get != null ? get : undefined,
-			set: accessor.set
-		});
-
-		function get(this: typeof component): unknown {
-			if (accessor == null) {
-				return;
-			}
-
+		// eslint-disable-next-line func-style
+		const get = function get(this: typeof component): unknown {
 			if (!getterInitialized) {
 				getterInitialized = true;
 
@@ -158,12 +150,21 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 			}
 
 			return accessor.get!.call(this);
-		}
-	});
+		};
+
+		Object.defineProperty(component, name, {
+			configurable: true,
+			enumerable: true,
+			get: accessor.get != null ? get : undefined,
+			set: accessor.set
+		});
+	}
 
 	const cachedAccessors = new Set<Function>();
 
-	Object.entries(meta.computedFields).forEach(([name, computed]) => {
+	for (const name of Object.keys(meta.computedFields)) {
+		const computed = meta.computedFields[name];
+
 		const tiedWith = tiedFields[name];
 
 		// In the `tiedFields` dictionary,
@@ -187,7 +188,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 				delete tiedFields[tiedWith];
 			}
 
-			return;
+			continue;
 		}
 
 		const
@@ -196,18 +197,8 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 		let getterInitialized = canUseForeverCache;
 
-		Object.defineProperty(component, name, {
-			configurable: true,
-			enumerable: true,
-			get: computed.get != null ? get : undefined,
-			set: computed.set
-		});
-
-		function get(this: typeof component): unknown {
-			if (computed == null) {
-				return;
-			}
-
+		// eslint-disable-next-line func-style
+		const get = function get(this: typeof component): unknown {
 			if (!getterInitialized) {
 				getterInitialized = true;
 
@@ -283,7 +274,9 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 			if (canUseCache && cacheStatus in get) {
 				if (this.hook !== 'created') {
-					effects.forEach((applyEffect) => applyEffect());
+					for (const applyEffect of effects) {
+						applyEffect();
+					}
 				}
 
 				return get[cacheStatus];
@@ -297,25 +290,34 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 			}
 
 			return value;
-		}
-	});
+		};
+
+		Object.defineProperty(component, name, {
+			configurable: true,
+			enumerable: true,
+			get: computed.get != null ? get : undefined,
+			set: computed.set
+		});
+	}
 
 	// Register a worker to clean up memory upon component destruction
 	$destructors.push(() => {
 		// eslint-disable-next-line require-yield
 		gc.add(function* destructor() {
-			cachedAccessors.forEach((getter) => {
+			for (const getter of cachedAccessors) {
 				delete getter[cacheStatus];
-			});
+			}
 
 			cachedAccessors.clear();
 		}());
 	});
 
 	if (deprecatedProps != null) {
-		Object.entries(deprecatedProps).forEach(([name, renamedTo]) => {
+		for (const name of Object.keys(deprecatedProps)) {
+			const renamedTo = deprecatedProps[name];
+
 			if (renamedTo == null) {
-				return;
+				continue;
 			}
 
 			Object.defineProperty(component, name, {
@@ -331,7 +333,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 					component[renamedTo] = val;
 				}
 			});
-		});
+		}
 	}
 
 	function fakeHandler() {

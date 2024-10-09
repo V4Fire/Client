@@ -22,7 +22,9 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
 
 	const isFunctional = meta.params.functional === true;
 
-	for (const [name, method] of Object.entries(methods)) {
+	for (const name of Object.keys(methods)) {
+		const method = methods[name];
+
 		if (method == null || !SSR && isFunctional && method.functional === false) {
 			continue;
 		}
