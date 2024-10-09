@@ -8,7 +8,7 @@
 
 import { isAbstractComponent } from 'core/component/reflect';
 
-import { addFieldsToMeta } from 'core/component/meta/field';
+import { sortFields } from 'core/component/meta/field';
 import { addMethodsToMeta } from 'core/component/meta/method';
 
 import type { ComponentConstructor, ModVal } from 'core/component/interface';
@@ -38,14 +38,12 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 		Object.defineProperty(meta, BLUEPRINT, {
 			value: {
 				watchers: meta.watchers,
-				hooks: meta.hooks,
-				fieldInitializers: meta.fieldInitializers,
-				systemFieldInitializers: meta.systemFieldInitializers
+				hooks: meta.hooks
 			}
 		});
 	}
 
-	type Blueprint = Pick<ComponentMeta, 'watchers' | 'hooks' | 'fieldInitializers' | 'systemFieldInitializers'>;
+	type Blueprint = Pick<ComponentMeta, 'watchers' | 'hooks'>;
 
 	const blueprint: CanNull<Blueprint> = meta[BLUEPRINT];
 
@@ -58,22 +56,18 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 
 		Object.assign(meta, {
 			hooks,
-			watchers: {...blueprint.watchers},
-			fieldInitializers: blueprint.fieldInitializers.slice(),
-			systemFieldInitializers: blueprint.systemFieldInitializers.slice()
+			watchers: {...blueprint.watchers}
 		});
 	}
 
 	const {component} = meta;
 
-	addFieldsToMeta('fields', meta);
-	addFieldsToMeta('systemFields', meta);
+	meta.fieldInitializers = sortFields(meta.fields);
+	meta.systemFieldInitializers = sortFields(meta.systemFields);
 
 	for (const init of meta.metaInitializers.values()) {
 		init(meta);
 	}
-
-	// Modifiers
 
 	if (isFirstFill) {
 		const {mods} = component;

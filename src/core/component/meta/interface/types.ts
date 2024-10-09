@@ -47,11 +47,7 @@ export interface ComponentField<Ctx extends ComponentInterface = ComponentInterf
 	forceUpdate?: boolean;
 }
 
-export interface ComponentFieldInitializer {
-	(ctx: ComponentInterface, store: Dictionary): unknown;
-}
-
-export type ComponentFieldInitializers = Array<[string, CanNull<ComponentFieldInitializer>]>;
+export type ComponentFieldInitializers = Array<[string, CanUndef<ComponentSystemField>]>;
 
 export type ComponentAccessorCacheType =
 	boolean |

@@ -21,7 +21,7 @@ import type { ComponentMeta } from 'core/component/meta/interface';
 export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): ComponentMeta {
 	const decoratedKeys = componentDecoratedKeys[meta.componentName];
 
-	Object.assign(meta.tiedFields, parentMeta.tiedFields);
+	meta.tiedFields = {...parentMeta.tiedFields};
 
 	if (parentMeta.metaInitializers.size > 0) {
 		meta.metaInitializers = new Map(parentMeta.metaInitializers);
@@ -34,18 +34,21 @@ export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): Com
 	inheritParams(meta, parentMeta);
 
 	inheritProp(meta.props, parentMeta.props);
-	Object.assign(meta.component.props, parentMeta.component.props);
-	Object.assign(meta.component.attrs, parentMeta.component.attrs);
+
+	meta.component.props = {...parentMeta.component.props};
+	meta.component.attrs = {...parentMeta.component.attrs};
 
 	inheritField(meta.fields, parentMeta.fields);
 	inheritField(meta.systemFields, parentMeta.systemFields);
 
 	inheritAccessors(meta.accessors, parentMeta.accessors);
 	inheritAccessors(meta.computedFields, parentMeta.computedFields);
-	Object.assign(meta.component.computed, parentMeta.component.computed);
+
+	meta.component.computed = {...parentMeta.component.computed};
 
 	inheritMethods(meta.methods, parentMeta.methods);
-	Object.assign(meta.component.methods, parentMeta.component.methods);
+
+	meta.component.methods = {...parentMeta.component.methods};
 
 	if (meta.params.partial == null) {
 		inheritMods(meta, parentMeta);

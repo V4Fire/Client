@@ -50,18 +50,13 @@ export function getFieldWeight(field: CanUndef<ComponentField>, scope: Dictionar
 
 /**
  * Sorts the specified fields and returns an array that is ordered and ready for initialization
- *
  * @param fields
- * @param scope
  */
-export function sortFields(
-	fields: ComponentFieldInitializers,
-	scope: Dictionary<ComponentField>
-): ComponentFieldInitializers {
-	return fields.sort(([aName], [bName]) => {
+export function sortFields(fields: Dictionary<ComponentField>): ComponentFieldInitializers {
+	return Object.entries(fields).sort(([aName], [bName]) => {
 		const
-			aWeight = getFieldWeight(scope[aName], scope),
-			bWeight = getFieldWeight(scope[bName], scope);
+			aWeight = getFieldWeight(fields[aName], fields),
+			bWeight = getFieldWeight(fields[bName], fields);
 
 		return aWeight - bWeight;
 	});

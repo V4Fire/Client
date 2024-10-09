@@ -27,20 +27,20 @@ export function initFields(
 		component
 	);
 
-	from.forEach(([name, init]) => {
+	for (const [name, field] of from) {
 		const sourceVal = store[name];
 
-		if (init == null) {
+		if (field?.init == null) {
 			store[name] = sourceVal;
-			return;
+			continue;
 		}
 
 		unsafe.$activeField = name;
 
-		init(component, store);
+		store[name] = field.init(unsafe, store);
 
 		unsafe.$activeField = undefined;
-	});
+	}
 
 	return store;
 }

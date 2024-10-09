@@ -17,6 +17,8 @@ import type { PartDecorator } from 'core/component/decorators/interface';
 
 import type { InitFieldFn, DecoratorSystem, DecoratorField } from 'core/component/decorators/system/interface';
 
+const INIT = Symbol('The field initializer');
+
 /**
  * Marks a class property as a system field.
  * Mutations to a system field never cause components to re-render.
@@ -95,7 +97,7 @@ export function system(
 			}
 		}
 
-		const field: ComponentField = meta[type][fieldName] ?? {
+		let field: ComponentField = meta[type][fieldName] ?? {
 			src: meta.componentName,
 			meta: {}
 		};
@@ -121,7 +123,7 @@ export function system(
 			}
 		}
 
-		meta[type][fieldName] = normalizeFunctionalParams({
+		field = normalizeFunctionalParams({
 			...field,
 			...params,
 
@@ -134,10 +136,80 @@ export function system(
 			}
 		}, meta);
 
+		meta[type][fieldName] = field;
+
+		if (field.init == null || !(INIT in field.init)) {
+			let getDefValue: CanNull<AnyFunction> = null;
+
+			if (field.default !== undefined) {
+				getDefValue = () => field.default;
+
+			} else if (meta.instance[fieldName] !== undefined) {
+				const val = meta.instance[fieldName];
+
+				if (Object.isPrimitive(val)) {
+					getDefValue = () => val;
+
+				} else {
+					// To prevent linking to the same type of component for non-primitive values,
+					// it's important to clone the default value from the component constructor.
+					getDefValue = () => Object.fastClone(val);
+				}
+			}
+
+			if (field.init != null) {
+				const customInit = field.init;
+
+				field.init = (ctx, store) => {
+					const val = customInit(ctx, store);
+
+					if (val === undefined && getDefValue != null) {
+						if (store[fieldName] === undefined) {
+							return getDefValue();
+						}
+
+						return undefined;
+					}
+
+					return val;
+				};
+
+			} else if (getDefValue != null) {
+				field.init = (_, store) => {
+					if (store[fieldName] === undefined) {
+						return getDefValue!();
+					}
+
+					return undefined;
+				};
+			}
+		}
+
+		if (field.init != null) {
+			Object.defineProperty(field.init, INIT, {value: true});
+		}
+
 		if (isStore.test(fieldName)) {
 			const tiedWith = isStore.replace(fieldName);
 			meta.tiedFields[fieldName] = tiedWith;
 			meta.tiedFields[tiedWith] = fieldName;
+		}
+
+		if (watchers != null && watchers.size > 0) {
+			meta.metaInitializers.set(fieldName, (meta) => {
+				const isFunctional = meta.params.functional === true;
+
+				for (const watcher of watchers!.values()) {
+					if (isFunctional && watcher.functional === false) {
+						continue;
+					}
+
+					const watcherListeners = meta.watchers[fieldName] ?? [];
+					meta.watchers[fieldName] = watcherListeners;
+
+					watcherListeners.push(watcher);
+				}
+			});
 		}
 	});
 }
