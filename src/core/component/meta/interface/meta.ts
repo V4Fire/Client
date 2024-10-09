@@ -6,10 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { WatchPath } from 'core/object/watch';
+
 import type { PropOptions } from 'core/component/decorators';
 import type { RenderFunction, WritableComputedOptions } from 'core/component/engines';
 
-import type { ComponentConstructor, WatchObject, WatchPath, ModsDecl } from 'core/component/interface';
+import type { ComponentConstructor, WatchObject, ModsDecl } from 'core/component/interface';
 import type { ComponentOptions } from 'core/component/meta/interface/options';
 
 import type {
@@ -157,7 +159,7 @@ export interface ComponentMeta {
 	 * A dictionary containing functions to initialize the component metaobject.
 	 * The keys in the dictionary are the component entities: props, fields, methods, etc.
 	 */
-	metaInitializers: Dictionary<(meta: ComponentMeta) => void>;
+	metaInitializers: Map<string, (meta: ComponentMeta) => void>;
 
 	/**
 	 * A less abstract representation of the component would typically include the following elements,

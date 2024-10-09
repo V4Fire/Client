@@ -58,8 +58,6 @@ export function system(
 		const params = Object.isFunction(initOrParams) ? {init: initOrParams} : {...initOrParams};
 
 		delete meta.methods[fieldName];
-		delete meta.accessors[fieldName];
-		delete meta.computedFields[fieldName];
 
 		const accessors = meta.accessors[fieldName] != null ?
 			meta.accessors :
@@ -81,7 +79,9 @@ export function system(
 				// Do not inherit the `functional` option in this case
 				delete field.functional;
 
-				if (fieldName === 'props') {
+				if (anotherType === 'props') {
+					delete meta.component.props[fieldName];
+
 					if (Object.isFunction(field.default)) {
 						field.init = field.default;
 						delete field.default;

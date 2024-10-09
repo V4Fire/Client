@@ -45,13 +45,16 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 
 	const
 		proto = constructor.prototype,
-		parentProto = Object.getPrototypeOf(proto),
 		descriptors = Object.getOwnPropertyDescriptors(proto);
 
-	for (const [name, desc] of Object.entries(descriptors)) {
+	let parentProto: CanNull<object> = null;
+
+	for (const name of Object.keys(descriptors)) {
 		if (name === 'constructor') {
 			continue;
 		}
+
+		const desc = descriptors[name];
 
 		// Methods
 		if ('value' in desc) {
@@ -79,14 +82,16 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 			component.methods[name] = wrapper;
 
 			const
-				watchers = methodDesc.watchers != null ? Object.entries(methodDesc.watchers) : [],
-				hooks = methodDesc.hooks != null ? Object.entries(methodDesc.hooks) : [];
+				watchers = methodDesc.watchers != null ? Object.keys(methodDesc.watchers) : [],
+				hooks = methodDesc.hooks != null ? Object.keys(methodDesc.hooks) : [];
 
 			if (watchers.length > 0 || hooks.length > 0) {
-				metaInitializers[name] = (meta) => {
+				metaInitializers.set(name, (meta) => {
 					const isFunctional = meta.params.functional === true;
 
-					for (const [watcherName, watcher] of watchers) {
+					for (const watcherName of watchers) {
+						const watcher = methodDesc.watchers![watcherName];
+
 						if (watcher == null || isFunctional && watcher.functional === false) {
 							continue;
 						}
@@ -102,14 +107,16 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 						});
 					}
 
-					for (const [hookName, hook] of hooks) {
+					for (const hookName of hooks) {
+						const hook = methodDesc.hooks![hookName];
+
 						if (isFunctional && hook.functional === false) {
 							continue;
 						}
 
 						meta.hooks[hookName].push({...hook, fn: method});
 					}
-				};
+				});
 			}
 
 		// Accessors
@@ -156,7 +163,9 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				set = desc.set ?? old?.set,
 				get = desc.get ?? old?.get;
 
-			if (name in parentProto) {
+			parentProto ??= Object.getPrototypeOf(proto);
+
+			if (name in parentProto!) {
 				// To use `super` within the setter, we also create a new method with a name `${key}Setter`
 				if (set != null) {
 					const methodName = `${name}Setter`;

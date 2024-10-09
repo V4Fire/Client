@@ -26,9 +26,11 @@ export function addFieldsToMeta(type: 'fields' | 'systemFields', meta: Component
 		fields = meta[type],
 		fieldInitializers = type === 'fields' ? meta.fieldInitializers : meta.systemFieldInitializers;
 
-	Object.entries(fields).forEach(([fieldName, field]) => {
+	for (const fieldName of Object.keys(fields)) {
+		const field = fields[fieldName];
+
 		if (field == null || !SSR && isFunctional && field.functional === false) {
-			return;
+			continue;
 		}
 
 		let
@@ -75,17 +77,19 @@ export function addFieldsToMeta(type: 'fields' | 'systemFields', meta: Component
 
 		fieldInitializers.push([fieldName, getValue]);
 
-		field.watchers?.forEach((watcher) => {
-			if (isFunctional && watcher.functional === false) {
-				return;
+		if (field.watchers != null) {
+			for (const watcher of field.watchers.values()) {
+				if (isFunctional && watcher.functional === false) {
+					continue;
+				}
+
+				const watcherListeners = watchers[fieldName] ?? [];
+				watchers[fieldName] = watcherListeners;
+
+				watcherListeners.push(watcher);
 			}
-
-			const watcherListeners = watchers[fieldName] ?? [];
-			watchers[fieldName] = watcherListeners;
-
-			watcherListeners.push(watcher);
-		});
-	});
+		}
+	}
 
 	sortFields(fieldInitializers, fields);
 }

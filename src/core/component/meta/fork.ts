@@ -21,17 +21,19 @@ export function forkMeta(base: ComponentMeta): ComponentMeta {
 	meta.tiedFields = {...meta.tiedFields};
 	meta.hooks = {};
 
-	Object.entries(base.hooks).forEach(([name, handlers]) => {
-		meta.hooks[name] = handlers.slice();
-	});
+	for (const name of Object.keys(base.hooks)) {
+		meta.hooks[name] = base.hooks[name].slice();
+	}
 
 	meta.watchers = {};
 
-	Object.entries(base.watchers).forEach(([name, watchers]) => {
+	for (const name of Object.keys(base.watchers)) {
+		const watchers = base.watchers[name];
+
 		if (watchers != null) {
 			meta.watchers[name] = watchers.slice();
 		}
-	});
+	}
 
 	return meta;
 }

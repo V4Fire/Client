@@ -6,11 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { WatchPath } from 'core/object/watch';
+
 import type { WritableComputedOptions, DirectiveBinding } from 'core/component/engines';
 
 import type { PropOptions, InitFieldFn, MergeFieldFn, UniqueFieldFn } from 'core/component/decorators';
 
-import type { ComponentInterface, FieldWatcher, MethodWatcher, WatchPath, Hook } from 'core/component/interface';
+import type { ComponentInterface, FieldWatcher, MethodWatcher, Hook } from 'core/component/interface';
 
 export interface ComponentProp extends PropOptions {
 	forceUpdate: boolean;

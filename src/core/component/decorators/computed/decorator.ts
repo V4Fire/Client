@@ -41,8 +41,9 @@ export function computed(params?: DecoratorComputed): PartDecorator {
 
 		params = {...params};
 
-		delete meta.accessors[accessorName];
-		delete meta.computedFields[accessorName];
+		delete meta.props[accessorName];
+		delete meta.fields[accessorName];
+		delete meta.systemFields[accessorName];
 
 		let type: 'accessors' | 'computedFields' = 'accessors';
 
@@ -81,6 +82,8 @@ export function computed(params?: DecoratorComputed): PartDecorator {
 				cache: type === 'computedFields' ? params.cache ?? true : false
 			}, meta);
 		}
+
+		delete meta[type === 'computedFields' ? 'accessors' : 'computedFields'][accessorName];
 
 		meta[type][accessorName] = accessor;
 

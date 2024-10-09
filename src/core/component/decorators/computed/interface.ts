@@ -6,7 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { WatchPath, ComponentAccessorCacheType } from 'core/component/interface';
+import type { WatchPath } from 'core/object/watch';
+
+import type { ComponentAccessorCacheType } from 'core/component/interface';
 import type { DecoratorFunctionalOptions } from 'core/component/decorators/interface';
 
 export interface DecoratorComputed extends DecoratorFunctionalOptions {
