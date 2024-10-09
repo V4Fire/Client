@@ -79,13 +79,13 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 				await parent.$nextTick();
 			}
 
-			propValuesToUpdate.forEach(([propName, getterName]) => {
+			for (const [propName, getterName] of propValuesToUpdate) {
 				const getter = unsafe.$attrs[getterName];
 
 				if (Object.isFunction(getter)) {
 					unsafe[`[[${propName}]]`] = getter()[0];
 				}
-			});
+			}
 		}
 	}
 }

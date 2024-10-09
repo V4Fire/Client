@@ -59,7 +59,9 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	}
 
 	if (Object.isArray(children)) {
-		children.forEach((child) => resolveAttrs.call(this, Object.cast(child)));
+		for (const child of children) {
+			resolveAttrs.call(this, Object.cast(child));
+		}
 	}
 
 	if (Object.isArray(dynamicChildren) && dynamicChildren.length > 0) {
@@ -139,16 +141,16 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 				const dynamicProps = vnode.dynamicProps ?? [];
 				vnode.dynamicProps = dynamicProps;
 
-				Object.keys(props).forEach((prop) => {
+				for (const prop of Object.keys(props)) {
 					if (isHandler.test(prop)) {
 						if (SSR) {
-							delete props![prop];
+							delete props[prop];
 
 						} else {
 							dynamicProps.push(prop);
 						}
 					}
-				});
+				}
 			}
 
 			delete props[key];
@@ -173,15 +175,15 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 			names = props[key];
 
 		if (names != null) {
-			names.split(' ').forEach((name: string) => {
+			for (const name of names.split(' ')) {
 				if ('classes' in this && this.classes?.[name] != null) {
-					Object.assign(props, mergeProps({class: props?.class}, {class: this.classes[name]}));
+					Object.assign(props, mergeProps({class: props.class}, {class: this.classes[name]}));
 				}
 
 				if ('styles' in this && this.styles?.[name] != null) {
-					Object.assign(props, mergeProps({style: props?.style}, {style: this.styles[name]}));
+					Object.assign(props, mergeProps({style: props.style}, {style: this.styles[name]}));
 				}
-			});
+			}
 
 			delete props[key];
 		}

@@ -56,9 +56,11 @@ export function inheritContext(
 	];
 
 	fields.forEach((cluster) => {
-		Object.entries(cluster).forEach(([name, field]) => {
+		for (const name of Object.keys(cluster)) {
+			const field = cluster[name];
+
 			if (field == null) {
-				return;
+				continue;
 			}
 
 			const link = linkedFields[name];
@@ -106,6 +108,6 @@ export function inheritContext(
 					ctx[name] = parentCtx[name];
 				}
 			}
-		});
+		}
 	});
 }

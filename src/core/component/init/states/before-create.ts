@@ -20,7 +20,7 @@ import { getNormalParent } from 'core/component/traverse';
 import { initProps, attachAttrPropsListeners } from 'core/component/prop';
 import { initFields } from 'core/component/field';
 import { attachAccessorsFromMeta } from 'core/component/accessor';
-import { attachMethodsFromMeta, callMethodFromComponent } from 'core/component/method';
+import { callMethodFromComponent } from 'core/component/method';
 
 import { runHook } from 'core/component/hook';
 import { implementEventEmitterAPI } from 'core/component/event';
@@ -205,7 +205,7 @@ export function beforeCreateState(
 
 	unsafe.$normalParent = getNormalParent(component);
 
-	['$root', '$parent', '$normalParent'].forEach((key) => {
+	for (const key of ['$root', '$parent', '$normalParent']) {
 		const val = unsafe[key];
 
 		if (val != null) {
@@ -216,7 +216,7 @@ export function beforeCreateState(
 				value: getComponentContext(Object.cast(val))
 			});
 		}
-	});
+	}
 
 	Object.defineProperty(unsafe, '$children', {
 		configurable: true,

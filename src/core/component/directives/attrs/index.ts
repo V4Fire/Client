@@ -139,9 +139,9 @@ ComponentEngine.directive('attrs', {
 
 				case 'on': {
 					if (Object.isDictionary(value)) {
-						Object.entries(value).forEach(([name, handler]) => {
-							attachEvent(name, handler);
-						});
+						for (const name of Object.keys(value)) {
+							attachEvent(name, value[name]);
+						}
 					}
 
 					return;
@@ -149,10 +149,10 @@ ComponentEngine.directive('attrs', {
 
 				case 'bind': {
 					if (Object.isDictionary(value)) {
-						Object.entries(value).forEach(([name, val]) => {
-							attrs[name] = val;
+						for (const name of Object.keys(value)) {
+							attrs[name] = value[name];
 							attrsKeys.push(name);
-						});
+						}
 					}
 
 					return;
@@ -266,9 +266,12 @@ ComponentEngine.directive('attrs', {
 				eventChunks = event.split('.'),
 				flags = Object.createDict<boolean>();
 
-			// The first element is the event name; we need to slice only the part containing the event modifiers
-			eventChunks.slice(1).forEach((chunk) => flags[chunk] = true);
 			event = eventChunks[0];
+
+			// The first element is the event name; we need to slice only the part containing the event modifiers
+			for (const chunk of eventChunks.slice(1)) {
+				flags[chunk] = true;
+			}
 
 			if (flags.right && !event.startsWith('key')) {
 				event = 'onContextmenu';
@@ -363,14 +366,16 @@ ComponentEngine.directive('attrs', {
 			attrs = normalizeComponentAttrs(attrs, null, componentMeta)!;
 		}
 
-		Object.entries(attrs).forEach(([name, value]) => {
+		for (const name of Object.keys(attrs)) {
+			const value = attrs[name];
+
 			if (name.startsWith('v-')) {
 				parseDirective(name, value);
 
 			} else if (!name.startsWith('@')) {
 				patchProps(props, normalizePropertyAttribute(name), value);
 			}
-		});
+		}
 
 		return props;
 
@@ -396,9 +401,9 @@ ComponentEngine.directive('attrs', {
 
 				case 'bind': {
 					if (Object.isDictionary(attrVal)) {
-						Object.entries(attrVal).forEach(([name, val]) => {
-							props[name] = val;
-						});
+						for (const name of Object.keys(attrVal)) {
+							props[name] = attrVal[name];
+						}
 					}
 
 					return;

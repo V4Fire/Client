@@ -40,7 +40,10 @@ export function beforeDestroyState(component: ComponentInterface, opts: Componen
 
 	unsafe.async.clearAll().locked = true;
 	unsafe.$async.clearAll().locked = true;
-	unsafe.$destructors.forEach((destructor) => destructor());
+
+	for (const destructor of unsafe.$destructors) {
+		destructor();
+	}
 
 	if ($el != null && $el.component === component) {
 		delete $el.component;

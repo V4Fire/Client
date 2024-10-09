@@ -152,7 +152,9 @@ export function implementEventEmitterAPI(component: object): void {
 				emitter = Object.cast(opts.rawEmitter ? reversedEmitter : wrappedReversedEmitter);
 			}
 
-			Array.toArray(event).forEach((event) => {
+			const events = Array.toArray(event);
+
+			for (const event of events) {
 				if (method === 'off' && cb == null) {
 					emitter.removeAllListeners(event);
 
@@ -163,7 +165,7 @@ export function implementEventEmitterAPI(component: object): void {
 						links.push(Object.cast(opts.rawEmitter ? cb : link));
 					}
 				}
-			});
+			}
 
 			if (isOnLike) {
 				return Object.isArray(event) ? links : links[0];

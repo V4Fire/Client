@@ -30,7 +30,7 @@ export function getFieldWeight(field: CanUndef<ComponentField>, scope: Dictionar
 	if (after != null) {
 		weight += after.size;
 
-		after.forEach((name) => {
+		for (const name of after) {
 			const dep = scope[name];
 
 			if (dep == null) {
@@ -38,7 +38,7 @@ export function getFieldWeight(field: CanUndef<ComponentField>, scope: Dictionar
 			}
 
 			weight += getFieldWeight(dep, scope);
-		});
+		}
 	}
 
 	if (!field.atom) {
