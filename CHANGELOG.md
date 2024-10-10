@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-10-??)
+
+#### :bug: Bug Fix
+
+* Fixed the issue with incorrectly detecting the functional smart component `build/snakeskin`
+
 ## v4.0.0-beta.144 (2024-10-09)
 
 #### :bug: Bug Fix

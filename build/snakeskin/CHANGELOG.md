@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-10-??)
+
+#### :bug: Bug Fix
+
+* Fixed the issue with incorrectly detecting the functional smart component
+
 ## v4.0.0-beta.91 (2024-04-19)
 
 #### :house: Internal
