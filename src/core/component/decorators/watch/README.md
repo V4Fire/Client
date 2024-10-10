@@ -203,7 +203,7 @@ export default class bExample extends iBlock {
   @prop({required: false})
   params?: Dictionary;
 
-  @watch({path: 'params', shouldInit: (ctx) => ctx.params != null})
+  @watch({path: 'params', shouldInit: (o) => o.params != null})
   watcher() {
 
   }

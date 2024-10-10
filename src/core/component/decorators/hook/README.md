@@ -243,7 +243,7 @@ then the rest will wait for its resolving to preserve the initialization order.
 
 ### [after]
 
-A method name or a list of names after which this handler should be invoked on a registered hook event.
+A method name or a list of method names after which this handler should be invoked during a registered hook event.
 
 ```typescript
 import iBlock, { component, hook } from 'components/super/i-block/i-block';

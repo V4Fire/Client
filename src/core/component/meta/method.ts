@@ -7,7 +7,9 @@
  */
 
 import { defProp } from 'core/const/props';
-import type { ComponentMeta } from 'core/component/interface';
+
+import { getComponentContext } from 'core/component/context';
+import type { ComponentMeta, ComponentAccessor, ComponentMethod } from 'core/component/interface';
 
 const ALREADY_PASSED = Symbol('This target is passed');
 
@@ -27,33 +29,96 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 	Object.defineProperty(constructor, ALREADY_PASSED, {value: true});
 
 	const {
+		component,
 		componentName: src,
+
 		props,
 		fields,
-		computedFields,
 		systemFields,
+
+		computedFields,
 		accessors,
-		methods
+		methods,
+
+		metaInitializers
 	} = meta;
 
 	const
 		proto = constructor.prototype,
-		descriptors = Object.getOwnPropertyDescriptors(proto);
+		descriptors = Object.getOwnPropertyDescriptors(proto),
+		descriptorKeys = Object.keys(descriptors);
 
-	Object.entries(descriptors).forEach(([name, desc]) => {
+	for (let i = 0; i < descriptorKeys.length; i++) {
+		const name = descriptorKeys[i];
+
 		if (name === 'constructor') {
-			return;
+			continue;
 		}
+
+		const desc = descriptors[name];
 
 		// Methods
 		if ('value' in desc) {
-			const fn = desc.value;
+			const method = desc.value;
 
-			if (!Object.isFunction(fn)) {
-				return;
+			if (!Object.isFunction(method)) {
+				continue;
 			}
 
-			methods[name] = Object.assign(methods[name] ?? {watchers: {}, hooks: {}}, {src, fn});
+			const methodDesc: ComponentMethod = Object.assign(methods[name] ?? {watchers: {}, hooks: {}}, {src, fn: method});
+			methods[name] = methodDesc;
+
+			component.methods[name] = method;
+
+			// eslint-disable-next-line func-style
+			const wrapper = function wrapper(this: object) {
+				// eslint-disable-next-line prefer-rest-params
+				return method.apply(getComponentContext(this), arguments);
+			};
+
+			if (wrapper.length !== method.length) {
+				Object.defineProperty(wrapper, 'length', {get: () => method.length});
+			}
+
+			component.methods[name] = wrapper;
+
+			const
+				watchers = methodDesc.watchers != null ? Object.keys(methodDesc.watchers) : [],
+				hooks = methodDesc.hooks != null ? Object.keys(methodDesc.hooks) : [];
+
+			if (watchers.length > 0 || hooks.length > 0) {
+				metaInitializers.set(name, (meta) => {
+					const isFunctional = meta.params.functional === true;
+
+					for (const watcherName of watchers) {
+						const watcher = methodDesc.watchers![watcherName];
+
+						if (watcher == null || isFunctional && watcher.functional === false) {
+							continue;
+						}
+
+						const watcherListeners = meta.watchers[watcherName] ?? [];
+						meta.watchers[watcherName] = watcherListeners;
+
+						watcherListeners.push({
+							...watcher,
+							method: name,
+							args: Array.toArray(watcher.args),
+							handler: method
+						});
+					}
+
+					for (const hookName of hooks) {
+						const hook = methodDesc.hooks![hookName];
+
+						if (isFunctional && hook.functional === false) {
+							continue;
+						}
+
+						meta.hooks[hookName].push({...hook, fn: method});
+					}
+				});
+			}
 
 		// Accessors
 		} else {
@@ -62,18 +127,15 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				storeKey = `${name}Store`;
 
 			let
-				metaKey: string,
-				tiedWith: CanUndef<object>;
+				type: 'accessors' | 'computedFields' = 'accessors',
+				tiedWith: CanNull<ComponentAccessor['tiedWith']> = null;
 
 			// Computed fields are cached by default
 			if (
 				name in computedFields ||
 				!(name in accessors) && (tiedWith = props[propKey] ?? fields[storeKey] ?? systemFields[storeKey])
 			) {
-				metaKey = 'computedFields';
-
-			} else {
-				metaKey = 'accessors';
+				type = 'computedFields';
 			}
 
 			let field: Dictionary;
@@ -88,7 +150,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				field = systemFields;
 			}
 
-			const store = meta[metaKey];
+			const store = meta[type];
 
 			// If we already have a property by this key, like a prop or field,
 			// we need to delete it to correct override
@@ -99,15 +161,14 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 
 			const
 				old = store[name],
-				set = desc.set ?? old?.set,
-				get = desc.get ?? old?.get;
+				set = desc.set ?? old?.set;
 
 			// To use `super` within the setter, we also create a new method with a name `${key}Setter`
 			if (set != null) {
-				const nm = `${name}Setter`;
-				proto[nm] = set;
+				const methodName = `${name}Setter`;
+				proto[methodName] = set;
 
-				meta.methods[nm] = {
+				meta.methods[methodName] = {
 					src,
 					fn: set,
 					watchers: {},
@@ -115,35 +176,29 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				};
 			}
 
-			// To using `super` within the getter, we also create a new method with a name `${key}Getter`
-			if (get != null) {
-				const nm = `${name}Getter`;
-				proto[nm] = get;
-
-				meta.methods[nm] = {
-					src,
-					fn: get,
-					watchers: {},
-					hooks: {}
-				};
-			}
-
-			const acc = Object.assign(store[name] ?? {}, {
+			const accessor: ComponentAccessor = Object.assign(store[name] ?? {cache: false}, {
 				src,
 				get: desc.get ?? old?.get,
 				set
 			});
 
-			store[name] = acc;
+			store[name] = accessor;
+
+			if (accessor.cache === 'auto') {
+				component.computed[name] = {
+					get: accessor.get,
+					set: accessor.set
+				};
+			}
 
 			// eslint-disable-next-line eqeqeq
-			if (acc.functional === undefined && meta.params.functional === null) {
-				acc.functional = false;
+			if (accessor.functional === undefined && meta.params.functional === null) {
+				accessor.functional = false;
 			}
 
 			if (tiedWith != null) {
-				acc.tiedWith = tiedWith;
+				accessor.tiedWith = tiedWith;
 			}
 		}
-	});
+	}
 }

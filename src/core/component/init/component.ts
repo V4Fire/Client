@@ -46,7 +46,10 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
 		const regParentComponent = componentRegInitializers[parentName];
 
 		if (regParentComponent != null) {
-			regParentComponent.forEach((reg) => reg());
+			for (const reg of regParentComponent) {
+				reg();
+			}
+
 			delete componentRegInitializers[parentName];
 			return true;
 		}
@@ -73,7 +76,10 @@ export function registerComponent(name: CanUndef<string>): CanNull<ComponentMeta
 	const regComponent = componentRegInitializers[name];
 
 	if (regComponent != null) {
-		regComponent.forEach((reg) => reg());
+		for (const reg of regComponent) {
+			reg();
+		}
+
 		delete componentRegInitializers[name];
 	}
 

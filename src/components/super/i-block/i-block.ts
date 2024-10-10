@@ -94,7 +94,8 @@ export default abstract class iBlock extends iBlockProviders {
 	 */
 	@watch<iBlock>({
 		path: 'r.shouldMountTeleports',
-		flush: 'post'
+		flush: 'post',
+		shouldInit: (o) => o.r.shouldMountTeleports === false
 	})
 
 	@hook('before:mounted')

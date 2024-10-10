@@ -18,7 +18,7 @@ import type { ComponentInterface } from 'core/component/interface';
  */
 export function beforeDataCreateState(component: ComponentInterface): void {
 	const {meta, $fields} = component.unsafe;
-	initFields(meta.fields, component, $fields);
+	initFields(meta.fieldInitializers, component, $fields);
 
 	// In functional components, the watching of fields can be initialized in lazy mode
 	if (SSR || meta.params.functional === true) {

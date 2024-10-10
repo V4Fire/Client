@@ -15,13 +15,12 @@ import { V4_COMPONENT } from 'core/component/const';
 import { getComponentContext } from 'core/component/context';
 
 import { forkMeta } from 'core/component/meta';
-import { getPropertyInfo, PropertyInfo } from 'core/component/reflect';
 import { getNormalParent } from 'core/component/traverse';
 
 import { initProps, attachAttrPropsListeners } from 'core/component/prop';
 import { initFields } from 'core/component/field';
 import { attachAccessorsFromMeta } from 'core/component/accessor';
-import { attachMethodsFromMeta, callMethodFromComponent } from 'core/component/method';
+import { callMethodFromComponent } from 'core/component/method';
 
 import { runHook } from 'core/component/hook';
 import { implementEventEmitterAPI } from 'core/component/event';
@@ -50,8 +49,6 @@ export function beforeCreateState(
 	opts?: InitBeforeCreateStateOptions
 ): void {
 	meta = forkMeta(meta);
-
-	const isFunctional = meta.params.functional === true;
 
 	// To avoid TS errors marks all properties as editable
 	const unsafe = Object.cast<Writable<ComponentInterface['unsafe']>>(component);
@@ -208,7 +205,7 @@ export function beforeCreateState(
 
 	unsafe.$normalParent = getNormalParent(component);
 
-	['$root', '$parent', '$normalParent'].forEach((key) => {
+	for (const key of ['$root', '$parent', '$normalParent']) {
 		const val = unsafe[key];
 
 		if (val != null) {
@@ -219,7 +216,7 @@ export function beforeCreateState(
 				value: getComponentContext(Object.cast(val))
 			});
 		}
-	});
+	}
 
 	Object.defineProperty(unsafe, '$children', {
 		configurable: true,
@@ -251,10 +248,6 @@ export function beforeCreateState(
 			}
 		}());
 	});
-
-	if (opts?.addMethods) {
-		attachMethodsFromMeta(component);
-	}
 
 	if (opts?.implementEventAPI) {
 		implementEventEmitterAPI(component);
@@ -288,86 +281,7 @@ export function beforeCreateState(
 
 	runHook('beforeRuntime', component).catch(stderr);
 
-	const {
-		systemFields,
-		tiedFields,
-
-		computedFields,
-		accessors,
-
-		watchDependencies,
-		watchers
-	} = meta;
-
-	initFields(systemFields, component, unsafe);
-
-	const fakeHandler = () => undefined;
-
-	if (watchDependencies.size > 0) {
-		const watchSet = new Set<PropertyInfo>();
-
-		watchDependencies.forEach((deps) => {
-			deps.forEach((dep) => {
-				const
-					path = Object.isArray(dep) ? dep.join('.') : String(dep),
-					info = getPropertyInfo(path, component);
-
-				if (info.type === 'system' || isFunctional && info.type === 'field') {
-					watchSet.add(info);
-				}
-			});
-		});
-
-		// If a computed property has a field or system field as a dependency
-		// and the host component does not have any watchers to this field,
-		// we need to register a "fake" watcher to enforce watching
-		watchSet.forEach((info) => {
-			const needToForceWatching =
-				watchers[info.name] == null &&
-				watchers[info.originalPath] == null &&
-				watchers[info.path] == null;
-
-			if (needToForceWatching) {
-				watchers[info.name] = [
-					{
-						deep: true,
-						immediate: true,
-						provideArgs: false,
-						handler: fakeHandler
-					}
-				];
-			}
-		});
-	}
-
-	// If a computed property is tied with a field or system field
-	// and the host component does not have any watchers to this field,
-	// we need to register a "fake" watcher to enforce watching
-	Object.entries(tiedFields).forEach(([name, normalizedName]) => {
-		if (normalizedName == null) {
-			return;
-		}
-
-		const
-			accessor = accessors[normalizedName],
-			computed = accessor == null ? computedFields[normalizedName] : null;
-
-		const needForceWatch = watchers[name] == null && (
-			accessor != null && accessor.dependencies?.length !== 0 ||
-			computed != null && computed.cache !== 'forever' && computed.dependencies?.length !== 0
-		);
-
-		if (needForceWatch) {
-			watchers[name] = [
-				{
-					deep: true,
-					immediate: true,
-					provideArgs: false,
-					handler: fakeHandler
-				}
-			];
-		}
-	});
+	initFields(meta.systemFieldInitializers, component, unsafe);
 
 	runHook('beforeCreate', component).catch(stderr);
 	callMethodFromComponent(component, 'beforeCreate');

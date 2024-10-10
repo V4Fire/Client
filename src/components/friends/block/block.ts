@@ -171,8 +171,8 @@ export function setMod(this: Block, name: string, value: unknown, reason: ModEve
 	this.localEmitter.emit(`block.mod.set.${name}.${normalizedValue}`, event);
 
 	if (!isInit) {
-		ctx.emit(`mod:set:${name}`, event);
-		ctx.emit(`mod:set:${name}:${normalizedValue}`, event);
+		ctx.strictEmit(`mod:set:${name}`, event);
+		ctx.strictEmit(`mod:set:${name}:${normalizedValue}`, event);
 	}
 
 	return true;
@@ -251,7 +251,7 @@ export function removeMod(this: Block, name: string, value?: unknown, reason: Mo
 		this.localEmitter.emit(`block.mod.remove.${name}.${currentValue}`, event);
 
 		if (needNotify) {
-			ctx.emit(`mod:remove:${name}`, event);
+			ctx.strictEmit(`mod:remove:${name}`, event);
 		}
 	}
 

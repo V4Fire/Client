@@ -38,32 +38,37 @@ export function initProps(
 		...opts
 	};
 
-	const {
-		store,
-		from
-	} = p;
+	const {store, from} = p;
 
 	const
 		isFunctional = meta.params.functional === true,
 		source: typeof props = p.forceUpdate ? props : attrs;
 
-	Object.entries(source).forEach(([propName, prop]) => {
+	const propNames = Object.keys(source);
+
+	for (let i = 0; i < propNames.length; i++) {
+		const
+			propName = propNames[i],
+			prop = source[propName];
+
 		const canSkip =
 			prop == null ||
 			!SSR && isFunctional && prop.functional === false;
 
 		if (canSkip) {
-			return;
+			continue;
 		}
 
 		unsafe.$activeField = propName;
 
 		let propValue = (from ?? component)[propName];
 
-		const getAccessors = unsafe.$attrs[`on:${propName}`];
+		if (propValue === undefined && unsafe.getPassedHandlers?.().has(`:${propName}`)) {
+			const getAccessors = unsafe.$attrs[`on:${propName}`];
 
-		if (propValue === undefined && Object.isFunction(getAccessors)) {
-			propValue = getAccessors()[0];
+			if (Object.isFunction(getAccessors)) {
+				propValue = getAccessors()[0];
+			}
 		}
 
 		let needSaveToStore = opts.saveToStore;
@@ -112,7 +117,7 @@ export function initProps(
 				get: () => opts.forceUpdate ? propValue : store[privateField]
 			});
 		}
-	});
+	}
 
 	unsafe.$activeField = undefined;
 	return store;

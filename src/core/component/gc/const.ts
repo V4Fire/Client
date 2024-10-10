@@ -31,9 +31,9 @@ export const add = (task: Iterator<void>): number => {
 	const l = queue.push(task);
 
 	if (newTaskHandlersQueue.length > 0) {
-		newTaskHandlersQueue.splice(0, newTaskHandlersQueue.length).forEach((handler) => {
+		for (const handler of newTaskHandlersQueue.splice(0, newTaskHandlersQueue.length)) {
 			handler();
-		});
+		}
 	}
 
 	return l;

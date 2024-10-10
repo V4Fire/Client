@@ -155,8 +155,8 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	readonly checkDBEquality: CheckDBEquality = true;
 
 	/** {@link iDataProvider.requestParams} */
-	@system({merge: true})
-	readonly requestParams: RequestParams = {get: {}};
+	@system({merge: true, init: () => ({get: {}})})
+	readonly requestParams!: RequestParams;
 
 	/**
 	 * The raw component data from the data provider
@@ -173,7 +173,7 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	 * @emits `dbChange(value: CanUndef<this['DB']>)`
 	 */
 	set db(value: CanUndef<this['DB']>) {
-		this.emit('dbCanChange', value);
+		this.strictEmit('dbCanChange', value);
 
 		if (value === this.db) {
 			return;
@@ -194,7 +194,7 @@ abstract class iDataData extends iBlock implements iDataProvider {
 			});
 		}
 
-		this.emit('dbChange', value);
+		this.strictEmit('dbChange', value);
 	}
 
 	static override readonly mods: ModsDecl = {
@@ -273,7 +273,7 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	 */
 	@watch<iData>({
 		path: 'componentConverter',
-		shouldInit: (ctx) => ctx.componentConverter != null
+		shouldInit: (o) => o.componentConverter != null
 	})
 
 	protected initRemoteData(): CanUndef<unknown> {

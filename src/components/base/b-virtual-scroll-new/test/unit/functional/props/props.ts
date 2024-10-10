@@ -287,9 +287,9 @@ test.describe('<b-virtual-scroll-new>', () => {
 						chunkSize,
 						request: {get: {test: 1}},
 						'@hook:beforeDataCreate': (ctx) => {
-							const original = ctx.emit;
+							const original = ctx.strictEmit;
 
-							ctx.emit = jestMock.mock((...args) => {
+							ctx.strictEmit = jestMock.mock((...args) => {
 								original(...args);
 								return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
 							});
@@ -305,7 +305,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 
 				const
 					virtualScrolLState = await component.getVirtualScrollState(),
-					spy = await component.getSpy((ctx) => ctx.emit),
+					spy = await component.getSpy((ctx) => ctx.strictEmit),
 					loadSuccessCalls = (await spy.results).filter(({value: [event]}) => event === 'dataLoadSuccess');
 
 				test.expect(loadSuccessCalls).toHaveLength(1);
