@@ -44,8 +44,12 @@ export function initProps(
 		isFunctional = meta.params.functional === true,
 		source: typeof props = p.forceUpdate ? props : attrs;
 
-	for (const propName of Object.keys(source)) {
-		const prop = source[propName];
+	const propNames = Object.keys(source);
+
+	for (let i = 0; i < propNames.length; i++) {
+		const
+			propName = propNames[i],
+			prop = source[propName];
 
 		const canSkip =
 			prop == null ||

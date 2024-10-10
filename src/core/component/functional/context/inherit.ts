@@ -31,33 +31,38 @@ export function inheritContext(
 	// Additionally, we should not unmount the vnodes created within the component.
 	parentCtx.$destroy(<ComponentDestructorOptions>{recursive: false, shouldUnmountVNodes: false});
 
+	const linkedFields = {};
+
 	const
 		props = ctx.$props,
 		parentProps = parentCtx.$props,
-		linkedFields = {};
+		parentKeys = Object.keys(parentProps);
 
-	Object.keys(parentProps).forEach((prop) => {
-		const linked = parentCtx.$syncLinkCache.get(prop);
+	for (let i = 0; i < parentKeys.length; i++) {
+		const
+			prop = parentKeys[i],
+			linked = parentCtx.$syncLinkCache.get(prop);
 
-		if (linked == null) {
-			return;
-		}
+		if (linked != null) {
+			const links = Object.values(linked);
 
-		Object.values(linked).forEach((link) => {
-			if (link != null) {
-				linkedFields[link.path] = prop;
+			for (let i = 0; i < links.length; i++) {
+				const link = links[i];
+
+				if (link != null) {
+					linkedFields[link.path] = prop;
+				}
 			}
-		});
-	});
+		}
+	}
 
-	const fields = [
-		parentCtx.meta.systemFields,
-		parentCtx.meta.fields
-	];
+	for (const cluster of [parentCtx.meta.systemFields, parentCtx.meta.fields]) {
+		const keys = Object.keys(cluster);
 
-	fields.forEach((cluster) => {
-		for (const name of Object.keys(cluster)) {
-			const field = cluster[name];
+		for (let i = 0; i < keys.length; i++) {
+			const
+				name = keys[i],
+				field = cluster[name];
 
 			if (field == null) {
 				continue;
@@ -109,5 +114,5 @@ export function inheritContext(
 				}
 			}
 		}
-	});
+	}
 }

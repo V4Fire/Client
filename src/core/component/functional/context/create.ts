@@ -41,7 +41,11 @@ export function createVirtualContext(
 	const handlers: Array<[string, boolean, Function]> = [];
 
 	if (props != null) {
-		for (const name of Object.keys(props)) {
+		const keys = Object.keys(props);
+
+		for (let i = 0; i < keys.length; i++) {
+			const name = keys[i];
+
 			const
 				prop = props[name],
 				normalizedName = name.camelize(false);
@@ -70,10 +74,7 @@ export function createVirtualContext(
 	let $options: {directives: Dictionary; components: Dictionary};
 
 	if ('$options' in parent) {
-		const {
-			directives = {},
-			components = {}
-		} = parent.$options;
+		const {directives = {}, components = {}} = parent.$options;
 
 		$options = {
 			directives: Object.create(directives),

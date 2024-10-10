@@ -46,7 +46,9 @@ type PatchFlags = Exclude<Flags, 'slots' | 'children'>;
  * ```
  */
 export function setVNodePatchFlags(vnode: VNode, ...flags: Flags): void {
-	for (const flag of flags) {
+	for (let i = 0; i < flags.length; i++) {
+		const flag = flags[i];
+
 		const
 			val = flagValues[flag],
 			dest = flagDest[flag];

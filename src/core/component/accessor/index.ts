@@ -78,7 +78,11 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 	const isFunctional = meta.params.functional === true;
 
-	for (const name of Object.keys(meta.accessors)) {
+	const accessorsNames = Object.keys(meta.accessors);
+
+	for (let i = 0; i < accessorsNames.length; i++) {
+		const name = accessorsNames[i];
+
 		const accessor = meta.accessors[name];
 
 		const tiedWith = tiedFields[name];
@@ -162,7 +166,11 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 	const cachedAccessors = new Set<Function>();
 
-	for (const name of Object.keys(meta.computedFields)) {
+	const computedNames = Object.keys(meta.computedFields);
+
+	for (let i = 0; i < computedNames.length; i++) {
+		const name = computedNames[i];
+
 		const computed = meta.computedFields[name];
 
 		const tiedWith = tiedFields[name];
@@ -274,8 +282,8 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 			if (canUseCache && cacheStatus in get) {
 				if (this.hook !== 'created') {
-					for (const applyEffect of effects) {
-						applyEffect();
+					for (let i = 0; i < effects.length; i++) {
+						effects[i]();
 					}
 				}
 

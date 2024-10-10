@@ -39,14 +39,14 @@ export interface ComponentMeta {
 	name: string;
 
 	/**
-	 * The name of the NPM package in which the component is defined or overridden
-	 */
-	layer?: string;
-
-	/**
 	 * Component name without any special suffixes
 	 */
 	componentName: string;
+
+	/**
+	 * The name of the NPM package in which the component is defined or overridden
+	 */
+	layer?: string;
 
 	/**
 	 * A link to the component's constructor

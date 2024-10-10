@@ -20,20 +20,26 @@ export function normalizeClass(classes: CanArray<string | Dictionary>): string {
 		classesStr = classes;
 
 	} else if (Object.isArray(classes)) {
-		classes.forEach((className) => {
-			const normalizedClass = normalizeClass(className);
+		for (let i = 0; i < classes.length; i += 1) {
+			const
+				className = classes[i],
+				normalizedClass = normalizeClass(className);
 
 			if (normalizedClass !== '') {
 				classesStr += `${normalizedClass} `;
 			}
-		});
+		}
 
 	} else if (Object.isDictionary(classes)) {
-		Object.entries(classes).forEach(([className, has]) => {
-			if (Object.isTruly(has)) {
+		const keys = Object.keys(classes);
+
+		for (let i = 0; i < keys.length; i++) {
+			const className = keys[i];
+
+			if (Object.isTruly(classes[className])) {
 				classesStr += `${className} `;
 			}
-		});
+		}
 	}
 
 	return classesStr.trim();
@@ -47,15 +53,22 @@ export function normalizeStyle(styles: CanArray<string | Dictionary<string>>): s
 	if (Object.isArray(styles)) {
 		const normalizedStyles = {};
 
-		styles.forEach((style) => {
+		for (let i = 0; i < styles.length; i++) {
+			const style = styles[i];
+
 			const normalizedStyle = Object.isString(style) ?
 				parseStringStyle(style) :
 				normalizeStyle(style);
 
-			if (Object.size(normalizedStyle) > 0) {
-				Object.entries(normalizedStyle).forEach(([name, style]) => normalizedStyles[name] = style);
+			if (Object.isDictionary(normalizedStyle)) {
+				const keys = Object.keys(normalizedStyle);
+
+				for (let i = 0; i < keys.length; i++) {
+					const name = keys[i];
+					normalizedStyles[name] = normalizedStyle[name];
+				}
 			}
-		});
+		}
 
 		return normalizedStyles;
 	}
@@ -82,17 +95,19 @@ const
 export function parseStringStyle(style: string): Dictionary<string> {
 	const styles = {};
 
-	style.split(listDelimiterRgxp).forEach((singleStyle) => {
-		singleStyle = singleStyle.trim();
+	const styleRules = style.split(listDelimiterRgxp);
 
-		if (singleStyle !== '') {
-			const chunks = singleStyle.split(propertyDelimiterRgxp, 2);
+	for (let i = 0; i < styleRules.length; i++) {
+		const style = styleRules[i].trim();
+
+		if (style !== '') {
+			const chunks = style.split(propertyDelimiterRgxp, 2);
 
 			if (chunks.length > 1) {
 				styles[chunks[0].trim()] = chunks[1].trim();
 			}
 		}
-	});
+	}
 
 	return styles;
 }
@@ -127,12 +142,18 @@ export function normalizeComponentAttrs(
 		normalizedAttrs['v-attrs'] = normalizeComponentAttrs(normalizedAttrs['v-attrs'], dynamicProps, component);
 	}
 
-	Object.entries(normalizedAttrs).forEach(normalizeAttr);
+	const attrNames = Object.keys(normalizedAttrs);
+
+	for (let i = 0; i < attrNames.length; i++) {
+		const attrName = attrNames[i];
+		normalizeAttr(attrName, normalizedAttrs[attrName]);
+	}
+
 	modifyDynamicPath();
 
 	return normalizedAttrs;
 
-	function normalizeAttr([attrName, value]: [string, unknown]) {
+	function normalizeAttr(attrName: string, value: unknown) {
 		let propName = `${attrName}Prop`.camelize(false);
 
 		if (attrName === 'ref' || attrName === 'ref_for') {
@@ -162,7 +183,7 @@ export function normalizeComponentAttrs(
 				tiedPropValue = value()[0];
 
 			normalizedAttrs[tiedPropName] = tiedPropValue;
-			normalizeAttr([tiedPropName, tiedPropValue]);
+			normalizeAttr(tiedPropName, tiedPropValue);
 			dynamicProps.push(tiedPropName);
 		}
 
@@ -200,8 +221,7 @@ export function normalizeComponentAttrs(
 			return;
 		}
 
-		// eslint-disable-next-line vars-on-top, no-var
-		for (var i = dynamicProps.length - 1; i >= 0; i--) {
+		for (let i = dynamicProps.length - 1; i >= 0; i--) {
 			const
 				prop = dynamicProps[i],
 				path = dynamicPropsPatches.get(prop);

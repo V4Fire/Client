@@ -57,8 +57,12 @@ export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): Com
 	return meta;
 
 	function inheritProp(current: ComponentMeta['props'], parent: ComponentMeta['props']) {
-		for (const propName of Object.keys(parent)) {
-			const parentProp = parent[propName];
+		const keys = Object.keys(parent);
+
+		for (let i = 0; i < keys.length; i++) {
+			const
+				propName = keys[i],
+				parentProp = parent[propName];
 
 			if (parentProp == null) {
 				continue;
@@ -83,8 +87,12 @@ export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): Com
 	}
 
 	function inheritField(current: ComponentMeta['fields'], parent: ComponentMeta['fields']) {
-		for (const fieldName of Object.keys(parent)) {
-			const parentField = parent[fieldName];
+		const keys = Object.keys(parent);
+
+		for (let i = 0; i < keys.length; i++) {
+			const
+				fieldName = keys[i],
+				parentField = parent[fieldName];
 
 			if (parentField == null) {
 				continue;
@@ -118,14 +126,21 @@ export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): Com
 	}
 
 	function inheritAccessors(current: ComponentMeta['accessors'], parent: ComponentMeta['accessors']) {
-		for (const accessorName of Object.keys(parent)) {
+		const keys = Object.keys(parent);
+
+		for (let i = 0; i < keys.length; i++) {
+			const accessorName = keys[i];
 			current[accessorName] = {...parent[accessorName]!};
 		}
 	}
 
 	function inheritMethods(current: ComponentMeta['methods'], parent: ComponentMeta['methods']) {
-		for (const methodName of Object.keys(parent)) {
-			const parentMethod = parent[methodName];
+		const keys = Object.keys(parent);
+
+		for (let i = 0; i < keys.length; i++) {
+			const
+				methodName = keys[i],
+				parentMethod = parent[methodName];
 
 			if (parentMethod == null) {
 				continue;
@@ -141,14 +156,21 @@ export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): Com
 				hooks = {};
 
 			if (parentMethod.watchers != null) {
-				for (const key of Object.keys(parentMethod.watchers)) {
+				const keys = Object.keys(parentMethod.watchers);
+
+				for (let i = 0; i < keys.length; i++) {
+					const key = keys[i];
 					watchers[key] = {...parentMethod.watchers[key]};
 				}
 			}
 
 			if (parentMethod.hooks != null) {
-				for (const key of Object.keys(parentMethod.hooks)) {
-					const hook = parentMethod.hooks[key];
+				const keys = Object.keys(parentMethod.hooks);
+
+				for (let i = 0; i < keys.length; i++) {
+					const
+						key = keys[i],
+						hook = parentMethod.hooks[key];
 
 					hooks[key] = {
 						...hook,
@@ -201,8 +223,12 @@ export function inheritParams(meta: ComponentMeta, parentMeta: ComponentMeta): v
 export function inheritMods(meta: ComponentMeta, parentMeta: ComponentMeta): void {
 	const {mods} = meta;
 
-	for (const modName of Object.keys(parentMeta.mods)) {
-		const parentModValues = parentMeta.mods[modName];
+	const keys = Object.keys(parentMeta.mods);
+
+	for (let i = 0; i < keys.length; i++) {
+		const
+			modName = keys[i],
+			parentModValues = parentMeta.mods[modName];
 
 		const
 			currentModValues = mods[modName],

@@ -401,9 +401,11 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 							const tiedLinks = handler[tiedWatchers];
 
 							if (Object.isArray(tiedLinks)) {
-								tiedLinks.forEach((path) => {
+								for (let i = 0; i < tiedLinks.length; i++) {
+									const path = tiedLinks[i];
+
 									if (!Object.isArray(path)) {
-										return;
+										continue;
 									}
 
 									const modifiedInfo: WatchHandlerParams = {
@@ -413,7 +415,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 									};
 
 									handler.call(this, value, oldValue, modifiedInfo);
-								});
+								}
 
 							} else {
 								handler.call(this, value, oldValue, info);
@@ -434,7 +436,9 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 						// This situation occurs when the root observable object has changed,
 						// and we need to remove the watchers of all its "nested parts", but leave the root watcher intact
-						destructors.splice(1, destructors.length).forEach((destroy) => destroy());
+						for (const destroy of destructors.splice(1, destructors.length)) {
+							destroy();
+						}
 
 						if (fromSystem) {
 							i.path = [isPrivateField.replace(String(i.path[0])), ...i.path.slice(1)];
@@ -476,9 +480,11 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 							const tiedLinks = handler[tiedWatchers];
 
 							if (Object.isArray(tiedLinks)) {
-								tiedLinks.forEach((path) => {
+								for (let i = 0; i < tiedLinks.length; i++) {
+									const path = tiedLinks[i];
+
 									if (!Object.isArray(path)) {
-										return;
+										continue;
 									}
 
 									const modifiedInfo: WatchHandlerParams = {
@@ -488,7 +494,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 									};
 
 									externalWatchHandler(value, oldValue, modifiedInfo);
-								});
+								}
 
 							} else {
 								externalWatchHandler(value, oldValue, info);
@@ -520,8 +526,9 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 					attachDeepProxy(forceUpdate);
 
 					return wrapDestructor(() => {
-						destructors.forEach((destroy) => destroy());
-						destructors.splice(0, destructors.length);
+						for (const destroy of destructors.splice(0, destructors.length)) {
+							destroy();
+						}
 					});
 				}
 

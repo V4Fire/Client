@@ -73,8 +73,10 @@ ComponentEngine.directive('render', {
 			} else {
 				if (Object.isArray(newVNode)) {
 					if (isSlot(newVNode[0])) {
-						for (const vnode of newVNode) {
-							const slot = vnode.props?.slot;
+						for (let i = 0; i < newVNode.length; i++) {
+							const
+								vnode = newVNode[i],
+								slot = vnode.props?.slot;
 
 							if (slot != null) {
 								slots[slot] = () => vnode.children ?? getDefaultSlotFromChildren(slot);

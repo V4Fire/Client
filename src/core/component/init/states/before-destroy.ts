@@ -41,8 +41,8 @@ export function beforeDestroyState(component: ComponentInterface, opts: Componen
 	unsafe.async.clearAll().locked = true;
 	unsafe.$async.clearAll().locked = true;
 
-	for (const destructor of unsafe.$destructors) {
-		destructor();
+	for (let i = 0; i < unsafe.$destructors.length; i++) {
+		unsafe.$destructors[i]();
 	}
 
 	if ($el != null && $el.component === component) {

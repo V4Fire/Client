@@ -45,11 +45,14 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 
 	const
 		proto = constructor.prototype,
-		descriptors = Object.getOwnPropertyDescriptors(proto);
+		descriptors = Object.getOwnPropertyDescriptors(proto),
+		descriptorKeys = Object.keys(descriptors);
 
 	let parentProto: CanNull<object> = null;
 
-	for (const name of Object.keys(descriptors)) {
+	for (let i = 0; i < descriptorKeys.length; i++) {
+		const name = descriptorKeys[i];
+
 		if (name === 'constructor') {
 			continue;
 		}

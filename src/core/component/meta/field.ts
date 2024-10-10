@@ -23,9 +23,9 @@ export function getFieldWeight(field: CanUndef<ComponentField>, scope: Dictionar
 		return 0;
 	}
 
-	const {after} = field;
-
 	let weight = 0;
+
+	const {after} = field;
 
 	if (after != null) {
 		weight += after.size;

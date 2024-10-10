@@ -50,7 +50,10 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 	if (blueprint != null) {
 		const hooks = {};
 
-		for (const name of Object.keys(blueprint.hooks)) {
+		const hookNames = Object.keys(blueprint.hooks);
+
+		for (let i = 0; i < hookNames.length; i++) {
+			const name = hookNames[i];
 			hooks[name] = blueprint.hooks[name].slice();
 		}
 
@@ -72,13 +75,19 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 	if (isFirstFill) {
 		const {mods} = component;
 
-		for (const modName of Object.keys(meta.mods)) {
-			const mod = meta.mods[modName];
+		const modNames = Object.keys(meta.mods);
+
+		for (let i = 0; i < modNames.length; i++) {
+			const
+				modName = modNames[i],
+				mod = meta.mods[modName];
 
 			let defaultValue: CanUndef<ModVal[]>;
 
 			if (mod != null) {
-				for (const val of mod) {
+				for (let i = 0; i < mod.length; i++) {
+					const val = mod[i];
+
 					if (Object.isArray(val)) {
 						defaultValue = val;
 						break;

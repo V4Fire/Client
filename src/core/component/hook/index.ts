@@ -80,8 +80,10 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 			if (hooks.some((hook) => hook.after != null && hook.after.size > 0)) {
 				const emitter = new QueueEmitter();
 
-				for (const [i, hook] of hooks.entries()) {
-					const hookName = hook.name;
+				for (let i = 0; i < hooks.length; i++) {
+					const
+						hook = hooks[i],
+						hookName = hook.name;
 
 					if (hook.once) {
 						toDelete ??= [];
@@ -114,7 +116,9 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 			} else {
 				let tasks: CanNull<Array<Promise<unknown>>> = null;
 
-				for (const [i, hook] of hooks.entries()) {
+				for (let i = 0; i < hooks.length; i++) {
+					const hook = hooks[i];
+
 					let res: unknown;
 
 					switch (args.length) {

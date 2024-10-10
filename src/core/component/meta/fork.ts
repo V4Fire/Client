@@ -21,14 +21,21 @@ export function forkMeta(base: ComponentMeta): ComponentMeta {
 	meta.tiedFields = {...meta.tiedFields};
 	meta.hooks = {};
 
-	for (const name of Object.keys(base.hooks)) {
+	const hookNames = Object.keys(base.hooks);
+
+	for (let i = 0; i < hookNames.length; i++) {
+		const name = hookNames[i];
 		meta.hooks[name] = base.hooks[name].slice();
 	}
 
 	meta.watchers = {};
 
-	for (const name of Object.keys(base.watchers)) {
-		const watchers = base.watchers[name];
+	const watcherNames = Object.keys(base.watchers);
+
+	for (let i = 0; i < watcherNames.length; i++) {
+		const
+			name = hookNames[i],
+			watchers = base.watchers[name];
 
 		if (watchers != null) {
 			meta.watchers[name] = watchers.slice();

@@ -27,7 +27,9 @@ export function initFields(
 		component
 	);
 
-	for (const [name, field] of from) {
+	for (let i = 0; i < from.length; i++) {
+		const [name, field] = from[i];
+
 		const sourceVal = store[name];
 
 		if (field?.init == null) {

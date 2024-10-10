@@ -40,6 +40,10 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 	const $a = p.async ?? unsafe.$async;
 
 	const
+		allWatchers = p.watchers ?? meta.watchers,
+		watcherKeys = Object.keys(allWatchers);
+
+	const
 		// True if the component is currently deactivated
 		isDeactivated = hook === 'deactivated',
 
@@ -49,12 +53,14 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 		// True if the method has been invoked with passing the custom async instance as a property
 		isCustomAsync = $a !== unsafe.$async;
 
-	const watchers = p.watchers ?? meta.watchers;
-
 	// Iterate over all registered watchers and listeners and initialize their
-	Object.entries(watchers).forEach(([watchPath, watchers]) => {
+	for (let i = 0; i < watcherKeys.length; i++) {
+		let watchPath = watcherKeys[i];
+
+		const watchers = allWatchers[watchPath];
+
 		if (watchers == null) {
-			return;
+			continue;
 		}
 
 		// A link to the context of the watcher;
@@ -77,21 +83,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 			attachWatcherOnMounted = hookMod === '?';
 		}
 
-		// Add a listener to the component's created hook if the component has not been created yet
-		if (attachWatcherOnCreated && isBeforeCreate) {
-			hooks['before:created'].push({fn: attachWatcher});
-			return;
-		}
-
-		// Add a listener to the component's mounted/activated hook if the component has not been mounted or activated yet
-		if (attachWatcherOnMounted && (isBeforeCreate || component.$el == null)) {
-			hooks[isDeactivated ? 'activated' : 'mounted'].unshift({fn: attachWatcher});
-			return;
-		}
-
-		attachWatcher();
-
-		function attachWatcher() {
+		const attachWatcher = () => {
 			// If we have a custom watcher, we need to find a link to the event emitter.
 			// For instance:
 			// ':foo' -> watcherCtx == ctx; key = 'foo'
@@ -112,16 +104,18 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 			let propInfo: typeof p.info = p.info;
 
 			// Iterates over all registered handlers for this watcher
-			watchers!.forEach((watchInfo) => {
+			for (let i = 0; i < watchers.length; i++) {
+				const watchInfo = watchers[i];
+
 				if (watchInfo.shouldInit?.(component) === false) {
-					return;
+					continue;
 				}
 
 				if (customWatcher == null) {
 					propInfo ??= getPropertyInfo(watchPath, component);
 
 					if (canSkipWatching(propInfo, watchInfo)) {
-						return;
+						continue;
 					}
 				}
 
@@ -362,7 +356,19 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 					link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(asyncParams, 'watchers'));
 					unwatch = $watch.call(component, propInfo, watchInfo, handler);
 				}
-			});
+			}
+		};
+
+		// Add a listener to the component's created hook if the component has not been created yet
+		if (attachWatcherOnCreated && isBeforeCreate) {
+			hooks['before:created'].push({fn: attachWatcher});
+
+		// Add a listener to the component's mounted/activated hook if the component has not been mounted or activated yet
+		} else if (attachWatcherOnMounted && (isBeforeCreate || component.$el == null)) {
+			hooks[isDeactivated ? 'activated' : 'mounted'].unshift({fn: attachWatcher});
+
+		} else {
+			attachWatcher();
 		}
-	});
+	}
 }
