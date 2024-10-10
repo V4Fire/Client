@@ -48,8 +48,6 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 		descriptors = Object.getOwnPropertyDescriptors(proto),
 		descriptorKeys = Object.keys(descriptors);
 
-	let parentProto: CanNull<object> = null;
-
 	for (let i = 0; i < descriptorKeys.length; i++) {
 		const name = descriptorKeys[i];
 
@@ -163,37 +161,19 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 
 			const
 				old = store[name],
-				set = desc.set ?? old?.set,
-				get = desc.get ?? old?.get;
+				set = desc.set ?? old?.set;
 
-			parentProto ??= Object.getPrototypeOf(proto);
+			// To use `super` within the setter, we also create a new method with a name `${key}Setter`
+			if (set != null) {
+				const methodName = `${name}Setter`;
+				proto[methodName] = set;
 
-			if (name in parentProto!) {
-				// To use `super` within the setter, we also create a new method with a name `${key}Setter`
-				if (set != null) {
-					const methodName = `${name}Setter`;
-					proto[methodName] = set;
-
-					meta.methods[methodName] = {
-						src,
-						fn: set,
-						watchers: {},
-						hooks: {}
-					};
-				}
-
-				// To using `super` within the getter, we also create a new method with a name `${key}Getter`
-				if (get != null) {
-					const methodName = `${name}Getter`;
-					proto[methodName] = get;
-
-					meta.methods[methodName] = {
-						src,
-						fn: get,
-						watchers: {},
-						hooks: {}
-					};
-				}
+				meta.methods[methodName] = {
+					src,
+					fn: set,
+					watchers: {},
+					hooks: {}
+				};
 			}
 
 			const accessor: ComponentAccessor = Object.assign(store[name] ?? {cache: false}, {
