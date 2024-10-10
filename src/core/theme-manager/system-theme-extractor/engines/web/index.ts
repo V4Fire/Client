@@ -37,11 +37,22 @@ export class SystemThemeExtractorWeb implements SystemThemeExtractor {
 		}
 
 		this.darkThemeMq = globalThis.matchMedia('(prefers-color-scheme: dark)');
-		type EmitterArgs = [string, (e: Event) => void];
+		type EmitterArgs = ['change', (e: MediaQueryListEvent) => void];
 
 		this.emitter = Object.cast((...args: EmitterArgs) => {
-			this.darkThemeMq.addEventListener(...args);
-			return (...args: EmitterArgs) => this.darkThemeMq.removeEventListener(...args);
+			if (typeof this.darkThemeMq.addEventListener === 'function') {
+				this.darkThemeMq.addEventListener(...args);
+				return (...args: EmitterArgs) => this.darkThemeMq.removeEventListener(...args);
+			}
+
+			/* eslint-disable deprecation/deprecation */
+			if (typeof this.darkThemeMq.addListener === 'function') {
+				this.darkThemeMq.addListener(args[1]);
+				return (...args: EmitterArgs) => this.darkThemeMq.removeListener(args[1]);
+			}
+			/* eslint-enable deprecation/deprecation */
+
+			stderr('MediaQueryList does not support change events');
 		});
 	}
 
