@@ -207,15 +207,15 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 
 	if (isSmartFunctional) {
 		if (vFuncDir == null || vFuncDir === 'true') {
-			appendFunctionalAttrsIs(attrs, true);
+			appendSmartFunctionalAttrs(attrs, true);
 
 		} else if (vFuncDir !== 'false') {
-			appendFunctionalAttrsIs(attrs, vFuncDir);
+			appendSmartFunctionalAttrs(attrs, vFuncDir);
 		}
 	}
 }
 
-function appendFunctionalAttrsIs(attrs, condition) {
+function appendSmartFunctionalAttrs(attrs, condition) {
 	if (attrs[':is']) {
 		attrs[':is'] = [`${attrs[':is'][0]} + (${condition} ? '-functional' : '')`];
 
