@@ -216,15 +216,16 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 }
 
 function appendSmartFunctionalAttrs(attrs, condition) {
+	if (webpack.ssr) {
+		attrs[':canFunctional'] = [condition];
+		return;
+	}
+
 	if (attrs[':is']) {
 		attrs[':is'] = [`${attrs[':is'][0]} + (${condition} ? '-functional' : '')`];
 
 	} else if (attrs['is']) {
 		attrs['is'] = [`${attrs['is'][0]}${condition ? '-functional' : ''}`];
-	}
-
-	if (webpack.ssr) {
-		attrs[':canFunctional'] = [condition];
 	}
 }
 
