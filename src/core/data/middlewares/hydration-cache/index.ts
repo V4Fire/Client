@@ -43,7 +43,6 @@ export function attachHydrationCache(opts: HydrationCacheOptions = defaultParams
 				id: cacheId(this),
 				query: params.querySerializer(ctx.query),
 				api: Object.isFunction(url) ? url(middlewareParams) : url,
-				cacheStrategy: params.cacheStrategy,
 				method: params.method
 			});
 
