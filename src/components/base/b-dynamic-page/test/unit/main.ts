@@ -148,7 +148,7 @@ test.describe('<b-dynamic-page>', () => {
 	});
 
 	test('should not render an empty node if the page is `undefined`', async ({page}) => {
-		const target = await renderDynamicPage(page);
+		const target = await renderDynamicPage(page, {'data-testid': 'target'});
 
 		await target.evaluate((ctx) => {
 			ctx.page = undefined;
@@ -156,8 +156,8 @@ test.describe('<b-dynamic-page>', () => {
 			return ctx.$nextTick();
 		});
 
-		const componentInnerHtml = await target.evaluate((ctx) => ctx.unsafe.$el?.innerHTML);
+		const componentInnerHtml = await page.getByTestId('target').innerHTML();
 
-		await test.expect(componentInnerHtml).toBe('');
+		test.expect(componentInnerHtml).toBe('');
 	});
 });
