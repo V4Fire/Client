@@ -15,6 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
+* Fixed the issue with incorrectly detecting the functional smart component `build/snakeskin`
 * Create a fallback for the addEventListener method on the MediaQueryList
   `core/theme-manager/system-theme-extractor/engines/web`
 * Fixed an issue with the comment node in `$refs` that occurs when rendering an `undefined` page `bDynamicPage`
