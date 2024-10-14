@@ -161,7 +161,8 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 
 			const
 				old = store[name],
-				set = desc.set ?? old?.set;
+				set = desc.set ?? old?.set,
+				get = desc.get ?? old?.get;
 
 			// To use `super` within the setter, we also create a new method with a name `${key}Setter`
 			if (set != null) {
@@ -176,9 +177,22 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				};
 			}
 
+			// To using `super` within the getter, we also create a new method with a name `${key}Getter`
+			if (get != null) {
+				const methodName = `${name}Getter`;
+				proto[methodName] = get;
+
+				meta.methods[methodName] = {
+					src,
+					fn: get,
+					watchers: {},
+					hooks: {}
+				};
+			}
+
 			const accessor: ComponentAccessor = Object.assign(store[name] ?? {cache: false}, {
 				src,
-				get: desc.get ?? old?.get,
+				get,
 				set
 			});
 
