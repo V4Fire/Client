@@ -210,12 +210,12 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 			appendSmartFunctionalAttrs(attrs, true);
 
 		} else if (vFuncDir !== 'false') {
-			appendSmartFunctionalAttrs(attrs, vFuncDir);
+			appendSmartFunctionalAttrs(attrs, vFuncDir, false);
 		}
 	}
 }
 
-function appendSmartFunctionalAttrs(attrs, condition) {
+function appendSmartFunctionalAttrs(attrs, condition, isStaticCondition = true) {
 	if (webpack.ssr) {
 		attrs[':canFunctional'] = [condition];
 		return;
@@ -223,6 +223,10 @@ function appendSmartFunctionalAttrs(attrs, condition) {
 
 	if (attrs[':is']) {
 		attrs[':is'] = [`${attrs[':is'][0]} + (${condition} ? '-functional' : '')`];
+
+	} else if (!isStaticCondition) {
+		attrs[':is'] = [`'${attrs['is'][0]}' + (${condition} ? '-functional' : '')`];
+		delete attrs['is'];
 
 	} else if (attrs['is']) {
 		attrs['is'] = [`${attrs['is'][0]}${condition ? '-functional' : ''}`];
