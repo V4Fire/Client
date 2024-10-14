@@ -15,6 +15,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
+* Create a fallback for the addEventListener method on the MediaQueryList
+  `core/theme-manager/system-theme-extractor/engines/web`
 * Fixed an issue with the comment node in `$refs` that occurs when rendering an `undefined` page `bDynamicPage`
 
 ## v4.0.0-beta.144 (2024-10-09)
