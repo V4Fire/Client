@@ -34,7 +34,7 @@ export function forkMeta(base: ComponentMeta): ComponentMeta {
 
 	for (let i = 0; i < watcherNames.length; i++) {
 		const
-			name = hookNames[i],
+			name = watcherNames[i],
 			watchers = base.watchers[name];
 
 		if (watchers != null) {

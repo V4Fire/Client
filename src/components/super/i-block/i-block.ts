@@ -100,10 +100,7 @@ export default abstract class iBlock extends iBlockProviders {
 
 	@hook('before:mounted')
 	protected onMountTeleports(): void {
-		const {
-			$el: originalNode,
-			$async: $a
-		} = this;
+		const {$el: originalNode, $async: $a} = this;
 
 		if (originalNode == null) {
 			return;
