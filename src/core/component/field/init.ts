@@ -32,7 +32,7 @@ export function initFields(
 
 		const sourceVal = store[name];
 
-		if (field?.init == null) {
+		if (sourceVal !== undefined || field?.init == null) {
 			store[name] = sourceVal;
 			continue;
 		}
