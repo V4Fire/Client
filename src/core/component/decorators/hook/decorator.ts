@@ -68,6 +68,6 @@ export function hook(hook: DecoratorHook): PartDecorator {
 			}
 		}
 
-		meta.methods[methodName] = normalizeFunctionalParams({...method}, meta);
+		meta.methods[methodName] = normalizeFunctionalParams({...method, hooks}, meta);
 	});
 }
