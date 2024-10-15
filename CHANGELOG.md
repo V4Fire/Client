@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-10-??)
+
+#### :bug: Bug Fix
+
+* Fixed an issue where the `touchend` event handler was being invoked after the component had already been destroyed
+
 ## v4.0.0-beta.145 (2024-10-14)
 
 #### :bug: Bug Fix

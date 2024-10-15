@@ -33,7 +33,8 @@
 					ref = header |
 					@touchstart = swipeControl.onPullStart($event, true) |
 					@touchmove = swipeControl.onPull |
-					@touchend = swipeControl.onPullEnd
+					/// TODO remove `async.proxy` on events after resolving issue https://github.com/vuejs/core/issues/12183
+					@touchend = async.proxy(swipeControl.onPullEnd)
 				.
 					< .&__toggler-stripe
 						< .&__toggler
@@ -44,7 +45,7 @@
 					v-on-resize = {handler: recalculateState} |
 					@touchstart = swipeControl.onPullStart |
 					@touchmove = swipeControl.onPull |
-					@touchend = swipeControl.onPullEnd
+					@touchend = async.proxy(swipeControl.onPullEnd)
 				.
 					- block content
 						< .&__content ref = content
