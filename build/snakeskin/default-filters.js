@@ -59,12 +59,14 @@ Snakeskin.importFilters({
 });
 
 function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplName, cursor) {
+	const needCamelize = /^(:[^-]|@)/;
+
 	Object.entries(attrs).forEach(([key, attr]) => {
 		if (isStaticV4Prop.test(key)) {
 			// Since HTML is not case-sensitive, the name can be written differently.
 			// We will explicitly normalize the name to the most popular format for HTML notation.
 			// For Vue attributes such as `:` and `@`, we convert the prop to camelCase format.
-			const normalizedKey = key.startsWith(':') || key.startsWith('@') ?
+			const normalizedKey = needCamelize.test(key) ?
 				key.camelize(false) :
 				key.dasherize();
 
