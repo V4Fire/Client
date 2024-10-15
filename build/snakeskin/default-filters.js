@@ -63,11 +63,14 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 		if (isStaticV4Prop.test(key)) {
 			// Since HTML is not case-sensitive, the name can be written differently.
 			// We will explicitly normalize the name to the most popular format for HTML notation.
-			const tmp = key.dasherize(key.startsWith(':'));
+			// For Vue attributes such as `:` and `@`, we convert the prop to camelCase format.
+			const normalizedKey = key.startsWith(':') || key.startsWith('@') ?
+				key.camelize(false) :
+				key.dasherize();
 
-			if (tmp !== key) {
+			if (normalizedKey !== key) {
 				delete attrs[key];
-				attrs[tmp] = attr;
+				attrs[normalizedKey] = attr;
 			}
 		}
 	});
