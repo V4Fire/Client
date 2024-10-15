@@ -136,10 +136,7 @@ export function prop(typeOrParams?: PropType | DecoratorProp): PartDecorator {
 				// it is necessary to clone this value for each new component instance
 				// to ensure that they do not share the same value
 				if (prop.type !== Function && defaultInstanceValue != null && typeof defaultInstanceValue === 'object') {
-					getDefault = () => Object.isPrimitive(defaultInstanceValue) ?
-						defaultInstanceValue :
-						Object.fastClone(defaultInstanceValue);
-
+					getDefault = () => Object.fastClone(defaultInstanceValue);
 					(<object>getDefault)[DEFAULT_WRAPPER] = true;
 				}
 

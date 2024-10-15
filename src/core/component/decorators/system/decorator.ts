@@ -145,15 +145,15 @@ export function system(
 				getDefValue = () => field.default;
 
 			} else if (meta.instance[fieldName] !== undefined) {
-				const val = meta.instance[fieldName];
+				const defaultInstanceValue = meta.instance[fieldName];
 
-				if (Object.isPrimitive(val)) {
-					getDefValue = () => val;
+				if (Object.isPrimitive(defaultInstanceValue)) {
+					getDefValue = () => defaultInstanceValue;
 
 				} else {
 					// To prevent linking to the same type of component for non-primitive values,
 					// it's important to clone the default value from the component constructor.
-					getDefValue = () => Object.fastClone(val);
+					getDefValue = () => Object.fastClone(defaultInstanceValue);
 				}
 			}
 
