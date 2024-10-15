@@ -233,11 +233,13 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		}
 
 		if (!SSR && functionalVNode.dynamicProps != null && functionalVNode.dynamicProps.length > 0) {
+			const functionalProps = functionalVNode.dynamicProps;
+
 			const dynamicProps = vnode.dynamicProps ?? [];
 			vnode.dynamicProps = dynamicProps;
 
-			for (let i = 0; i < dynamicProps.length; i++) {
-				const propName = dynamicProps[i];
+			for (let i = 0; i < functionalProps.length; i++) {
+				const propName = functionalProps[i];
 
 				if (isHandler.test(propName)) {
 					dynamicProps.push(propName);
