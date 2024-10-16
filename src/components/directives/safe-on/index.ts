@@ -9,7 +9,7 @@ import log from 'core/log';
 import ComponentEngine from 'core/component';
 
 import type { SafeOnDirectiveParams } from 'components/directives/safe-on/interface';
-import { VNode } from 'core/component/engines';
+import type { VNode } from 'core/component/engines';
 
 //#if runtime has dummyComponents
 import('components/directives/safe-on/test/b-safe-on-dynamic-event-dummy');

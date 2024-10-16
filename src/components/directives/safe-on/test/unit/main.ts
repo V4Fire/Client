@@ -5,12 +5,15 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
-import bDummy from 'components/dummies/b-dummy/b-dummy';
-import { Locator, Page } from 'playwright';
+
+import type { Locator, Page } from 'playwright';
+
 import test from 'tests/config/unit/test';
 import { Component } from 'tests/helpers';
 import { createMockFn, SpyObject } from 'tests/helpers/mock';
-import bSafeOnDynamicEventDummy from '../b-safe-on-dynamic-event-dummy/b-safe-on-dynamic-event-dummy';
+
+import type bDummy from 'components/dummies/b-dummy/b-dummy';
+import type bSafeOnDynamicEventDummy from 'components/directives/safe-on/test/b-safe-on-dynamic-event-dummy/b-safe-on-dynamic-event-dummy';
 
 test.describe('components/directives/safe-on', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -34,9 +37,7 @@ test.describe('components/directives/safe-on', () => {
 
 		await element.click();
 
-		const calls = await mockCb.calls;
-
-		test.expect(calls[0]).toMatchObject([test.expect.any(Object)]);
+		test.expect(await mockCb.calls[0]).toMatchObject([test.expect.any(Object)]);
 	});
 
 	test('should update the event listener if the event type is changed', async ({page}) => {
