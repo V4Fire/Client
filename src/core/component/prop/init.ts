@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { DEFAULT_WRAPPER } from 'core/component/const';
-
 import type { ComponentInterface } from 'core/component/interface';
 import type { InitPropsObjectOptions } from 'core/component/prop/interface';
 
@@ -76,7 +74,7 @@ export function initProps(
 		if (propValue === undefined && prop.default !== undefined) {
 			propValue = prop.default;
 
-			if (Object.isFunction(propValue) && (opts.saveToStore === true || propValue[DEFAULT_WRAPPER] !== true)) {
+			if (Object.isFunction(propValue) && opts.saveToStore) {
 				propValue = prop.type === Function ? propValue : propValue(component);
 
 				if (Object.isFunction(propValue)) {

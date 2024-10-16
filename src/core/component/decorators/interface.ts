@@ -16,7 +16,7 @@ export interface DecoratorFunctionalOptions {
 	functional?: boolean;
 }
 
-interface ComponentDescriptor {
+export interface ComponentDescriptor {
 	meta: ComponentMeta;
 	parentMeta: CanNull<ComponentMeta>;
 }

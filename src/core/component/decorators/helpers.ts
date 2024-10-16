@@ -17,6 +17,7 @@ import type {
 	PartDecorator,
 	ComponentPartDecorator,
 
+	ComponentDescriptor,
 	DecoratorFunctionalOptions
 
 } from 'core/component/decorators/interface';
@@ -27,13 +28,13 @@ import type {
  */
 export function createComponentDecorator(decorator: ComponentPartDecorator): PartDecorator {
 	return (_: object, partKey: string, partDesc?: PropertyDescriptor) => {
-		initEmitter.once('bindConstructor', (componentName, regEvent) => {
+		initEmitter.once('bindConstructor', (componentName: string, regEvent: string) => {
 			const decoratedKeys = componentDecoratedKeys[componentName] ?? new Set();
 			componentDecoratedKeys[componentName] = decoratedKeys;
 
 			decoratedKeys.add(partKey);
 
-			initEmitter.once(regEvent, (componentDesc) => {
+			initEmitter.once(regEvent, (componentDesc: ComponentDescriptor) => {
 				decorator(componentDesc, partKey, partDesc);
 			});
 		});
