@@ -65,6 +65,12 @@ export function beforeCreateState(
 		get: () => meta.instance
 	});
 
+	Object.defineProperty(unsafe, 'constructor', {
+		configurable: true,
+		enumerable: true,
+		value: meta.constructor
+	});
+
 	unsafe.$fields = {};
 	unsafe.$systemFields = {};
 	unsafe.$modifiedFields = {};

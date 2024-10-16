@@ -45,6 +45,18 @@ export function defaultValue(getter: () => unknown): PartDecorator {
 
 		} else if (key in meta.systemFields) {
 			regField(key, 'systemFields', {init: getter}, meta);
+
+		} else {
+			const value = getter();
+
+			if (Object.isFunction(value)) {
+				Object.defineProperty(meta.constructor.prototype, key, {
+					configurable: true,
+					enumerable: false,
+					writable: true,
+					value
+				});
+			}
 		}
 	});
 }

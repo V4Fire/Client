@@ -212,7 +212,7 @@ export default abstract class iBlockState extends iBlockMods {
 			value === 'ready' && oldValue === 'beforeReady' ||
 			value === 'inactive' && !this.renderOnActivation ||
 
-			(<typeof iBlockState>this.instance.constructor).shadowComponentStatuses[value];
+			(<typeof iBlockState>this.constructor).shadowComponentStatuses[value];
 
 		if (isShadowStatus) {
 			this.shadowComponentStatusStore = value;
@@ -602,7 +602,7 @@ export default abstract class iBlockState extends iBlockMods {
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
-		const i = this.instance;
+		const i = (<typeof iBlockState>this.constructor).prototype;
 
 		this.i18n = i.i18n.bind(this);
 		this.syncStorageState = i.syncStorageState.bind(this);

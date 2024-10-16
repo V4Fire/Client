@@ -442,8 +442,7 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
-		const
-			i = this.instance;
+		const i = (<typeof bSelect>this.constructor).prototype;
 
 		this.normalizeItems = i.normalizeItems.bind(this);
 	}

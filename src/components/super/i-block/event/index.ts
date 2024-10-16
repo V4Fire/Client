@@ -597,7 +597,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
-		const i = this.instance;
+		const i = (<typeof iBlockEvent>this.constructor).prototype;
 
 		this.on = i.on.bind(this);
 		this.once = i.once.bind(this);

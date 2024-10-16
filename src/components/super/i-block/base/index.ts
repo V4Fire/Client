@@ -673,7 +673,9 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 */
 	@hook('beforeRuntime')
 	protected initBaseAPI(): void {
-		this.watch = this.instance.watch.bind(this);
+		const i = (<typeof iBlockBase>this.constructor).prototype;
+
+		this.watch = i.watch.bind(this);
 
 		if (this.getParent != null) {
 			const {$parent} = this;
