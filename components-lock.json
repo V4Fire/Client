@@ -1,5 +1,5 @@
 {
-  "hash": "cf42b6d3305a7aa82f03a6a2e1777d6f80d56f444952b156ab1c06a1a331a112",
+  "hash": "2fd9759454c34e78b268750128181a86425ed1baf9f6fd8defbe8475ae6f9fce",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -12,25 +12,29 @@
             "parent": "i-block",
             "dependencies": [],
             "libs": [
-              "components/directives/on-resize"
+              "components/directives/on-resize",
+              "components/directives/safe-on"
             ]
           },
           "name": "b-bottom-slide",
           "parent": "i-block",
           "dependencies": [],
           "libs": [
-            "components/directives/on-resize"
+            "components/directives/on-resize",
+            "components/directives/safe-on"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
             "%data:Set": [
-              "components/directives/on-resize"
+              "components/directives/on-resize",
+              "components/directives/safe-on"
             ]
           },
           "resolvedOwnLibs": {
             "%data": "%data:Set",
             "%data:Set": [
-              "components/directives/on-resize"
+              "components/directives/on-resize",
+              "components/directives/safe-on"
             ]
           },
           "type": "block",
@@ -1270,6 +1274,38 @@
             "src/components/base/b-router/b-router.styl"
           ],
           "tpl": "src/components/base/b-router/b-router.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-safe-on-dynamic-event-dummy",
+        {
+          "index": "src/components/directives/safe-on/test/b-safe-on-dynamic-event-dummy/index.js",
+          "declaration": {
+            "name": "b-safe-on-dynamic-event-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-safe-on-dynamic-event-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/directives/safe-on/test/b-safe-on-dynamic-event-dummy/b-safe-on-dynamic-event-dummy.ts",
+          "styles": [
+            "src/components/directives/safe-on/test/b-safe-on-dynamic-event-dummy/b-safe-on-dynamic-event-dummy.styl"
+          ],
+          "tpl": "src/components/directives/safe-on/test/b-safe-on-dynamic-event-dummy/b-safe-on-dynamic-event-dummy.ss",
           "etpl": null
         }
       ],
@@ -2859,6 +2895,7 @@
               "components/directives/icon",
               "components/directives/in-view",
               "components/directives/safe-html",
+              "components/directives/safe-on",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
               "components/traits/i-control-list/i-control-list",
@@ -2907,6 +2944,7 @@
             "components/directives/icon",
             "components/directives/in-view",
             "components/directives/safe-html",
+            "components/directives/safe-on",
             "core/router/engines/browser-history",
             "core/router/engines/in-memory",
             "components/traits/i-control-list/i-control-list",
@@ -2925,6 +2963,7 @@
               "components/directives/image",
               "components/directives/in-view",
               "components/directives/safe-html",
+              "components/directives/safe-on",
               "components/traits/i-control-list/i-control-list",
               "core/browser",
               "core/cookies",
@@ -2944,6 +2983,7 @@
               "components/directives/image",
               "components/directives/in-view",
               "components/directives/safe-html",
+              "components/directives/safe-on",
               "components/traits/i-control-list/i-control-list",
               "core/browser",
               "core/cookies",

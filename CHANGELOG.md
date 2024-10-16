@@ -13,9 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2024-10-??)
 
-#### :bug: Bug Fix
+#### :rocket: New Feature
 
-* Fixed an issue where the `touchend` event handler was being invoked after the component had already been destroyed
+* Added the `v-safe-on` directive to ensure event listeners are only active while the component is alive,
+preventing handlers from being called after the component is destroyed `core/component/directives/safe-on`
 
 ## v4.0.0-beta.145 (2024-10-14)
 

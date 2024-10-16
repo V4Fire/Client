@@ -14,7 +14,7 @@
 	- windowEvents = { &
 		'@touchstart': 'onStart',
 		'@touchmove': 'onMove',
-		'@touchend': '(...args) => async.proxy(onRelease)(...args)'
+		'v-safe-on:touchend': 'onRelease'
 	} .
 
 	- block body
