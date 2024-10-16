@@ -71,7 +71,12 @@ function resisterComponentDefaultValues(context) {
 	 * @returns {Node}
 	 */
 	function visitor(node) {
-		if (ts.isPropertyDeclaration(node) && ts.hasInitializer(node) && isComponentClass(node.parent, 'component')) {
+		if (
+			ts.isPropertyDeclaration(node) &&
+			ts.hasInitializer(node) &&
+			!node.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.StaticKeyword) &&
+			isComponentClass(node.parent, 'component')
+		) {
 			needImportDecorator = true;
 			return addDefaultValueDecorator(context, node);
 		}
