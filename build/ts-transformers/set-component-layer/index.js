@@ -24,7 +24,7 @@ const
 	pathToRootRgxp = /(?<path>.+)[/\\]src[/\\]/,
 	isComponentPath = new RegExp(`\\/(${validators.blockTypeList.join('|')})-.+?\\/?`);
 
-module.setComponentLayer = setComponentLayer;
+module.exports = setComponentLayer;
 
 /**
  * Adds the "layer" property to the component declaration parameters
