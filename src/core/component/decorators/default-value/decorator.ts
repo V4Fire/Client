@@ -15,7 +15,6 @@ import type { PartDecorator } from 'core/component/decorators/interface';
 
 /**
  * Sets a default value for the specified prop or component field.
- * The value is set using a getter function.
  *
  * Typically, this decorator does not need to be used explicitly,
  * as it will be automatically added in the appropriate places during the build process.
@@ -25,38 +24,41 @@ import type { PartDecorator } from 'core/component/decorators/interface';
  *
  * @example
  * ```typescript
- * import iBlock, { component, prop, defaultValue } from 'components/super/i-block/i-block';
+ * import { defaultValue } from 'core/component/decorators/default-value';
+ * import iBlock, { component, prop, system } from 'components/super/i-block/i-block';
  *
  * @component()
  * class bExample extends iBlock {
- *   @defaultValue(() => 0)
+ *   @defaultValue(0)
  *   @prop(Number)
- *   bla!: number;
+ *   id!: number;
+ *
+ *   @defaultValue(() => ({}))
+ *   @system()
+ *   opts: Dictionary;
  * }
  * ```
  */
-export function defaultValue(getter: () => unknown): PartDecorator {
+export function defaultValue(getter: unknown): PartDecorator {
 	return createComponentDecorator(({meta}, key) => {
+		const isFunction = Object.isFunction(getter);
+
 		if (key in meta.props) {
 			regProp(key, {default: getter}, meta);
 
 		} else if (key in meta.fields) {
-			regField(key, 'fields', {init: getter}, meta);
+			regField(key, 'fields', isFunction ? {init: getter} : {default: getter}, meta);
 
 		} else if (key in meta.systemFields) {
-			regField(key, 'systemFields', {init: getter}, meta);
+			regField(key, 'systemFields', isFunction ? {init: getter} : {default: getter}, meta);
 
-		} else {
-			const value = getter();
-
-			if (Object.isFunction(value)) {
-				Object.defineProperty(meta.constructor.prototype, key, {
-					configurable: true,
-					enumerable: false,
-					writable: true,
-					value
-				});
-			}
+		} else if (isFunction) {
+			Object.defineProperty(meta.constructor.prototype, key, {
+				configurable: true,
+				enumerable: false,
+				writable: true,
+				value: getter
+			});
 		}
 	});
 }

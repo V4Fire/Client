@@ -92,19 +92,40 @@ function addDefaultValueDecorator(context, node) {
 
 	const defaultValue = ts.getEffectiveInitializer(node);
 
-	const getterValue = factory.createBlock(
-		[factory.createReturnStatement(defaultValue)],
-		true
-	);
+	let getter;
 
-	const getter = factory.createArrowFunction(
-		undefined,
-		undefined,
-		[],
-		undefined,
-		undefined,
-		getterValue
-	);
+	if (ts.isFunctionLike(defaultValue)) {
+		getter = defaultValue;
+
+	} else if (
+		ts.isNumericLiteral(defaultValue) ||
+		ts.isBigIntLiteral(defaultValue) ||
+		ts.isStringLiteral(defaultValue) ||
+		defaultValue.kind === ts.SyntaxKind.UndefinedKeyword ||
+		defaultValue.kind === ts.SyntaxKind.NullKeyword ||
+		defaultValue.kind === ts.SyntaxKind.TrueKeyword ||
+		defaultValue.kind === ts.SyntaxKind.FalseKeyword
+	) {
+		getter = defaultValue;
+
+	} else {
+		const getterValue = ts.isFunctionLike(defaultValue) ?
+			defaultValue :
+
+			factory.createBlock(
+				[factory.createReturnStatement(defaultValue)],
+				true
+			);
+
+		getter = factory.createArrowFunction(
+			undefined,
+			undefined,
+			[],
+			undefined,
+			undefined,
+			getterValue
+		);
+	}
 
 	const decoratorExpr = factory.createCallExpression(
 		factory.createIdentifier('defaultValue'),

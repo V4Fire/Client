@@ -157,11 +157,7 @@ export function regField(
 	meta[type][fieldName] = field;
 
 	if (field.init == null || !(INIT in field.init)) {
-		let getDefValue: CanNull<AnyFunction> = null;
-
-		if (field.default !== undefined) {
-			getDefValue = () => field.default;
-		}
+		const defValue = field.default;
 
 		if (field.init != null) {
 			const customInit = field.init;
@@ -169,9 +165,9 @@ export function regField(
 			field.init = (ctx, store) => {
 				const val = customInit(ctx, store);
 
-				if (val === undefined && getDefValue != null) {
+				if (val === undefined && defValue !== undefined) {
 					if (store[fieldName] === undefined) {
-						return getDefValue();
+						return defValue;
 					}
 
 					return undefined;
@@ -180,10 +176,10 @@ export function regField(
 				return val;
 			};
 
-		} else if (getDefValue != null) {
+		} else if (defValue !== undefined) {
 			field.init = (_, store) => {
 				if (store[fieldName] === undefined) {
-					return getDefValue!();
+					return defValue;
 				}
 
 				return undefined;
