@@ -28,7 +28,8 @@ module.exports = resisterComponentDefaultValues;
  * @example
  *
  * ```typescript
- * class bExample {
+ * @component()
+ * class bExample extends iBlock {
  *   @prop(Array)
  *   prop = [];
  * }
@@ -37,7 +38,8 @@ module.exports = resisterComponentDefaultValues;
  * Will transform to
  *
  * ```typescript
- * class bExample {
+ * @component()
+ * class bExample extends iBlock {
  *   @defaultValue(() => [])
  *   @prop(Array)
  *   prop = [];
@@ -46,15 +48,6 @@ module.exports = resisterComponentDefaultValues;
  */
 function resisterComponentDefaultValues(context) {
 	let needImportDecorator = false;
-
-	function visitor(node) {
-		if (ts.isPropertyDeclaration(node) && ts.hasInitializer(node) && isComponentClass(node.parent, 'component')) {
-			needImportDecorator = true;
-			return addDefaultValueDecorator(context, node);
-		}
-
-		return ts.visitEachChild(node, visitor, context);
-	}
 
 	return (node) => {
 		node = ts.visitNode(node, visitor);
@@ -65,6 +58,21 @@ function resisterComponentDefaultValues(context) {
 
 		return node;
 	};
+
+	/**
+	 * A visitor for the AST node
+	 *
+	 * @param {Node} node
+	 * @returns {Node}
+	 */
+	function visitor(node) {
+		if (ts.isPropertyDeclaration(node) && ts.hasInitializer(node) && isComponentClass(node.parent, 'component')) {
+			needImportDecorator = true;
+			return addDefaultValueDecorator(context, node);
+		}
+
+		return ts.visitEachChild(node, visitor, context);
+	}
 }
 
 /**

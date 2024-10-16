@@ -7,8 +7,9 @@ This is necessary to allow retrieval of the default value for a component's prop
 ## Example
 
 ```typescript
-import iBlock, { prop } from 'components/super/i-block/i-block';
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
+@component()
 class bExample extends iBlock {
   @prop(Array)
   prop: string[] = [];
@@ -19,8 +20,9 @@ Will transform to
 
 ```typescript
 import { defaultValue } from 'core/component/decorators/default-value';
-import iBlock, { prop } from 'components/super/i-block/i-block';
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
+@component()
 class bExample extends iBlock {
   @defaultValue(() => { return []; })
   @prop(Array)

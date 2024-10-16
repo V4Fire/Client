@@ -14,12 +14,10 @@ const
 
 /**
  * Returns a settings object for setting up TypeScript transformers
- *
- * @param {import('typescript').Program} program
  * @returns {object}
  */
-module.exports = (program) => ({
-	before: [setComponentLayer(program), resisterComponentDefaultValues],
+module.exports = () => ({
+	before: [setComponentLayer, resisterComponentDefaultValues],
 	after: {},
 	afterDeclarations: {}
 });
