@@ -43,7 +43,7 @@ export function defaultValue(getter: () => unknown): PartDecorator {
 		} else if (key in meta.fields) {
 			regField(key, 'fields', {init: getter}, meta);
 
-		} else {
+		} else if (key in meta.systemFields) {
 			regField(key, 'systemFields', {init: getter}, meta);
 		}
 	});
