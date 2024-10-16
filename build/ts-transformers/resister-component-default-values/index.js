@@ -34,7 +34,7 @@ module.exports = resisterComponentDefaultValues;
  * }
  * ```
  *
- * Will become:
+ * Will transform to
  *
  * ```typescript
  * class bExample {
