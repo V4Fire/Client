@@ -35,6 +35,8 @@ module.exports = setComponentLayer;
  *
  * @example
  * ```typescript
+ * import iBlock, { component } from 'components/super/i-block/i-block';
+ *
  * @component()
  * class bExample extends iBlock {}
  * ```
@@ -42,6 +44,8 @@ module.exports = setComponentLayer;
  * Will transform to
  *
  * ```typescript
+ * import iBlock, { component } from 'components/super/i-block/i-block';
+ *
  * @component({layer: '@v4fire/client'})
  * class bExample extends iBlock {}
  * ```

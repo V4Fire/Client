@@ -28,6 +28,8 @@ module.exports = resisterComponentDefaultValues;
  * @example
  *
  * ```typescript
+ * import iBlock, { component, prop } from 'components/super/i-block/i-block';
+ *
  * @component()
  * class bExample extends iBlock {
  *   @prop(Array)
@@ -38,6 +40,9 @@ module.exports = resisterComponentDefaultValues;
  * Will transform to
  *
  * ```typescript
+ * import { defaultValue } from 'core/component/decorators/default-value';
+ * import iBlock, { component, prop } from 'components/super/i-block/i-block';
+ *
  * @component()
  * class bExample extends iBlock {
  *   @defaultValue(() => [])
