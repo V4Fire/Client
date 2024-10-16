@@ -8,8 +8,7 @@
 import log from 'core/log';
 import ComponentEngine from 'core/component';
 
-import type { SafeOnDirectiveParams } from 'components/directives/safe-on/interface';
-import type { VNode } from 'core/component/engines';
+import type { SafeOnDirectiveParams, SafeOnElement, SafeOnEventType } from 'components/directives/safe-on/interface';
 
 //#if runtime has dummyComponents
 import('components/directives/safe-on/test/b-safe-on-dynamic-event-dummy');
@@ -17,74 +16,75 @@ import('components/directives/safe-on/test/b-safe-on-dynamic-event-dummy');
 
 export * from 'components/directives/safe-on/interface';
 
-const logger = log.namespace('v-safe-on');
+const
+	logger = log.namespace('v-safe-on'),
+	safeOnMapKey = '[[SAFE_ON]]';
 
 ComponentEngine.directive('safe-on', {
-	mounted(el: Element, binding: SafeOnDirectiveParams, vnode: VNode) {
+	mounted(el: SafeOnElement, binding: SafeOnDirectiveParams) {
 		const {eventType, handler} = validateBinding(binding);
 
 		if (eventType == null || handler == null) {
 			return;
 		}
 
-		const ctx = vnode.virtualParent?.value?.unsafe;
-
 		addEventListener(el, eventType, handler);
-
-		ctx?.meta.hooks.beforeDestroy.push({
-			fn: () => removeEventListener(el, eventType)
-		});
 	},
 
-	updated(el: Element, binding: SafeOnDirectiveParams) {
+	updated(el: SafeOnElement, binding: SafeOnDirectiveParams) {
 		const {eventType, handler} = validateBinding(binding);
 
 		if (eventType == null || handler == null) {
 			return;
 		}
 
-		if (
-			el['[[SAFE_ON_EVENT_TYPE]]'] === eventType &&
-			el['[[SAFE_ON_HANDLER]]'] === handler
-		) {
-			return;
-		}
+		if (el[safeOnMapKey]?.has(handler)) {
+			const {eventType: oldEventType} = el[safeOnMapKey].get(handler)!;
 
-		if (el['[[SAFE_ON_EVENT_TYPE]]'] != null) {
-			removeEventListener(el, el['[[SAFE_ON_EVENT_TYPE]]']);
+			if (oldEventType === eventType) {
+				return;
+			}
+
+			removeEventListener(el, handler);
 		}
 
 		addEventListener(el, eventType, handler);
 	},
 
-	unmounted(el: Element, binding: SafeOnDirectiveParams) {
-		const eventType = binding.arg;
+	unmounted(el: SafeOnElement, binding: SafeOnDirectiveParams) {
+		const handler = binding.value;
 
-		if (Object.size(eventType) === 0) {
+		if (typeof handler !== 'function') {
 			return;
 		}
 
-		removeEventListener(el, eventType!);
+		removeEventListener(el, handler);
 	}
 });
 
-function addEventListener(el: Element, eventType: string, handler: SafeOnDirectiveParams['value']) {
-	el['[[SAFE_ON_HANDLER]]'] = handler;
-	el['[[SAFE_ON_EVENT_TYPE]]'] = eventType;
-
-	el.addEventListener(eventType, el['[[SAFE_ON_HANDLER]]']);
-}
-
-function removeEventListener(el: Element, eventType: string) {
-	if (el['[[SAFE_ON_HANDLER]]'] != null) {
-		el.removeEventListener(eventType, el['[[SAFE_ON_HANDLER]]']);
-
-		delete el['[[SAFE_ON_HANDLER]]'];
-		delete el['[[SAFE_ON_EVENT_TYPE]]'];
+function addEventListener(el: SafeOnElement, eventType: SafeOnEventType, handler: SafeOnDirectiveParams['value']) {
+	if (el[safeOnMapKey] == null) {
+		el[safeOnMapKey] = new WeakMap();
 	}
+
+	el[safeOnMapKey].set(handler, {fn: handler, eventType});
+	el.addEventListener(eventType, handler);
 }
 
-function validateBinding(binding: SafeOnDirectiveParams): { eventType?: string; handler?: SafeOnDirectiveParams['value'] } {
+function removeEventListener(el: SafeOnElement, handler: Function): void {
+	if (!(el[safeOnMapKey]?.has(handler))) {
+		return;
+	}
+
+	const {eventType, fn} = el[safeOnMapKey].get(handler)!;
+	el.removeEventListener(eventType, fn);
+	el[safeOnMapKey].delete(handler);
+}
+
+function validateBinding(binding: SafeOnDirectiveParams): {
+	eventType?: SafeOnEventType;
+	handler?: SafeOnDirectiveParams['value'];
+} {
 	const eventType = binding.arg;
 	const handler = binding.value;
 

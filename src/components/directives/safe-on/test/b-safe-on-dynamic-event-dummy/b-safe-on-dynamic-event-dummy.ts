@@ -17,6 +17,12 @@ export default class bSafeOnDynamicEventDummy extends bDummy {
 	dynamicEventName: string = 'click';
 
 	/**
+	 * True, if the element with the dynamic event is visible
+	 */
+	@field()
+	isElementVisible: boolean = true;
+
+	/**
 	 * The event handler
 	 */
 	onDynamicEvent(): void {

@@ -12,5 +12,9 @@
 
 - template index() extends ['b-dummy'].index
 	- block body
-		< .&__dynamic-event v-safe-on:[dynamicEventName] = onDynamicEvent | -testid = dynamicEvent
+		< .&__dynamic-event &
+			v-if = isElementVisible |
+			v-safe-on:[dynamicEventName] = onDynamicEvent |
+			-testid = dynamicEvent
+		.
 			Dynamic event: {{dynamicEventName}}

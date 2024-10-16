@@ -2,7 +2,7 @@
 
 [Changelog](./CHANGELOG.md)
 
-This module provides a directive that ensures event listeners are only active while the component is alive, preventing handlers from being called after the component is destroyed.
+This module provides a directive that prevents handlers from being called after the vnode is unmounted.
 This is a secure alternative to [v-on](https://vuejs.org/api/built-in-directives.html#v-on).
 
 ## Installation
@@ -18,6 +18,7 @@ package('b-component-name')
 
 ## Usage
 
+The `v-safe-on` directive works like the `v-on` directive.
 You can use the `v-safe-on` directive in Snakeskin templates like this:
 
 ```

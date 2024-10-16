@@ -23,7 +23,7 @@ test.describe('components/directives/safe-on', () => {
 	test('should add event listener', async ({page}) => {
 		const mockCb = await createMockFn(page, () => undefined);
 
-		const {element} = await renderDirective(page, 'click', mockCb);
+		const element = await renderDirective(page, 'click', mockCb);
 
 		await element.click();
 
@@ -33,11 +33,11 @@ test.describe('components/directives/safe-on', () => {
 	test('should pass arguments to the callback', async ({page}) => {
 		const mockCb = await createMockFn(page, (...args) => args);
 
-		const {element} = await renderDirective(page, 'click', mockCb);
+		const element = await renderDirective(page, 'click', mockCb);
 
 		await element.click();
 
-		test.expect(await mockCb.calls[0]).toMatchObject([test.expect.any(Object)]);
+		await test.expect(mockCb.calls).resolves.toMatchObject([[test.expect.any(Object)]]);
 	});
 
 	test('should update the event listener if the event type is changed', async ({page}) => {
@@ -50,16 +50,50 @@ test.describe('components/directives/safe-on', () => {
 			ctx.on('onDynamicEvent', mock);
 		}, mockDynamicEvent.handle);
 
-		await element.click();
+		await element.dispatchEvent('click');
 
 		await component.evaluate((ctx) => ctx.dynamicEventName = 'mouseup');
 
-		await element.click();
+		await element.dispatchEvent('mouseup');
 
 		test.expect(await mockDynamicEvent.calls).toEqual([
 			['click'],
 			['mouseup']
 		]);
+	});
+
+	test('should remove the old event listener if the event type is changed', async ({page}) => {
+		const component = await Component.createComponent<bSafeOnDynamicEventDummy>(page, 'b-safe-on-dynamic-event-dummy');
+		const element = page.getByTestId('dynamicEvent');
+
+		const mockDynamicEvent = await createMockFn(page, () => undefined);
+
+		await component.evaluate((ctx, mock) => {
+			ctx.on('onDynamicEvent', mock);
+		}, mockDynamicEvent.handle);
+
+		await element.dispatchEvent('click');
+
+		await component.evaluate((ctx) => ctx.dynamicEventName = 'mouseup');
+
+		await element.dispatchEvent('click');
+
+		await test.expect(mockDynamicEvent.calls).resolves.toEqual([['click']]);
+	});
+
+	test('should support multiple event types', async ({page}) => {
+		const mockCb = await createMockFn(page, (...args) => args);
+
+		const element = await renderDirective(page, 'pointerdown', mockCb, {
+			'v-safe-on:pointerup': mockCb,
+			'v-safe-on:focus': mockCb
+		});
+
+		await element.dispatchEvent('pointerdown');
+		await element.dispatchEvent('pointerup');
+		await element.dispatchEvent('focus');
+
+		await test.expect(mockCb.callsCount).toBeResolvedTo(3);
 	});
 
 	test('should log an errors if the event type is not specified', async ({page, consoleTracker}) => {
@@ -69,7 +103,7 @@ test.describe('components/directives/safe-on', () => {
 			'v-safe-on': (msg) => msg.text()
 		});
 
-		const {element} = await renderDirective(page, '', mockCb);
+		const element = await renderDirective(page, '', mockCb);
 		await element.click();
 
 		const messages = await consoleTracker.getMessages();
@@ -83,7 +117,7 @@ test.describe('components/directives/safe-on', () => {
 			'v-safe-on': (msg) => msg.text()
 		});
 
-		const {element} = await renderDirective(page, 'click', Object.cast('foo'));
+		const element = await renderDirective(page, 'click', Object.cast('foo'));
 		await element.click();
 
 		const messages = await consoleTracker.getMessages();
@@ -92,32 +126,44 @@ test.describe('components/directives/safe-on', () => {
 		test.expect(messages[0]).toMatch('Expecting a function, got string');
 	});
 
-	test('should remove event listener if the component is destroyed', async ({page}) => {
-		const mockCb = await createMockFn(page, () => undefined);
+	test('should remove event listener if the vnode is unmounted', async ({page}) => {
+		const component = await Component.createComponent<bSafeOnDynamicEventDummy>(page, 'b-safe-on-dynamic-event-dummy');
+		const element = page.getByTestId('dynamicEvent');
 
-		const {element, destroy} = await renderDirective(page, 'click', mockCb);
+		const mockDynamicEvent = await createMockFn(page, () => undefined);
 
-		await element.click();
-		await destroy();
+		await element.evaluate((el, [component, mock]) => new Promise((resolve) => {
+			component.on('onDynamicEvent', mock);
 
-		await element.click();
+			el.dispatchEvent(new Event('click'));
 
-		await test.expect(mockCb.callsCount).toBeResolvedTo(1);
+			component.isElementVisible = false;
+
+			setTimeout(() => {
+				el.dispatchEvent(new Event('click'));
+				resolve(true);
+			});
+		}), [component, mockDynamicEvent.handle]);
+
+		await test.expect(mockDynamicEvent.calls).resolves.toEqual([['click']]);
 	});
 });
 
-async function renderDirective(page: Page, eventName: string, callback: SpyObject): Promise<{
-	element: Locator;
-	destroy(): Promise<void>;
-}> {
-	const component = await Component.createComponent<bDummy>(page, 'b-dummy', {
+async function renderDirective(
+	page: Page,
+	eventName: string,
+	callback: SpyObject,
+	attrs: Dictionary = {}
+): Promise<Locator> {
+	await Component.createComponent<bDummy>(page, 'b-dummy', {
 		children: {
 			default: {
 				type: 'div',
 
 				attrs: {
 					'data-testid': 'safe-on',
-					[`v-safe-on:${eventName}`]: callback
+					[`v-safe-on:${eventName}`]: callback,
+					...attrs
 				},
 
 				children: {
@@ -127,7 +173,5 @@ async function renderDirective(page: Page, eventName: string, callback: SpyObjec
 		}
 	});
 
-	const locator = page.getByTestId('safe-on');
-
-	return {element: locator, destroy: () => component.evaluate((ctx) => ctx.unsafe.$destroy())};
+	return page.getByTestId('safe-on');
 }

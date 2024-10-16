@@ -9,5 +9,15 @@
 import type { DirectiveBinding } from 'core/component/engines';
 
 export interface SafeOnDirectiveParams extends DirectiveBinding {
-	value(...args: unknown[]): unknown;
+	value: EventListener;
+	arg?: SafeOnEventType;
 }
+
+export interface SafeOnElement extends Element {
+	'[[SAFE_ON]]'?: WeakMap<Function, {
+		fn: EventListener;
+		eventType: SafeOnEventType;
+	}>;
+}
+
+export type SafeOnEventType = string | keyof ElementEventMap;
