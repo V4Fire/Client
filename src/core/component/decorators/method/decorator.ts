@@ -49,7 +49,7 @@ import type { MethodType } from 'core/component/decorators/method/interface';
 export function method(type: MethodType): PartDecorator {
 	return createComponentDecorator3((desc, name, proto) => {
 		regMethod(name, type, desc.meta, proto);
-	}, true);
+	});
 }
 
 /**
@@ -69,10 +69,7 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 		fields,
 		systemFields,
 
-		computedFields,
-		accessors,
-
-		metaInitializers
+		methods
 	} = meta;
 
 	if (type === 'method') {
@@ -80,12 +77,12 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 
 		const fn = proto[name];
 
-		if (meta.methods.hasOwnProperty(name)) {
-			method = meta.methods[name]!;
+		if (methods.hasOwnProperty(name)) {
+			method = methods[name]!;
 			method.fn = fn;
 
 		} else {
-			const parent = meta.methods[name];
+			const parent = methods[name];
 
 			if (parent != null) {
 				method = {...parent, src, fn};
@@ -103,7 +100,7 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 			}
 		}
 
-		meta.methods[name] = method;
+		methods[name] = method;
 		component.methods[name] = fn;
 
 		// eslint-disable-next-line func-style
@@ -121,7 +118,7 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 		const {hooks, watchers} = method;
 
 		if (hooks != null || watchers != null) {
-			metaInitializers.set(name, (meta) => {
+			meta.metaInitializers.set(name, (meta) => {
 				const isFunctional = meta.params.functional === true;
 
 				if (hooks != null) {
@@ -177,8 +174,8 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 
 		// Computed fields are cached by default
 		if (
-			name in computedFields ||
-			!(name in accessors) && (tiedWith = props[propKey] ?? fields[storeKey] ?? systemFields[storeKey])
+			name in meta.computedFields ||
+			!(name in meta.accessors) && (tiedWith = props[propKey] ?? fields[storeKey] ?? systemFields[storeKey])
 		) {
 			type = 'computedFields';
 		}
@@ -218,7 +215,7 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 			const methodName = `${name}Setter`;
 			proto[methodName] = set;
 
-			meta.methods[methodName] = {
+			methods[methodName] = {
 				src,
 				fn: set,
 				watchers: {},
@@ -231,7 +228,7 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 			const methodName = `${name}Getter`;
 			proto[methodName] = get;
 
-			meta.methods[methodName] = {
+			methods[methodName] = {
 				src,
 				fn: get,
 				watchers: {},
