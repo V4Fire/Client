@@ -25,6 +25,8 @@ const
 	isESImport = !ssr && typescript().client.compilerOptions.module === 'ES2020',
 	fatHTML = webpack.fatHTML();
 
+const path = require('upath');
+
 /**
  * A Monic replacer is used to enable dynamic imports of components
  *
@@ -38,8 +40,15 @@ const
  * });
  * ```
  */
-module.exports = async function dynamicComponentImportReplacer(str) {
-	const {entryDeps} = await graph;
+module.exports = async function dynamicComponentImportReplacer(str, filePath) {
+	const {
+		entryDeps,
+		components
+	} = await graph;
+
+	const
+		ext = path.extname(filePath),
+		component = components.get(path.basename(filePath, ext));
 
 	return str.replace(importRgxp, (str, magicComments, q, resourcePath, resourceName) => {
 		const
@@ -62,10 +71,11 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 
 			} else {
 				if (isESImport) {
-					decl = `import(${magicComments} '${fullPath}')`;
+					const importExpr = `import(${magicComments} '${fullPath}')`;
+					decl = `new Promise(function (r) {${importExpr}})`;
 
 				} else {
-					decl = `new Promise(function (r) { return r(require('${fullPath}')); })`;
+					decl = `new Promise(function (r) { r(require('${fullPath}')); })`;
 				}
 
 				decl += '.catch(function (err) { stderr(err) })';
@@ -87,10 +97,13 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 
 			} else {
 				if (isESImport) {
-					decl = `import(${magicComments} '${tplPath}').then(${regTpl})`;
+					const
+						importExpr = `import(${magicComments} '${tplPath}')`,
+						promise = `new Promise(function (r) { r(${importExpr}) })`;
+					decl = `${promise}.then(${regTpl})`;
 
 				} else {
-					decl = `new Promise(function (r) { return r(require('${tplPath}')); }).then(${regTpl})`;
+					decl = `new Promise(function (r) { r(require('${tplPath}')); }).then(${regTpl})`;
 				}
 
 				decl += '.catch(function (err) { stderr(err) })';
@@ -124,7 +137,7 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 			}
 
 			decl = `function () { return ${decl}; }`;
-			imports[0] = `TPLS['${resourceName}'] ? ${imports[0]} : ${imports[0]}.then(${decl}, function (err) { stderr(err); return ${decl}(); })`;
+			imports[0] = `TPLS['${resourceName}'] ? ${(imports[0])} : ${imports[0]}.then(${decl}, function (err) { stderr(err); return ${decl}(); })`;
 		}
 
 		return `Promise.all([${imports.join(',')}])`;

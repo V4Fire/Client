@@ -18,7 +18,7 @@ const
 
 const
 	{src, build, webpack} = config,
-	{resolve, block, entries} = require('@pzlr/build-core');
+	{resolve, block, entries, validators} = require('@pzlr/build-core');
 
 const
 	componentParams = include('build/graph/component-params');
@@ -40,7 +40,9 @@ const {
 	output,
 	cacheDir,
 	isStandalone,
-	tracer
+	tracer,
+	invokeByRegisterEvent,
+	getLayerName
 } = include('build/helpers');
 
 /**
@@ -204,7 +206,7 @@ async function buildProjectGraph() {
 		});
 
 		if (tplContent) {
-			const tplsStore = 'globalThis.TPLS = globalThis.TPLS || Object.create(null)';
+			const tplsStore = 'globalThis.TPLS = globalThis.TPLS || Object.create(null);\n';
 			tplContent = [webpackRuntime, tplsStore, tplContent, ''].join('\n');
 		}
 
@@ -221,6 +223,7 @@ async function buildProjectGraph() {
 					$C(component.libs).forEach((el) => {
 						if (!usedLibs.has(el)) {
 							usedLibs.add(el);
+							
 							str += `require('${el}');\n`;
 						}
 					});
@@ -244,12 +247,24 @@ async function buildProjectGraph() {
 						entry = path.resolve(tmpEntries, '../', name);
 					}
 
+					const entryPath = getEntryPath(entry);
+					let importScript;
+
+					const
+						componentName = component?.name ?? name,
+						isComponent = new RegExp(`\(${validators.blockTypeList.join('|')})-.+?/?`).test(componentName);
+
+					
 					if (webpack.ssr) {
-						str += `Object.assign(module.exports, require('${getEntryPath(entry)}'));\n`;
+						importScript = `Object.assign(module.exports, require('${entryPath}'));\n`;
 
 					} else {
-						str += `require('${getEntryPath(entry)}');\n`;
+						importScript = `require('${entryPath}');\n`;
 					}
+
+					str += isComponent ? 
+						invokeByRegisterEvent(importScript, getLayerName(entry), componentName) :
+						importScript;
 				}
 
 				return str;
