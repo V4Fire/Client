@@ -27,10 +27,11 @@ import type {
  * The decorator function expects three input arguments (excluding the object descriptor).
  *
  * @param decorator
+ * @param [append] - if true, the decorator handler will be added to the end of the queue
  */
-export function createComponentDecorator3(decorator: ComponentPartDecorator3): PartDecorator {
+export function createComponentDecorator3(decorator: ComponentPartDecorator3, append?: boolean): PartDecorator {
 	return (proto: object, partKey: string) => {
-		createComponentDecorator(decorator, partKey, undefined, proto);
+		createComponentDecorator(decorator, partKey, undefined, proto, append);
 	};
 }
 
@@ -39,10 +40,11 @@ export function createComponentDecorator3(decorator: ComponentPartDecorator3): P
  * The decorator function expects four input arguments (including the object descriptor).
  *
  * @param decorator
+ * @param [append] - if true, the decorator handler will be added to the end of the queue
  */
-export function createComponentDecorator4(decorator: ComponentPartDecorator4): PartDecorator {
+export function createComponentDecorator4(decorator: ComponentPartDecorator4, append?: boolean): PartDecorator {
 	return (proto: object, partKey: string, partDesc?: PropertyDescriptor) => {
-		createComponentDecorator(decorator, partKey, partDesc, proto);
+		createComponentDecorator(decorator, partKey, partDesc, proto, append);
 	};
 }
 
@@ -50,9 +52,12 @@ function createComponentDecorator(
 	decorator: ComponentPartDecorator3 | ComponentPartDecorator4,
 	partKey: string,
 	partDesc: CanUndef<PropertyDescriptor>,
-	proto: object
+	proto: object,
+	append?: boolean
 ): void {
-	initEmitter.once('bindConstructor', (_componentName: string, regEvent: string) => {
+	const event = append ? 'after:bindConstructor' : 'bindConstructor';
+
+	initEmitter.once(event, (_componentName: string, regEvent: string) => {
 		initEmitter.once(regEvent, (componentDesc: ComponentDescriptor) => {
 			if (decorator.length <= 3) {
 				(<ComponentPartDecorator3>decorator)(componentDesc, partKey, proto);

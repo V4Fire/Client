@@ -49,7 +49,7 @@ import type { MethodType } from 'core/component/decorators/method/interface';
 export function method(type: MethodType): PartDecorator {
 	return createComponentDecorator3((desc, name, proto) => {
 		regMethod(name, type, desc.meta, proto);
-	});
+	}, true);
 }
 
 /**

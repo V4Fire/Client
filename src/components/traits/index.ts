@@ -67,7 +67,7 @@ import { regMethod, MethodType } from 'core/component/decorators/method';
  */
 export function derive(...traits: Function[]) {
 	return (target: Function): void => {
-		initEmitter.once('bindConstructor', (_: string, regEvent: string) => {
+		initEmitter.once('after:bindConstructor', (_: string, regEvent: string) => {
 			initEmitter.once(regEvent, ({meta}: ComponentDescriptor) => {
 				const proto = target.prototype;
 
