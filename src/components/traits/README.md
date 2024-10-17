@@ -99,7 +99,7 @@ We have defined a trait. We can now proceed to implement it in a basic class.
    specify any traits we want to automatically implement.
 
    ```typescript
-   import { derive } from 'core/functools/trait';
+   import { derive } from 'components/traits';
 
    interface DuckLike extends Trait<typeof Duckable> {}
 
@@ -116,7 +116,7 @@ We have defined a trait. We can now proceed to implement it in a basic class.
 4. Profit! Now TS will automatically understand the methods of the interface, and they will work at runtime.
 
    ```typescript
-   import { derive } from 'core/functools/trait';
+   import { derive } from 'components/traits';
 
    interface DuckLike extends Trait<typeof Duckable> {}
 
@@ -136,7 +136,7 @@ We have defined a trait. We can now proceed to implement it in a basic class.
 5. Of course, we can implement more than one trait in a component.
 
    ```typescript
-   import { derive } from 'core/functools/trait';
+   import { derive } from 'components/traits';
 
    interface DuckLike extends Trait<typeof Duckable>, Trait<typeof AnotherTrait> {}
 

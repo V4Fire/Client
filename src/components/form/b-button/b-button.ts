@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import { derive } from 'core/functools/trait';
+import { derive } from 'components/traits';
 import DataProvider, { getDefaultRequestParams, base, get } from 'components/friends/data-provider';
 
 import type bForm from 'components/form/b-form/b-form';
