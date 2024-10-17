@@ -8,6 +8,7 @@
 
 import type { RegExpOptions, ParseOptions, Key } from 'path-to-regexp';
 import type { EventEmitter2 as EventEmitter } from 'eventemitter2';
+import type { State } from 'core/component/state';
 
 import type bRouter from 'components/base/b-router/b-router';
 
@@ -31,7 +32,7 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	 */
 	load?(routerCtx?: bRouter): Promise<unknown>;
 
-	prefetch?(routerCtx?: bRouter): Promise<unknown>;
+	prefetch?(route: CanUndef<AnyRoute>, routes: RouteBlueprints, remoteState: State): Promise<unknown>;
 
 	/**
 	 * The path to the route.
