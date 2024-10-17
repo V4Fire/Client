@@ -93,7 +93,7 @@ test.describe('components/directives/safe-on', () => {
 		await element.dispatchEvent('pointerup');
 		await element.dispatchEvent('focus');
 
-		await test.expect(mockCb.callsCount).toBeResolvedTo(3);
+		await test.expect(mockCb.callsCount).resolves.toBe(3);
 	});
 
 	test('should log an errors if the event type is not specified', async ({page, consoleTracker}) => {
@@ -146,6 +146,69 @@ test.describe('components/directives/safe-on', () => {
 		}), [component, mockDynamicEvent.handle]);
 
 		await test.expect(mockDynamicEvent.calls).resolves.toEqual([['click']]);
+	});
+
+	test.describe('modifiers', () => {
+		test('should prevent the default behavior', async ({page}) => {
+			const mockCb = await createMockFn(page, () => undefined);
+			const element = await renderDirective(page, 'click.prevent', mockCb);
+
+			const mockPreventDefault = await createMockFn(page, () => undefined);
+			await element.evaluate((el, mock) => {
+				const e = new Event('click');
+				e.preventDefault = mock;
+
+				el.dispatchEvent(e);
+			}, mockPreventDefault.handle);
+
+			await test.expect(mockPreventDefault.callsCount).resolves.toBe(1);
+		});
+
+		test('should prevent the default behavior and stop the propagation', async ({page}) => {
+			const mockCb = await createMockFn(page, () => undefined);
+			const element = await renderDirective(page, 'click.stop.prevent', mockCb);
+
+			const mockPreventDefault = await createMockFn(page, () => undefined);
+			const mockStopPropagation = await createMockFn(page, () => undefined);
+
+			await element.evaluate((el, [prevent, stop]) => {
+				const e = new Event('click');
+				e.preventDefault = prevent;
+				e.stopPropagation = stop;
+
+				el.dispatchEvent(e);
+			}, [mockPreventDefault.handle, mockStopPropagation.handle]);
+
+			await test.expect(mockPreventDefault.callsCount).resolves.toBe(1);
+			await test.expect(mockStopPropagation.callsCount).resolves.toBe(1);
+		});
+
+		test.describe('event listener options', () => {
+			let mockAddEventListener: SpyObject;
+
+			test.beforeEach(async ({page}) => {
+				mockAddEventListener = await createMockFn(page, (...args) => args);
+
+				await page.evaluate((mock) => {
+					Element.prototype.addEventListener = Object.cast(mock);
+				}, mockAddEventListener.handle);
+			});
+
+			test('should pass the single option to the addEventListener', async ({page}) => {
+				const mockCb = await createMockFn(page, () => undefined);
+				await renderDirective(page, 'click.capture', mockCb);
+
+				await test.expect(mockAddEventListener.calls).resolves.toEqual([['click', null, {capture: true}]]);
+			});
+
+			test('should pass the multiple options to the addEventListener', async ({page}) => {
+				const mockCb = await createMockFn(page, () => undefined);
+				await renderDirective(page, 'click.capture.once', mockCb);
+
+				await test.expect(mockAddEventListener.calls).resolves.toEqual([['click', null, {capture: true, once: true}]]);
+			});
+		});
+
 	});
 });
 

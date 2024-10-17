@@ -21,3 +21,18 @@ export interface SafeOnElement extends Element {
 }
 
 export type SafeOnEventType = string | keyof ElementEventMap;
+
+export type KeyedEvent = KeyboardEvent | MouseEvent | TouchEvent;
+
+export type ModifierGuards =
+  | 'shift'
+  | 'ctrl'
+  | 'alt'
+  | 'meta'
+  | 'left'
+  | 'right'
+  | 'stop'
+  | 'prevent'
+  | 'self'
+  | 'middle'
+  | 'exact';
