@@ -92,6 +92,7 @@ export function component(opts?: ComponentOptions): Function {
 		const regEvent = `constructor.${componentNormalizedName}.${componentInfo.layer}`;
 
 		initEmitter.emit('bindConstructor', componentNormalizedName, regEvent);
+		initEmitter.emit('after:bindConstructor', componentNormalizedName, regEvent);
 
 		if (isPartial) {
 			pushToInitList(() => {
