@@ -56,7 +56,8 @@ import {
 
 	wrapWithDirectives,
 	wrapResolveDirective,
-	wrapMergeProps, wrapWithCtx
+	wrapMergeProps,
+	wrapWithCtx
 
 } from 'core/component/render';
 
