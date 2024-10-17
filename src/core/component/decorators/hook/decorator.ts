@@ -40,7 +40,9 @@ export function hook(hook: DecoratorHook): PartDecorator {
 
 		let method: ComponentMethod;
 
-		if (meta.methods.hasOwnProperty(methodName)) {
+		const alreadyDefined = meta.methods.hasOwnProperty(methodName);
+
+		if (alreadyDefined) {
 			method = meta.methods[methodName]!;
 
 		} else {
@@ -86,6 +88,11 @@ export function hook(hook: DecoratorHook): PartDecorator {
 			}
 		}
 
-		meta.methods[methodName] = normalizeFunctionalParams({...method, hooks}, meta);
+		if (alreadyDefined) {
+			method.hooks = hooks;
+
+		} else {
+			meta.methods[methodName] = normalizeFunctionalParams({...method, hooks}, meta);
+		}
 	});
 }

@@ -58,45 +58,47 @@ export function regProp(propName: string, typeOrParams: Nullable<PropType | Deco
 		{type: typeOrParams, forceUpdate: true} :
 		{forceUpdate: true, ...typeOrParams};
 
-	delete meta.methods[propName];
-
-	const accessors = propName in meta.accessors ?
-		meta.accessors :
-		meta.computedFields;
-
-	if (accessors[propName] != null) {
-		Object.defineProperty(meta.constructor.prototype, propName, defProp);
-		delete accessors[propName];
-	}
-
-	// Handling the situation when a field changes type during inheritance,
-	// for example, it was a @system in the parent component and became a @prop
-	for (const anotherType of ['fields', 'systemFields']) {
-		const cluster = meta[anotherType];
-
-		if (propName in cluster) {
-			const field: ComponentField = {...cluster[propName]};
-
-			// Do not inherit the `functional` option in this case
-			delete field.functional;
-
-			// The option `init` cannot be converted to `default`
-			delete field.init;
-
-			meta.props[propName] = {...field, forceUpdate: true};
-
-			delete cluster[propName];
-
-			break;
-		}
-	}
-
 	let prop: ComponentProp;
 
-	if (meta.props.hasOwnProperty(propName)) {
+	const alreadyDefined = meta.props.hasOwnProperty(propName);
+
+	if (alreadyDefined) {
 		prop = meta.props[propName]!;
 
 	} else {
+		delete meta.methods[propName];
+
+		const accessors = propName in meta.accessors ?
+			meta.accessors :
+			meta.computedFields;
+
+		if (accessors[propName] != null) {
+			Object.defineProperty(meta.constructor.prototype, propName, defProp);
+			delete accessors[propName];
+		}
+
+		// Handling the situation when a field changes type during inheritance,
+		// for example, it was a @system in the parent component and became a @prop
+		for (const anotherType of ['fields', 'systemFields']) {
+			const cluster = meta[anotherType];
+
+			if (propName in cluster) {
+				const field: ComponentField = {...cluster[propName]};
+
+				// Do not inherit the `functional` option in this case
+				delete field.functional;
+
+				// The option `init` cannot be converted to `default`
+				delete field.init;
+
+				meta.props[propName] = {...field, forceUpdate: true};
+
+				delete cluster[propName];
+
+				break;
+			}
+		}
+
 		const parent = meta.props[propName];
 
 		if (parent != null) {
@@ -134,19 +136,34 @@ export function regProp(propName: string, typeOrParams: Nullable<PropType | Deco
 		}
 	}
 
-	prop = normalizeFunctionalParams({
-		...prop,
-		...params,
+	if (alreadyDefined) {
+		const {meta} = prop;
 
-		watchers,
-
-		meta: {
-			...prop.meta,
-			...params.meta
+		if (params.meta != null) {
+			Object.assign(meta, params.meta);
 		}
-	}, meta);
 
-	meta.props[propName] = prop;
+		Object.assign(prop, {
+			...params,
+			watchers,
+			meta
+		});
+
+	} else {
+		prop = normalizeFunctionalParams({
+			...prop,
+			...params,
+
+			watchers,
+
+			meta: {
+				...prop.meta,
+				...params.meta
+			}
+		}, meta);
+
+		meta.props[propName] = prop;
+	}
 
 	let defaultValue: unknown;
 

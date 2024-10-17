@@ -86,52 +86,54 @@ export function regField(
 ): void {
 	const params = Object.isFunction(initOrParams) ? {init: initOrParams} : {...initOrParams};
 
-	delete meta.methods[fieldName];
-
-	const accessors = fieldName in meta.accessors ?
-		meta.accessors :
-		meta.computedFields;
-
-	if (accessors[fieldName] != null) {
-		Object.defineProperty(meta.constructor.prototype, fieldName, defProp);
-		delete accessors[fieldName];
-	}
-
-	const store = meta[cluster];
-
-	// Handling the situation when a field changes type during inheritance,
-	// for example, it was a @prop in the parent component and became a @system
-	for (const anotherType of ['props', cluster === 'fields' ? 'systemFields' : 'fields']) {
-		const anotherStore = meta[anotherType];
-
-		if (fieldName in anotherStore) {
-			const field: ComponentField = {...anotherStore[fieldName]};
-
-			// Do not inherit the `functional` option in this case
-			delete field.functional;
-
-			if (anotherType === 'props') {
-				delete meta.component.props[fieldName];
-
-				if (Object.isFunction(field.default)) {
-					field.init = field.default;
-					delete field.default;
-				}
-			}
-
-			store[fieldName] = field;
-			delete anotherStore[fieldName];
-
-			break;
-		}
-	}
-
 	let field: ComponentField;
 
-	if (store.hasOwnProperty(fieldName)) {
+	const
+		store = meta[cluster],
+		alreadyDefined = store.hasOwnProperty(fieldName);
+
+	if (alreadyDefined) {
 		field = store[fieldName]!;
 
 	} else {
+		delete meta.methods[fieldName];
+
+		const accessors = fieldName in meta.accessors ?
+			meta.accessors :
+			meta.computedFields;
+
+		if (accessors[fieldName] != null) {
+			Object.defineProperty(meta.constructor.prototype, fieldName, defProp);
+			delete accessors[fieldName];
+		}
+
+		// Handling the situation when a field changes type during inheritance,
+		// for example, it was a @prop in the parent component and became a @system
+		for (const anotherType of ['props', cluster === 'fields' ? 'systemFields' : 'fields']) {
+			const anotherStore = meta[anotherType];
+
+			if (fieldName in anotherStore) {
+				const field: ComponentField = {...anotherStore[fieldName]};
+
+				// Do not inherit the `functional` option in this case
+				delete field.functional;
+
+				if (anotherType === 'props') {
+					delete meta.component.props[fieldName];
+
+					if (Object.isFunction(field.default)) {
+						field.init = field.default;
+						delete field.default;
+					}
+				}
+
+				store[fieldName] = field;
+				delete anotherStore[fieldName];
+
+				break;
+			}
+		}
+
 		const parent = store[fieldName];
 
 		if (parent != null) {
@@ -174,20 +176,42 @@ export function regField(
 		}
 	}
 
-	field = normalizeFunctionalParams({
-		...field,
-		...params,
+	if (alreadyDefined) {
+		const {meta} = field;
 
-		after,
-		watchers,
-
-		meta: {
-			...field.meta,
-			...params.meta
+		if (params.meta != null) {
+			Object.assign(meta, params.meta);
 		}
-	}, meta);
 
-	store[fieldName] = field;
+		Object.assign(field, {
+			...params,
+			after,
+			watchers,
+			meta
+		});
+
+	} else {
+		field = normalizeFunctionalParams({
+			...field,
+			...params,
+
+			after,
+			watchers,
+
+			meta: {
+				...field.meta,
+				...params.meta
+			}
+		}, meta);
+
+		store[fieldName] = field;
+
+		if (isStore.test(fieldName)) {
+			const tiedWith = isStore.replace(fieldName);
+			meta.tiedFields[fieldName] = tiedWith;
+			meta.tiedFields[tiedWith] = fieldName;
+		}
+	}
 
 	if (field.init == null || !(INIT in field.init)) {
 		const defValue = field.default;
@@ -218,16 +242,10 @@ export function regField(
 				return undefined;
 			};
 		}
-	}
 
-	if (field.init != null) {
-		Object.defineProperty(field.init, INIT, {value: true});
-	}
-
-	if (isStore.test(fieldName)) {
-		const tiedWith = isStore.replace(fieldName);
-		meta.tiedFields[fieldName] = tiedWith;
-		meta.tiedFields[tiedWith] = fieldName;
+		if (field.init != null) {
+			Object.defineProperty(field.init, INIT, {value: true});
+		}
 	}
 
 	if (watchers != null && watchers.size > 0) {

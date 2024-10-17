@@ -139,7 +139,9 @@ export function watch(watcher: DecoratorFieldWatcher | DecoratorMethodWatcher): 
 		function decorateMethod() {
 			let method: ComponentMethod;
 
-			if (meta.methods.hasOwnProperty(key)) {
+			const alreadyDefined = meta.methods.hasOwnProperty(key);
+
+			if (alreadyDefined) {
 				method = meta.methods[key]!;
 
 			} else {
@@ -174,7 +176,12 @@ export function watch(watcher: DecoratorFieldWatcher | DecoratorMethodWatcher): 
 				}
 			}
 
-			meta.methods[key] = normalizeFunctionalParams({...method, watchers}, meta);
+			if (alreadyDefined) {
+				method.watchers = watchers;
+
+			} else {
+				meta.methods[key] = normalizeFunctionalParams({...method, watchers}, meta);
+			}
 		}
 
 		function decorateField() {
@@ -194,7 +201,9 @@ export function watch(watcher: DecoratorFieldWatcher | DecoratorMethodWatcher): 
 
 			let field: ComponentProp | ComponentField;
 
-			if (store.hasOwnProperty(key)) {
+			const alreadyDefined = store.hasOwnProperty(key);
+
+			if (alreadyDefined) {
 				field = store[key]!;
 
 			} else {
@@ -230,7 +239,12 @@ export function watch(watcher: DecoratorFieldWatcher | DecoratorMethodWatcher): 
 				}
 			}
 
-			store[key] = normalizeFunctionalParams({...field, watchers}, meta);
+			if (alreadyDefined) {
+				field.watchers = watchers;
+
+			} else {
+				store[key] = normalizeFunctionalParams({...field, watchers}, meta);
+			}
 		}
 	});
 }

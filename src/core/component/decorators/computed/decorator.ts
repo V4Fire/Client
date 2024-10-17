@@ -41,7 +41,7 @@ export function computed(params?: DecoratorComputed): PartDecorator {
 		delete meta.fields[accessorName];
 		delete meta.systemFields[accessorName];
 
-		let type: 'accessors' | 'computedFields' = 'accessors';
+		let cluster: 'accessors' | 'computedFields' = 'accessors';
 
 		if (
 			params.cache === true ||
@@ -49,17 +49,17 @@ export function computed(params?: DecoratorComputed): PartDecorator {
 			params.cache === 'forever' ||
 			params.cache !== false && (Object.isArray(params.dependencies) || accessorName in meta.computedFields)
 		) {
-			type = 'computedFields';
+			cluster = 'computedFields';
 		}
 
-		const store = meta[type];
+		const store = meta[cluster];
 
 		let accessor: ComponentAccessor = store[accessorName] ?? {
 			src: meta.componentName,
 			cache: false
 		};
 
-		const needOverrideComputed = type === 'accessors' ?
+		const needOverrideComputed = cluster === 'accessors' ?
 			accessorName in meta.computedFields :
 			!('cache' in params) && accessorName in meta.accessors;
 
@@ -77,11 +77,11 @@ export function computed(params?: DecoratorComputed): PartDecorator {
 			accessor = normalizeFunctionalParams({
 				...accessor,
 				...params,
-				cache: type === 'computedFields' ? params.cache ?? true : false
+				cache: cluster === 'computedFields' ? params.cache ?? true : false
 			}, meta);
 		}
 
-		delete meta[type === 'computedFields' ? 'accessors' : 'computedFields'][accessorName];
+		delete meta[cluster === 'computedFields' ? 'accessors' : 'computedFields'][accessorName];
 
 		store[accessorName] = accessor;
 
