@@ -16,11 +16,12 @@ import SyncPromise from 'core/promise/sync';
 import type Async from 'core/async';
 import type { AsyncOptions } from 'core/async';
 
+import { beforeHooks, Hook } from 'core/component';
+
 import Friend from 'components/friends/friend';
 
 import { statuses } from 'components/super/i-block/const';
 
-import type { Hook } from 'core/component';
 import type { Cb } from 'components/super/i-block/modules/lfc/interface';
 
 export * from 'components/super/i-block/modules/lfc/interface';
@@ -44,14 +45,9 @@ export default class Lfc extends Friend {
 	 * ```
 	 */
 	isBeforeCreate(...skip: Hook[]): boolean {
-		const beforeHooks = {
-			beforeRuntime: true,
-			beforeCreate: true,
-			beforeDataCreate: true
-		};
-
-		skip.forEach((hook) => beforeHooks[hook] = false);
-		return Boolean(beforeHooks[<string>this.hook]);
+		const hooks = {...beforeHooks};
+		skip.forEach((hook) => hooks[hook] = false);
+		return Boolean(hooks[<string>this.hook]);
 	}
 
 	/**

@@ -39,13 +39,14 @@ export interface WatchOptions extends RawWatchOptions {
 }
 
 export interface FieldWatcher<
+	Ctx extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
 > extends WatchOptions {
 	/**
 	 * This handler is called when a watcher event occurs
 	 */
-	handler: WatchHandler<A, B>;
+	handler: string | WatchHandler<A, B>;
 
 	/**
 	 * If set to false, the watcher will not be registered for functional components
@@ -63,7 +64,7 @@ export interface FieldWatcher<
 }
 
 export interface WatchObject<
-	CTX extends ComponentInterface = ComponentInterface,
+	Ctx extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
 > extends WatchOptions {
@@ -133,7 +134,7 @@ export interface WatchObject<
 	 * }
 	 * ```
 	 */
-	wrapper?: WatchWrapper<CTX, A, B>;
+	wrapper?: WatchWrapper<Ctx, A, B>;
 
 	/**
 	 * The name of a component method that is registered as a handler for the watcher
@@ -152,11 +153,11 @@ export interface WatchObject<
 	 *
 	 * @param ctx
 	 */
-	shouldInit?(ctx: CTX): boolean;
+	shouldInit?(ctx: Ctx): boolean;
 }
 
 export interface MethodWatcher<
-	CTX extends ComponentInterface = ComponentInterface,
+	Ctx extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
 > extends WatchOptions {
@@ -190,7 +191,7 @@ export interface MethodWatcher<
 	 *
 	 * @param ctx
 	 */
-	shouldInit?(ctx: CTX): boolean;
+	shouldInit?(ctx: Ctx): boolean;
 
 	/**
 	 * An object with additional settings for the event emitter
@@ -228,7 +229,7 @@ export interface MethodWatcher<
 	 * }
 	 * ```
 	 */
-	wrapper?: WatchWrapper<CTX, A, B>;
+	wrapper?: WatchWrapper<Ctx, A, B>;
 }
 
 export type WatchPath =
@@ -236,9 +237,9 @@ export type WatchPath =
 	PropertyInfo |
 	{ctx: object; path?: RawWatchPath};
 
-export interface RawWatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
+export interface RawWatchHandler<Ctx extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
 	(a: A, b?: B, params?: WatchHandlerParams): void;
-	(this: CTX, a: A, b?: B, params?: WatchHandlerParams): void;
+	(this: Ctx, a: A, b?: B, params?: WatchHandlerParams): void;
 }
 
 export interface WatchHandler<A = unknown, B = A> {

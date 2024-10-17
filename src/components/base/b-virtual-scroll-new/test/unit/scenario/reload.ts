@@ -42,7 +42,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withDefaultPaginationProviderProps({chunkSize: chunkSize[0]})
 				.withProps({
 					chunkSize: chunkSize[0],
-					'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
+					'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'strictEmit')
 				})
 				.build({useDummy: true});
 
@@ -62,7 +62,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 			await component.waitForDataIndexChild(chunkSize[1] - 1);
 
 			const
-				spy = await component.getSpy((ctx) => ctx.emit),
+				spy = await component.getSpy((ctx) => ctx.strictEmit),
 				calls = filterEmitterCalls(await spy.calls, true, ['initLoadStart', 'initLoad']).map(([event]) => event);
 
 			test.expect(calls).toEqual([
@@ -110,7 +110,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 					.withDefaultPaginationProviderProps({chunkSize})
 					.withProps({
 						chunkSize,
-						'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
+						'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'strictEmit')
 					})
 					.build();
 
@@ -119,7 +119,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 				await component.waitForDataIndexChild(chunkSize * 2 - 1);
 
 				const
-					spy = await component.getSpy((ctx) => ctx.emit),
+					spy = await component.getSpy((ctx) => ctx.strictEmit),
 					calls = filterEmitterCalls(await spy.calls, true, ['initLoadStart', 'initLoad']).map(([event]) => event);
 
 				test.expect(calls).toEqual([

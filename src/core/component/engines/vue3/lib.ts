@@ -65,9 +65,9 @@ const Vue = makeLazy(
 		call: {
 			component: (contexts, ...args) => {
 				if (args.length === 1) {
-					contexts.forEach((ctx) => {
+					for (const ctx of contexts) {
 						ctx.component.apply(ctx, Object.cast(args));
-					});
+					}
 
 					return;
 				}
@@ -79,9 +79,9 @@ const Vue = makeLazy(
 
 			directive: (contexts, ...args: any[]) => {
 				if (args.length === 1) {
-					contexts.forEach((ctx) => {
+					for (const ctx of contexts) {
 						ctx.directive.apply(ctx, Object.cast(args));
-					});
+					}
 
 					return;
 				}
@@ -92,15 +92,15 @@ const Vue = makeLazy(
 			},
 
 			mixin: (contexts, ...args) => {
-				contexts.forEach((ctx) => {
+				for (const ctx of contexts) {
 					ctx.mixin.apply(ctx, Object.cast(args));
-				});
+				}
 			},
 
 			provide: (contexts, ...args) => {
-				contexts.forEach((ctx) => {
+				for (const ctx of contexts) {
 					ctx.provide.apply(ctx, Object.cast(args));
-				});
+				}
 			}
 		}
 	}

@@ -28,10 +28,6 @@ test.describe('<i-block> event API', () => {
 		const scan = await target.evaluate((ctx) => {
 			const res: any[] = [];
 
-			ctx.on('onFoo_bar', (...args: any[]) => {
-				res.push(...args);
-			});
-
 			ctx.on('onFoo-bar', (...args: any[]) => {
 				res.push(...args);
 			});
@@ -40,12 +36,12 @@ test.describe('<i-block> event API', () => {
 				res.push(...args);
 			});
 
-			ctx.emit('foo bar', 1);
+			ctx.emit('foo-bar', 1);
 
 			return res;
 		});
 
-		test.expect(scan).toEqual([1, 1, 1]);
+		test.expect(scan).toEqual([1, 1]);
 	});
 
 	test('the `emit` method should fire 3 events', async ({page}) => {

@@ -14,7 +14,7 @@ Take a look at [[bTree]] or [[bList]] to see more.
 * The trait can be partially derived.
 
   ```typescript
-  import { derive } from 'core/functools/trait';
+  import { derive } from 'components/traits';
 
   import iActiveItems from 'traits/i-active-items/i-active-items';
   import iBlock, { component } from 'components/super/i-block/i-block';

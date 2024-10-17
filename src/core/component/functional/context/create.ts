@@ -41,8 +41,14 @@ export function createVirtualContext(
 	const handlers: Array<[string, boolean, Function]> = [];
 
 	if (props != null) {
-		Object.entries(props).forEach(([name, prop]) => {
-			const normalizedName = name.camelize(false);
+		const keys = Object.keys(props);
+
+		for (let i = 0; i < keys.length; i++) {
+			const name = keys[i];
+
+			const
+				prop = props[name],
+				normalizedName = name.camelize(false);
 
 			if (normalizedName in meta.props) {
 				$props[normalizedName] = prop;
@@ -62,16 +68,13 @@ export function createVirtualContext(
 
 				$attrs[name] = prop;
 			}
-		});
+		}
 	}
 
 	let $options: {directives: Dictionary; components: Dictionary};
 
 	if ('$options' in parent) {
-		const {
-			directives = {},
-			components = {}
-		} = parent.$options;
+		const {directives = {}, components = {}} = parent.$options;
 
 		$options = {
 			directives: Object.create(directives),
@@ -86,7 +89,11 @@ export function createVirtualContext(
 	}
 
 	const virtualCtx = Object.cast<ComponentInterface & Dictionary>({
+		__proto__: meta.component.methods,
+
 		componentName: meta.componentName,
+
+		render: meta.component.render,
 
 		meta,
 
@@ -135,18 +142,17 @@ export function createVirtualContext(
 	});
 
 	init.beforeCreateState(virtualCtx, meta, {
-		addMethods: true,
 		implementEventAPI: true
 	});
 
-	handlers.forEach(([event, once, handler]) => {
+	for (const [event, once, handler] of handlers) {
 		if (once) {
 			unsafe.$once(event, handler);
 
 		} else {
 			unsafe.$on(event, handler);
 		}
-	});
+	}
 
 	init.beforeDataCreateState(virtualCtx);
 	return initDynamicComponentLifeCycle(virtualCtx);

@@ -109,9 +109,8 @@ export function attachDynamicWatcher(
 
 		const filteredMutations: unknown[] = [];
 
-		mutations.forEach((mutation) => {
-			const
-				[value, oldValue, info] = mutation;
+		for (const mutation of mutations) {
+			const [value, oldValue, info] = mutation;
 
 			if (
 				// We don't watch deep mutations
@@ -123,11 +122,11 @@ export function attachDynamicWatcher(
 				// The mutation has been already fired
 				watchOpts.eventFilter && !Object.isTruly(watchOpts.eventFilter(value, oldValue, info))
 			) {
-				return;
+				continue;
 			}
 
 			filteredMutations.push(mutation);
-		});
+		}
 
 		if (filteredMutations.length > 0) {
 			if (isPacked) {

@@ -84,7 +84,7 @@ export default abstract class iData extends iDataHandlers {
 
 		try {
 			if (opts.emitStartEvent !== false) {
-				this.emit('initLoadStart', opts);
+				this.strictEmit('initLoadStart', opts);
 			}
 
 			if (this.dataProviderProp != null && this.dataProvider == null) {

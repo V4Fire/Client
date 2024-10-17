@@ -542,7 +542,10 @@ export default class bDynamicPage extends iDynamicPage {
 
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
-		this.addClearListenersToCache = this.instance.addClearListenersToCache.bind(this);
+
+		const i = (<typeof bDynamicPage>this.constructor).prototype;
+
+		this.addClearListenersToCache = i.addClearListenersToCache.bind(this);
 	}
 
 	/**

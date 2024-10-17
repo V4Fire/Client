@@ -13,7 +13,7 @@ This module provides a trait for a component that extends the "opening/closing" 
 * The trait can be automatically derived.
 
   ```typescript
-  import { derive } from 'core/functools/trait';
+  import { derive } from 'components/traits';
 
   import iOpenToggle from 'components/traits/i-open-toggle/i-open-toggle';
   import iBlock, { component } from 'components/super/i-block/i-block';
