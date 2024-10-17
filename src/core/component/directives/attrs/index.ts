@@ -302,7 +302,7 @@ ComponentEngine.directive('attrs', {
 					registeredKeyModifiers = Object.keys(Object.select(flags, keyModifiers));
 
 				if (registeredModifiers.length > 0) {
-					attrVal = r?.withModifiers.call(ctx, Object.cast(attrVal), registeredKeyModifiers);
+					attrVal = r?.withModifiers.call(ctx, Object.cast(attrVal), registeredModifiers);
 				}
 
 				if (registeredKeyModifiers.length > 0) {
