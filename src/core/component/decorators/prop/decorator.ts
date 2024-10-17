@@ -91,10 +91,31 @@ export function regProp(propName: string, typeOrParams: Nullable<PropType | Deco
 		}
 	}
 
-	let prop: ComponentProp = meta.props[propName] ?? {
-		forceUpdate: true,
-		meta: {}
-	};
+	let prop: ComponentProp;
+
+	if (meta.props.hasOwnProperty(propName)) {
+		prop = meta.props[propName]!;
+
+	} else {
+		const parent = meta.props[propName];
+
+		if (parent != null) {
+			prop = {
+				...parent,
+				meta: {...parent.meta}
+			};
+
+			if (parent.watchers != null) {
+				prop.watchers = new Map(parent.watchers);
+			}
+
+		} else {
+			prop = {
+				forceUpdate: true,
+				meta: {}
+			};
+		}
+	}
 
 	let {watchers} = prop;
 

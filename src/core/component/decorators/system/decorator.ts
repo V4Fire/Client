@@ -115,10 +115,34 @@ export function regField(
 		}
 	}
 
-	let field: ComponentField = meta[type][fieldName] ?? {
-		src: meta.componentName,
-		meta: {}
-	};
+	const store = meta[type];
+
+	let field: ComponentField;
+
+	if (store.hasOwnProperty(fieldName)) {
+		field = store[fieldName]!;
+
+	} else {
+		const parent = store[fieldName];
+
+		if (parent != null) {
+			field = {
+				...parent,
+				src: meta.componentName,
+				meta: {...parent.meta}
+			};
+
+			if (parent.watchers != null) {
+				field.watchers = new Map(parent.watchers);
+			}
+
+		} else {
+			field = {
+				src: meta.componentName,
+				meta: {}
+			};
+		}
+	}
 
 	let {watchers, after} = field;
 

@@ -137,17 +137,35 @@ export function watch(watcher: DecoratorFieldWatcher | DecoratorMethodWatcher): 
 		}
 
 		function decorateMethod() {
-			const methodWatchers = Array.toArray(<DecoratorMethodWatcher>watcher);
+			let method: ComponentMethod;
 
-			const method: ComponentMethod = meta.methods[key] ?? {
-				src: meta.componentName,
-				fn: Object.throw,
-				watchers: {}
-			};
+			if (meta.methods.hasOwnProperty(key)) {
+				method = meta.methods[key]!;
+
+			} else {
+				const parent = meta.methods[key];
+
+				if (parent != null) {
+					method = {
+						...parent,
+						src: meta.componentName
+					};
+
+					if (parent.watchers != null) {
+						method.watchers = Object.create(parent.watchers);
+					}
+
+				} else {
+					method = {
+						src: meta.componentName,
+						fn: Object.throw
+					};
+				}
+			}
 
 			const {watchers = {}} = method;
 
-			for (const methodWatcher of methodWatchers) {
+			for (const methodWatcher of Array.toArray(<DecoratorMethodWatcher>watcher)) {
 				if (Object.isString(methodWatcher)) {
 					watchers[methodWatcher] = normalizeFunctionalParams({path: methodWatcher}, meta);
 
@@ -174,10 +192,32 @@ export function watch(watcher: DecoratorFieldWatcher | DecoratorMethodWatcher): 
 				store = meta.systemFields;
 			}
 
-			const field: ComponentProp | ComponentField = store[key] ?? {
-				src: meta.componentName,
-				meta: {}
-			};
+			let field: ComponentProp | ComponentField;
+
+			if (store.hasOwnProperty(key)) {
+				field = store[key]!;
+
+			} else {
+				const parent = store[key];
+
+				if (parent != null) {
+					field = {
+						...parent,
+						src: meta.componentName,
+						meta: {...parent.meta}
+					};
+
+					if (parent.watchers != null) {
+						field.watchers = new Map(parent.watchers);
+					}
+
+				} else {
+					field = {
+						src: meta.componentName,
+						meta: {}
+					};
+				}
+			}
 
 			const {watchers = new Map()} = field;
 

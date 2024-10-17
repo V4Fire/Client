@@ -38,11 +38,33 @@ export function hook(hook: DecoratorHook): PartDecorator {
 	return createComponentDecorator3(({meta}, methodName) => {
 		const methodHooks = Array.toArray(hook);
 
-		const method: ComponentMethod = meta.methods[methodName] ?? {
-			src: meta.componentName,
-			fn: Object.throw,
-			hooks: {}
-		};
+		let method: ComponentMethod;
+
+		if (meta.methods.hasOwnProperty(methodName)) {
+			method = meta.methods[methodName]!;
+
+		} else {
+			const parent = meta.methods[methodName];
+
+			if (parent != null) {
+				method = {
+					...parent,
+					src: meta.componentName
+				};
+
+				Object.assign(method, parent);
+
+				if (parent.hooks != null) {
+					method.hooks = Object.create(parent.hooks);
+				}
+
+			} else {
+				method = {
+					src: meta.componentName,
+					fn: Object.throw
+				};
+			}
+		}
 
 		const {hooks = {}} = method;
 

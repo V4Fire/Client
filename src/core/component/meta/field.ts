@@ -53,7 +53,14 @@ export function getFieldWeight(field: CanUndef<ComponentField>, scope: Dictionar
  * @param fields
  */
 export function sortFields(fields: Dictionary<ComponentField>): ComponentFieldInitializers {
-	return Object.entries(fields).sort(([aName], [bName]) => {
+	const list: Array<[string, ComponentField]> = [];
+
+	// eslint-disable-next-line guard-for-in
+	for (const name in fields) {
+		list.push([name, fields[name]!]);
+	}
+
+	return list.sort(([aName], [bName]) => {
 		const
 			aWeight = getFieldWeight(fields[aName], fields),
 			bWeight = getFieldWeight(fields[bName], fields);

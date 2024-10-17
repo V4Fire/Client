@@ -78,11 +78,8 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 	const isFunctional = meta.params.functional === true;
 
-	const accessorsNames = Object.keys(meta.accessors);
-
-	for (let i = 0; i < accessorsNames.length; i++) {
-		const name = accessorsNames[i];
-
+	// eslint-disable-next-line guard-for-in
+	for (const name in meta.accessors) {
 		const accessor = meta.accessors[name];
 
 		const tiedWith = tiedFields[name];
@@ -166,11 +163,8 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 	const cachedAccessors = new Set<Function>();
 
-	const computedNames = Object.keys(meta.computedFields);
-
-	for (let i = 0; i < computedNames.length; i++) {
-		const name = computedNames[i];
-
+	// eslint-disable-next-line guard-for-in
+	for (const name in meta.computedFields) {
 		const computed = meta.computedFields[name];
 
 		const tiedWith = tiedFields[name];

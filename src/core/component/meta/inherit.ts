@@ -6,9 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { componentDecoratedKeys, PARENT } from 'core/component/const';
+import { PARENT } from 'core/component/const';
 
-import type { ModDeclVal, FieldWatcher } from 'core/component/interface';
+import type { ModDeclVal } from 'core/component/interface';
 import type { ComponentMeta } from 'core/component/meta/interface';
 
 /**
@@ -19,8 +19,6 @@ import type { ComponentMeta } from 'core/component/meta/interface';
  * @param parentMeta
  */
 export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): ComponentMeta {
-	const decoratedKeys = componentDecoratedKeys[meta.componentName];
-
 	meta.tiedFields = {...parentMeta.tiedFields};
 
 	if (parentMeta.metaInitializers.size > 0) {
@@ -33,21 +31,17 @@ export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): Com
 
 	inheritParams(meta, parentMeta);
 
-	inheritProp(meta.props, parentMeta.props);
+	meta.props = Object.create(parentMeta.props);
+	meta.fields = Object.create(parentMeta.fields);
+	meta.systemFields = Object.create(parentMeta.systemFields);
+
+	meta.accessors = Object.create(parentMeta.accessors);
+	meta.computedFields = Object.create(parentMeta.computedFields);
+	meta.methods = Object.create(parentMeta.methods);
 
 	meta.component.props = {...parentMeta.component.props};
 	meta.component.attrs = {...parentMeta.component.attrs};
-
-	inheritField(meta.fields, parentMeta.fields);
-	inheritField(meta.systemFields, parentMeta.systemFields);
-
-	inheritAccessors(meta.accessors, parentMeta.accessors);
-	inheritAccessors(meta.computedFields, parentMeta.computedFields);
-
 	meta.component.computed = {...parentMeta.component.computed};
-
-	inheritMethods(meta.methods, parentMeta.methods);
-
 	meta.component.methods = {...parentMeta.component.methods};
 
 	if (meta.params.partial == null) {
@@ -55,133 +49,6 @@ export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): Com
 	}
 
 	return meta;
-
-	function inheritProp(current: ComponentMeta['props'], parent: ComponentMeta['props']) {
-		const keys = Object.keys(parent);
-
-		for (let i = 0; i < keys.length; i++) {
-			const
-				propName = keys[i],
-				parentProp = parent[propName];
-
-			if (parentProp == null) {
-				continue;
-			}
-
-			if (decoratedKeys == null || !decoratedKeys.has(propName)) {
-				current[propName] = parentProp;
-				continue;
-			}
-
-			let watchers: CanUndef<Map<FieldWatcher['handler'], FieldWatcher>>;
-
-			if (parentProp.watchers != null) {
-				for (const watcher of parentProp.watchers.values()) {
-					watchers ??= new Map();
-					watchers.set(watcher.handler, {...watcher});
-				}
-			}
-
-			current[propName] = {...parentProp, watchers};
-		}
-	}
-
-	function inheritField(current: ComponentMeta['fields'], parent: ComponentMeta['fields']) {
-		const keys = Object.keys(parent);
-
-		for (let i = 0; i < keys.length; i++) {
-			const
-				fieldName = keys[i],
-				parentField = parent[fieldName];
-
-			if (parentField == null) {
-				continue;
-			}
-
-			if (decoratedKeys == null || !decoratedKeys.has(fieldName)) {
-				current[fieldName] = parentField;
-				continue;
-			}
-
-			let
-				after: CanUndef<Set<string>>,
-				watchers: CanUndef<Map<FieldWatcher['handler'], FieldWatcher>>;
-
-			if (parentField.watchers != null) {
-				for (const watcher of parentField.watchers.values()) {
-					watchers ??= new Map();
-					watchers.set(watcher.handler, {...watcher});
-				}
-			}
-
-			if (parentField.after != null) {
-				for (const name of parentField.after) {
-					after ??= new Set();
-					after.add(name);
-				}
-			}
-
-			current[fieldName] = {...parentField, after, watchers};
-		}
-	}
-
-	function inheritAccessors(current: ComponentMeta['accessors'], parent: ComponentMeta['accessors']) {
-		const keys = Object.keys(parent);
-
-		for (let i = 0; i < keys.length; i++) {
-			const accessorName = keys[i];
-			current[accessorName] = {...parent[accessorName]!};
-		}
-	}
-
-	function inheritMethods(current: ComponentMeta['methods'], parent: ComponentMeta['methods']) {
-		const keys = Object.keys(parent);
-
-		for (let i = 0; i < keys.length; i++) {
-			const
-				methodName = keys[i],
-				parentMethod = parent[methodName];
-
-			if (parentMethod == null) {
-				continue;
-			}
-
-			if (decoratedKeys == null || !decoratedKeys.has(methodName)) {
-				current[methodName] = {...parentMethod};
-				continue;
-			}
-
-			const
-				watchers = {},
-				hooks = {};
-
-			if (parentMethod.watchers != null) {
-				const keys = Object.keys(parentMethod.watchers);
-
-				for (let i = 0; i < keys.length; i++) {
-					const key = keys[i];
-					watchers[key] = {...parentMethod.watchers[key]};
-				}
-			}
-
-			if (parentMethod.hooks != null) {
-				const keys = Object.keys(parentMethod.hooks);
-
-				for (let i = 0; i < keys.length; i++) {
-					const
-						key = keys[i],
-						hook = parentMethod.hooks[key];
-
-					hooks[key] = {
-						...hook,
-						after: Object.size(hook.after) > 0 ? new Set(hook.after) : undefined
-					};
-				}
-			}
-
-			current[methodName] = {...parentMethod, watchers, hooks};
-		}
-	}
 }
 
 /**

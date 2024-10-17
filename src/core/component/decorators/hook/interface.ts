@@ -7,7 +7,7 @@
  */
 
 import type { Hook } from 'core/component/interface';
-import type { DecoratorFunctionalOptions } from 'core/component/decorators/interface/types';
+import type { DecoratorFunctionalOptions } from 'core/component/decorators/interface';
 
 export type DecoratorHook =
 	CanArray<Hook> |

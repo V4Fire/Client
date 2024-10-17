@@ -73,65 +73,91 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 
 		computedFields,
 		accessors,
-		methods,
 
 		metaInitializers
 	} = meta;
 
 	if (type === 'method') {
-		const method = proto[name];
+		let method: ComponentMethod;
 
-		const methodDesc: ComponentMethod = Object.assign(methods[name] ?? {watchers: {}, hooks: {}}, {src, fn: method});
-		methods[name] = methodDesc;
+		const fn = proto[name];
 
-		component.methods[name] = method;
+		if (meta.methods.hasOwnProperty(name)) {
+			method = meta.methods[name]!;
+			method.fn = fn;
+
+		} else {
+			const parent = meta.methods[name];
+
+			if (parent != null) {
+				method = {...parent, src, fn};
+
+				if (parent.hooks != null) {
+					fn.hooks = Object.create(parent.hooks);
+				}
+
+				if (parent.watchers != null) {
+					fn.watchers = Object.create(parent.watchers);
+				}
+
+			} else {
+				method = {src, fn};
+			}
+		}
+
+		meta.methods[name] = method;
+		component.methods[name] = fn;
 
 		// eslint-disable-next-line func-style
 		const wrapper = function wrapper(this: object) {
 			// eslint-disable-next-line prefer-rest-params
-			return method.apply(getComponentContext(this), arguments);
+			return fn.apply(getComponentContext(this), arguments);
 		};
 
-		if (wrapper.length !== method.length) {
-			Object.defineProperty(wrapper, 'length', {get: () => method.length});
+		if (wrapper.length !== fn.length) {
+			Object.defineProperty(wrapper, 'length', {get: () => fn.length});
 		}
 
 		component.methods[name] = wrapper;
 
-		const
-			watchers = methodDesc.watchers != null ? Object.keys(methodDesc.watchers) : [],
-			hooks = methodDesc.hooks != null ? Object.keys(methodDesc.hooks) : [];
+		const {hooks, watchers} = method;
 
-		if (watchers.length > 0 || hooks.length > 0) {
+		if (hooks != null || watchers != null) {
 			metaInitializers.set(name, (meta) => {
 				const isFunctional = meta.params.functional === true;
 
-				for (const watcherName of watchers) {
-					const watcher = methodDesc.watchers![watcherName];
+				if (hooks != null) {
+					// eslint-disable-next-line guard-for-in
+					for (const hookName in hooks) {
+						const hook = hooks[hookName];
 
-					if (watcher == null || isFunctional && watcher.functional === false) {
-						continue;
+						if (isFunctional && hook.functional === false) {
+							continue;
+						}
+
+						meta.hooks[hookName].push({...hook, fn});
 					}
-
-					const watcherListeners = meta.watchers[watcherName] ?? [];
-					meta.watchers[watcherName] = watcherListeners;
-
-					watcherListeners.push({
-						...watcher,
-						method: name,
-						args: Array.toArray(watcher.args),
-						handler: method
-					});
 				}
 
-				for (const hookName of hooks) {
-					const hook = methodDesc.hooks![hookName];
+				if (watchers != null) {
+					// eslint-disable-next-line guard-for-in
+					for (const watcherName in watchers) {
+						const watcher = watchers[watcherName];
 
-					if (isFunctional && hook.functional === false) {
-						continue;
+						if (watcher == null || isFunctional && watcher.functional === false) {
+							continue;
+						}
+
+						const watcherListeners = meta.watchers[watcherName] ?? [];
+						meta.watchers[watcherName] = watcherListeners;
+
+						watcherListeners.push({
+							...watcher,
+							method: name,
+							args: Array.toArray(watcher.args),
+							handler: fn
+						});
 					}
-
-					meta.hooks[hookName].push({...hook, fn: method});
 				}
 			});
 		}
@@ -182,7 +208,11 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 
 		const
 			old = store[name],
+
+			// eslint-disable-next-line @v4fire/unbound-method
 			set = desc.set ?? old?.set,
+
+			// eslint-disable-next-line @v4fire/unbound-method
 			get = desc.get ?? old?.get;
 
 		// To use `super` within the setter, we also create a new method with a name `${key}Setter`
@@ -211,11 +241,23 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 			};
 		}
 
-		const accessor: ComponentAccessor = Object.assign(store[name] ?? {cache: false}, {
-			src,
-			get,
-			set
-		});
+		let accessor: ComponentAccessor;
+
+		if (store.hasOwnProperty(name)) {
+			accessor = store[name]!;
+
+		} else {
+			const parent = store[name];
+
+			accessor = {src, cache: false};
+
+			if (parent != null) {
+				Object.assign(accessor, parent);
+			}
+		}
+
+		accessor.get = get;
+		accessor.set = set;
 
 		store[name] = accessor;
 

@@ -52,7 +52,9 @@ export function computed(params?: DecoratorComputed): PartDecorator {
 			type = 'computedFields';
 		}
 
-		let accessor: ComponentAccessor = meta[type][accessorName] ?? {
+		const store = meta[type];
+
+		let accessor: ComponentAccessor = store[accessorName] ?? {
 			src: meta.componentName,
 			cache: false
 		};
@@ -81,7 +83,7 @@ export function computed(params?: DecoratorComputed): PartDecorator {
 
 		delete meta[type === 'computedFields' ? 'accessors' : 'computedFields'][accessorName];
 
-		meta[type][accessorName] = accessor;
+		store[accessorName] = accessor;
 
 		if (params.dependencies != null && params.dependencies.length > 0) {
 			meta.watchDependencies.set(accessorName, params.dependencies);

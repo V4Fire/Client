@@ -8,8 +8,6 @@
 
 import { initEmitter } from 'core/component/event';
 
-import { componentDecoratedKeys } from 'core/component/const';
-
 import type { ComponentMeta } from 'core/component/meta';
 
 import type {
@@ -54,12 +52,7 @@ function createComponentDecorator(
 	partDesc: CanUndef<PropertyDescriptor>,
 	proto: object
 ): void {
-	initEmitter.once('bindConstructor', (componentName: string, regEvent: string) => {
-		const decoratedKeys = componentDecoratedKeys[componentName] ?? new Set();
-		componentDecoratedKeys[componentName] = decoratedKeys;
-
-		decoratedKeys.add(partKey);
-
+	initEmitter.once('bindConstructor', (_componentName: string, regEvent: string) => {
 		initEmitter.once(regEvent, (componentDesc: ComponentDescriptor) => {
 			if (decorator.length <= 3) {
 				(<ComponentPartDecorator3>decorator)(componentDesc, partKey, proto);
