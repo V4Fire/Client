@@ -18,8 +18,6 @@ import type { ComponentAccessor, ComponentMethod } from 'core/component/interfac
 import type { PartDecorator } from 'core/component/decorators/interface';
 import type { MethodType } from 'core/component/decorators/method/interface';
 
-export * from 'core/component/decorators/method/interface';
-
 /**
  * Marks a class method or accessor as a component part.
  *

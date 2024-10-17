@@ -15,7 +15,16 @@ import type { ComponentField } from 'core/component/interface';
 import type { ComponentMeta } from 'core/component/meta';
 
 import type { PartDecorator } from 'core/component/decorators/interface';
-import type { InitFieldFn, DecoratorSystem, DecoratorField } from 'core/component/decorators/system/interface';
+
+import type {
+
+	FieldCluster,
+	InitFieldFn,
+
+	DecoratorSystem,
+	DecoratorField
+
+} from 'core/component/decorators/system/interface';
 
 const INIT = Symbol('The field initializer');
 
@@ -26,7 +35,7 @@ const INIT = Symbol('The field initializer');
  * @decorator
  *
  * @param [initOrParams] - a function to initialize the field value or an object with field parameters
- * @param [type] - the type of the registered field: `systemFields` or `fields`
+ * @param [cluster] - the cluster for the registered field: `systemFields` or `fields`
  *
  * @example
  * ```typescript
@@ -42,22 +51,22 @@ const INIT = Symbol('The field initializer');
  * }
  * ```
  */
-export function system(initOrParams?: InitFieldFn | DecoratorSystem, type?: 'systemFields'): PartDecorator;
+export function system(initOrParams?: InitFieldFn | DecoratorSystem, cluster?: 'systemFields'): PartDecorator;
 
 /**
  * Marks a class property as a field.
  *
  * @param [initOrParams] - a function to initialize the field value or an object with field parameters
- * @param [type] - the type of the registered field: `systemFields` or `fields`
+ * @param [cluster] - the cluster for the registered field: `systemFields` or `fields`
  */
-export function system(initOrParams: CanUndef<InitFieldFn | DecoratorField>, type: 'fields'): PartDecorator;
+export function system(initOrParams: CanUndef<InitFieldFn | DecoratorField>, cluster: 'fields'): PartDecorator;
 
 export function system(
 	initOrParams?: InitFieldFn | DecoratorSystem | DecoratorField,
-	type: 'fields' | 'systemFields' = 'systemFields'
+	cluster: FieldCluster = 'systemFields'
 ): PartDecorator {
 	return createComponentDecorator3((desc, fieldName) => {
-		regField(fieldName, type, initOrParams, desc.meta);
+		regField(fieldName, cluster, initOrParams, desc.meta);
 	});
 }
 
@@ -65,13 +74,13 @@ export function system(
  * Registers a component field in the specified metaobject
  *
  * @param fieldName - the name of the field
- * @param type - the type of the registered field: `systemFields` or `fields`
+ * @param cluster - the cluster for the registered field: `systemFields` or `fields`
  * @param initOrParams - a function to initialize the field value or an object with field parameters
  * @param meta - the metaobject where the field is registered
  */
 export function regField(
 	fieldName: string,
-	type: 'systemFields' | 'fields',
+	cluster: FieldCluster,
 	initOrParams: Nullable<InitFieldFn | DecoratorField>,
 	meta: ComponentMeta
 ): void {
@@ -88,13 +97,15 @@ export function regField(
 		delete accessors[fieldName];
 	}
 
+	const store = meta[cluster];
+
 	// Handling the situation when a field changes type during inheritance,
 	// for example, it was a @prop in the parent component and became a @system
-	for (const anotherType of ['props', type === 'fields' ? 'systemFields' : 'fields']) {
-		const cluster = meta[anotherType];
+	for (const anotherType of ['props', cluster === 'fields' ? 'systemFields' : 'fields']) {
+		const anotherStore = meta[anotherType];
 
-		if (fieldName in cluster) {
-			const field: ComponentField = {...cluster[fieldName]};
+		if (fieldName in anotherStore) {
+			const field: ComponentField = {...anotherStore[fieldName]};
 
 			// Do not inherit the `functional` option in this case
 			delete field.functional;
@@ -108,14 +119,12 @@ export function regField(
 				}
 			}
 
-			meta[type][fieldName] = field;
-			delete cluster[fieldName];
+			store[fieldName] = field;
+			delete anotherStore[fieldName];
 
 			break;
 		}
 	}
-
-	const store = meta[type];
 
 	let field: ComponentField;
 
@@ -178,7 +187,7 @@ export function regField(
 		}
 	}, meta);
 
-	meta[type][fieldName] = field;
+	store[fieldName] = field;
 
 	if (field.init == null || !(INIT in field.init)) {
 		const defValue = field.default;

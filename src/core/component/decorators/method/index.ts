@@ -12,3 +12,4 @@
  */
 
 export * from 'core/component/decorators/method/decorator';
+export * from 'core/component/decorators/method/interface';

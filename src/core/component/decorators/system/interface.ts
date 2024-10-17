@@ -10,6 +10,8 @@ import type { ComponentInterface } from 'core/component/interface';
 import type { DecoratorFieldWatcher } from 'core/component/decorators/watch';
 import type { DecoratorFunctionalOptions } from 'core/component/decorators/interface';
 
+export type FieldCluster = 'fields' | 'systemFields';
+
 export interface DecoratorSystem<
 	Ctx extends ComponentInterface = ComponentInterface,
 	A = unknown,
