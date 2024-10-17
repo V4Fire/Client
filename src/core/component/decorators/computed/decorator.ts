@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { createComponentDecorator, normalizeFunctionalParams } from 'core/component/decorators/helpers';
+import { createComponentDecorator3, normalizeFunctionalParams } from 'core/component/decorators/helpers';
 
 import type { ComponentAccessor } from 'core/component/interface';
 
@@ -34,11 +34,7 @@ import type { DecoratorComputed } from 'core/component/decorators/computed/inter
  * ```
  */
 export function computed(params?: DecoratorComputed): PartDecorator {
-	return createComponentDecorator(({meta}, accessorName, desc) => {
-		if (desc == null) {
-			return;
-		}
-
+	return createComponentDecorator3(({meta}, accessorName) => {
 		params = {...params};
 
 		delete meta.props[accessorName];

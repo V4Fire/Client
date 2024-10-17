@@ -15,7 +15,9 @@ import type { ComponentMeta } from 'core/component/meta';
 import type {
 
 	PartDecorator,
-	ComponentPartDecorator,
+
+	ComponentPartDecorator3,
+	ComponentPartDecorator4,
 
 	ComponentDescriptor,
 	DecoratorFunctionalOptions
@@ -23,22 +25,50 @@ import type {
 } from 'core/component/decorators/interface';
 
 /**
- * Creates a decorator for a component's property or method based on the provided decorator function
+ * Creates a decorator for a component's property or method based on the provided decorator function.
+ * The decorator function expects three input arguments (excluding the object descriptor).
+ *
  * @param decorator
  */
-export function createComponentDecorator(decorator: ComponentPartDecorator): PartDecorator {
-	return (_: object, partKey: string, partDesc?: PropertyDescriptor) => {
-		initEmitter.once('bindConstructor', (componentName: string, regEvent: string) => {
-			const decoratedKeys = componentDecoratedKeys[componentName] ?? new Set();
-			componentDecoratedKeys[componentName] = decoratedKeys;
-
-			decoratedKeys.add(partKey);
-
-			initEmitter.once(regEvent, (componentDesc: ComponentDescriptor) => {
-				decorator(componentDesc, partKey, partDesc);
-			});
-		});
+export function createComponentDecorator3(decorator: ComponentPartDecorator3): PartDecorator {
+	return (proto: object, partKey: string) => {
+		createComponentDecorator(decorator, partKey, undefined, proto);
 	};
+}
+
+/**
+ * Creates a decorator for a component's property or method based on the provided decorator function.
+ * The decorator function expects four input arguments (including the object descriptor).
+ *
+ * @param decorator
+ */
+export function createComponentDecorator4(decorator: ComponentPartDecorator4): PartDecorator {
+	return (proto: object, partKey: string, partDesc?: PropertyDescriptor) => {
+		createComponentDecorator(decorator, partKey, partDesc, proto);
+	};
+}
+
+function createComponentDecorator(
+	decorator: ComponentPartDecorator3 | ComponentPartDecorator4,
+	partKey: string,
+	partDesc: CanUndef<PropertyDescriptor>,
+	proto: object
+): void {
+	initEmitter.once('bindConstructor', (componentName: string, regEvent: string) => {
+		const decoratedKeys = componentDecoratedKeys[componentName] ?? new Set();
+		componentDecoratedKeys[componentName] = decoratedKeys;
+
+		decoratedKeys.add(partKey);
+
+		initEmitter.once(regEvent, (componentDesc: ComponentDescriptor) => {
+			if (decorator.length <= 3) {
+				(<ComponentPartDecorator3>decorator)(componentDesc, partKey, proto);
+
+			} else {
+				(<ComponentPartDecorator4>decorator)(componentDesc, partKey, partDesc, proto);
+			}
+		});
+	});
 }
 
 /**

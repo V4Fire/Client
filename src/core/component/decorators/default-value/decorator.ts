@@ -9,7 +9,7 @@
 import { regProp } from 'core/component/decorators/prop';
 import { regField } from 'core/component/decorators/system';
 
-import { createComponentDecorator } from 'core/component/decorators/helpers';
+import { createComponentDecorator3 } from 'core/component/decorators/helpers';
 
 import type { PartDecorator } from 'core/component/decorators/interface';
 
@@ -20,7 +20,7 @@ import type { PartDecorator } from 'core/component/decorators/interface';
  * as it will be automatically added in the appropriate places during the build process.
  *
  * @decorator
- * @param [getter] - a function that returns the default value for a prop or field.
+ * @param [getter] - a function that returns the default value for a prop or field
  *
  * @example
  * ```typescript
@@ -40,7 +40,7 @@ import type { PartDecorator } from 'core/component/decorators/interface';
  * ```
  */
 export function defaultValue(getter: unknown): PartDecorator {
-	return createComponentDecorator(({meta}, key) => {
+	return createComponentDecorator3(({meta}, key) => {
 		const isFunction = Object.isFunction(getter);
 
 		if (key in meta.props) {

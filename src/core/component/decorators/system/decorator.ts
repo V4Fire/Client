@@ -9,7 +9,7 @@
 import { defProp } from 'core/const/props';
 import { isStore } from 'core/component/reflect';
 
-import { createComponentDecorator, normalizeFunctionalParams } from 'core/component/decorators/helpers';
+import { createComponentDecorator3, normalizeFunctionalParams } from 'core/component/decorators/helpers';
 
 import type { ComponentField } from 'core/component/interface';
 import type { ComponentMeta } from 'core/component/meta';
@@ -56,13 +56,13 @@ export function system(
 	initOrParams?: InitFieldFn | DecoratorSystem | DecoratorField,
 	type: 'fields' | 'systemFields' = 'systemFields'
 ): PartDecorator {
-	return createComponentDecorator((desc, fieldName) => {
+	return createComponentDecorator3((desc, fieldName) => {
 		regField(fieldName, type, initOrParams, desc.meta);
 	});
 }
 
 /**
- * Registers a component field to the specified metaobject
+ * Registers a component field in the specified metaobject
  *
  * @param fieldName - the name of the field
  * @param type - the type of the registered field: `systemFields` or `fields`

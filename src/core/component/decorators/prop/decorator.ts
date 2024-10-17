@@ -9,7 +9,7 @@
 import { defProp } from 'core/const/props';
 
 import { isBinding } from 'core/component/reflect';
-import { createComponentDecorator, normalizeFunctionalParams } from 'core/component/decorators/helpers';
+import { createComponentDecorator3, normalizeFunctionalParams } from 'core/component/decorators/helpers';
 
 import type { ComponentMeta } from 'core/component/meta';
 import type { ComponentProp, ComponentField } from 'core/component/interface';
@@ -41,13 +41,13 @@ import type { DecoratorProp, PropType } from 'core/component/decorators/prop/int
  * ```
  */
 export function prop(typeOrParams?: PropType | DecoratorProp): PartDecorator {
-	return createComponentDecorator((desc, propName) => {
+	return createComponentDecorator3((desc, propName) => {
 		regProp(propName, typeOrParams, desc.meta);
 	});
 }
 
 /**
- * Registers a component prop to the specified metaobject
+ * Registers a component prop in the specified metaobject
  *
  * @param propName - the name of the property
  * @param typeOrParams - a constructor of the property type or an object with property parameters

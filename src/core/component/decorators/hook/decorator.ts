@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { createComponentDecorator, normalizeFunctionalParams } from 'core/component/decorators/helpers';
+import { createComponentDecorator3, normalizeFunctionalParams } from 'core/component/decorators/helpers';
 
 import type { ComponentMethod } from 'core/component/interface';
 
@@ -35,11 +35,7 @@ import type { DecoratorHook } from 'core/component/decorators/hook/interface';
  * ```
  */
 export function hook(hook: DecoratorHook): PartDecorator {
-	return createComponentDecorator(({meta}, methodName, desc) => {
-		if (desc == null) {
-			return;
-		}
-
+	return createComponentDecorator3(({meta}, methodName) => {
 		const methodHooks = Array.toArray(hook);
 
 		const method: ComponentMethod = meta.methods[methodName] ?? {

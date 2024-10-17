@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { createComponentDecorator, normalizeFunctionalParams } from 'core/component/decorators/helpers';
+import { createComponentDecorator4, normalizeFunctionalParams } from 'core/component/decorators/helpers';
 
 import type { ComponentProp, ComponentField, ComponentMethod } from 'core/component/interface';
 
@@ -128,7 +128,7 @@ import type { DecoratorFieldWatcher, DecoratorMethodWatcher } from 'core/compone
  * ```
  */
 export function watch(watcher: DecoratorFieldWatcher | DecoratorMethodWatcher): PartDecorator {
-	return createComponentDecorator(({meta}, key, desc) => {
+	return createComponentDecorator4(({meta}, key, desc) => {
 		if (desc == null) {
 			decorateField();
 

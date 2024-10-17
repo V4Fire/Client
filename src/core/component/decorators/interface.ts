@@ -21,8 +21,12 @@ export interface ComponentDescriptor {
 	parentMeta: CanNull<ComponentMeta>;
 }
 
-export interface ComponentPartDecorator {
-	(component: ComponentDescriptor, partKey: string, partDesc?: PropertyDescriptor): void;
+export interface ComponentPartDecorator3 {
+	(component: ComponentDescriptor, partKey: string, proto: object): void;
+}
+
+export interface ComponentPartDecorator4 {
+	(component: ComponentDescriptor, partKey: string, partDesc: CanUndef<PropertyDescriptor>, proto: object): void;
 }
 
 export interface PartDecorator {
