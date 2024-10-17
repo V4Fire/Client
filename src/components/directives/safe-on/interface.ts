@@ -6,33 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { DirectiveBinding } from 'core/component/engines';
-
-export interface SafeOnDirectiveParams extends DirectiveBinding {
-	value: EventListener;
-	arg?: SafeOnEventType;
-}
-
 export interface SafeOnElement extends Element {
-	'[[SAFE_ON]]'?: WeakMap<Function, {
-		fn: EventListener;
-		eventType: SafeOnEventType;
-	}>;
+	/**
+	 * Private field to store event invokers
+	 * - vei = vue event invokers
+	 */
+	_vei?: Record<string, EventListenerOrEventListenerObject | undefined>;
 }
-
-export type SafeOnEventType = string | keyof ElementEventMap;
-
-export type KeyedEvent = KeyboardEvent | MouseEvent | TouchEvent;
-
-export type ModifierGuards =
-  | 'shift'
-  | 'ctrl'
-  | 'alt'
-  | 'meta'
-  | 'left'
-  | 'right'
-  | 'stop'
-  | 'prevent'
-  | 'self'
-  | 'middle'
-  | 'exact';

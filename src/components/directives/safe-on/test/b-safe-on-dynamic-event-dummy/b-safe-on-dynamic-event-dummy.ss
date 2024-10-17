@@ -14,7 +14,7 @@
 	- block body
 		< .&__dynamic-event &
 			v-if = isElementVisible |
-			v-safe-on:[dynamicEventName] = onDynamicEvent |
+			v-safe-on:[dynamicEventName].stop = onDynamicEvent |
 			-testid = dynamicEvent
 		.
 			Dynamic event: {{dynamicEventName}}
