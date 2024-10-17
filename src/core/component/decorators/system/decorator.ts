@@ -196,7 +196,7 @@ export function regField(
 			const customInit = field.init;
 
 			field.init = (ctx, store) => {
-				const val = customInit(ctx, store);
+				const val = customInit.call(ctx, ctx, store);
 
 				if (val === undefined && defValue !== undefined) {
 					if (store[fieldName] === undefined) {

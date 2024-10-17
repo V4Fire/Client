@@ -156,11 +156,12 @@ function addDefaultValueDecorator(context, node) {
 				true
 			);
 
-		getter = factory.createArrowFunction(
+		getter = factory.createFunctionExpression(
 			undefined,
+			undefined,
+			'getter',
 			undefined,
 			[],
-			undefined,
 			undefined,
 			getterValue
 		);
