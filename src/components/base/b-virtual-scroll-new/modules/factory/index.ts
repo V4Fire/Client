@@ -143,7 +143,7 @@ export class ComponentFactory extends Friend {
 	 */
 	protected normalizeComponentItemProps(componentName: string, props: Dictionary): Dictionary {
 		const
-			meta = registerComponent(componentName, '@v4fire/client');
+			meta = registerComponent(componentName);
 
 		if (meta == null) {
 			return props;

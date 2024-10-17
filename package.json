@@ -26,7 +26,7 @@
     "V4Fire"
   ],
   "scripts": {
-    "bbuild": "npx webpack --watch --env public-path=// progress=false",
+    "bbuild": "npx webpack --watch --env public-path=// --env progres=false",
     "sttart": "npx static ./dist/client",
     "build": "yarn build:tsconfig && webpack",
     "build:tsconfig": "node node_modules/@v4fire/core/build/build-tsconfig",

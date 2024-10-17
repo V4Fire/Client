@@ -12,11 +12,6 @@ const
 	{typescript, webpack, webpack: {ssr}} = require('@config/config'),
 	{commentModuleExpr: commentExpr} = include('build/const');
 
-const {
-	invokeByRegisterEvent,
-	getLayerName
-} = include('build/helpers');
-
 const
 	graph = include('build/graph');
 
@@ -72,15 +67,15 @@ module.exports = async function dynamicComponentImportReplacer(str, filePath) {
 				decl;
 
 			if (ssr) {
-				decl = invokeByRegisterEvent(`require('${fullPath}')`, getLayerName(filePath), component?.name);
+				decl = `require('${fullPath}')`;
 
 			} else {
 				if (isESImport) {
 					const importExpr = `import(${magicComments} '${fullPath}')`;
-					decl = `new Promise(function (r) {${invokeByRegisterEvent(`r(${importExpr})`, getLayerName(filePath), component?.name)}})`;
+					decl = `new Promise(function (r) {${importExpr}})`;
 
 				} else {
-					decl = `new Promise(function (r) { ${invokeByRegisterEvent(`r(require('${fullPath}'));`, getLayerName(filePath), component?.name)} })`;
+					decl = `new Promise(function (r) { r(require('${fullPath}')); })`;
 				}
 
 				decl += '.catch(function (err) { stderr(err) })';
@@ -92,23 +87,23 @@ module.exports = async function dynamicComponentImportReplacer(str, filePath) {
 		{
 			const
 				tplPath = `${fullPath}.ss`,
-				regTpl = `function (module) { ${invokeByRegisterEvent(`TPLS['${resourceName}'] = module${isESImport ? '.default' : ''}['${resourceName}'];`, getLayerName(filePath), component?.name)} return module; }`;
+				regTpl = `function (module) { TPLS['${resourceName}'] = module${isESImport ? '.default' : ''}['${resourceName}']; return module; }`;
 
 			let
 				decl;
 
 			if (ssr) {
-				decl = invokeByRegisterEvent(`(${regTpl})(require('${tplPath}'))`, getLayerName(filePath), resourceName);
+				decl = `(${regTpl})(require('${tplPath}'))`;
 
 			} else {
 				if (isESImport) {
 					const
 						importExpr = `import(${magicComments} '${tplPath}')`,
-						promise = `new Promise(function (r) {${invokeByRegisterEvent(`r(${importExpr})`, getLayerName(filePath), component?.name)}})`;
+						promise = `new Promise(function (r) { r(${importExpr}) })`;
 					decl = `${promise}.then(${regTpl})`;
 
 				} else {
-					decl = `new Promise(function (r) { ${invokeByRegisterEvent(`r(require('${tplPath}'));`, getLayerName(filePath), component?.name)} }).then(${regTpl})`;
+					decl = `new Promise(function (r) { r(require('${tplPath}')); }).then(${regTpl})`;
 				}
 
 				decl += '.catch(function (err) { stderr(err) })';

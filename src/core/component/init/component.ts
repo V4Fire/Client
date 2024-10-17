@@ -79,8 +79,19 @@ export function registerComponent(name: CanUndef<string>, layer?: string): CanNu
 
 	const component = components.get(name);
 
-	let componentName = (component?.componentName || name).replaceAll('-functional', '');	
-	initEmitter.emit(`registerComponent.${layer}.${componentName}`);
+	let
+		componentName = component?.componentName || name,
+		componentNormolizedName = componentName.match(/(?<name>.*)-functional$/)?.groups?.name || componentName;	
+
+	
+	const event = `registerComponent.${layer}.${componentNormolizedName}`;
+	if (layer == null) {
+		initEmitter.emit(`registerComponent.@v4fire/client.${componentNormolizedName}`);
+		initEmitter.emit(`registerComponent.@edadeal/core.${componentNormolizedName}`);
+		initEmitter.emit(`registerComponent.@edadeal/cb.${componentNormolizedName}`);
+	} else {
+		initEmitter.emit(event);
+	}
 
 	const
 		regComponent = componentRegInitializers[name];

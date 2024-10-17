@@ -15,7 +15,7 @@ const
 const
 	path = require('upath'),
 	graph = include('build/graph'),
-	{ invokeByRegisterEvent, getOriginLayerFromPath } = include('build/helpers');
+	{ invokeByRegisterEvent, getLayerName } = include('build/helpers');
 
 
 const
@@ -139,7 +139,7 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 						expr = `require('${src}');`
 					}
 
-					decl += `try { ${invokeByRegisterEvent(expr, getOriginLayerFromPath(filePath), dep)} } catch (err) { stderr(err); }`;
+					decl += `try { ${invokeByRegisterEvent(expr, getLayerName(filePath), dep)} } catch (err) { stderr(err); }`;
 				}
 
 			} catch {}

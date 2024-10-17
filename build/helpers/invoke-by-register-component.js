@@ -8,7 +8,7 @@
  * @returns {String}
  */
 exports.invokeByRegisterEvent = function(script, layerName, componentName) {
-	if (script?.trim()?.length == 0) {
+	if (script?.trim()?.length == 0 || layerName == null || componentName == null) {
 		return script;
 	}
 
@@ -18,7 +18,6 @@ exports.invokeByRegisterEvent = function(script, layerName, componentName) {
 				globalThis.initEmitter = initEmitter;
 			}
 			globalThis.initEmitter.once('registerComponent.${layerName}.${componentName}', () => {
-				console.log('invoked from handler', 'registerComponent.${layerName}.${componentName}');
 				${script}
 			});
 		\n
