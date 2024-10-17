@@ -19,8 +19,8 @@ const ts = require('typescript');
 module.exports = resisterComponentDefaultValues;
 
 /**
- * Registers default values for the properties of a class that is a component.
- * The registration of default values is achieved through the defaultValue decorator.
+ * Registers parts of a class as parts of the associated component.
+ * For example, all methods and accessors of the class are registered as methods and accessors of the component.
  *
  * @param {TransformationContext} context
  * @returns {Transformer}
@@ -34,6 +34,14 @@ module.exports = resisterComponentDefaultValues;
  * class bExample extends iBlock {
  *   @prop(Array)
  *   prop = [];
+ *
+ *   get answer() {
+ *     return 42;
+ *   }
+ *
+ *   just() {
+ *     return 'do it';
+ *   }
  * }
  * ```
  *
@@ -41,6 +49,8 @@ module.exports = resisterComponentDefaultValues;
  *
  * ```typescript
  * import { defaultValue } from 'core/component/decorators/default-value';
+ * import { method } from 'core/component/decorators/method';
+ *
  * import iBlock, { component, prop } from 'components/super/i-block/i-block';
  *
  * @component()
@@ -48,17 +58,33 @@ module.exports = resisterComponentDefaultValues;
  *   @defaultValue(() => [])
  *   @prop(Array)
  *   prop = [];
+ *
+ *   @method('accessor')
+ *   get answer() {
+ *     return 42;
+ *   }
+ *
+ *   @method('method')
+ *   just() {
+ *     return 'do it';
+ *   }
  * }
  * ```
  */
 function resisterComponentDefaultValues(context) {
-	let needImportDecorator = false;
+	let
+		needImportDefaultValueDecorator = false,
+		needImportMethodDecorator = false;
 
 	return (node) => {
 		node = ts.visitNode(node, visitor);
 
-		if (needImportDecorator) {
-			return addDefaultValueDecoratorImport(context, node);
+		if (needImportDefaultValueDecorator) {
+			node = addDecoratorImport('defaultValue', 'core/component/decorators/default-value', context, node);
+		}
+
+		if (needImportMethodDecorator) {
+			node = addDecoratorImport('method', 'core/component/decorators/method', context, node);
 		}
 
 		return node;
@@ -77,8 +103,16 @@ function resisterComponentDefaultValues(context) {
 			!node.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.StaticKeyword) &&
 			isComponentClass(node.parent, 'component')
 		) {
-			needImportDecorator = true;
+			needImportDefaultValueDecorator = true;
 			return addDefaultValueDecorator(context, node);
+		}
+
+		if (
+			(ts.isMethodDeclaration(node) || ts.isGetAccessorDeclaration(node) || ts.isSetAccessorDeclaration(node)) &&
+			isComponentClass(node.parent, 'component')
+		) {
+			needImportMethodDecorator = true;
+			return addMethodDecorator(context, node);
 		}
 
 		return ts.visitEachChild(node, visitor, context);
@@ -154,21 +188,89 @@ function addDefaultValueDecorator(context, node) {
 }
 
 /**
- * Adds the import for the @defaultValue decorator to the specified file
+ * Adds the @method decorator for the specified class method or accessor
  *
+ * @param {TransformationContext} context - the transformation context
+ * @param {Node} node - the method/accessor node in the AST
+ * @returns {Node}
+ */
+function addMethodDecorator(context, node) {
+	const {factory} = context;
+
+	let type;
+
+	if (ts.isMethodDeclaration(node)) {
+		type = 'method';
+
+	} else {
+		type = 'accessor';
+	}
+
+	const decoratorExpr = factory.createCallExpression(
+		factory.createIdentifier('method'),
+		undefined,
+		[factory.createStringLiteral(type)]
+	);
+
+	const decorator = factory.createDecorator(decoratorExpr);
+
+	const decorators = factory.createNodeArray([decorator, ...(node.decorators || [])]);
+
+	if (ts.isMethodDeclaration(node)) {
+		return factory.updateMethodDeclaration(
+			node,
+			decorators,
+			node.modifiers,
+			node.asteriskToken,
+			node.name,
+			node.questionToken,
+			node.typeParameters,
+			node.parameters,
+			node.type,
+			node.body
+		);
+	}
+
+	if (ts.isGetAccessorDeclaration(node)) {
+		return factory.updateGetAccessorDeclaration(
+			node,
+			decorators,
+			node.modifiers,
+			node.name,
+			node.parameters,
+			node.type,
+			node.body
+		);
+	}
+
+	return factory.updateSetAccessorDeclaration(
+		node,
+		decorators,
+		node.modifiers,
+		node.name,
+		node.parameters,
+		node.body
+	);
+}
+
+/**
+ * Adds the import for the decorator with the specified name to the specified file
+ *
+ * @param {string} name - the name of the decorator to be imported and applied (e.g., `defaultValue`)
+ * @param {string} path - the path from which the decorator should be imported (e.g., `core/component/decorators`)
  * @param {TransformationContext} context - the transformation context
  * @param {Node} node - the source file node in the AST
  * @returns {Node}
  */
-function addDefaultValueDecoratorImport(context, node) {
+function addDecoratorImport(name, path, context, node) {
 	const {factory} = context;
 
-	const decoratorSrc = factory.createStringLiteral('core/component/decorators/default-value');
+	const decoratorSrc = factory.createStringLiteral(path);
 
 	const importSpecifier = factory.createImportSpecifier(
 		undefined,
 		undefined,
-		factory.createIdentifier('defaultValue')
+		factory.createIdentifier(name)
 	);
 
 	const importClause = factory.createImportClause(

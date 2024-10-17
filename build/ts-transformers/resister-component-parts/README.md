@@ -1,8 +1,6 @@
-# build/ts-transformers/resister-component-default-values
+# build/ts-transformers/resister-component-parts
 
-This module provides a transformer for extracting default properties of a component class into a special decorator `@defaultValue` (`core/component/decorators/default-value`).
-
-This is necessary to allow retrieval of the default value for a component's prop at runtime without needing to create an instance of the component class.
+This module provides a transformer for registering parts of a class as parts of the associated component.
 
 ## Example
 
@@ -13,6 +11,14 @@ import iBlock, { component, prop } from 'components/super/i-block/i-block';
 class bExample extends iBlock {
   @prop(Array)
   prop: string[] = [];
+
+  get answer() {
+    return 42;
+  }
+
+  just() {
+    return 'do it';
+  }
 }
 ```
 
@@ -20,6 +26,8 @@ Will transform to
 
 ```typescript
 import { defaultValue } from 'core/component/decorators/default-value';
+import { method } from 'core/component/decorators/method';
+
 import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
 @component()
@@ -27,6 +35,16 @@ class bExample extends iBlock {
   @defaultValue(() => { return []; })
   @prop(Array)
   prop: string[] = [];
+
+  @method('accessor')
+  get answer() {
+    return 42;
+  }
+
+  @method('method')
+  just() {
+    return 'do it';
+  }
 }
 ```
 
@@ -35,10 +53,10 @@ class bExample extends iBlock {
 To attach the transformer, you need to add its import to `build/ts-transformers`.
 
 ```js
-const registerComponentDefaultValues = include('build/ts-transformers/register-component-default-values');
+const resisterComponentParts = include('build/ts-transformers/resister-component-parts');
 
-module.exports = (program) => ({
-  before: [registerComponentDefaultValues],
+module.exports = () => ({
+  before: [resisterComponentParts],
   after: {},
   afterDeclarations: {}
 });

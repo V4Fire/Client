@@ -10,14 +10,14 @@
 
 const
 	setComponentLayer = include('build/ts-transformers/set-component-layer'),
-	resisterComponentDefaultValues = include('build/ts-transformers/resister-component-default-values');
+	resisterComponentParts = include('build/ts-transformers/resister-component-parts');
 
 /**
- * Returns a settings object for setting up TypeScript transformers
+ * Returns a settings object for configuring TypeScript transformers
  * @returns {object}
  */
 module.exports = () => ({
-	before: [setComponentLayer, resisterComponentDefaultValues],
+	before: [setComponentLayer, resisterComponentParts],
 	after: {},
 	afterDeclarations: {}
 });
