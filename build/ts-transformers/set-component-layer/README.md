@@ -29,7 +29,7 @@ To attach the transformer, you need to add its import to `build/ts-transformers`
 ```js
 const setComponentLayer = include('build/ts-transformers/set-component-layer');
 
-module.exports = (program) => ({
+module.exports = () => ({
   before: [setComponentLayer],
   after: {},
   afterDeclarations: {}
