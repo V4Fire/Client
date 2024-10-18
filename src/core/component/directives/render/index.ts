@@ -102,7 +102,7 @@ ComponentEngine.directive('render', {
 		}
 
 		function isAsyncVNode(VNode: CanPromise<VNode> | SSRBufferItem) {
-			return Object.isPromise(VNode) || (Object.isArray(VNode) && VNode.hasAsync);
+			return Object.isPromise(VNode) || Object.isArray(VNode);
 		}
 
 		async function getSSRInnerHTML(content: CanArray<SSRBufferItem>) {
