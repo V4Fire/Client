@@ -41,7 +41,7 @@ export function canSkipWatching(
 
 		const isFunctional = params.functional === true;
 
-		if (propInfo.type === 'prop' || (propInfo.type === 'attr' && propInfo.name !== '$attrs')) {
+		if (propInfo.type === 'prop' || (propInfo.type === 'attr' && !propInfo.fullPath.endsWith('$attrs'))) {
 			skipWatching = SSR || params.root === true || isFunctional;
 
 			if (!skipWatching) {
