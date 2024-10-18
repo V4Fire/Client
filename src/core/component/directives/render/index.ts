@@ -12,7 +12,7 @@
  */
 
 import { setVNodePatchFlags } from 'core/component/render';
-import { ComponentEngine, VNode } from 'core/component/engines';
+import { ComponentEngine, SSRBufferItem, VNode } from 'core/component/engines';
 
 import { getDirectiveContext } from 'core/component/directives/helpers';
 import type { DirectiveParams } from 'core/component/directives/render/interface';
@@ -37,13 +37,13 @@ ComponentEngine.directive('render', {
 			canReplaceOriginalVNode = isTemplate && !Object.isArray(newVNode);
 
 		if (canReplaceOriginalVNode) {
-			return SSR ? renderSSRFragment(newVNode) : newVNode;
+			return isSSRBufferItem(newVNode) ? renderSSRFragment(newVNode) : newVNode;
 		}
 
 		if (Object.isString(vnode.type)) {
-			const children = Array.toArray(newVNode);
+			if (isSSRBufferItem(newVNode)) {
+				const children: Array<SSRBufferItem> = Array.toArray(newVNode);
 
-			if (SSR) {
 				if (isTemplate) {
 					vnode.type = 'ssr-fragment';
 				}
@@ -54,6 +54,8 @@ ComponentEngine.directive('render', {
 				};
 
 			} else {
+				const children = Array.toArray(newVNode);
+
 				vnode.children = children;
 				vnode.dynamicChildren = Object.cast(children.slice());
 				setVNodePatchFlags(vnode, 'children');
@@ -67,7 +69,7 @@ ComponentEngine.directive('render', {
 			vnode.children = slots;
 			setVNodePatchFlags(vnode, 'slots');
 
-			if (SSR) {
+			if (isSSRBufferItem(newVNode)) {
 				slots.default = () => renderSSRFragment(newVNode);
 
 			} else {
@@ -95,17 +97,25 @@ ComponentEngine.directive('render', {
 			}
 		}
 
-		async function getSSRInnerHTML(content: CanArray<CanPromise<VNode>>) {
-			let normalizedContent = Array.toArray(content);
+		function isSSRBufferItem(_VNode: CanUndef<CanArray<VNode> | SSRBufferItem>): _VNode is CanUndef<SSRBufferItem> {
+			return SSR;
+		}
 
-			while (normalizedContent.some(Object.isPromise)) {
+		function isAsyncVNode(VNode: CanPromise<VNode> | SSRBufferItem) {
+			return Object.isPromise(VNode) || (Object.isArray(VNode) && VNode.hasAsync);
+		}
+
+		async function getSSRInnerHTML(content: CanArray<SSRBufferItem>) {
+			let normalizedContent: Array<SSRBufferItem> = Array.toArray(content);
+
+			while (normalizedContent.some(isAsyncVNode)) {
 				normalizedContent = (await Promise.all(normalizedContent)).flat();
 			}
 
 			return normalizedContent.join('');
 		}
 
-		function renderSSRFragment(content: CanArray<CanPromise<VNode>>) {
+		function renderSSRFragment(content: SSRBufferItem) {
 			if (ctx == null) {
 				return;
 			}
