@@ -42,7 +42,7 @@ ComponentEngine.directive('render', {
 
 		if (Object.isString(vnode.type)) {
 			if (isSSRBufferItem(newVNode)) {
-				const children: Array<SSRBufferItem> = Array.toArray(newVNode);
+				const children: SSRBufferItem[] = Array.toArray(newVNode);
 
 				if (isTemplate) {
 					vnode.type = 'ssr-fragment';
@@ -106,7 +106,7 @@ ComponentEngine.directive('render', {
 		}
 
 		async function getSSRInnerHTML(content: CanArray<SSRBufferItem>) {
-			let normalizedContent: Array<SSRBufferItem> = Array.toArray(content);
+			let normalizedContent: SSRBufferItem[] = Array.toArray(content);
 
 			while (normalizedContent.some(isRecursiveBufferItem)) {
 				normalizedContent = (await Promise.all(normalizedContent)).flat();
