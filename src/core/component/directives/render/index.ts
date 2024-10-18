@@ -25,10 +25,11 @@ ComponentEngine.directive('render', {
 			ctx = getDirectiveContext(params, vnode);
 
 		const
-			newVNode = params.value,
+			newVNode = Object.cast<CanUndef<CanArray<VNode>>>(params.value),
+			newBuffer = Object.cast<CanUndef<SSRBufferItem>>(params.value),
 			originalChildren = vnode.children;
 
-		if (newVNode == null) {
+		if (newVNode == null || newBuffer == null) {
 			return;
 		}
 
@@ -37,12 +38,12 @@ ComponentEngine.directive('render', {
 			canReplaceOriginalVNode = isTemplate && !Object.isArray(newVNode);
 
 		if (canReplaceOriginalVNode) {
-			return isSSRBufferItem(newVNode) ? renderSSRFragment(newVNode) : newVNode;
+			return SSR ? renderSSRFragment(newBuffer) : newVNode;
 		}
 
 		if (Object.isString(vnode.type)) {
-			if (isSSRBufferItem(newVNode)) {
-				const children: SSRBufferItem[] = Array.toArray(newVNode);
+			if (SSR) {
+				const children = Array.toArray(newBuffer);
 
 				if (isTemplate) {
 					vnode.type = 'ssr-fragment';
@@ -69,8 +70,8 @@ ComponentEngine.directive('render', {
 			vnode.children = slots;
 			setVNodePatchFlags(vnode, 'slots');
 
-			if (isSSRBufferItem(newVNode)) {
-				slots.default = () => renderSSRFragment(newVNode);
+			if (SSR) {
+				slots.default = () => renderSSRFragment(newBuffer);
 
 			} else {
 				if (Object.isArray(newVNode)) {
@@ -95,10 +96,6 @@ ComponentEngine.directive('render', {
 
 				slots.default = () => newVNode;
 			}
-		}
-
-		function isSSRBufferItem(_VNode: CanUndef<CanArray<VNode> | SSRBufferItem>): _VNode is CanUndef<SSRBufferItem> {
-			return SSR;
 		}
 
 		function isRecursiveBufferItem(bufferItem: SSRBufferItem) {
