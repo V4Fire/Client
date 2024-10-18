@@ -101,14 +101,14 @@ ComponentEngine.directive('render', {
 			return SSR;
 		}
 
-		function isAsyncVNode(VNode: CanPromise<VNode> | SSRBufferItem) {
-			return Object.isPromise(VNode) || Object.isArray(VNode);
+		function isRecursiveBufferItem(bufferItem: SSRBufferItem) {
+			return Object.isPromise(bufferItem) || Object.isArray(bufferItem);
 		}
 
 		async function getSSRInnerHTML(content: CanArray<SSRBufferItem>) {
 			let normalizedContent: Array<SSRBufferItem> = Array.toArray(content);
 
-			while (normalizedContent.some(isAsyncVNode)) {
+			while (normalizedContent.some(isRecursiveBufferItem)) {
 				normalizedContent = (await Promise.all(normalizedContent)).flat();
 			}
 
