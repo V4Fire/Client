@@ -98,7 +98,7 @@ ComponentEngine.directive('render', {
 			}
 		}
 
-		function isRecursiveBufferItem(bufferItem: SSRBufferItem) {
+		function isRecursiveBufferItem(bufferItem: SSRBufferItem): bufferItem is Exclude<SSRBufferItem, string> {
 			return Object.isPromise(bufferItem) || Object.isArray(bufferItem);
 		}
 
