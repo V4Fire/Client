@@ -115,21 +115,17 @@ ComponentEngine.directive('attrs', {
 		}
 
 		function parseDirective(attrName: string, attrVal: unknown) {
-			const
-				decl = directiveRgxp.exec(attrName);
+			const decl = directiveRgxp.exec(attrName);
 
-			let
-				value = attrVal;
+			let value = attrVal;
 
 			if (decl == null) {
 				throw new SyntaxError('Invalid directive declaration');
 			}
 
-			const
-				[, name, arg = '', rawModifiers = ''] = decl;
+			const [, name, arg = '', rawModifiers = ''] = decl;
 
-			let
-				dir: CanUndef<object>;
+			let dir: CanUndef<object>;
 
 			switch (name) {
 				case 'show': {
@@ -167,8 +163,7 @@ ComponentEngine.directive('attrs', {
 						handlerCache = getHandlerStore(),
 						handlerKey = `onUpdate:${modelProp}:${modelValLink}`;
 
-					let
-						handler = handlerCache.get(handlerKey);
+					let handler = handlerCache.get(handlerKey);
 
 					if (handler == null) {
 						handler = (newVal: unknown) => {
@@ -316,7 +311,7 @@ ComponentEngine.directive('attrs', {
 			// For the transmission of accessors, `forceUpdate: false` props use events.
 			// For example, `@:value = createPropAccessors(() => someValue)`.
 			// A distinctive feature of such events is the prefix `@:` or `on:`.
-			// Such events are processed in a special way.
+			// Such events are processed specially.
 			const isSystemGetter = isPropGetter.test(event);
 			props[event] = attrVal;
 
@@ -380,18 +375,15 @@ ComponentEngine.directive('attrs', {
 		return props;
 
 		function parseDirective(attrName: string, attrVal: unknown) {
-			const
-				decl = directiveRgxp.exec(attrName);
+			const decl = directiveRgxp.exec(attrName);
 
 			if (decl == null) {
 				throw new SyntaxError('Invalid directive declaration');
 			}
 
-			const
-				[, name, arg = '', rawModifiers = ''] = decl;
+			const [, name, arg = '', rawModifiers = ''] = decl;
 
-			let
-				dir: CanUndef<object>;
+			let dir: CanUndef<object>;
 
 			switch (name) {
 				case 'show': {

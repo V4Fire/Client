@@ -18,8 +18,7 @@ import type { ComponentInterface } from 'core/component/interface';
  * @param idsCache - the store for the registered elements
  */
 export function getElementId(el: Element, idsCache: WeakMap<Element, string>): string {
-	let
-		id = idsCache.get(el);
+	let id = idsCache.get(el);
 
 	if (id == null) {
 		id = Object.fastHash(Math.random());
