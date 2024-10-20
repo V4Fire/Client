@@ -13,8 +13,7 @@ import { makeLazy } from 'core/lazy';
 import { createApp, createSSRApp, defineAsyncComponent, App, Component } from 'vue';
 import type { CreateAppFunction } from 'core/component/engines/interface';
 
-let
-	ssrContext = SSR || HYDRATION;
+let ssrContext = SSR || HYDRATION;
 
 const NewApp = <CreateAppFunction>function App(component: Component & {el?: Element}, rootProps: Nullable<Dictionary>) {
 	const app = Object.create((ssrContext ? createSSRApp : createApp)(component, rootProps));

@@ -141,8 +141,7 @@ export function attachDynamicWatcher(
 	let destructor: Function;
 
 	if (prop.type === 'mounted') {
-		let
-			watcher: Watcher;
+		let watcher: Watcher;
 
 		if (Object.size(prop.path) > 0) {
 			watcher = watch(prop.ctx, prop.path, watchOpts, wrapper);

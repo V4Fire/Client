@@ -258,8 +258,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			return null;
 		}
 
-		let
-			proxy = watchInfo?.value;
+		let proxy = watchInfo?.value;
 
 		if (proxy != null) {
 			if (watchInfo == null) {
@@ -269,8 +268,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			switch (info.type) {
 				case 'field':
 				case 'system': {
-					const
-						propCtx = info.ctx.unsafe;
+					const propCtx = info.ctx.unsafe;
 
 					if (!Object.getOwnPropertyDescriptor(propCtx, info.name)?.get) {
 						proxy[watcherInitializer]?.();
@@ -308,11 +306,9 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				}
 
 				case 'attr': {
-					const
-						attr = info.name;
+					const attr = info.name;
 
-					let
-						unwatch: Function;
+					let unwatch: Function;
 
 					if ('watch' in watchInfo) {
 						unwatch = watchInfo.watch(attr, (value: object, oldValue: object) => {
