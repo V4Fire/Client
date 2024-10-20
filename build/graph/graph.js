@@ -252,7 +252,7 @@ async function buildProjectGraph() {
 
 					const
 						componentName = component?.name ?? name,
-						isComponent = new RegExp(`\(${validators.blockTypeList.join('|')})-.+?/?`).test(componentName);
+						isPageComponent = new RegExp(`\(p)-.+?/?`).test(componentName);
 
 					
 					if (webpack.ssr) {
@@ -262,7 +262,7 @@ async function buildProjectGraph() {
 						importScript = `require('${entryPath}');\n`;
 					}
 
-					str += isComponent ? 
+					str += isPageComponent ? 
 						invokeByRegisterEvent(importScript, getLayerName(entry), componentName) :
 						importScript;
 				}
