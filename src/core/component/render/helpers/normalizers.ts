@@ -6,10 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { isPropGetter } from 'core/component/reflect';
 import type { ComponentMeta } from 'core/component/meta';
+import type { ComponentInterface } from 'core/component/interface';
+
+import { isPropGetter } from 'core/component/reflect';
 import { registerComponent } from 'core/component/init';
-import { ComponentInterface } from 'core/component/interface';
 
 /**
  * Normalizes the provided CSS classes and returns the resulting output
