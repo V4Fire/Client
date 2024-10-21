@@ -172,6 +172,27 @@ export function component(opts?: ComponentOptions): Function {
 						enumerable: true,
 						writable: true,
 						value: componentInfo.params
+					},
+
+					name: {
+						configurable: true,
+						enumerable: true,
+						writable: true,
+						value: componentInfo.name
+					},
+
+					component: {
+						configurable: true,
+						enumerable: true,
+						writable: true,
+						value: Object.create(rawMeta.component, {
+							name: {
+								configurable: true,
+								enumerable: true,
+								writable: true,
+								value: componentInfo.name
+							}
+						})
 					}
 				});
 

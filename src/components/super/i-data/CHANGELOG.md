@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.143 (2024-10-09)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with updating the `componentStatus` after destroying the component
+
 ## v4.0.0-beta.30 (2023-10-11)
 
 #### :bug: Bug Fix
