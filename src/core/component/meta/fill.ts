@@ -62,8 +62,10 @@ export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor 
 
 	const {component} = meta;
 
-	meta.fieldInitializers = sortFields(meta.fields);
-	meta.systemFieldInitializers = sortFields(meta.systemFields);
+	if (isFirstFill) {
+		meta.fieldInitializers = sortFields(meta.fields);
+		meta.systemFieldInitializers = sortFields(meta.systemFields);
+	}
 
 	for (const init of meta.metaInitializers.values()) {
 		init(meta);
