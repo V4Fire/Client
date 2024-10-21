@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.147 (2024-10-21)
+
+#### :rocket: New Feature
+
+* Add `SSRBuffer` and `SSRBufferItem` types
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change

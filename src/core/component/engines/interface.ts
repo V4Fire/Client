@@ -78,3 +78,9 @@ export interface CreateAppFunction<E = Element> {
 		ResolveDirective<E>
 	>;
 }
+
+export type SSRBuffer = SSRBufferItem[] & {
+    hasAsync?: boolean;
+};
+
+export type SSRBufferItem = string | SSRBuffer | Promise<SSRBuffer>;
