@@ -33,7 +33,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			const {constructor} = <ComponentMeta>this;
 
 			if (!constructor.hasOwnProperty(INSTANCE)) {
-				Object.defineProperty(constructor, INSTANCE, {value: new constructor()});
+				Object.defineProperty(constructor, INSTANCE, {value: Object.create(constructor.prototype)});
 			}
 
 			return constructor[INSTANCE];
