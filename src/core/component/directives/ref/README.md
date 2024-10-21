@@ -13,7 +13,7 @@ This directive is used in conjunction with the standard `ref` directive.
 < b-button :ref = $resolveRef('button') | v-ref = 'button'
 ```
 
-## Why is This Directive Needed?
+## Why is This Directive Necessary?
 
 V4Fire supports two types of components: regular and functional.
 From the perspective of the rendering library used, functional components are regular functions that return VNodes.

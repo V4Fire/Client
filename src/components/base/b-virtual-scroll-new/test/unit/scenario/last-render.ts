@@ -101,9 +101,9 @@ test.describe('<b-virtual-scroll-new>', () => {
 					shouldStopRequestingData: (state: VirtualScrollState): boolean => state.lastLoadedData.length === 0,
 
 					'@hook:beforeDataCreate': (ctx) => {
-						const original = ctx.emit;
+						const original = ctx.strictEmit;
 
-						ctx.emit = jestMock.mock((...args) => {
+						ctx.strictEmit = jestMock.mock((...args) => {
 							original(...args);
 							return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
 						});
@@ -116,7 +116,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 			await component.waitForLifecycleDone();
 
 			const
-				spy = await component.getSpy((ctx) => ctx.emit),
+				spy = await component.getSpy((ctx) => ctx.strictEmit),
 				results = filterEmitterResults(await spy.results, true, ['initLoadStart', 'initLoad']);
 
 			test.expect(results).toEqual([

@@ -36,13 +36,13 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 			el = unsafe.$el,
 			propValuesToUpdate: string[][] = [];
 
-		Object.entries(unsafe.$attrs).forEach(([attrName, attrVal]) => {
+		unsafe.getPassedProps?.()?.forEach((attrName) => {
 			const propPrefix = 'on:';
 
 			if (meta.props[attrName]?.forceUpdate === false) {
 				const getterName = propPrefix + attrName;
 
-				if (attrVal !== undefined && !Object.isFunction(unsafe.$attrs[getterName])) {
+				if (unsafe.$attrs[attrName] !== undefined && !Object.isFunction(unsafe.$attrs[getterName])) {
 					throw new Error(`No accessors are defined for the prop "${attrName}". To set the accessors, pass them as ":${attrName} = propValue | @:${attrName} = createPropAccessors(() => propValue)()" or "v-attrs = {'@:${attrName}': createPropAccessors(() => propValue)}".`);
 				}
 			}
@@ -79,13 +79,13 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 				await parent.$nextTick();
 			}
 
-			propValuesToUpdate.forEach(([propName, getterName]) => {
+			for (const [propName, getterName] of propValuesToUpdate) {
 				const getter = unsafe.$attrs[getterName];
 
 				if (Object.isFunction(getter)) {
 					unsafe[`[[${propName}]]`] = getter()[0];
 				}
-			});
+			}
 		}
 	}
 }

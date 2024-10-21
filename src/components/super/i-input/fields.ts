@@ -71,7 +71,7 @@ export default abstract class iInputFields extends iInputProps {
 	 * A map of available component validators
 	 */
 	get validatorsMap(): typeof iInputFields['validators'] {
-		return (<typeof iInputFields>this.instance.constructor).validators;
+		return (<typeof iInputFields>this.constructor).validators;
 	}
 
 	/**

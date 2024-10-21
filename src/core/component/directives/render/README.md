@@ -7,7 +7,7 @@ The directive supports several modes of operation:
 2. The new VNodes are inserted as child content of the node where the directive is applied.
 3. The new VNodes are inserted as a component slot (if the directive is applied to a component).
 
-## Why is This Directive Needed?
+## Why is This Directive Necessary?
 
 To decompose the template of one component into multiple render functions and utilize their composition.
 This approach is extremely useful when we have a large template that cannot be divided into independent components.

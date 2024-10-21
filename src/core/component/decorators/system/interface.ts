@@ -7,11 +7,13 @@
  */
 
 import type { ComponentInterface } from 'core/component/interface';
-import type { DecoratorFieldWatcher } from 'core/component/decorators/interface/watcher';
-import type { DecoratorFunctionalOptions } from 'core/component/decorators/interface/types';
+import type { DecoratorFieldWatcher } from 'core/component/decorators/watch';
+import type { DecoratorFunctionalOptions } from 'core/component/decorators/interface';
+
+export type FieldCluster = 'fields' | 'systemFields';
 
 export interface DecoratorSystem<
-	CTX extends ComponentInterface = ComponentInterface,
+	Ctx extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
 > extends DecoratorFunctionalOptions {
@@ -25,7 +27,7 @@ export interface DecoratorSystem<
 	 *
 	 * @default `false`
 	 */
-	unique?: boolean | UniqueFieldFn<CTX>;
+	unique?: boolean | UniqueFieldFn<Ctx>;
 
 	/**
 	 * This option allows you to set the default value of the field.
@@ -85,7 +87,7 @@ export interface DecoratorSystem<
 	 * }
 	 * ```
 	 */
-	init?: InitFieldFn<CTX>;
+	init?: InitFieldFn<Ctx>;
 
 	/**
 	 * A name or a list of names after which this property should be initialized.
@@ -183,7 +185,7 @@ export interface DecoratorSystem<
 	 * }
 	 * ```
 	 */
-	watch?: DecoratorFieldWatcher<CTX, A, B>;
+	watch?: DecoratorFieldWatcher<Ctx, A, B>;
 
 	/**
 	 * If set to false, the field can't be watched if created inside a functional component.
@@ -207,7 +209,7 @@ export interface DecoratorSystem<
 	 *
 	 * @default `false`
 	 */
-	merge?: MergeFieldFn<CTX> | boolean;
+	merge?: MergeFieldFn<Ctx> | boolean;
 
 	/**
 	 * A dictionary with some extra information of the field.
@@ -233,10 +235,10 @@ export interface DecoratorSystem<
 }
 
 export interface DecoratorField<
-	CTX extends ComponentInterface = ComponentInterface,
+	Ctx extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
-> extends DecoratorSystem<CTX, A, B> {
+> extends DecoratorSystem<Ctx, A, B> {
 	/**
 	 * If set to true, property changes will cause the template to be guaranteed to be re-rendered.
 	 * Be aware that enabling this property may result in redundant redrawing.
@@ -246,14 +248,14 @@ export interface DecoratorField<
 	forceUpdate?: boolean;
 }
 
-export interface InitFieldFn<CTX extends ComponentInterface = ComponentInterface> {
-	(ctx: CTX['unsafe'], data: Dictionary): unknown;
+export interface InitFieldFn<Ctx extends ComponentInterface = ComponentInterface> {
+	(ctx: Ctx['unsafe'], data: Dictionary): unknown;
 }
 
-export interface MergeFieldFn<CTX extends ComponentInterface = ComponentInterface> {
-	(ctx: CTX['unsafe'], oldCtx: CTX['unsafe'], field: string, link?: string): unknown;
+export interface MergeFieldFn<Ctx extends ComponentInterface = ComponentInterface> {
+	(ctx: Ctx['unsafe'], oldCtx: Ctx['unsafe'], field: string, link?: string): unknown;
 }
 
-export interface UniqueFieldFn<CTX extends ComponentInterface = ComponentInterface> {
-	(ctx: CTX['unsafe'], oldCtx: CTX['unsafe']): AnyToBoolean;
+export interface UniqueFieldFn<Ctx extends ComponentInterface = ComponentInterface> {
+	(ctx: Ctx['unsafe'], oldCtx: Ctx['unsafe']): AnyToBoolean;
 }

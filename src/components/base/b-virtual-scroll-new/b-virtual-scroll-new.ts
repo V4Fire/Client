@@ -12,7 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { derive } from 'core/functools/trait';
+import { derive } from 'components/traits';
 
 import type { AsyncOptions } from 'core/async';
 import SyncPromise from 'core/promise/sync';

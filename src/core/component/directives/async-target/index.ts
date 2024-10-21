@@ -20,8 +20,7 @@ export * from 'core/component/directives/async-target/interface';
 
 ComponentEngine.directive('async-target', {
 	beforeCreate(params: DirectiveParams, vnode: VNode): void {
-		const
-			ctx = getDirectiveContext(params, vnode);
+		const ctx = getDirectiveContext(params, vnode);
 
 		if (ctx == null || params.value === false) {
 			return;

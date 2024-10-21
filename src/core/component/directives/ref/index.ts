@@ -34,10 +34,7 @@ ComponentEngine.directive('ref', {
 });
 
 function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode: VNode): void {
-	const {
-		value,
-		instance
-	} = opts;
+	const {value, instance} = opts;
 
 	let ctx = getDirectiveContext(opts, vnode);
 	ctx = Object.cast(ctx?.meta.params.functional === true ? ctx : instance);
@@ -65,8 +62,7 @@ function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode
 		refs = ctx.$refs;
 
 	if (vnode.virtualComponent != null) {
-		const
-			refVal = getRefVal();
+		const refVal = getRefVal();
 
 		if (Object.isArray(refVal)) {
 			refVal[REF_ID] ??= Math.random();
@@ -107,11 +103,9 @@ function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode
 	}
 
 	function resolveRefVal(key?: PropertyKey) {
-		const
-			refVal = getRefVal();
+		const refVal = getRefVal();
 
-		let
-			ref: unknown;
+		let ref: unknown;
 
 		if (Object.isArray(refVal)) {
 			if (key != null) {

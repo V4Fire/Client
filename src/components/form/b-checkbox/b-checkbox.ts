@@ -241,8 +241,7 @@ export default class bCheckbox extends iInput implements iSize {
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
-		const
-			i = this.instance;
+		const i = (<typeof bCheckbox>this.constructor).prototype;
 
 		this.convertValueToChecked = i.convertValueToChecked.bind(this);
 		this.onCheckedChange = i.onCheckedChange.bind(this);
@@ -286,8 +285,7 @@ export default class bCheckbox extends iInput implements iSize {
 	}
 
 	protected override resolveValue(value?: this['Value']): this['Value'] {
-		const
-			i = this.instance;
+		const i = (<typeof bCheckbox>this.constructor).prototype;
 
 		const canApplyDefault =
 			value === undefined &&

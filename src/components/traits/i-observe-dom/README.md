@@ -11,7 +11,7 @@ This module provides a trait for a component to observe DOM changes by using [`M
 * The trait can be automatically derived.
 
   ```typescript
-  import { derive } from 'core/functools/trait';
+  import { derive } from 'components/traits';
 
   import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
   import iBlock, { component, wait } from 'components/super/i-block/i-block';

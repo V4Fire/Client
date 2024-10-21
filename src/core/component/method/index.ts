@@ -14,28 +14,6 @@
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
- * Attaches methods to the passed component instance, taken from its associated metaobject
- * @param component
- */
-export function attachMethodsFromMeta(component: ComponentInterface): void {
-	const {meta, meta: {methods}} = component.unsafe;
-
-	const isFunctional = meta.params.functional === true;
-
-	Object.entries(methods).forEach(([name, method]) => {
-		if (method == null || !SSR && isFunctional && method.functional === false) {
-			return;
-		}
-
-		component[name] = method.fn.bind(component);
-	});
-
-	if (isFunctional) {
-		component.render = Object.cast(meta.component.render);
-	}
-}
-
-/**
  * Invokes a specific method from the passed component instance
  *
  * @param component

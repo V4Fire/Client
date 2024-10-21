@@ -9,16 +9,15 @@
 'use strict';
 
 const
-	setComponentLayer = include('build/ts-transformers/set-component-layer');
+	setComponentLayer = include('build/ts-transformers/set-component-layer'),
+	resisterComponentParts = include('build/ts-transformers/resister-component-parts');
 
 /**
- * Returns a settings object for setting up TypeScript transformers
- *
- * @param {import('typescript').Program} program
+ * Returns a settings object for configuring TypeScript transformers
  * @returns {object}
  */
-module.exports = (program) => ({
-	before: [setComponentLayer(program)],
+module.exports = () => ({
+	before: [setComponentLayer, resisterComponentParts],
 	after: {},
 	afterDeclarations: {}
 });

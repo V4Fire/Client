@@ -12,7 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { derive } from 'core/functools/trait';
+import { derive } from 'components/traits';
 
 import Block, { getElementSelector } from 'components/friends/block';
 
