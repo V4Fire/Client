@@ -25,14 +25,18 @@ export * from 'components/super/i-block/modules/mods/interface';
  * @param component
  */
 export function initMods(component: iBlock['unsafe']): ModsDict {
-	const declMods = component.meta.component.mods;
+	const
+		declMods = component.meta.component.mods,
+		resolveModVal = (val: unknown) => val != null ? String(val) : undefined;
 
 	const
 		attrMods: Array<[string, () => CanUndef<string>]> = [],
-		modVal = (val: unknown) => val != null ? String(val) : undefined;
+		attrNames = Object.keys(component.$attrs);
 
-	Object.keys(component.$attrs).forEach((attrName) => {
-		const modName = attrName.camelize(false);
+	for (let i = 0; i < attrNames.length; i++) {
+		const
+			attrName = attrNames[i],
+			modName = attrName.camelize(false);
 
 		if (modName in declMods) {
 			let el: Nullable<Node>;
@@ -44,7 +48,7 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
 					el.removeAttribute(attrName);
 				}
 
-				void component.setMod(modName, modVal(attrs[attrName]));
+				void component.setMod(modName, resolveModVal(attrs[attrName]));
 			});
 
 			component.meta.hooks['before:mounted'].push({
@@ -57,9 +61,9 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
 				}
 			});
 
-			attrMods.push([modName, () => modVal(component.$attrs[attrName])]);
+			attrMods.push([modName, () => resolveModVal(component.$attrs[attrName])]);
 		}
-	});
+	}
 
 	return Object.cast(component.sync.link(link));
 
@@ -69,47 +73,67 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
 			mods = isModsInitialized ? component.mods : {...declMods};
 
 		if (propMods != null) {
-			Object.entries(propMods).forEach(([key, val]) => {
-				if (val != null || mods[key] == null) {
-					mods[key] = modVal(val);
+			const propNames = Object.keys(propMods);
+
+			for (let i = 0; i < propNames.length; i++) {
+				const
+					propName = propNames[i],
+					propVal = propMods[propNames[i]];
+
+				if (propVal != null || mods[propName] == null) {
+					mods[propName] = resolveModVal(propVal);
 				}
-			});
+			}
 		}
 
-		attrMods.forEach(([name, getter]) => {
-			const val = getter();
+		for (let i = 0; i < attrMods.length; i++) {
+			const [attrName, getAttrValue] = attrMods[i];
 
-			if (isModsInitialized || val != null) {
-				mods[name] = val;
+			const attrVal = getAttrValue();
+
+			if (isModsInitialized || attrVal != null) {
+				mods[attrName] = attrVal;
 			}
-		});
+		}
 
 		const {experiments} = component.r.remoteState;
 
 		if (Object.isArray(experiments)) {
-			experiments.forEach((exp) => {
-				const experimentMods = exp.meta?.mods;
+			for (let i = 0; i < experiments.length; i++) {
+				const
+					exp = experiments[i],
+					expMods = exp.meta?.mods;
 
-				if (!Object.isDictionary(experimentMods)) {
-					return;
+				if (!Object.isDictionary(expMods)) {
+					continue;
 				}
 
-				Object.entries(experimentMods).forEach(([name, val]) => {
-					if (val != null || mods[name] == null) {
-						mods[name] = modVal(val);
+				const expModNames = Object.keys(expMods);
+
+				for (let i = 0; i < expModNames.length; i++) {
+					const
+						modName = expModNames[i],
+						modVal = expMods[modName];
+
+					if (modVal != null || mods[modName] == null) {
+						mods[modName] = resolveModVal(modVal);
 					}
-				});
-			});
+				}
+			}
 		}
 
-		Object.entries(mods).forEach(([name, val]) => {
-			val = modVal(mods[name]);
-			mods[name] = val;
+		const modNames = Object.keys(mods);
+
+		for (let i = 0; i < modNames.length; i++) {
+			const modName = modNames[i];
+
+			const modVal = resolveModVal(mods[modName]);
+			mods[modName] = modVal;
 
 			if (component.hook !== 'beforeDataCreate') {
-				void component.setMod(name, val);
+				void component.setMod(modName, modVal);
 			}
-		});
+		}
 
 		return mods;
 	}
@@ -147,15 +171,19 @@ export function mergeMods(
 		return;
 	}
 
-	const
-		modsProp = getExpandedModsProp(component),
-		mods = {...oldComponent.mods};
+	const modsProp = getExpandedModsProp(component);
 
-	Object.keys(mods).forEach((key) => {
-		if (component.sync.syncModCache[key] != null) {
-			delete mods[key];
+	const
+		mods = {...oldComponent.mods},
+		modNames = Object.keys(mods);
+
+	for (let i = 0; i < modNames.length; i++) {
+		const modName = modNames[i];
+
+		if (component.sync.syncModCache[modName] != null) {
+			delete mods[modName];
 		}
-	});
+	}
 
 	if (Object.fastCompare(modsProp, getExpandedModsProp(oldComponent))) {
 		l.sync(mods);
@@ -200,27 +228,32 @@ export function mergeMods(
 export function getReactiveMods(component: iBlock): Readonly<ModsDict> {
 	const
 		watchMods = {},
-		watchers = component.field.get<ModsDict>('reactiveModsStore')!,
-		systemMods = component.mods;
+		watchers = component.field.get<ModsDict>('reactiveModsStore')!;
 
-	Object.entries(systemMods).forEach(([name, val]) => {
-		if (name in watchers) {
-			watchMods[name] = val;
+	const modNames = Object.keys(component.mods);
+
+	for (let i = 0; i < modNames.length; i++) {
+		const
+			modName = modNames[i],
+			modVal = component.mods[modName];
+
+		if (modName in watchers) {
+			watchMods[modName] = modVal;
 
 		} else {
-			Object.defineProperty(watchMods, name, {
+			Object.defineProperty(watchMods, modName, {
 				configurable: true,
 				enumerable: true,
 				get: () => {
-					if (!(name in watchers)) {
-						Object.getPrototypeOf(watchers)[name] = val;
+					if (!(modName in watchers)) {
+						Object.getPrototypeOf(watchers)[modName] = modVal;
 					}
 
-					return watchers[name];
+					return watchers[modName];
 				}
 			});
 		}
-	});
+	}
 
 	return Object.freeze(watchMods);
 }
