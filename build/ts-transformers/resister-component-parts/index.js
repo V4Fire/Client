@@ -14,6 +14,7 @@ const ts = require('typescript');
  * @typedef {import('typescript').Transformer} Transformer
  * @typedef {import('typescript').TransformationContext} TransformationContext
  * @typedef {import('typescript').Node} Node
+ * @typedef {import('typescript').ClassDeclaration} ClassDeclaration
  */
 
 module.exports = resisterComponentDefaultValues;
@@ -72,6 +73,8 @@ module.exports = resisterComponentDefaultValues;
  * ```
  */
 function resisterComponentDefaultValues(context) {
+	const {factory} = context;
+
 	let
 		needImportDefaultValueDecorator = false,
 		needImportMethodDecorator = false;
@@ -94,25 +97,63 @@ function resisterComponentDefaultValues(context) {
 	 * A visitor for the AST node
 	 *
 	 * @param {Node} node
-	 * @returns {Node}
+	 * @returns {Node|ClassDeclaration}
 	 */
 	function visitor(node) {
-		if (
-			ts.isPropertyDeclaration(node) &&
-			ts.hasInitializer(node) &&
-			!node.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.StaticKeyword) &&
-			isComponentClass(node.parent, 'component')
-		) {
-			needImportDefaultValueDecorator = true;
-			return addDefaultValueDecorator(context, node);
-		}
+		if (isComponentClass(node, 'component') && node.members != null) {
+			const newMembers = node.members.flatMap((node) => {
+				if (
+					ts.isPropertyDeclaration(node) &&
+					ts.hasInitializer(node) &&
+					!node.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.StaticKeyword)
+				) {
+					needImportDefaultValueDecorator = true;
+					return addDefaultValueDecorator(context, node);
+				}
 
-		if (
-			(ts.isMethodDeclaration(node) || ts.isGetAccessorDeclaration(node) || ts.isSetAccessorDeclaration(node)) &&
-			isComponentClass(node.parent, 'component')
-		) {
-			needImportMethodDecorator = true;
-			return addMethodDecorator(context, node);
+				const name = node.name.getText();
+
+				const
+					isGetter = ts.isGetAccessorDeclaration(node),
+					isSetter = !isGetter && ts.isSetAccessorDeclaration(node);
+
+				if (isGetter || isSetter || ts.isMethodDeclaration(node)) {
+					needImportMethodDecorator = true;
+					node = addMethodDecorator(context, node);
+				}
+
+				if (isGetter || isSetter) {
+					const
+						postfix = isGetter ? 'Getter' : 'Setter',
+						methodName = context.factory.createStringLiteral(name + postfix);
+
+					const method = factory.createMethodDeclaration(
+						undefined,
+						undefined,
+						undefined,
+						methodName,
+						undefined,
+						undefined,
+						[],
+						undefined,
+						node.body
+					);
+
+					return [node, method];
+				}
+
+				return node;
+			});
+
+			return factory.updateClassDeclaration(
+				node,
+				node.decorators,
+				node.modifiers,
+				node.name,
+				node.typeParameters,
+				node.heritageClauses,
+				newMembers
+			);
 		}
 
 		return ts.visitEachChild(node, visitor, context);
@@ -303,6 +344,10 @@ function addDecoratorImport(name, path, context, node) {
  */
 function isComponentClass(node) {
 	const {decorators} = node;
+
+	if (!ts.isClassDeclaration(node)) {
+		return false;
+	}
 
 	const getDecoratorName = (decorator) => (
 		decorator.expression &&

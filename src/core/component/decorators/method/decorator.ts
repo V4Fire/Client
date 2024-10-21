@@ -210,32 +210,6 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 			// eslint-disable-next-line @v4fire/unbound-method
 			get = desc.get ?? old?.get;
 
-		// To use `super` within the setter, we also create a new method with a name `${key}Setter`
-		if (set != null) {
-			const methodName = `${name}Setter`;
-			proto[methodName] = set;
-
-			methods[methodName] = {
-				src,
-				fn: set,
-				watchers: {},
-				hooks: {}
-			};
-		}
-
-		// To using `super` within the getter, we also create a new method with a name `${key}Getter`
-		if (get != null) {
-			const methodName = `${name}Getter`;
-			proto[methodName] = get;
-
-			methods[methodName] = {
-				src,
-				fn: get,
-				watchers: {},
-				hooks: {}
-			};
-		}
-
 		let accessor: ComponentAccessor;
 
 		if (store.hasOwnProperty(name)) {
