@@ -37,9 +37,18 @@ export function computed(params?: DecoratorComputed): PartDecorator {
 	return createComponentDecorator3(({meta}, accessorName) => {
 		params = {...params};
 
-		delete meta.props[accessorName];
-		delete meta.fields[accessorName];
-		delete meta.systemFields[accessorName];
+		if (meta.props[accessorName] != null) {
+			meta.props[accessorName] = undefined;
+			delete meta.component.props[accessorName];
+		}
+
+		if (meta.fields[accessorName] != null) {
+			meta.fields[accessorName] = undefined;
+		}
+
+		if (meta.systemFields[accessorName] != null) {
+			meta.systemFields[accessorName] = undefined;
+		}
 
 		let cluster: 'accessors' | 'computedFields' = 'accessors';
 
@@ -47,7 +56,7 @@ export function computed(params?: DecoratorComputed): PartDecorator {
 			params.cache === true ||
 			params.cache === 'auto' ||
 			params.cache === 'forever' ||
-			params.cache !== false && (Object.isArray(params.dependencies) || accessorName in meta.computedFields)
+			params.cache !== false && (Object.isArray(params.dependencies) || meta.computedFields[accessorName] != null)
 		) {
 			cluster = 'computedFields';
 		}
@@ -60,8 +69,8 @@ export function computed(params?: DecoratorComputed): PartDecorator {
 		};
 
 		const needOverrideComputed = cluster === 'accessors' ?
-			accessorName in meta.computedFields :
-			!('cache' in params) && accessorName in meta.accessors;
+			meta.computedFields[accessorName] != null :
+			!('cache' in params) && meta.accessors[accessorName] != null;
 
 		if (needOverrideComputed) {
 			const computed = meta.computedFields[accessorName];

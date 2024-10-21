@@ -66,15 +66,17 @@ export function regProp(propName: string, typeOrParams: Nullable<PropType | Deco
 		prop = meta.props[propName]!;
 
 	} else {
-		delete meta.methods[propName];
+		if (meta.methods[propName] != null) {
+			meta.methods[propName] = undefined;
+		}
 
-		const accessors = propName in meta.accessors ?
+		const accessors = meta.accessors[propName] != null ?
 			meta.accessors :
 			meta.computedFields;
 
 		if (accessors[propName] != null) {
 			Object.defineProperty(meta.constructor.prototype, propName, defProp);
-			delete accessors[propName];
+			accessors[propName] = undefined;
 		}
 
 		// Handling the situation when a field changes type during inheritance,
@@ -82,7 +84,7 @@ export function regProp(propName: string, typeOrParams: Nullable<PropType | Deco
 		for (const anotherType of ['fields', 'systemFields']) {
 			const cluster = meta[anotherType];
 
-			if (propName in cluster) {
+			if (cluster[propName] != null) {
 				const field: ComponentField = {...cluster[propName]};
 
 				// Do not inherit the `functional` option in this case
@@ -93,7 +95,7 @@ export function regProp(propName: string, typeOrParams: Nullable<PropType | Deco
 
 				meta.props[propName] = {...field, forceUpdate: true};
 
-				delete cluster[propName];
+				cluster[propName] = undefined;
 
 				break;
 			}

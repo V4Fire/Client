@@ -126,7 +126,7 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 					for (const hookName in hooks) {
 						const hook = hooks[hookName];
 
-						if (isFunctional && hook.functional === false) {
+						if (hook == null || isFunctional && hook.functional === false) {
 							continue;
 						}
 
@@ -174,8 +174,8 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 
 		// Computed fields are cached by default
 		if (
-			name in meta.computedFields ||
-			!(name in meta.accessors) && (tiedWith = props[propKey] ?? fields[storeKey] ?? systemFields[storeKey])
+			meta.computedFields[name] != null ||
+			meta.accessors[name] == null && (tiedWith = props[propKey] ?? fields[storeKey] ?? systemFields[storeKey])
 		) {
 			type = 'computedFields';
 		}
@@ -198,7 +198,7 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 		// we need to delete it to correct override
 		if (field[name] != null) {
 			Object.defineProperty(proto, name, defProp);
-			delete field[name];
+			field[name] = undefined;
 		}
 
 		const

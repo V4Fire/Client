@@ -96,15 +96,17 @@ export function regField(
 		field = store[fieldName]!;
 
 	} else {
-		delete meta.methods[fieldName];
+		if (meta.methods[fieldName] != null) {
+			meta.methods[fieldName] = undefined;
+		}
 
-		const accessors = fieldName in meta.accessors ?
+		const accessors = meta.accessors[fieldName] != null ?
 			meta.accessors :
 			meta.computedFields;
 
 		if (accessors[fieldName] != null) {
 			Object.defineProperty(meta.constructor.prototype, fieldName, defProp);
-			delete accessors[fieldName];
+			accessors[fieldName] = undefined;
 		}
 
 		// Handling the situation when a field changes type during inheritance,
@@ -112,7 +114,7 @@ export function regField(
 		for (const anotherType of ['props', cluster === 'fields' ? 'systemFields' : 'fields']) {
 			const anotherStore = meta[anotherType];
 
-			if (fieldName in anotherStore) {
+			if (anotherStore[fieldName] != null) {
 				const field: ComponentField = {...anotherStore[fieldName]};
 
 				// Do not inherit the `functional` option in this case
@@ -128,7 +130,7 @@ export function regField(
 				}
 
 				store[fieldName] = field;
-				delete anotherStore[fieldName];
+				anotherStore[fieldName] = undefined;
 
 				break;
 			}

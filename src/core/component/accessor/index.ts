@@ -82,6 +82,10 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	for (const name in meta.accessors) {
 		const accessor = meta.accessors[name];
 
+		if (accessor == null) {
+			continue;
+		}
+
 		const tiedWith = tiedFields[name];
 
 		// In the `tiedFields` dictionary,
@@ -92,7 +96,6 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		delete tiedFields[name];
 
 		const canSkip =
-			accessor == null ||
 			component[name] != null ||
 			!SSR && isFunctional && accessor.functional === false;
 
@@ -167,6 +170,10 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	for (const name in meta.computedFields) {
 		const computed = meta.computedFields[name];
 
+		if (computed == null) {
+			continue;
+		}
+
 		const tiedWith = tiedFields[name];
 
 		// In the `tiedFields` dictionary,
@@ -177,7 +184,6 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		delete tiedFields[name];
 
 		const canSkip =
-			computed == null ||
 			component[name] != null ||
 			computed.cache === 'auto' ||
 			!SSR && isFunctional && computed.functional === false;

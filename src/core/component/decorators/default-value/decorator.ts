@@ -43,13 +43,13 @@ export function defaultValue(getter: unknown): PartDecorator {
 	return createComponentDecorator3(({meta}, key) => {
 		const isFunction = Object.isFunction(getter);
 
-		if (key in meta.props) {
+		if (meta.props[key] != null) {
 			regProp(key, {default: getter}, meta);
 
-		} else if (key in meta.fields) {
+		} else if (meta.fields[key] != null) {
 			regField(key, 'fields', isFunction ? {init: getter} : {default: getter}, meta);
 
-		} else if (key in meta.systemFields) {
+		} else if (meta.systemFields[key] != null) {
 			regField(key, 'systemFields', isFunction ? {init: getter} : {default: getter}, meta);
 
 		} else if (isFunction) {

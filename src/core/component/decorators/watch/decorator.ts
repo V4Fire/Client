@@ -189,10 +189,10 @@ export function watch(watcher: DecoratorFieldWatcher | DecoratorMethodWatcher): 
 
 			let store: typeof meta['props'] | typeof meta['fields'];
 
-			if (key in meta.props) {
+			if (meta.props[key] != null) {
 				store = meta.props;
 
-			} else if (key in meta.fields) {
+			} else if (meta.fields[key] != null) {
 				store = meta.fields;
 
 			} else {

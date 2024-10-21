@@ -57,7 +57,13 @@ export function sortFields(fields: Dictionary<ComponentField>): ComponentFieldIn
 
 	// eslint-disable-next-line guard-for-in
 	for (const name in fields) {
-		list.push([name, fields[name]!]);
+		const field = fields[name];
+
+		if (field == null) {
+			continue;
+		}
+
+		list.push([name, field]);
 	}
 
 	return list.sort(([aName], [bName]) => {
