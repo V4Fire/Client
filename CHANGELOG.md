@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.146 (2024-10-18)
+
+#### :bug: Bug Fix
+
+* Fixed `$attrs` not being watched `core/component/watch`
+
 ## v4.0.0-beta.145 (2024-10-14)
 
 #### :bug: Bug Fix
