@@ -47,6 +47,10 @@ DataProvider.addToPrototype({getDefaultRequestParams, base, get});
 
 interface bButton extends Trait<typeof iAccess>, Trait<typeof iOpenToggle> {}
 
+console.group();
+console.log('b-button invoked');
+console.groupEnd();
+
 @component({
 	functional: {
 		wait: undefined,
