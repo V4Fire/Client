@@ -12,7 +12,7 @@ import type { ComponentInterface } from 'core/component/interface/component/comp
  * A helper structure to pack the unsafe interface.
  * It resolves some ambiguous TS warnings.
  */
-export type UnsafeGetter<U extends UnsafeComponentInterface = UnsafeComponentInterface> = U['CTX'] & U;
+export type UnsafeGetter<U extends UnsafeComponentInterface = UnsafeComponentInterface> = Dictionary & U['CTX'] & U;
 
 /**
  * This is a special interface that provides access to protected properties and methods outside the primary class.
