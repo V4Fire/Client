@@ -30,6 +30,7 @@ test.describe('core/component/render/helpers/flags', () => {
 			await renderDummy(page, true);
 			const vnode = page.getByTestId('vnode');
 
+			// FIXME: don't use private API
 			const patchFlag = await vnode.evaluate(
 				(ctx) => (<{__vnode?: VNode}>ctx).__vnode?.patchFlag ?? 0
 			);
