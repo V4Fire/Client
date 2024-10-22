@@ -136,7 +136,7 @@ class bTree extends iTreeProps implements iActiveItems, iFoldable {
 		return normalizeItems.call(o, val);
 	}))
 
-	protected itemsStore: this['Items'] = [];
+	protected itemsStore!: this['Items'];
 
 	/** @inheritDoc */
 	declare protected readonly $refs: iData['$refs'] & {

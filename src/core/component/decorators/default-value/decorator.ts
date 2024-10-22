@@ -47,10 +47,18 @@ export function defaultValue(getter: unknown): PartDecorator {
 			regProp(key, {default: getter}, meta);
 
 		} else if (meta.fields[key] != null) {
-			regField(key, 'fields', isFunction ? {init: getter} : {default: getter}, meta);
+			const params = isFunction ?
+				{init: getter, default: undefined} :
+				{init: undefined, default: getter};
+
+			regField(key, 'fields', params, meta);
 
 		} else if (meta.systemFields[key] != null) {
-			regField(key, 'systemFields', isFunction ? {init: getter} : {default: getter}, meta);
+			const params = isFunction ?
+				{init: getter, default: undefined} :
+				{init: undefined, default: getter};
+
+			regField(key, 'systemFields', params, meta);
 
 		} else if (isFunction) {
 			Object.defineProperty(meta.constructor.prototype, key, {
