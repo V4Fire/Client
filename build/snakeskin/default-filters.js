@@ -83,9 +83,9 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 		componentName = attrs[TYPE_OF];
 
 	} else if (tag === 'component') {
-		if (attrs[':instance-of']) {
-			componentName = attrs[':instance-of'][0].camelize(false);
-			delete attrs[':instance-of'];
+		if (attrs[':instanceOf']) {
+			componentName = attrs[':instanceOf'][0].camelize(false);
+			delete attrs[':instanceOf'];
 
 		} else {
 			componentName = 'iBlock';
