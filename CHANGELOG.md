@@ -11,6 +11,49 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.146 (2024-10-18)
+
+#### :bug: Bug Fix
+
+* Fixed `$attrs` not being watched `core/component/watch`
+
+## v4.0.0-beta.145 (2024-10-14)
+
+#### :bug: Bug Fix
+
+* Fixed the issue with incorrectly detecting the functional smart component `build/snakeskin`
+* Create a fallback for the addEventListener method on the MediaQueryList
+  `core/theme-manager/system-theme-extractor/engines/web`
+* Fixed an issue with the comment node in `$refs` that occurs when rendering an `undefined` page `bDynamicPage`
+
+## v4.0.0-beta.144 (2024-10-09)
+
+#### :bug: Bug Fix
+
+* Override a component name in the shared meta `core/component/decorators`
+
+## v4.0.0-beta.143 (2024-10-09)
+
+#### :rocket: New Feature
+
+* Added `JSHandle` representing the mock agent in `SpyObject.handle` `tests/helpers/mock`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with updating the `componentStatus` after destroying the component `iData`
+
+## v4.0.0-beta.142 (2024-10-04)
+
+#### :bug: Bug Fix
+
+* Better fix for the exports in transpiled snakeskin modules `build/webpack`
+
+## v4.0.0-beta.141 (2024-10-03)
+
+#### :bug: Bug Fix
+
+* Do not call destructor recursively on before unmount `core/component/engines/vue3`
+
 ## v4.0.0-beta.140 (2024-10-03)
 
 #### :bug: Bug Fix

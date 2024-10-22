@@ -453,7 +453,7 @@ export default class bDynamicPage extends iDynamicPage {
 				// the `onPageChange` callback, which is why we must clean it up here.
 				that.onPageChange = undefined;
 
-				resolve(true);
+				resolve(newPage != null);
 			};
 		}
 	}

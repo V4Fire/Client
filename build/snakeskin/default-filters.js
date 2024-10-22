@@ -97,6 +97,10 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 
 	const component = componentParams[componentName];
 
+	if (isSmartComponent(component)) {
+		attrs[SMART_PROPS] = component.functional;
+	}
+
 	const isSimpleTag =
 		tag !== 'component' &&
 		!attrs[TYPE_OF] &&
@@ -108,7 +112,7 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 	let isFunctional = false;
 
 	if (component) {
-		if (component && component.functional === true) {
+		if (component.functional === true) {
 			isFunctional = true;
 
 		} else if (!vFuncDir && attrs[SMART_PROPS] != null) {
@@ -208,22 +212,29 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 
 	if (isSmartFunctional) {
 		if (vFuncDir == null || vFuncDir === 'true') {
-			if (webpack.ssr) {
-				attrs[':canFunctional'] = [true];
-
-			} else {
-				attrs['is'] = [`${attrs['is'][0]}-functional`];
-			}
+			appendSmartFunctionalAttrs(attrs, true);
 
 		} else if (vFuncDir !== 'false') {
-			if (webpack.ssr) {
-				attrs[':canFunctional'] = [vFuncDir];
-
-			} else {
-				attrs[':is'] = [`'${attrs['is'][0]}' + (${vFuncDir} ? '-functional' : '')`];
-				delete attrs['is'];
-			}
+			appendSmartFunctionalAttrs(attrs, vFuncDir, false);
 		}
+	}
+}
+
+function appendSmartFunctionalAttrs(attrs, condition, isStaticCondition = true) {
+	if (webpack.ssr) {
+		attrs[':canFunctional'] = [condition];
+		return;
+	}
+
+	if (attrs[':is']) {
+		attrs[':is'] = [`${attrs[':is'][0]} + (${condition} ? '-functional' : '')`];
+
+	} else if (!isStaticCondition) {
+		attrs[':is'] = [`'${attrs['is'][0]}' + (${condition} ? '-functional' : '')`];
+		delete attrs['is'];
+
+	} else if (attrs['is']) {
+		attrs['is'] = [`${attrs['is'][0]}${condition ? '-functional' : ''}`];
 	}
 }
 
@@ -235,15 +246,10 @@ function tagNameFilter(tag, attrs, rootTag, forceRenderAsVNode) {
 		componentName = tag.camelize(false),
 		component = componentParams[componentName];
 
-	const isSmartComponent =
-		component != null &&
-		!Object.isBoolean(component.functional);
-
-	if (isSmartComponent) {
+	if (isSmartComponent(component)) {
 		attrs.is = [tag];
 
 		attrs[TYPE_OF] = componentName.camelize(false);
-		attrs[SMART_PROPS] = component.functional;
 
 		return 'component';
 	}
@@ -254,4 +260,8 @@ function tagNameFilter(tag, attrs, rootTag, forceRenderAsVNode) {
 function bemFilter(block, attrs, rootTag, value) {
 	attrs ??= {};
 	return bemFilters.reduce((res, filter) => res + filter(block, attrs, rootTag, value), '');
+}
+
+function isSmartComponent(component) {
+	return component != null && !Object.isBoolean(component.functional);
 }

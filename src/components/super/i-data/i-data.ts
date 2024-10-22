@@ -80,7 +80,7 @@ export default abstract class iData extends iDataHandlers {
 			join: 'replace'
 		};
 
-		const callSuper = () => super.initLoad(() => this.db, opts);
+		const callSuper = $a.proxy(() => super.initLoad(() => this.db, opts));
 
 		try {
 			if (opts.emitStartEvent !== false) {

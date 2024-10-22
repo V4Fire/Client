@@ -85,17 +85,13 @@ console.log(await spy.calls); // [[], []]
 To create a mock function, use the `createMockFn` function. It will create a mock function and automatically inject it into the page.
 
 ```typescript
-import { expandedStringify } from 'core/prelude/test-env/components/json';
-
 const mockFn = await createMockFn(page, () => 1);
 
-await page.evaluate(([obj]) => {
-  const parsed = globalThis.expandedParse(obj);
+await page.evaluate(([mock]) => {
+  mock();
+  mock();
 
-  parsed.mockFn();
-  parsed.mockFn();
-
-}, <const>[expandedStringify({ mockFn })]);
+}, <const>[mockFn.handle]);
 
 console.log(await mockFn.calls); // [[], []]
 ```

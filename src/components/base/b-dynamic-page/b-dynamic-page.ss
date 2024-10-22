@@ -26,7 +26,7 @@
 
 		< template v-for = el in asyncRender.iterate(renderIterator, {filter: renderFilter, group: registerRenderGroup})
 			< component.&__component &
-				v-if = !pageTakenFromCache |
+				v-if = !pageTakenFromCache && page != null |
 				ref = component |
 
 				:is = page |
