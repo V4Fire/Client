@@ -134,7 +134,7 @@ function resisterComponentDefaultValues(context) {
 						methodName,
 						undefined,
 						undefined,
-						[],
+						node.parameters,
 						undefined,
 						node.body
 					);
