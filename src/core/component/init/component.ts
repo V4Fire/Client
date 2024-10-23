@@ -11,6 +11,8 @@ import { isComponent, componentRegInitializers, componentParams, components } fr
 import type { ComponentMeta } from 'core/component/interface';
 import type { ComponentConstructorInfo } from 'core/component/reflect';
 
+import { initEmitter } from 'core/component/event';
+
 /**
  * Registers parent components for the given one.
  * The function returns false if all parent components are already registered.
@@ -21,12 +23,12 @@ import type { ComponentConstructorInfo } from 'core/component/reflect';
  * @param component - the component information object
  */
 export function registerParentComponents(component: ComponentConstructorInfo): boolean {
-	const {name} = component;
+	const { name } = component;
 
 	let
 		parentName = component.parentParams?.name,
 		parentComponent = component.parent;
-
+	
 	if (!Object.isTruly(parentName) || !componentRegInitializers[<string>parentName]) {
 		return false;
 	}
@@ -48,6 +50,7 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
 		if (regParentComponent != null) {
 			regParentComponent.forEach((reg) => reg());
 			delete componentRegInitializers[parentName];
+
 			return true;
 		}
 	}
@@ -65,17 +68,36 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
  *
  * @param name - the component name
  */
-export function registerComponent(name: CanUndef<string>): CanNull<ComponentMeta> {
+export function registerComponent(name: CanUndef<string>, layer?: string): CanNull<ComponentMeta> {
 	if (name == null || !isComponent.test(name)) {
 		return null;
 	}
 
-	const regComponent = componentRegInitializers[name];
+	const component = components.get(name);
+
+	let
+		componentName = component?.componentName || name,
+		componentNormolizedName = componentName.match(/(?<name>.*)-functional$/)?.groups?.name || componentName;	
+
+	const event = `registerComponent.${layer}.${componentNormolizedName}`;
+	if (layer == null) {
+		// TO MAKE UP BETTER SOLUTION AND REMOVE IT
+		for (const l of globalThis.layersList) {
+			initEmitter.emit(`registerComponent.${l}.${componentNormolizedName}`);
+		}
+	} else {
+		initEmitter.emit(event);
+	}
+
+	const
+		regComponent = componentRegInitializers[name];
 
 	if (regComponent != null) {
 		regComponent.forEach((reg) => reg());
+
 		delete componentRegInitializers[name];
+
 	}
 
-	return components.get(name) ?? null;
+	return component ?? null;
 }
