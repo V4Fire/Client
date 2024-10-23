@@ -424,8 +424,7 @@ export default class bDynamicPage extends iDynamicPage {
 					});
 
 				} else {
-					const
-						pageComponentFromCache = pageElFromCache.component;
+					const pageComponentFromCache = pageElFromCache.component;
 
 					if (pageComponentFromCache != null) {
 						pageComponentFromCache.activate();
@@ -477,8 +476,7 @@ export default class bDynamicPage extends iDynamicPage {
 			return loopbackStrategy;
 		}
 
-		const
-			{exclude, include} = this;
+		const {exclude, include} = this;
 
 		if (exclude != null) {
 			if (Object.isFunction(exclude)) {
@@ -491,11 +489,9 @@ export default class bDynamicPage extends iDynamicPage {
 			}
 		}
 
-		let
-			cacheKey = page;
+		let cacheKey = page;
 
-		const
-			globalCache = this.keepAliveCache.global!;
+		const globalCache = this.keepAliveCache.global!;
 
 		const globalStrategy: KeepAliveStrategy = {
 			isLoopback: false,
@@ -507,8 +503,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 		if (include != null) {
 			if (Object.isFunction(include)) {
-				const
-					res = include(page, route, this);
+				const res = include(page, route, this);
 
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (res == null || res === false) {
@@ -555,11 +550,9 @@ export default class bDynamicPage extends iDynamicPage {
 	 * @param cache
 	 */
 	protected addClearListenersToCache<T extends AbstractCache<iDynamicPageEl>>(cache: T): T {
-		const
-			wrappedCache = addEmitter<AbstractCache<iDynamicPageEl>>(cache);
+		const wrappedCache = addEmitter<AbstractCache<iDynamicPageEl>>(cache);
 
-		let
-			instanceCache: WeakMap<iDynamicPageEl, number> = new WeakMap();
+		let instanceCache: WeakMap<iDynamicPageEl, number> = new WeakMap();
 
 		wrappedCache.subscribe('set', cache, changeCountInMap(0, 1));
 		wrappedCache.subscribe('remove', cache, changeCountInMap(1, -1));
