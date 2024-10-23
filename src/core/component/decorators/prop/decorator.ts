@@ -55,8 +55,8 @@ export function prop(typeOrParams?: PropType | DecoratorProp): PartDecorator {
  */
 export function regProp(propName: string, typeOrParams: Nullable<PropType | DecoratorProp>, meta: ComponentMeta): void {
 	const params: DecoratorProp = Object.isFunction(typeOrParams) || Object.isArray(typeOrParams) ?
-		{type: typeOrParams, forceUpdate: true} :
-		{forceUpdate: true, ...typeOrParams};
+		{type: typeOrParams} :
+		{...typeOrParams};
 
 	let prop: ComponentProp;
 
