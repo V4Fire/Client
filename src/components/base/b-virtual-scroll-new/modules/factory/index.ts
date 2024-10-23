@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { registerComponent } from 'core/component/init';
+import { normalizeComponentForceUpdateProps } from 'core/component';
 
 import Friend from 'components/friends/friend';
 import type { VNodeDescriptor } from 'components/friends/vdom';
@@ -142,24 +142,7 @@ export class ComponentFactory extends Friend {
 	 * @param props
 	 */
 	protected normalizeComponentItemProps(componentName: string, props: Dictionary): Dictionary {
-		const
-			meta = registerComponent(componentName);
-
-		if (meta == null) {
-			return props;
-		}
-
-		return Object.entries(props).reduce((acc, [key, value]) => {
-			const
-				noUpdate = meta.props[key]?.forceUpdate === false || meta.props[`${key}Prop`]?.forceUpdate === false,
-				normalizedKey = noUpdate ? `@:${key}` : key;
-
-			acc[normalizedKey] = noUpdate ?
-				this.ctx.createPropAccessors(() => <object>value) :
-				value;
-
-			return acc;
-		}, {});
+		return normalizeComponentForceUpdateProps(this.component, componentName, props);
 	}
 
 	/**

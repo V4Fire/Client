@@ -23,7 +23,7 @@ export { runHook } from 'core/component/hook';
 export { bindRemoteWatchers, canSkipWatching, isCustomWatcher, customWatcherRgxp } from 'core/component/watch';
 
 export { callMethodFromComponent } from 'core/component/method';
-export { normalizeClass, normalizeStyle } from 'core/component/render';
+export { normalizeClass, normalizeStyle, normalizeComponentForceUpdateProps } from 'core/component/render';
 
 export {
 
