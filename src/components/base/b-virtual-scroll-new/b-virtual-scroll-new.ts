@@ -505,7 +505,7 @@ class bVirtualScrollNew extends iVirtualScrollProps implements iItems {
 
 		this.componentInternalState.setIsDomInsertInProgress(true);
 
-		this.async.requestAnimationFrame(() => {
+		this.async.requestAnimationFrame(async () => {
 			const
 				state = this.getVirtualScrollState();
 
@@ -515,7 +515,9 @@ class bVirtualScrollNew extends iVirtualScrollProps implements iItems {
 				this.slotsStateController.loadingProgressState();
 			}
 
-			this.$refs.container.appendChild(fragment);
+			const container = await this.waitRef<HTMLElement>('container');
+
+			container.appendChild(fragment);
 			this.componentInternalState.setIsDomInsertInProgress(false);
 
 			this.onDomInsertDone();
@@ -541,14 +543,16 @@ class bVirtualScrollNew extends iVirtualScrollProps implements iItems {
 
 		const asyncGroup = bVirtualScrollNewFirstChunkRenderAsyncGroup;
 
-		this.nextTick({label: $$.firstChunkRender, group: asyncGroup}).then(() => {
+		this.nextTick({label: $$.firstChunkRender, group: asyncGroup}).then(async () => {
 			this.componentInternalState.setIsDomInsertInProgress(false);
 
 			let itemsForMount: Array<MountedChild | MountedItem> = [];
 
 			if (!SSR) {
+				const container = await this.waitRef<HTMLElement>('container');
+
 				itemsForMount = this.componentFactory
-					.produceMounted(items, <HTMLElement[]>Array.from(this.$refs.container.children));
+					.produceMounted(items, <HTMLElement[]>Array.from(container.children));
 			}
 
 			this.observer.observe(itemsForMount);
