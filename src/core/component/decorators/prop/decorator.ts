@@ -68,6 +68,7 @@ export function regProp(propName: string, typeOrParams: Nullable<PropType | Deco
 	} else {
 		if (meta.methods[propName] != null) {
 			meta.methods[propName] = undefined;
+			delete meta.component.methods[propName];
 		}
 
 		const accessors = meta.accessors[propName] != null ?
@@ -77,6 +78,7 @@ export function regProp(propName: string, typeOrParams: Nullable<PropType | Deco
 		if (accessors[propName] != null) {
 			Object.defineProperty(meta.constructor.prototype, propName, defProp);
 			accessors[propName] = undefined;
+			delete meta.component.computed[propName];
 		}
 
 		// Handling the situation when a field changes type during inheritance,

@@ -98,6 +98,7 @@ export function regField(
 	} else {
 		if (meta.methods[fieldName] != null) {
 			meta.methods[fieldName] = undefined;
+			delete meta.component.methods[fieldName];
 		}
 
 		const accessors = meta.accessors[fieldName] != null ?
@@ -107,6 +108,7 @@ export function regField(
 		if (accessors[fieldName] != null) {
 			Object.defineProperty(meta.constructor.prototype, fieldName, defProp);
 			accessors[fieldName] = undefined;
+			delete meta.component.computed[fieldName];
 		}
 
 		// Handling the situation when a field changes type during inheritance,
