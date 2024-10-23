@@ -59,25 +59,12 @@ Snakeskin.importFilters({
 });
 
 function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplName, cursor) {
-	const needCamelize = /^(:[^-]|@)/;
-
-	Object.entries(attrs).forEach(([key, attr]) => {
-		if (isStaticV4Prop.test(key)) {
-			// Since HTML is not case-sensitive, the name can be written differently.
-			// We will explicitly normalize the name to the most popular format for HTML notation.
-			// For Vue attributes such as `:` and `@`, we convert the prop to camelCase format.
-			const normalizedKey = needCamelize.test(key) ?
-				key.camelize(false) :
-				key.dasherize();
-
-			if (normalizedKey !== key) {
-				delete attrs[key];
-				attrs[normalizedKey] = attr;
-			}
-		}
-	});
-
 	let componentName;
+
+	if (attrs[':instance-of']) {
+		attrs[':instanceOf'] = attrs[':instance-of'];
+		delete attrs[':instance-of'];
+	}
 
 	if (attrs[TYPE_OF]) {
 		componentName = attrs[TYPE_OF];
@@ -96,6 +83,41 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 	}
 
 	const component = componentParams[componentName];
+
+	Object.entries(attrs).forEach(([key, attr]) => {
+		if (isStaticV4Prop.test(key)) {
+			// Since HTML is not case-sensitive, the name can be written differently.
+			// We will explicitly normalize the name to the most popular format for HTML notation.
+			// For Vue component attributes such as `:` and `@`, we convert the prop to camelCase format.
+			let normalizedKey;
+
+			if (component) {
+				if (key.startsWith('@')) {
+					normalizedKey = key.camelize(false);
+
+				} else if (key.startsWith('v-on:')) {
+					normalizedKey = key.replace(/^v-on:([^.[]+)(.*)/, (_, event, rest) =>
+						`v-on:${event.camelize(false)}${rest}`);
+
+				} else if (key.startsWith(':') && !key.startsWith(':-') && !key.startsWith(':v-')) {
+					const camelizedKey = key.camelize(false);
+
+					if (component.props[camelizedKey.slice(1)]) {
+						normalizedKey = camelizedKey;
+					}
+				}
+			}
+
+			if (!normalizedKey) {
+				normalizedKey = key.dasherize();
+			}
+
+			if (normalizedKey !== key) {
+				delete attrs[key];
+				attrs[normalizedKey] = attr;
+			}
+		}
+	});
 
 	if (isSmartComponent(component)) {
 		attrs[SMART_PROPS] = component.functional;
