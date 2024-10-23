@@ -91,10 +91,10 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		patchFlag = normalizePatchFlagUsingProps.call(this, patchFlag, attrs);
 
 		if (Object.isString(name)) {
-			component = registerComponent(name, '@v4fire/client');
+			component = registerComponent(name);
 
 		} else if (!Object.isPrimitive(name) && 'name' in name) {
-			component = registerComponent(name.name, '@v4fire/client');
+			component = registerComponent(name.name);
 		}
 
 		const createVNode: (...args: Parameters<typeof createBlock>) => VNode = (
@@ -482,7 +482,7 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 				...args: unknown[]
 			) => {
 				const
-					meta = registerComponent(component.name, '@v4fire/client');
+					meta = registerComponent(component.name);
 
 				if (meta != null) {
 					props = normalizeComponentAttrs(props, [], meta);

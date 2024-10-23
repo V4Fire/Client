@@ -23,15 +23,12 @@ import { initEmitter } from 'core/component/event';
  * @param component - the component information object
  */
 export function registerParentComponents(component: ComponentConstructorInfo): boolean {
-	const
-		{name, layer} = component;
+	const { name } = component;
 
 	let
 		parentName = component.parentParams?.name,
 		parentComponent = component.parent;
 	
-	initEmitter.emit(`registerComponent.${layer}.${component?.name}`);
-
 	if (!Object.isTruly(parentName) || !componentRegInitializers[<string>parentName]) {
 		return false;
 	}
@@ -41,7 +38,6 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
 
 		if (parentComponent) {
 			const p = componentParams.get(parentComponent);
-			initEmitter.emit(`registerComponent.${p?.layer}.${parentName}`);
 			parentName = p?.name;
 		}
 	}
@@ -83,12 +79,12 @@ export function registerComponent(name: CanUndef<string>, layer?: string): CanNu
 		componentName = component?.componentName || name,
 		componentNormolizedName = componentName.match(/(?<name>.*)-functional$/)?.groups?.name || componentName;	
 
-	
 	const event = `registerComponent.${layer}.${componentNormolizedName}`;
 	if (layer == null) {
-		initEmitter.emit(`registerComponent.@v4fire/client.${componentNormolizedName}`);
-		initEmitter.emit(`registerComponent.@edadeal/core.${componentNormolizedName}`);
-		initEmitter.emit(`registerComponent.@edadeal/cb.${componentNormolizedName}`);
+		// TO MAKE UP BETTER SOLUTION AND REMOVE IT
+		for (const l of globalThis.layersList) {
+			initEmitter.emit(`registerComponent.${l}.${componentNormolizedName}`);
+		}
 	} else {
 		initEmitter.emit(event);
 	}

@@ -8,18 +8,24 @@
  * @returns {String}
  */
 exports.invokeByRegisterEvent = function(script, layerName, componentName) {
-	if (script?.trim()?.length == 0 || layerName == null || componentName == null) {
+	if (script?.trim()?.length == 0) {
 		return script;
 	}
 
 	return `\n
-			if (globalThis.initEmitter == null) {
-				const {initEmitter} = require('core/component/event');
-				globalThis.initEmitter = initEmitter;
-			}
-			globalThis.initEmitter.once('registerComponent.${layerName}.${componentName}', () => {
-				${script}
-			});
+		if (globalThis.initEmitter == null) {
+			const {initEmitter} = require('core/component/event');
+			globalThis.initEmitter = initEmitter;
+		}
+		if (globalThis.layersList == null) {
+			globalThis.layersList = new Set();
+		}
+		if (!globalThis.layersList.has('${layerName}')) {
+			globalThis.layersList.add('${layerName}');
+		}
+		globalThis.initEmitter.once('registerComponent.${layerName}.${componentName}', () => {
+			${script}
+		});
 		\n
 	`;
 }

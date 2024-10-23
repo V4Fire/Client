@@ -46,7 +46,7 @@ globalThis.renderComponents = (
 
 	const ids = scheme.map(() => Math.random().toString(16).slice(2));
 
-	const componentMeta = registerComponent(componentName, '@v4fire/client');
+	const componentMeta = registerComponent(componentName);
 
 	const vnodes = create.call(ctx.vdom, scheme.map(({attrs, children}, i) => ({
 		type: componentName,
