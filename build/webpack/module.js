@@ -243,13 +243,6 @@ module.exports = async function module({plugins}) {
 				}
 			},
 
-			'extract-loader',
-
-			{
-				loader: 'html-loader',
-				options: config.html()
-			},
-
 			{
 				loader: 'monic-loader',
 				options: inherit(monic.html, {
