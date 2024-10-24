@@ -38,7 +38,7 @@ import {
 } from 'core/component/meta';
 
 import { initEmitter } from 'core/component/event';
-import { getComponent, ComponentEngine } from 'core/component/engines';
+import { getComponent, ComponentEngine, AsyncComponentOptions } from 'core/component/engines';
 
 import { getComponentMods, getInfoFromConstructor } from 'core/component/reflect';
 import { registerComponent, registerParentComponents } from 'core/component/init';
@@ -233,7 +233,7 @@ export function component(opts?: ComponentOptions): Function {
 				rootComponents[componentFullName] = loadTemplate(getComponent(meta));
 
 			} else {
-				const componentDeclArgs = <const>[componentFullName, loadTemplate(getComponent(meta))];
+				const componentDeclArgs = <const>[componentFullName, loadTemplate(getComponent(meta), true)];
 				ComponentEngine.component(...componentDeclArgs);
 
 				if (app.context != null && app.context.component(componentFullName) == null) {
@@ -241,9 +241,21 @@ export function component(opts?: ComponentOptions): Function {
 				}
 			}
 
-			function loadTemplate(component: object): CanPromise<ComponentOptions> {
+			function loadTemplate(component: object): CanPromise<ComponentOptions>;
+
+			function loadTemplate(component: object, lazy: true): AsyncComponentOptions;
+
+			function loadTemplate(component: object, lazy?: true) {
 				let resolve: Function = identity;
-				return meta.params.tpl === false ? attachTemplatesAndResolve() : waitComponentTemplates();
+				if (meta.params.tpl === false) {
+					return attachTemplatesAndResolve();
+				}
+
+				if (lazy) {
+					return {loader: waitComponentTemplates};
+				}
+
+				return waitComponentTemplates();
 
 				function waitComponentTemplates() {
 					const fns = TPLS[meta.componentName];
