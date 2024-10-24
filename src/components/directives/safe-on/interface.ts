@@ -6,9 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-bottom-slide')
-	.extends('i-block')
-	.libs(
-		'components/directives/on-resize',
-		'components/directives/safe-on'
-	);
+import type { DirectiveBinding } from 'core/component/engines';
+
+export interface SafeOnDirectiveParams extends DirectiveBinding {
+	value: Function;
+}
