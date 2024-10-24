@@ -6,11 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/**
- * [[include:components/super/i-block/modules/provide/README.md]]
- * @packageDocumentation
- */
-
 import type Friend from 'components/friends/friend';
 
 import type iBlock from 'components/super/i-block/i-block';
@@ -47,9 +42,15 @@ export function mods(this: Friend, mods?: Mods): CanNull<ModsDict> {
 	const resolvedMods = {...sharedMods};
 
 	if (mods != null) {
-		Object.entries(mods).forEach(([key, val]) => {
-			resolvedMods[key.dasherize()] = val != null ? String(val) : undefined;
-		});
+		const modNames = Object.keys(mods);
+
+		for (let i = 0; i < modNames.length; i++) {
+			const
+				modName = modNames[i],
+				modVal = mods[modName];
+
+			resolvedMods[modName.dasherize()] = modVal != null ? String(modVal) : undefined;
+		}
 	}
 
 	return resolvedMods;
