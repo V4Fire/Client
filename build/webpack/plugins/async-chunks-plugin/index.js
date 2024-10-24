@@ -21,16 +21,17 @@ class AsyncPlugRuntimeModule extends RuntimeModule {
 	}
 
 	generate() {
-		return `const loadScript = ${RuntimeGlobals.loadScript};
-${RuntimeGlobals.loadScript} = (path, cb, chunk, id) => {
-	const tpl = document.getElementById(id);
-	if (tpl?.content) {
+		return `var loadScript = ${RuntimeGlobals.loadScript};
+function loadScriptReplacement(path, cb, chunk, id) {
+	var tpl = document.getElementById(id);
+	if (tpl && tpl.content) {
 		document.body.appendChild(tpl.content.cloneNode(true));
 		cb();
 	} else {
 		loadScript(path, cb, chunk, id);
 	}
-}`;
+}
+${RuntimeGlobals.loadScript} = loadScriptReplacement`;
 	}
 }
 
