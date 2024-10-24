@@ -15,8 +15,19 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added the `v-safe-on` directive to ensure event listeners are only active while the component is alive,
-preventing handlers from being called after the component is destroyed `core/component/directives/safe-on`
+* Added the `v-safe-on` directive, which allows event handlers to execute only when the vnode is not unmounted
+  `components/directives/safe-on`
+* Added a wrapper for `withModifiers` with support for the `safe` modifier `core/component/render`
+
+#### :house: Internal
+
+* Moved the `parseEventListener` function to common directive helpers `core/component/directives/attrs`
+
+## v4.0.0-beta.146 (2024-10-18)
+
+#### :bug: Bug Fix
+
+* Fixed `$attrs` not being watched `core/component/watch`
 
 ## v4.0.0-beta.145 (2024-10-14)
 
