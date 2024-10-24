@@ -141,6 +141,29 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		let passedProps: CanNull<Set<string>> = null;
 		props.getPassedProps ??= () => passedProps ??= new Set(attrs != null ? Object.keys(attrs) : []);
 
+		let passedHandlers: CanNull<Set<string>> = null;
+		props.getPassedHandlers ??= () => {
+			if (passedHandlers != null) {
+				return passedHandlers;
+			}
+
+			if (attrs == null) {
+				passedHandlers = new Set();
+
+			} else {
+				passedHandlers = new Set(
+					Object.keys(attrs)
+						.filter((prop) => prop.startsWith('on'))
+						.map((prop) => {
+							prop = prop.slice('on'.length);
+							return prop[0].toLowerCase() + prop.slice(1);
+						})
+				);
+			}
+
+			return passedHandlers;
+		};
+
 		// For refs within functional components,
 		// it is necessary to explicitly set a reference to the instance of the component
 		if (!SSR && vnode.ref != null && vnode.ref.i == null) {
@@ -161,15 +184,19 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		const virtualCtx = createVirtualContext(component, {parent: this, props: attrs, slots});
 		vnode.virtualComponent = virtualCtx;
 
+		const filteredAttrs = {};
+
 		const
 			declaredProps = component.props,
-			filteredAttrs = {};
+			propKeys = Object.keys(props);
 
-		Object.entries(props).forEach(([key, val]) => {
-			if (declaredProps[key.camelize(false)] == null) {
-				filteredAttrs[key] = val;
+		for (let i = 0; i < propKeys.length; i++) {
+			const propName = propKeys[i];
+
+			if (declaredProps[propName.camelize(false)] == null) {
+				filteredAttrs[propName] = props[propName];
 			}
-		});
+		}
 
 		const functionalVNode = virtualCtx.render(virtualCtx, []);
 
@@ -206,15 +233,19 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		}
 
 		if (!SSR && functionalVNode.dynamicProps != null && functionalVNode.dynamicProps.length > 0) {
+			const functionalProps = functionalVNode.dynamicProps;
+
 			const dynamicProps = vnode.dynamicProps ?? [];
 			vnode.dynamicProps = dynamicProps;
 
-			functionalVNode.dynamicProps.forEach((propName) => {
+			for (let i = 0; i < functionalProps.length; i++) {
+				const propName = functionalProps[i];
+
 				if (isHandler.test(propName)) {
 					dynamicProps.push(propName);
 					setVNodePatchFlags(vnode, 'props');
 				}
-			});
+			}
 		}
 
 		functionalVNode.ignore = true;
@@ -400,7 +431,9 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 			Object.cast(this.$normalParent) :
 			this;
 
-		dirs.forEach((decl) => {
+		for (let i = 0; i < dirs.length; i++) {
+			const decl = dirs[i];
+
 			const [dir, value, arg, modifiers] = decl;
 
 			const binding: DirectiveBinding = {
@@ -418,7 +451,8 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 			};
 
 			if (!Object.isDictionary(dir)) {
-				return bindings.push(binding);
+				bindings.push(binding);
+				continue;
 			}
 
 			if (Object.isFunction(dir.beforeCreate)) {
@@ -436,7 +470,7 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 			} else if (Object.keys(dir).length > 0) {
 				bindings.push(binding);
 			}
-		});
+		}
 
 		return vnode;
 
@@ -537,7 +571,9 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 	async function unrollBuffer(buf: BufItems): Promise<string> {
 		let res = '';
 
-		for (let val of buf) {
+		for (let i = 0; i < buf.length; i++) {
+			let val = buf[i];
+
 			if (Object.isPromise(val)) {
 				val = await val;
 			}

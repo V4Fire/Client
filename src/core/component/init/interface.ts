@@ -7,6 +7,5 @@
  */
 
 export interface InitBeforeCreateStateOptions {
-	addMethods?: boolean;
 	implementEventAPI?: boolean;
 }

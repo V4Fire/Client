@@ -13,7 +13,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { derive } from 'core/functools/trait';
+import { derive } from 'components/traits';
 
 import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';

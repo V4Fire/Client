@@ -352,7 +352,6 @@ test.describe('<b-tree> active items API', () => {
 
 			await expectActive(true, activeNodes);
 			await expectActive(false, inactiveNodes);
-
 		});
 
 		test('should unset the previous active items with `unsetPrevious = true`', async ({page}) => {

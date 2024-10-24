@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { derive } from 'core/functools/trait';
+import { derive } from 'components/traits';
 
 import bDummy, { component, hook, wait } from 'components/dummies/b-dummy/b-dummy';
 import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';

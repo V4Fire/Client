@@ -66,9 +66,11 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 
 		let obj: Nullable<ComponentInterface> = component;
 
-		chunks.some((chunk, i, chunks) => {
+		for (let i = 0; i < chunks.length; i++) {
+			const chunk = chunks[i];
+
 			if (obj == null) {
-				return true;
+				break;
 			}
 
 			if (Object.isMap(obj)) {
@@ -82,9 +84,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 				component = obj;
 				rootI = i === chunks.length - 1 ? i : i + 1;
 			}
-
-			return false;
-		});
+		}
 
 		path = chunks.slice(rootI).join('.');
 		topPath = chunks.slice(0, rootI + 1).join('.');

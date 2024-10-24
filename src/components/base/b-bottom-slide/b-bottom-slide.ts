@@ -14,7 +14,7 @@
 import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
 
-import { derive } from 'core/functools/trait';
+import { derive } from 'components/traits';
 
 import History from 'components/traits/i-history/history';
 import type iHistory from 'components/traits/i-history/i-history';

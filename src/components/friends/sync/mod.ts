@@ -128,19 +128,19 @@ export function mod<D = unknown, R = unknown>(
 
 		const {path} = info;
 
-		let val: unknown;
+		let rawVal: unknown;
 
 		if (path.includes('.')) {
-			val = that.field.get(info.originalPath);
+			rawVal = that.field.get(info.originalPath);
 
 		} else {
-			val = info.type === 'field' ? that.field.getFieldsStore(info.ctx)[path] : info.ctx[path];
+			rawVal = info.type === 'field' ? that.field.getFieldsStore(info.ctx)[path] : info.ctx[path];
 		}
 
-		val = (<LinkGetter>converter).call(that.component, val);
+		const modVal = (<LinkGetter>converter).call(that.component, rawVal);
 
-		if (val !== undefined) {
-			ctx.mods[modName] = String(val);
+		if (modVal !== undefined) {
+			ctx.mods[modName] = String(modVal);
 		}
 	}
 

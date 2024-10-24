@@ -11,26 +11,30 @@
  * @packageDocumentation
  */
 
-import type { ComponentInterface } from 'core/component/interface';
+import type { ComponentInterface, UnsafeComponentInterface } from 'core/component/interface';
 
 /**
  * Attaches methods to the passed component instance, taken from its associated metaobject
  * @param component
  */
 export function attachMethodsFromMeta(component: ComponentInterface): void {
-	const {meta, meta: {methods}} = component.unsafe;
+	const {meta, meta: {component: {methods}}} = Object.cast<UnsafeComponentInterface>(component);
 
-	const isFunctional = meta.params.functional === true;
+	const methodNames = Object.keys(methods);
 
-	Object.entries(methods).forEach(([name, method]) => {
-		if (method == null || !SSR && isFunctional && method.functional === false) {
-			return;
+	for (let i = 0; i < methodNames.length; i++) {
+		const
+			methodName = methodNames[i],
+			method = methods[methodName];
+
+		if (method == null) {
+			continue;
 		}
 
-		component[name] = method.fn.bind(component);
-	});
+		component[methodName] = method.bind(component);
+	}
 
-	if (isFunctional) {
+	if (meta.params.functional === true) {
 		component.render = Object.cast(meta.component.render);
 	}
 }

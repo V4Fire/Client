@@ -1,7 +1,7 @@
 # core/component/decorators/system
 
 The decorator marks a class property as a system field.
-System property mutations never cause components to re-render.
+Mutations to a system field never cause components to re-render.
 
 ```typescript
 import iBlock, { component, system } from 'components/super/i-block/i-block';

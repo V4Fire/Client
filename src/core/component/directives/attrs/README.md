@@ -7,7 +7,7 @@ the provided dictionary.
 < .example v-attrs = {'@click': console.log, class: classes, 'v-show': condition}
 ```
 
-## Why is This Directive Needed?
+## Why is This Directive Necessary?
 
 Often, there are situations where we need to dynamically apply a set of parameters to an element or component.
 While we have extended versions of the `v-on` and `v-bind` directives for events and attributes,

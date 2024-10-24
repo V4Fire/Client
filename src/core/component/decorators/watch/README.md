@@ -112,7 +112,7 @@ class bExample extends iBlock {
 }
 ```
 
-## Additional options
+## Additional Options
 
 The `@watch` decorator can accept any options compatible with the watch function from the `core/object/watch` module.
 For a more detailed list of these options, please refer to that module's documentation.
@@ -203,7 +203,7 @@ export default class bExample extends iBlock {
   @prop({required: false})
   params?: Dictionary;
 
-  @watch({path: 'params', shouldInit: (ctx) => ctx.params != null})
+  @watch({path: 'params', shouldInit: (o) => o.params != null})
   watcher() {
 
   }

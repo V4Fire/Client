@@ -47,12 +47,7 @@ class State extends Friend {
 	get needRouterSync(): boolean {
 		// @ts-ignore (access)
 		baseSyncRouterState ??= iBlock.prototype.syncRouterState;
-		return baseSyncRouterState !== Object.cast<typeof this.instance['unsafe']>(this.instance).syncRouterState;
-	}
-
-	/** {@link iBlock.instance} */
-	protected get instance(): this['CTX']['instance'] {
-		return this.ctx.instance;
+		return baseSyncRouterState !== this.ctx.constructor.prototype.syncRouterState;
 	}
 }
 

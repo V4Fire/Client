@@ -11,7 +11,7 @@ This module provides a trait for a component that needs to implement the "openin
 * The trait can be automatically derived.
 
   ```typescript
-  import { derive } from 'core/functools/trait';
+  import { derive } from 'components/traits';
 
   import iOpen from 'components/traits/i-open/i-open';
   import iBlock, { component } from 'components/super/i-block/i-block';

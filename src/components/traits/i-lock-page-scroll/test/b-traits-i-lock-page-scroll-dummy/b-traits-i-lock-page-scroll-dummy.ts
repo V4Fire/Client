@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { derive } from 'core/functools/trait';
+import { derive } from 'components/traits';
 
 import bDummy, { component } from 'components/dummies/b-dummy/b-dummy';
 import iLockPageScroll from 'components/traits/i-lock-page-scroll/i-lock-page-scroll';
