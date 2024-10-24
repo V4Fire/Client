@@ -126,11 +126,6 @@ Vue.component = Object.cast(
 			return originalComponent.call(ctx, name);
 		}
 
-		if (Object.isPromise(component)) {
-			const promise = component;
-			component = defineAsyncComponent(Object.cast(() => promise));
-		}
-
 		if (isAsyncComponentOptions(component)) {
 			component = defineAsyncComponent(component);
 		}
