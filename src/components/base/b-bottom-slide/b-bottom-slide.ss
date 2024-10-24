@@ -33,7 +33,7 @@
 					ref = header |
 					@touchstart = swipeControl.onPullStart($event, true) |
 					@touchmove = swipeControl.onPull |
-					v-safe-on:touchend = swipeControl.onPullEnd
+					v-safe-on:touchend = swipeControl.onPullEnd.bind(swipeControl)
 				.
 					< .&__toggler-stripe
 						< .&__toggler
@@ -44,7 +44,7 @@
 					v-on-resize = {handler: recalculateState} |
 					@touchstart = swipeControl.onPullStart |
 					@touchmove = swipeControl.onPull |
-					v-safe-on:touchend = swipeControl.onPullEnd
+					v-safe-on:touchend = swipeControl.onPullEnd.bind(swipeControl)
 				.
 					- block content
 						< .&__content ref = content

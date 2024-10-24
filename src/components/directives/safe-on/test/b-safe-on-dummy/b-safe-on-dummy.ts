@@ -9,13 +9,7 @@
 import bDummy, { component, field } from 'components/dummies/b-dummy/b-dummy';
 
 @component()
-export default class bSafeOnDynamicEventDummy extends bDummy {
-	/**
-	 * The name of the dynamic event
-	 */
-	@field()
-	dynamicEventName: string = 'click';
-
+export default class bSafeOnDummy extends bDummy {
 	/**
 	 * True, if the element with the dynamic event is visible
 	 */
@@ -23,9 +17,15 @@ export default class bSafeOnDynamicEventDummy extends bDummy {
 	isElementVisible: boolean = true;
 
 	/**
+	 * The name of the dynamic event
+	 */
+	@field()
+	dynamicEventName: string = 'click';
+
+	/**
 	 * The event handler
 	 */
-	onDynamicEvent(): void {
-		this.emit('dynamicEvent', this.dynamicEventName);
+	onEvent(): void {
+		this.emit('event');
 	}
 }

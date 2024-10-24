@@ -1,5 +1,5 @@
 {
-  "hash": "2fd9759454c34e78b268750128181a86425ed1baf9f6fd8defbe8475ae6f9fce",
+  "hash": "966323eda4c97824a2822f416bb588904fa51331397d912dc37a8ee531c2a3d6",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1278,16 +1278,16 @@
         }
       ],
       [
-        "b-safe-on-dynamic-event-dummy",
+        "b-safe-on-dummy",
         {
-          "index": "src/components/directives/safe-on/test/b-safe-on-dynamic-event-dummy/index.js",
+          "index": "src/components/directives/safe-on/test/b-safe-on-dummy/index.js",
           "declaration": {
-            "name": "b-safe-on-dynamic-event-dummy",
+            "name": "b-safe-on-dummy",
             "parent": "b-dummy",
             "dependencies": [],
             "libs": []
           },
-          "name": "b-safe-on-dynamic-event-dummy",
+          "name": "b-safe-on-dummy",
           "parent": "b-dummy",
           "dependencies": [],
           "libs": [],
@@ -1301,11 +1301,11 @@
           },
           "type": "block",
           "mixin": false,
-          "logic": "src/components/directives/safe-on/test/b-safe-on-dynamic-event-dummy/b-safe-on-dynamic-event-dummy.ts",
+          "logic": "src/components/directives/safe-on/test/b-safe-on-dummy/b-safe-on-dummy.ts",
           "styles": [
-            "src/components/directives/safe-on/test/b-safe-on-dynamic-event-dummy/b-safe-on-dynamic-event-dummy.styl"
+            "src/components/directives/safe-on/test/b-safe-on-dummy/b-safe-on-dummy.styl"
           ],
-          "tpl": "src/components/directives/safe-on/test/b-safe-on-dynamic-event-dummy/b-safe-on-dynamic-event-dummy.ss",
+          "tpl": "src/components/directives/safe-on/test/b-safe-on-dummy/b-safe-on-dummy.ss",
           "etpl": null
         }
       ],

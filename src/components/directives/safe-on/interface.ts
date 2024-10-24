@@ -6,10 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export interface SafeOnElement extends Element {
-	/**
-	 * Private field to store event invokers
-	 * - vei = vue event invokers
-	 */
-	_vei?: Record<string, EventListenerOrEventListenerObject | undefined>;
+import type { DirectiveBinding } from 'core/component/engines';
+
+export interface SafeOnDirectiveParams extends DirectiveBinding {
+	value: Function;
 }

@@ -105,12 +105,6 @@ module.exports = [
 				return;
 			}
 
-			if (key.startsWith('v-safe-on')) {
-				const [, eventWithModifiers] = key.split(':');
-				attrs[`@${eventWithModifiers}`] = attr;
-				attrs[key] = [];
-			}
-
 			// For event handler optimization
 			if (
 				key === 'v-on' ||
