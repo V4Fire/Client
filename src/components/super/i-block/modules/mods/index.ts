@@ -156,6 +156,8 @@ export function mergeMods(
 	link?: string
 ): void {
 	if (link == null) {
+		// @ts-ignore (readonly)
+		component.mods = {...oldComponent.mods};
 		return;
 	}
 
@@ -171,19 +173,9 @@ export function mergeMods(
 		return;
 	}
 
-	const modsProp = getExpandedModsProp(component);
-
 	const
-		mods = {...oldComponent.mods},
-		modNames = Object.keys(mods);
-
-	for (let i = 0; i < modNames.length; i++) {
-		const modName = modNames[i];
-
-		if (component.sync.syncModCache[modName] != null) {
-			delete mods[modName];
-		}
-	}
+		modsProp = getExpandedModsProp(component),
+		mods = {...oldComponent.mods};
 
 	if (Object.fastCompare(modsProp, getExpandedModsProp(oldComponent))) {
 		l.sync(mods);
@@ -197,27 +189,27 @@ export function mergeMods(
 			return {};
 		}
 
-		const modsProp = component.$props[link];
+		const modsProp = component[link];
 
 		if (!Object.isDictionary(modsProp)) {
 			return {};
 		}
 
 		const
-			declMods = component.meta.component.mods,
-			res = <ModsDict>{...modsProp};
+			declaredMods = component.meta.component.mods,
+			expandedModsProp = <ModsDict>{...modsProp};
 
 		component.getPassedProps?.().forEach((name) => {
-			if (name in declMods) {
+			if (name in declaredMods) {
 				const attr = component.$attrs[name];
 
 				if (attr != null) {
-					res[name] = attr;
+					expandedModsProp[name] = attr;
 				}
 			}
 		});
 
-		return res;
+		return expandedModsProp;
 	}
 }
 
