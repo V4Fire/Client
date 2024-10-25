@@ -37,27 +37,30 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 			propValuesToUpdate: string[][] = [];
 
 		unsafe.getPassedProps?.()?.forEach((attrName) => {
+			const prop = meta.props[attrName];
+
+			if ((prop == null || prop.forceUpdate) && !isPropGetter.test(attrName)) {
+				return;
+			}
+
 			const propPrefix = 'on:';
 
-			if (meta.props[attrName]?.forceUpdate === false) {
+			if (prop != null) {
 				const getterName = propPrefix + attrName;
 
 				if (unsafe.$attrs[attrName] !== undefined && !Object.isFunction(unsafe.$attrs[getterName])) {
 					throw new Error(`No accessors are defined for the prop "${attrName}". To set the accessors, pass them as ":${attrName} = propValue | @:${attrName} = createPropAccessors(() => propValue)()" or "v-attrs = {'@:${attrName}': createPropAccessors(() => propValue)}".`);
 				}
-			}
 
-			if (!isPropGetter.test(attrName)) {
-				return;
-			}
+			} else {
+				const propName = isPropGetter.replace(attrName);
 
-			const propName = isPropGetter.replace(attrName);
+				if (meta.props[propName]?.forceUpdate === false) {
+					propValuesToUpdate.push([propName, attrName]);
 
-			if (meta.props[propName]?.forceUpdate === false) {
-				propValuesToUpdate.push([propName, attrName]);
-
-				if (el instanceof Element) {
-					el.removeAttribute(propName);
+					if (el instanceof Element) {
+						el.removeAttribute(propName);
+					}
 				}
 			}
 		});
