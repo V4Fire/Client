@@ -65,7 +65,7 @@ export function defaultValue(getter: unknown): PartDecorator {
 				configurable: true,
 				enumerable: false,
 				writable: true,
-				value: getter
+				value: getter()
 			});
 		}
 	});
