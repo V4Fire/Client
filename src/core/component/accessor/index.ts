@@ -119,38 +119,45 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 				const {watchers, watchDependencies} = meta;
 
-				onCreated(this.hook, () => {
-					// If a computed property has a field or system field as a dependency
-					// and the host component does not have any watchers to this field,
-					// we need to register a "fake" watcher to enforce watching
-					watchDependencies.get(name)?.forEach((dep) => {
-						const
-							path = Object.isArray(dep) ? dep.join('.') : String(dep),
-							info = getPropertyInfo(path, component);
+				const deps = watchDependencies.get(name);
 
-						const needForceWatch =
-							(info.type === 'system' || info.type === 'field') &&
-
-							watchers[info.name] == null &&
-							watchers[info.originalPath] == null &&
-							watchers[info.path] == null;
-
-						if (needForceWatch) {
-							this.$watch(info, {deep: true, immediate: true}, fakeHandler);
-						}
-					});
-
-					if (tiedWith != null) {
-						const needForceWatch = watchers[tiedWith] == null && accessor.dependencies?.length !== 0;
-
-						// If a computed property is tied with a field or system field
+				if (name !== 'hook' && (deps != null && deps.length > 0 || tiedWith != null)) {
+					onCreated(this.hook, () => {
+						// If a computed property has a field or system field as a dependency
 						// and the host component does not have any watchers to this field,
 						// we need to register a "fake" watcher to enforce watching
-						if (needForceWatch) {
-							this.$watch(tiedWith, {deep: true, immediate: true}, fakeHandler);
+						if (deps != null) {
+							for (let i = 0; i < deps.length; i++) {
+								const
+									dep = deps[i],
+									path = Object.isArray(dep) ? dep.join('.') : String(dep),
+									info = getPropertyInfo(path, component);
+
+								const needForceWatch =
+									(info.type === 'system' || info.type === 'field') &&
+
+									watchers[info.name] == null &&
+									watchers[info.originalPath] == null &&
+									watchers[info.path] == null;
+
+								if (needForceWatch) {
+									this.$watch(info, {deep: true, immediate: true}, fakeHandler);
+								}
+							}
 						}
-					}
-				});
+
+						if (tiedWith != null) {
+							const needForceWatch = watchers[tiedWith] == null && accessor.dependencies?.length !== 0;
+
+							// If a computed property is tied with a field or system field
+							// and the host component does not have any watchers to this field,
+							// we need to register a "fake" watcher to enforce watching
+							if (needForceWatch) {
+								this.$watch(tiedWith, {deep: true, immediate: true}, fakeHandler);
+							}
+						}
+					});
+				}
 			}
 
 			return accessor.get!.call(this);
@@ -212,66 +219,73 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 				const {watchers, watchDependencies} = meta;
 
-				onCreated(this.hook, () => {
-					// If a computed property has a field or system field as a dependency
-					// and the host component does not have any watchers to this field,
-					// we need to register a "fake" watcher to enforce watching
-					watchDependencies.get(name)?.forEach((dep) => {
-						const
-							path = Object.isArray(dep) ? dep.join('.') : String(dep),
-							info = getPropertyInfo(path, component);
+				const deps = watchDependencies.get(name);
 
-						// If a getter already has a cached result and is used inside a template,
-						// it is not possible to track its effect, as the value is not recalculated.
-						// This can lead to a problem where one of the entities on which the getter depends is updated,
-						// but the template is not.
-						// To avoid this problem, we explicitly touch all dependent entities.
-						// For functional components, this problem does not exist,
-						// as no change in state can trigger their re-render.
-						if (!isFunctional && info.type !== 'system') {
-							effects.push(() => {
-								const store = info.type === 'field' ? getFieldsStore(Object.cast(info.ctx)) : info.ctx;
-
-								if (info.path.includes('.')) {
-									void Object.get(store, path);
-
-								} else if (path in store) {
-									// @ts-ignore (effect)
-									void store[path];
-								}
-							});
-						}
-
-						const needToForceWatching =
-							(info.type === 'system' || info.type === 'field') &&
-
-							watchers[info.name] == null &&
-							watchers[info.originalPath] == null &&
-							watchers[info.path] == null;
-
-						if (needToForceWatching) {
-							this.$watch(info, {deep: true, immediate: true}, fakeHandler);
-						}
-					});
-
-					if (tiedWith != null) {
-						effects.push(() => {
-							if (tiedWith in this) {
-								// @ts-ignore (effect)
-								void this[tiedWith];
-							}
-						});
-
-						const needToForceWatching = watchers[tiedWith] == null && computed.dependencies?.length !== 0;
-
-						// If a computed property is tied with a field or system field
+				if (name !== 'hook' && (deps != null && deps.length > 0 || tiedWith != null)) {
+					onCreated(this.hook, () => {
+						// If a computed property has a field or system field as a dependency
 						// and the host component does not have any watchers to this field,
 						// we need to register a "fake" watcher to enforce watching
-						if (needToForceWatching) {
-							this.$watch(tiedWith, {deep: true, immediate: true}, fakeHandler);
+						if (deps != null) {
+							for (let i = 0; i < deps.length; i++) {
+								const
+									dep = deps[i],
+									path = Object.isArray(dep) ? dep.join('.') : String(dep),
+									info = getPropertyInfo(path, component);
+
+								// If a getter already has a cached result and is used inside a template,
+								// it is not possible to track its effect, as the value is not recalculated.
+								// This can lead to a problem where one of the entities on which the getter depends is updated,
+								// but the template is not.
+								// To avoid this problem, we explicitly touch all dependent entities.
+								// For functional components, this problem does not exist,
+								// as no change in state can trigger their re-render.
+								if (!isFunctional && info.type !== 'system') {
+									effects.push(() => {
+										const store = info.type === 'field' ? getFieldsStore(Object.cast(info.ctx)) : info.ctx;
+
+										if (info.path.includes('.')) {
+											void Object.get(store, path);
+
+										} else if (path in store) {
+											// @ts-ignore (effect)
+											void store[path];
+										}
+									});
+								}
+
+								const needToForceWatching =
+									(info.type === 'system' || info.type === 'field') &&
+
+									watchers[info.name] == null &&
+									watchers[info.originalPath] == null &&
+									watchers[info.path] == null;
+
+								if (needToForceWatching) {
+									this.$watch(info, {deep: true, immediate: true}, fakeHandler);
+								}
+							}
 						}
-					}
-				});
+
+						if (tiedWith != null) {
+							effects.push(() => {
+								if (tiedWith in this) {
+									// @ts-ignore (effect)
+									void this[tiedWith];
+								}
+							});
+
+							const needToForceWatching = watchers[tiedWith] == null && computed.dependencies?.length !== 0;
+
+							// If a computed property is tied with a field or system field
+							// and the host component does not have any watchers to this field,
+							// we need to register a "fake" watcher to enforce watching
+							if (needToForceWatching) {
+								this.$watch(tiedWith, {deep: true, immediate: true}, fakeHandler);
+							}
+						}
+					});
+				}
 			}
 
 			// We should not use the getter's cache until the component is fully created.
