@@ -57,13 +57,6 @@ module.exports = [
 			delete attrs['class'];
 		}
 
-		// To ensure correct functioning on the client side with functional components,
-		// we normalize all calls to the v-attrs directive as props
-		if (attrs['v-attrs']) {
-			attrs[':v-attrs'] = attrs['v-attrs'].slice();
-			delete attrs['v-attrs'];
-		}
-
 		if (webpack.ssr) {
 			// In SSR, these directives are meaningless
 			delete attrs['v-once'];
@@ -73,6 +66,18 @@ module.exports = [
 			if (attrs['v-render'] && forceRenderAsVNode === false) {
 				throw new Error(`("${tplName}") To use the \`v-render\` directive with SSR, you need to switch the component to rendering mode in VNODE using the \`forceRenderAsVNode\` constant`);
 			}
+
+			// For SSR, all `:v-attrs` calls should be normalized like a regular directive call
+			if (attrs[':v-attrs']) {
+				attrs['v-attrs'] = attrs[':v-attrs'].slice();
+				delete attrs[':v-attrs'];
+			}
+
+		// To ensure correct functioning on the client side with functional components,
+		// we normalize all calls to the v-attrs directive as props
+		} else if (attrs['v-attrs']) {
+			attrs[':v-attrs'] = attrs['v-attrs'].slice();
+			delete attrs['v-attrs'];
 		}
 
 		// Ensuring correct functioning of refs inside functional components
