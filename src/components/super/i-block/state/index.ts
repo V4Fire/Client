@@ -610,21 +610,6 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * Initializes the theme modifier and attaches a listener to monitor changes of the theme
-	 */
-	@hook('created')
-	protected initThemeModListener(): void {
-		const theme = this.remoteState.theme.get();
-		void this.setMod('theme', theme.value);
-
-		this.async.on(
-			this.remoteState.theme.emitter,
-			'theme.change',
-			(theme: Theme) => this.setMod('theme', theme.value)
-		);
-	}
-
-	/**
 	 * Stores a boolean flag in the hydrationStore during SSR,
 	 * which determines whether the content of components should be rendered during hydration
 	 * if server-side rendering is disabled for the component
@@ -657,6 +642,9 @@ export default abstract class iBlockState extends iBlockMods {
 			const v = this.stage;
 			return v == null ? v : String(v);
 		});
+
+		this.sync.mod('theme', 'remoteState.theme.emitter:theme.change', {immediate: true}, (theme?: Theme) =>
+			theme != null ? theme.value : this.remoteState.theme.get());
 	}
 
 	/**
