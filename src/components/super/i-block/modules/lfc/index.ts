@@ -113,7 +113,7 @@ export default class Lfc extends Friend {
 	 * ```
 	 */
 	execCbAfterBlockReady<R = unknown>(cb: Cb<this['C'], R>, opts?: AsyncOptions): CanUndef<CanPromise<R>> {
-		if (this.ctx.block) {
+		if ('block' in this.ctx) {
 			if (statuses[this.componentStatus] >= 0) {
 				return cb.call(this.component);
 			}
