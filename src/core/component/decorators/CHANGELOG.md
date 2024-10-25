@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-10-??)
+
+#### :bug: Bug Fix
+
+* Fixed endless attempts to load a component template that is not in use
+
 ## v4.0.0-beta.144 (2024-10-09)
 
 #### :bug: Bug Fix
