@@ -17,6 +17,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Create a `normalizeComponentForceUpdateProps` for normalizing the props with `forceUpdate = false` `core/component/render`
 
+## v4.0.0-beta.147 (2024-10-25)
+
+#### :bug: Bug Fix
+
+* Fixed the bug with previous active element not loosing its focus state `bList`
+
 ## v4.0.0-beta.146 (2024-10-18)
 
 #### :bug: Bug Fix
