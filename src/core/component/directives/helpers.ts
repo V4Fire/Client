@@ -10,6 +10,7 @@ import { getComponentContext } from 'core/component/context';
 
 import type { DirectiveBinding, VNode } from 'core/component/engines';
 import type { ComponentInterface } from 'core/component/interface';
+
 import { isPropGetter } from 'core/component/reflect';
 import { setVNodePatchFlags } from 'core/component/render';
 
