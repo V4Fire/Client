@@ -7,6 +7,7 @@
  */
 
 import { app, ComponentInterface } from 'core/component';
+
 import { registerComponent } from 'core/component/init';
 import { render, create } from 'components/friends/vdom';
 
@@ -15,8 +16,7 @@ import type { ComponentElement } from 'components/super/i-static-page/i-static-p
 
 import { expandedParse } from 'core/prelude/test-env/components/json';
 
-const
-	createdComponents = Symbol('A set of created components');
+const createdComponents = Symbol('A set of created components');
 
 globalThis.renderComponents = (
 	componentName: string,
@@ -30,11 +30,9 @@ globalThis.renderComponents = (
 		}
 	}
 
-	const
-		ID_ATTR = 'data-dynamic-component-id';
+	const ID_ATTR = 'data-dynamic-component-id';
 
-	const
-		ctx = <Nullable<iBlock['unsafe']>>app.component;
+	const ctx = <Nullable<iBlock['unsafe']>>app.component;
 
 	if (ctx == null) {
 		throw new ReferenceError('The root context for rendering is not defined');
@@ -91,13 +89,12 @@ globalThis.renderComponents = (
 };
 
 globalThis.removeCreatedComponents = () => {
-	const
-		components = globalThis[createdComponents];
+	const components = globalThis[createdComponents];
 
 	if (Object.isSet(components)) {
-		Object.cast<Set<ComponentElement>>(components).forEach((node) => {
-			node.component?.unsafe.$destroy();
-			node.remove();
+		Object.cast<Set<Nullable<ComponentElement>>>(components).forEach((node) => {
+			node?.component?.unsafe.$destroy();
+			node?.remove();
 		});
 
 		components.clear();
