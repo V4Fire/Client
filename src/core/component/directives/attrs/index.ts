@@ -367,7 +367,7 @@ ComponentEngine.directive('attrs', {
 			if (name.startsWith('v-')) {
 				parseDirective(name, value);
 
-			} else if (!name.startsWith('@')) {
+			} else if (!name.startsWith('@') || isPropGetter.test(name)) {
 				patchProps(props, normalizePropertyAttribute(name), value);
 			}
 		});
