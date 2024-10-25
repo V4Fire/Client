@@ -644,7 +644,7 @@ export default abstract class iBlockState extends iBlockMods {
 		});
 
 		this.sync.mod('theme', 'remoteState.theme.emitter:theme.change', {immediate: true}, (theme?: Theme) =>
-			theme != null ? theme.value : this.remoteState.theme.get());
+			(theme ?? this.remoteState.theme.get()).value);
 	}
 
 	/**
