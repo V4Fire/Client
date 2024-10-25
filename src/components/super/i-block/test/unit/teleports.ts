@@ -45,7 +45,7 @@ test.describe('<i-block> using the root teleport', () => {
 			const attrs = await target.evaluate((ctx) =>
 				ctx.unsafe.$refs.component.$el!.className);
 
-			test.expect(attrs).toBe('i-block-helper u1e705d34abc46a b-bottom-slide b-bottom-slide_opened_false b-bottom-slide_stick_true b-bottom-slide_events_false b-bottom-slide_height-mode_full b-bottom-slide_visible_false b-bottom-slide_theme_light b-bottom-slide_hidden_true');
+			test.expect(attrs).toBe('i-block-helper u1e705d34abc46a b-bottom-slide b-bottom-slide_opened_false b-bottom-slide_stick_true b-bottom-slide_events_false b-bottom-slide_height-mode_full b-bottom-slide_theme_light b-bottom-slide_visible_false b-bottom-slide_hidden_true');
 		});
 	});
 
