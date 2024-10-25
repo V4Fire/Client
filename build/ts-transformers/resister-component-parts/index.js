@@ -174,10 +174,7 @@ function addDefaultValueDecorator(context, node) {
 
 	let getter;
 
-	if (ts.isFunctionLike(defaultValue)) {
-		getter = defaultValue;
-
-	} else if (
+	if (
 		ts.isNumericLiteral(defaultValue) ||
 		ts.isBigIntLiteral(defaultValue) ||
 		ts.isStringLiteral(defaultValue) ||
@@ -189,13 +186,10 @@ function addDefaultValueDecorator(context, node) {
 		getter = defaultValue;
 
 	} else {
-		const getterValue = ts.isFunctionLike(defaultValue) ?
-			defaultValue :
-
-			factory.createBlock(
-				[factory.createReturnStatement(defaultValue)],
-				true
-			);
+		const getterValue = factory.createBlock(
+			[factory.createReturnStatement(defaultValue)],
+			true
+		);
 
 		getter = factory.createFunctionExpression(
 			undefined,
