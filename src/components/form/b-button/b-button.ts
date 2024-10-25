@@ -222,8 +222,7 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 			default: {
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (this.dataProviderProp != null && (this.dataProviderProp !== 'Provider' || this.href != null)) {
-					let
-						{dataProvider} = this;
+					let {dataProvider} = this;
 
 					if (dataProvider == null) {
 						throw new ReferenceError('Missing data provider to send data');
@@ -242,8 +241,9 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 				// Form attribute fix for MS Edge && IE
 				} else if (this.form != null && this.type === 'submit') {
 					e.preventDefault();
+
 					const form = this.dom.getComponent<bForm>(`#${this.form}`);
-					form && await form.submit();
+					await form?.submit();
 				}
 
 				await this.toggle();
