@@ -225,13 +225,12 @@ export function normalizeComponentAttrs(
 
 /**
  * Normalizes the props with `forceUpdate` set to `false` for a child component
- * using the parent context
+ * using the parent context. The function returns a new object of normalized props
+ * for the child component.
  *
  * @param parentCtx - the context of the parent component
  * @param componentName - the name of the child component
  * @param props - the initial props of the child component
- *
- * @returns The new object of normalized props for the child component
  */
 export function normalizeComponentForceUpdateProps(
 	parentCtx: ComponentInterface,

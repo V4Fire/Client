@@ -6,8 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { app, ComponentInterface } from 'core/component';
-import { normalizeComponentForceUpdateProps } from 'core/component';
+import { app, ComponentInterface, normalizeComponentForceUpdateProps } from 'core/component';
 import { render, create } from 'components/friends/vdom';
 
 import type iBlock from 'components/super/i-block/i-block';
