@@ -67,8 +67,7 @@ ComponentEngine.directive('attrs', {
 			r = ctx.$renderEngine.r;
 		}
 
-		let
-			attrs = {...params.value};
+		let attrs = {...params.value};
 
 		if (componentMeta != null) {
 			attrs = normalizeComponentAttrs(attrs, vnode.dynamicProps, componentMeta)!;
@@ -228,8 +227,7 @@ ComponentEngine.directive('attrs', {
 
 			if (Object.isDictionary(dir)) {
 				if (Object.isFunction(dir.beforeCreate)) {
-					const
-						newVnode = dir.beforeCreate(binding, vnode);
+					const newVnode = dir.beforeCreate(binding, vnode);
 
 					if (newVnode != null) {
 						vnode = newVnode;
@@ -354,8 +352,7 @@ ComponentEngine.directive('attrs', {
 			props: Dictionary = {},
 			componentMeta = ctx?.meta;
 
-		let
-			attrs = {...params.value};
+		let attrs = {...params.value};
 
 		if (componentMeta != null) {
 			attrs = normalizeComponentAttrs(attrs, null, componentMeta)!;
