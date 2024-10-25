@@ -31,55 +31,57 @@ export function inheritContext(
 	// Additionally, we should not unmount the vnodes created within the component.
 	parentCtx.$destroy(<ComponentDestructorOptions>{recursive: false, shouldUnmountVNodes: false});
 
-	const linkedFields = {};
-
 	const
-		props = ctx.$props,
-		parentProps = parentCtx.$props,
-		parentKeys = Object.keys(parentProps);
+		parentProps = parentCtx.getPassedProps?.(),
+		linkedFields = {};
 
-	for (let i = 0; i < parentKeys.length; i++) {
-		const
-			prop = parentKeys[i],
-			linked = parentCtx.$syncLinkCache.get(prop);
+	if (parentProps != null) {
+		for (const prop of parentProps) {
+			const linked = parentCtx.$syncLinkCache.get(prop);
 
-		if (linked != null) {
-			const links = Object.values(linked);
+			if (linked != null) {
+				const links = Object.values(linked);
 
-			for (let i = 0; i < links.length; i++) {
-				const link = links[i];
+				for (let i = 0; i < links.length; i++) {
+					const link = links[i];
 
-				if (link != null) {
-					linkedFields[link.path] = prop;
+					if (link != null) {
+						linkedFields[link.path] = prop;
+					}
 				}
 			}
 		}
 	}
 
-	for (const cluster of [parentCtx.meta.systemFields, parentCtx.meta.fields]) {
-		const keys = Object.keys(cluster);
+	const parentMeta = parentCtx.meta;
 
-		for (let i = 0; i < keys.length; i++) {
+	const clusters = <const>[
+		[parentMeta.systemFields, parentMeta.systemFieldInitializers],
+		[parentMeta.fields, parentMeta.fieldInitializers]
+	];
+
+	for (const [cluster, fields] of clusters) {
+		for (let i = 0; i < fields.length; i++) {
 			const
-				name = keys[i],
-				field = cluster[name];
+				fieldName = fields[i][0],
+				field = cluster[fieldName];
 
 			if (field == null) {
 				continue;
 			}
 
-			const link = linkedFields[name];
+			const link = linkedFields[fieldName];
 
 			const
-				val = ctx[name],
-				oldVal = parentCtx[name];
+				val = ctx[fieldName],
+				oldVal = parentCtx[fieldName];
 
 			const needMerge =
-				ctx.$modifiedFields[name] !== true &&
+				ctx.$modifiedFields[fieldName] !== true &&
 
 				(
 					Object.isFunction(field.unique) ?
-						!Object.isTruly(field.unique(ctx, Object.cast(parentCtx))) :
+						!Object.isTruly(field.unique(ctx, parentCtx)) :
 						!field.unique
 				) &&
 
@@ -87,30 +89,28 @@ export function inheritContext(
 
 				(
 					link == null ||
-					Object.fastCompare(props[link], parentProps[link])
+					Object.fastCompare(ctx[link], parentCtx[link])
 				);
 
 			if (needMerge) {
-				if (Object.isTruly(field.merge)) {
-					if (field.merge === true) {
-						let newVal = oldVal;
+				if (field.merge === true) {
+					let newVal = oldVal;
 
-						if (Object.isDictionary(val) || Object.isDictionary(oldVal)) {
-							// eslint-disable-next-line prefer-object-spread
-							newVal = Object.assign({}, val, oldVal);
+					if (Object.isDictionary(val) || Object.isDictionary(oldVal)) {
+						// eslint-disable-next-line prefer-object-spread
+						newVal = Object.assign({}, val, oldVal);
 
-						} else if (Object.isArray(val) || Object.isArray(oldVal)) {
-							newVal = Object.assign([], val, oldVal);
-						}
-
-						ctx[name] = newVal;
-
-					} else if (Object.isFunction(field.merge)) {
-						field.merge(ctx, Object.cast(parentCtx), name, link);
+					} else if (Object.isArray(val) || Object.isArray(oldVal)) {
+						newVal = Object.assign([], val, oldVal);
 					}
 
+					ctx[fieldName] = newVal;
+
+				} else if (Object.isFunction(field.merge)) {
+					field.merge(ctx, parentCtx, fieldName, link);
+
 				} else {
-					ctx[name] = parentCtx[name];
+					ctx[fieldName] = parentCtx[fieldName];
 				}
 			}
 		}
