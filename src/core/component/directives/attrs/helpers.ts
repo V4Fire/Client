@@ -18,6 +18,7 @@ import {
 
 } from 'core/component/render';
 
+import { propGetterRgxp } from 'core/component/reflect';
 import { modRgxp, styleAttrs, classAttrs } from 'core/component/directives/attrs/const';
 
 /**
@@ -52,6 +53,10 @@ export function normalizePropertyAttribute(name: string): string {
 
 			attrName = `^${attrName}`;
 		}
+	}
+
+	if (propGetterRgxp.test(attrName)) {
+		attrName = `on${attrName.slice(1).capitalize()}`;
 	}
 
 	return attrName;
