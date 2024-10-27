@@ -5,7 +5,7 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
-
+import config from 'config';
 import { isComponent, componentRegInitializers, componentParams, components } from 'core/component/const';
 
 import type { ComponentMeta } from 'core/component/interface';
@@ -68,29 +68,21 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
  *
  * @param name - the component name
  */
-export function registerComponent(name: CanUndef<string>, layer?: string): CanNull<ComponentMeta> {
+export function registerComponent(name: CanUndef<string>): CanNull<ComponentMeta> {
 	if (name == null || !isComponent.test(name)) {
 		return null;
 	}
 
-	const component = components.get(name);
-
-	let
+	const 
+		component = components.get(name),
 		componentName = component?.componentName || name,
-		componentNormolizedName = componentName.match(/(?<name>.*)-functional$/)?.groups?.name || componentName;	
-
+		componentNormolizedName = componentName.match(/(?<name>.*)-functional$/)?.groups?.name || componentName,
+		layer = config.components[componentNormolizedName]?.layer;
+	
 	const event = `registerComponent.${layer}.${componentNormolizedName}`;
-	if (layer == null) {
-		// TO MAKE UP BETTER SOLUTION AND REMOVE IT
-		for (const l of globalThis.layersList) {
-			initEmitter.emit(`registerComponent.${l}.${componentNormolizedName}`);
-		}
-	} else {
-		initEmitter.emit(event);
-	}
+	initEmitter.emit(event);
 
-	const
-		regComponent = componentRegInitializers[name];
+	const regComponent = componentRegInitializers[name];
 
 	if (regComponent != null) {
 		regComponent.forEach((reg) => reg());

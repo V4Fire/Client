@@ -17,12 +17,7 @@ exports.invokeByRegisterEvent = function(script, layerName, componentName) {
 			const {initEmitter} = require('core/component/event');
 			globalThis.initEmitter = initEmitter;
 		}
-		if (globalThis.layersList == null) {
-			globalThis.layersList = new Set();
-		}
-		if (!globalThis.layersList.has('${layerName}')) {
-			globalThis.layersList.add('${layerName}');
-		}
+		
 		globalThis.initEmitter.once('registerComponent.${layerName}.${componentName}', () => {
 			${script}
 		});

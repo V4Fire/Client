@@ -252,7 +252,7 @@ async function buildProjectGraph() {
 
 					const
 						componentName = component?.name ?? name,
-						isPageComponent = new RegExp(`\(p)-.+?/?`).test(componentName);
+						isPageComponent = new RegExp(`\p-.+?/?`).test(componentName);
 
 					
 					if (webpack.ssr) {

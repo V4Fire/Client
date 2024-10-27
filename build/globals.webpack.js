@@ -15,7 +15,7 @@ const
 const
 	{csp, build, webpack, i18n} = config,
 	{config: pzlr} = require('@pzlr/build-core'),
-	{collectI18NKeysets} = include('build/helpers'),
+	{collectI18NKeysets, getLayerName} = include('build/helpers'),
 	{getDSComponentMods, getThemes, getDS} = include('build/ds');
 
 const
@@ -56,9 +56,18 @@ module.exports = {
 	COMPONENTS: projectGraph.then(({components}) => {
 		if (Object.isMap(components)) {
 			return $C(components).to({}).reduce((res, el, key) => {
+				let layer;
+
+				if (el.logic != null) {
+					layer = JSON.stringify(getLayerName(el.logic));
+				} else {
+					layer = JSON.stringify(getLayerName(el.index))
+				}
+
 				res[key] = {
 					parent: JSON.stringify(el.parent),
-					dependencies: JSON.stringify(el.dependencies)
+					dependencies: JSON.stringify(el.dependencies),
+					layer
 				};
 
 				return res;
