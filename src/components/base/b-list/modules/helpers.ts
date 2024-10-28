@@ -24,6 +24,10 @@ export function setActiveMod(this: bList, el: Element, isActive: boolean): void 
 
 	this.block.setElementMod(el, 'link', 'active', isActive);
 
+	if (!isActive && el instanceof HTMLElement) {
+		el.blur();
+	}
+
 	if (el.hasAttribute('aria-selected')) {
 		el.setAttribute('aria-selected', String(isActive));
 	}
