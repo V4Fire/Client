@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.148 (2024-10-28)
+
+#### :bug: Bug Fix
+
+* The syntax of the `v-attrs` directive now normalizes from `:v-attrs` to `v-attrs` for SSR
+
 ## v4.0.0-beta.145 (2024-10-14)
 
 #### :bug: Bug Fix

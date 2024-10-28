@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.148 (2024-10-28)
+
+#### :bug: Bug Fix
+
+* Fixed the `resolveAttrs` function: property getters are no longer removed from props
+
 ## v4.0.0-beta.140 (2024-10-03)
 
 #### :bug: Bug Fix

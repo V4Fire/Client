@@ -11,6 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.148 (2024-10-28)
+
+#### :bug: Bug Fix
+
+* The syntax of the `v-attrs` directive now normalizes from `:v-attrs` to `v-attrs` for SSR `build/snakeskin/filters/tag`
+* Fixed the handling of property getters in SSR: property getters are now included in props instead of being ignored as handlers `core/component/directives/attrs`
+* Fixed the `resolveAttrs` function: property getters are no longer removed from props `core/component/render/helpers/attrs`
+
 ## v4.0.0-beta.147 (2024-10-25)
 
 #### :bug: Bug Fix

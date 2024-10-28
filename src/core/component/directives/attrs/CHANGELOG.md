@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.148 (2024-10-28)
+
+#### :bug: Bug Fix
+
+* Fixed the handling of property getters in SSR: property getters are now included in props instead of being ignored as handlers
+
 ## v4.0.0-beta.111 (2024-07-18)
 
 #### :bug: Bug Fix
