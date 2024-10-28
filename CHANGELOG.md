@@ -17,6 +17,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed endless attempts to load a component template that is not in use `core/component/decorators/component`
 
+## v4.0.0-beta.148 (2024-10-28)
+
+#### :house: Internal
+
+* Create a `normalizeComponentForceUpdateProps` for normalizing the props with `forceUpdate = false` `core/component/render`
+* Exclude SSR shims for non-SSR environments `core/shims`
+
 ## v4.0.0-beta.147 (2024-10-25)
 
 #### :bug: Bug Fix
