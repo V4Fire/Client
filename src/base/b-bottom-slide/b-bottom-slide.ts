@@ -433,6 +433,8 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iOpen, iVisible, i
 	 * @see [[iOpen.open]]
 	 * @param [step]
 	 * @emits `open()`
+	 * @emits `openTransitionStart()`
+	 * @emits `openTransitionEnd()`
 	 */
 	@wait('ready')
 	async open(step?: number): Promise<boolean> {
@@ -455,12 +457,20 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iOpen, iVisible, i
 		}
 
 		this.emit('open');
+
+		void this.waitRef<HTMLElement>('window').then((win) => {
+			this.async.once(win, 'transitionstart', () => this.emitTransitionEvent('open', 'Start'));
+			this.async.once(win, 'transitionend', () => this.emitTransitionEvent('open', 'End'));
+		});
+
 		return true;
 	}
 
 	/**
 	 * @see [[iOpen.close]]
 	 * @emits `close()`
+	 * @emits `closeTransitionStart()`
+	 * @emits `closeTransitionEnd()`
 	 */
 	async close(): Promise<boolean> {
 		if (this.isClosed) {
@@ -480,6 +490,12 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iOpen, iVisible, i
 
 		this.history.clear();
 		this.emit('close');
+
+		void this.waitRef<HTMLElement>('window').then((win) => {
+			this.async.once(win, 'transitionstart', () => this.emitTransitionEvent('close', 'Start'));
+			this.async.once(win, 'transitionend', () => this.emitTransitionEvent('close', 'End'));
+		});
+
 		return true;
 	}
 
@@ -528,6 +544,10 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iOpen, iVisible, i
 	/** @see [[iOpen.onTouchClose]] */
 	async onTouchClose(): Promise<void> {
 		// Loopback
+	}
+
+	protected emitTransitionEvent(prefix: string, state: 'Start' | 'End'): void {
+		this.emit(`${prefix}Transition${state}`);
 	}
 
 	protected override initModEvents(): void {

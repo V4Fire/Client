@@ -129,6 +129,74 @@ module.exports = (page, {browser, contextOpts}) => {
 			});
 		});
 
+		describe('emits transitions', () => {
+			it('invokes the `open` method', async () => {
+				const [component] = await initBottomSlide({
+					heightMode: 'full'
+				});
+
+				const
+					start = component.evaluate((ctx) => ctx.promisifyOnce('openTransitionStart')),
+					end = component.evaluate((ctx) => ctx.promisifyOnce('openTransitionEnd'));
+
+				await open(component);
+
+				await expectAsync(Promise.all([start, end])).toBeResolved();
+			});
+
+			it('opening via a swipe', async () => {
+				const [component] = await initBottomSlide({
+					heightMode: 'full',
+					visible: 160
+				});
+
+				const
+					start = component.evaluate((ctx) => ctx.promisifyOnce('openTransitionStart')),
+					end = component.evaluate((ctx) => ctx.promisifyOnce('openTransitionEnd'));
+
+				await gesture.evaluate((ctx) =>
+					ctx.swipe(ctx.buildSteps(3, 20, globalThis.innerHeight, 0, -20)));
+
+				await expectAsync(Promise.all([start, end])).toBeResolved();
+			});
+
+			it('invokes the `close` method', async () => {
+				const [component] = await initBottomSlide({
+					heightMode: 'full'
+				});
+
+				const
+					start = component.evaluate((ctx) => ctx.promisifyOnce('closeTransitionStart')),
+					end = component.evaluate((ctx) => ctx.promisifyOnce('closeTransitionEnd'));
+
+				await open(component);
+				await close(component);
+
+				await expectAsync(Promise.all([start, end])).toBeResolved();
+			});
+
+			it('closing via a swipe', async () => {
+				const [component] = await initBottomSlide({
+					heightMode: 'full'
+				});
+
+				const
+					start = component.evaluate((ctx) => ctx.promisifyOnce('closeTransitionStart')),
+					end = component.evaluate((ctx) => ctx.promisifyOnce('closeTransitionEnd'));
+
+				await open(component);
+
+				const
+					windowY = await getComponentWindowYPos(component);
+
+				await gesture.evaluate((ctx, windowY) =>
+					ctx.swipe(ctx.buildSteps(6, 40, windowY + 20, 0, 100, {pause: 200})), windowY);
+
+				await expectAsync(Promise.all([start, end])).toBeResolved();
+			});
+
+		});
+
 		describe('`stepChange`', () => {
 			it('invokes the `next` method', async () => {
 				const [component] = await initBottomSlide({
