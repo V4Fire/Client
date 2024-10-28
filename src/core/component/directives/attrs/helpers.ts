@@ -56,7 +56,7 @@ export function normalizePropertyAttribute(name: string): string {
 	}
 
 	if (isPropGetter.test(attrName)) {
-		attrName = `on${attrName.slice(1).capitalize()}`;
+		attrName = `on${attrName.slice(1)}`;
 	}
 
 	return attrName;
