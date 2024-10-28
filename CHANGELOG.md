@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added a new webpack loader for responsive images `build/webpack/loaders/responsive-images-loader`
+
 ## v4.0.0-beta.148 (2024-10-28)
 
 #### :house: Internal
@@ -1162,12 +1168,6 @@ result of which the components in the slots had an incorrect `$parent` `build/sn
 * Added the `theme` modifier calculation to components `components/super/i-block`
 
 ## v4.0.0-beta.30 (2023-10-11)
-
-#### :rocket: New Feature
-
-* Added a new webpack loader for responsive images `build/webpack/loaders/responsive-images-loader`
-
-## v4.0.0-beta.?? (2023-??-??)
 
 #### :boom: Breaking Change
 
