@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Create a `normalizeComponentForceUpdateProps` for normalizing the props with `forceUpdate = false` `core/component/render`
+* Exclude SSR shims for non-SSR environments `core/shims`
 
 ## v4.0.0-beta.147 (2024-10-25)
 
