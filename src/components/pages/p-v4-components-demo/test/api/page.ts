@@ -13,41 +13,59 @@ import { concatURLs } from 'core/url';
 import Component from 'tests/helpers/component';
 
 import type bDummy from 'components/dummies/b-dummy/b-dummy';
+import type pV4ComponentsDemo from 'components/pages/p-v4-components-demo/p-v4-components-demo';
 
 /**
  * Page object: provides an API to work with `DemoPage`
  */
 export default class DemoPage {
-
 	/** {@link Page} */
 	readonly page: Page;
 
 	/**
-	 * Server base url
+	 * Server base URL
 	 */
 	readonly baseUrl: string;
 
 	/**
-	 * Returns an initial page name
+	 * Page component reference.
+	 */
+	component?: JSHandle<pV4ComponentsDemo>;
+
+	/**
+	 * Returns the initial page name
 	 */
 	get pageName(): string {
 		return '';
 	}
 
 	/**
+	 * Name of the HTML file
+	 */
+	protected pageFileName: string;
+
+	/**
 	 * @param page
+	 * @param baseUrl
 	 */
 	constructor(page: Page, baseUrl: string) {
 		this.page = page;
 		this.baseUrl = baseUrl;
+		this.pageFileName = build.demoPage();
 	}
 
 	/**
 	 * Opens a demo page
+	 * @param [query] - query parameters for the URL, i.e. `a=1&b=1`
 	 */
-	async goto(): Promise<DemoPage> {
-		await this.page.goto(concatURLs(this.baseUrl, `${build.demoPage()}.html`), {waitUntil: 'networkidle'});
-		await this.page.waitForSelector('#root-component', {state: 'attached'});
+	async goto(query: string = ''): Promise<DemoPage> {
+		const
+			root = this.page.locator('#root-component');
+
+		await this.page.goto(concatURLs(this.baseUrl, `${this.pageFileName}.html`) + (query.length > 0 ? `?${query}` : ''), {waitUntil: 'networkidle'});
+		await root.waitFor({state: 'attached'});
+
+		this.component = await root.evaluateHandle((ctx) => ctx.component);
 
 		return this;
 	}

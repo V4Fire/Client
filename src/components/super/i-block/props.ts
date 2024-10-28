@@ -14,25 +14,24 @@ import type { Stage } from 'components/super/i-block/interface';
 
 import type { ModsProp } from 'components/super/i-block/modules/mods';
 import { prop, DecoratorMethodWatcher } from 'components/super/i-block/decorators';
+
 import type { TransitionMethod } from 'components/base/b-router/interface';
 
-@component()
+@component({partial: 'iBlock'})
 export default abstract class iBlockProps extends ComponentInterface {
 	@prop({type: String, required: false})
 	override readonly componentIdProp?: string;
 
-	/**
-	 * The unique or global name of the component.
-	 * Used to synchronize component data with various external storages.
-	 */
 	@prop({type: String, required: false})
-	readonly globalName?: string;
+	override readonly globalName?: string;
 
 	/**
-	 * The component root tag type
+	 * The component root tag type.
+	 * This prop is similar to the SS constant *rootTag* but has a higher priority.
+	 * It is convenient to use for various wrapper components.
 	 */
-	@prop(String)
-	readonly rootTag: string = 'div';
+	@prop({type: String, required: false})
+	readonly rootTag?: string;
 
 	/**
 	 * If set to true, the component will log informational messages in addition to errors and warnings.
@@ -48,14 +47,14 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 * For example, let's say we have a component that implements an image upload form.
 	 * And we have two options for this form: uploading from a link or uploading from a computer.
 	 *
-	 * In order to differentiate between these two options and render different markups accordingly,
+	 * To differentiate between these two options and render different markups accordingly,
 	 * we can create two stage values: "link" and "file".
 	 * This way, we can modify the component's template based on the current stage value.
 	 */
 	@prop({type: [String, Number], required: false})
 	readonly stageProp?: Stage;
 
-	@prop({type: Object, required: false})
+	@prop({type: Object, required: false, forceUpdate: false})
 	override readonly modsProp?: ModsProp;
 
 	/**
@@ -111,10 +110,10 @@ export default abstract class iBlockProps extends ComponentInterface {
 	readonly dependenciesProp?: Iterable<Module>;
 
 	/**
-	 * If set to false, the component will not render its content during server-side rendering
+	 * If set to false, the component will not render its content during SSR
 	 */
 	@prop({type: Boolean, forceDefault: true})
-	readonly ssrRendering: boolean = true;
+	readonly ssrRenderingProp: boolean = true;
 
 	/**
 	 * A promise that will block the rendering of the component until it is resolved.
@@ -174,8 +173,8 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 * ```
 	 *
 	 * However, in certain cases where the stage value is not present in the `route.query`,
-	 * and the component has a default value for stage,
-	 * we may encounter a situation where there is a route that has not been synchronized with the component.
+	 * and the component has a default value for stage.
+	 * We may encounter a situation where there is a route that has not been synchronized with the component.
 	 * This can impact the logic for "back" navigation as it may not meet our expectations.
 	 *
 	 * To address this, if you set `syncRouterStateOnInit` to true,
@@ -195,7 +194,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 	readonly routerStateUpdateMethod: Exclude<TransitionMethod, 'event'> = 'push';
 
 	/**
-	 * A dictionary with remote component watchers.
+	 * A dictionary containing remote component watchers.
 	 * Using this prop is very similar to using the @watch decorator:
 	 *   1. As a key, we specify the name of the current component method we want to call.
 	 *   2. As a value, we specify the property path or event that we want to watch or listen to.
@@ -269,8 +268,8 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 * });
 	 * ```
 	 */
-	@prop(Boolean)
-	readonly proxyCall: boolean = false;
+	@prop({type: Boolean, required: false})
+	readonly proxyCall?: boolean;
 
 	/**
 	 * If set to true, the component event dispatching mode is enabled.
@@ -310,16 +309,15 @@ export default abstract class iBlockProps extends ComponentInterface {
 	@prop({type: Object, required: false})
 	override readonly styles?: Dictionary<CanArray<string> | Dictionary<string>>;
 
-	/**
-	 * Whether to add classes to the component markup with its unique identifier.
-	 * For functional components, the value of this parameter can only be false.
-	 */
 	@prop({type: Boolean, forceDefault: true})
-	readonly renderComponentId: boolean = true;
+	override readonly canFunctional: boolean = false;
 
 	@prop({type: Function, required: false})
 	override readonly getRoot?: () => this['Root'];
 
 	@prop({type: Function, required: false})
 	override readonly getParent?: () => this['$parent'];
+
+	@prop({type: Function, required: false})
+	override readonly getPassedProps?: () => Set<string>;
 }

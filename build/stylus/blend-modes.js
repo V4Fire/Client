@@ -69,7 +69,7 @@ module.exports = function addPlugins(api) {
 	 * @see https://en.wikipedia.org/wiki/Blend_modes
 	 * @param {object} foreground
 	 * @param {object} background
-	 * @param {string} [mode=normal]
+	 * @param {string} [mode]
 	 * @returns {object}
 	 */
 	api.define('blend', (foreground, background, mode = 'normal') => {

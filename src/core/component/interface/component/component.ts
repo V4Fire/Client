@@ -8,20 +8,23 @@
 
 /* eslint-disable @typescript-eslint/unified-signatures */
 
-import type Async from 'core/async';
-import type { BoundFn, ProxyCb } from 'core/async';
+import type watch from 'core/object/watch';
+import type { Watcher } from 'core/object/watch';
 
-import type { State } from 'core/component/state';
-import type { HydrationStore } from 'core/component/hydration';
-import type { VNode, Slots, ComponentOptions, SetupContext } from 'core/component/engines';
+import type Async from 'core/async';
+import type { BoundFn, ProxyCb, EventId } from 'core/async';
+import type { AbstractCache } from 'core/cache';
+
+import { V4_COMPONENT } from 'core/component/const';
 import type { ComponentMeta } from 'core/component/meta';
+import type { VNode, Slots, ComponentOptions, SetupContext } from 'core/component/engines';
 
 import type { Hook } from 'core/component/interface/lc';
 import type { ModsProp, ModsDict } from 'core/component/interface/mod';
 import type { SyncLinkCache } from 'core/component/interface/link';
 import type { RenderEngine } from 'core/component/interface/engine';
 
-import type { ComponentElement } from 'core/component/interface/component/types';
+import type { ComponentApp, ComponentDestructorOptions, ComponentElement, ComponentEmitterOptions } from 'core/component/interface/component/types';
 import type { WatchPath, WatchOptions, RawWatchHandler } from 'core/component/interface/watch';
 import type { UnsafeGetter, UnsafeComponentInterface } from 'core/component/interface/component/unsafe';
 
@@ -40,23 +43,46 @@ export abstract class ComponentInterface {
 	readonly Component!: ComponentInterface;
 
 	/**
+	 * A unique symbol used to identify a V4Fire component
+	 */
+	readonly [V4_COMPONENT]: true;
+
+	/**
+	 * References to the instance of the entire application and its state
+	 */
+	readonly app!: ComponentApp;
+
+	/**
 	 * The unique component identifier.
+	 *
 	 * The value for this prop is automatically generated during the build process,
 	 * but it can also be manually specified.
 	 * If the prop is not provided, the ID will be generated at runtime.
 	 */
-	readonly componentIdProp?: string;
+	abstract readonly componentIdProp?: string;
 
 	/**
 	 * The unique component identifier.
 	 * The value is formed based on the passed prop or dynamically.
 	 */
-	readonly componentId!: string;
+	abstract readonly componentId: string;
 
 	/**
 	 * The component name in dash-style without special postfixes like `-functional`
 	 */
 	readonly componentName!: string;
+
+	/**
+	 * The unique or global name of the component.
+	 * Used to synchronize component data with various external storages.
+	 */
+	abstract readonly globalName?: string;
+
+	/**
+	 * True if the component renders as a regular one, but can be rendered as a functional.
+	 * This parameter is used during SSR and when hydrating the page.
+	 */
+	readonly canFunctional?: boolean;
 
 	/**
 	 * A reference to the class instance of the component.
@@ -85,7 +111,7 @@ export abstract class ComponentInterface {
 	 * and you give the outer component some theme modifier. This modifier will be recursively provided to
 	 * all child components.
 	 */
-	abstract get sharedMods(): CanNull<Readonly<ModsDict>>;
+	abstract get sharedMods(): CanNull<ModsDict>;
 
 	/**
 	 * Additional classes for the component elements.
@@ -137,12 +163,24 @@ export abstract class ComponentInterface {
 	abstract readonly getParent?: () => this['$parent'];
 
 	/**
+	 * The getter is used to get a set of props that were passed to the component directly through the template
+	 */
+	abstract readonly getPassedProps?: () => Set<string>;
+
+	/**
 	 * A string value indicating the lifecycle hook that the component is currently in.
 	 * For instance, `created`, `mounted` or `destroyed`.
 	 *
 	 * @see https://vuejs.org/guide/essentials/lifecycle.html
 	 */
 	abstract hook: Hook;
+
+	/**
+	 * A link to the root component
+	 */
+	get r(): this['Root'] {
+		return Object.throw();
+	}
 
 	/**
 	 * An API for safely invoking some internal properties and methods of a component.
@@ -200,22 +238,15 @@ export abstract class ComponentInterface {
 	readonly $renderEngine!: RenderEngine<any>;
 
 	/**
+	 * A number that increments every time the component is rendered
+	 */
+	readonly $renderCounter!: number;
+
+	/**
 	 * A link to the component metaobject.
 	 * This object contains all information of the component properties, methods, etc.
 	 */
 	protected readonly meta!: ComponentMeta;
-
-	/**
-	 * Hydrated data repository.
-	 * This API is used only for SSR.
-	 */
-	protected readonly hydrationStore?: HydrationStore;
-
-	/**
-	 * The global state with which the SSR rendering process is initialized.
-	 * This API is used only for SSR.
-	 */
-	protected readonly ssrState?: State;
 
 	/**
 	 * A dictionary containing component attributes that are not identified as input properties
@@ -245,11 +276,6 @@ export abstract class ComponentInterface {
 	protected readonly $activeField?: string;
 
 	/**
-	 * A number that increments every time the component is re-rendered
-	 */
-	protected readonly $renderCounter!: number;
-
-	/**
 	 * A dictionary containing references to component elements with the "ref" attribute
 	 */
 	protected readonly $refs!: Dictionary;
@@ -265,6 +291,11 @@ export abstract class ComponentInterface {
 	protected readonly $syncLinkCache!: SyncLinkCache;
 
 	/**
+	 * A stub for the correct functioning of `$parent`
+	 */
+	protected $restArgs!: unknown;
+
+	/**
 	 * An API for binding and managing asynchronous operations
 	 */
 	protected readonly async!: Async<ComponentInterface>;
@@ -274,6 +305,16 @@ export abstract class ComponentInterface {
 	 * This property is used by restricted/private consumers, such as private directives or component engines.
 	 */
 	protected readonly $async!: Async<ComponentInterface>;
+
+	/**
+	 * A list of functions that should be called when the component is destroyed
+	 */
+	protected readonly $destructors!: Function[];
+
+	/**
+	 * Cache for rendered SSR templates
+	 */
+	protected readonly $ssrCache?: AbstractCache<string>;
 
 	/**
 	 * A promise that resolves when the component is initialized.
@@ -351,9 +392,25 @@ export abstract class ComponentInterface {
 	protected abstract setup(props: Dictionary, ctx: SetupContext): CanPromise<CanUndef<Dictionary>>;
 
 	/**
-	 * Destroys the component
+	 * Creates a tuple of accessors for a value defined by a getter function.
+	 * This function is used to pass the value as a prop
+	 * to a child component without creating a contract for reactive template updates.
+	 * This is necessary to optimize situations where a change in a component's prop triggers
+	 * a re-render of the entire component, even if this prop is not used in the template.
+	 *
+	 * @param _getter
 	 */
-	protected $destroy(): void {
+	protected createPropAccessors<T extends object>(
+		_getter: () => T
+	): () => [T, (...args: Parameters<typeof watch> extends [any, ...infer A] ? A : never) => Watcher<T>] {
+		return Object.throw();
+	}
+
+	/**
+	 * Destroys the component
+	 * @param [_opts]
+	 */
+	protected $destroy(_opts?: ComponentDestructorOptions): void {
 		return Object.throw();
 	}
 
@@ -433,30 +490,86 @@ export abstract class ComponentInterface {
 	/**
 	 * Attaches a listener to the specified component's event
 	 *
-	 * @param _event
-	 * @param _handler
+	 * @param event
+	 * @param handler
+	 * @param [opts]
 	 */
-	protected $on<E = unknown, R = unknown>(_event: CanArray<string>, _handler: ProxyCb<E, R, this>): this {
+	protected $on<E = unknown, R = unknown>(
+		event: string,
+		handler: ProxyCb<E, R, this>,
+		opts?: ComponentEmitterOptions
+	): EventId;
+
+	/**
+	 * Attaches a listener to the specified component's events
+	 *
+	 * @param events
+	 * @param handler
+	 * @param [opts]
+	 */
+	protected $on<E = unknown, R = unknown>(
+		events: string[],
+		handler: ProxyCb<E, R, this>,
+		opts?: ComponentEmitterOptions
+	): EventId[];
+
+	protected $on<E = unknown, R = unknown>(
+		_event: CanArray<string>,
+		_handler: ProxyCb<E, R, this>,
+		_opts?: ComponentEmitterOptions
+	): CanArray<EventId> {
 		return Object.throw();
 	}
 
 	/**
 	 * Attaches a disposable listener to the specified component's event
 	 *
-	 * @param _event
-	 * @param _handler
+	 * @param event
+	 * @param handler
+	 * @param [opts]
 	 */
-	protected $once<E = unknown, R = unknown>(_event: string, _handler: ProxyCb<E, R, this>): this {
+	protected $once<E = unknown, R = unknown>(
+		event: string,
+		handler: ProxyCb<E, R, this>,
+		opts?: ComponentEmitterOptions
+	): EventId;
+
+	/**
+	 * Attaches a disposable listener to the specified component's event
+	 *
+	 * @param events
+	 * @param handler
+	 * @param opts
+	 */
+	protected $once<E = unknown, R = unknown>(
+		events: string[],
+		handler: ProxyCb<E, R, this>,
+		opts?: ComponentEmitterOptions
+	): EventId[];
+
+	protected $once<E = unknown, R = unknown>(
+		_event: CanArray<string>,
+		_handler: ProxyCb<E, R, this>,
+		_opts?: ComponentEmitterOptions
+	): CanArray<EventId> {
 		return Object.throw();
 	}
 
 	/**
 	 * Detaches the specified event listeners from the component
-	 *
-	 * @param [_event]
-	 * @param [_handler]
+	 * @param [link]
 	 */
-	protected $off(_event?: CanArray<string>, _handler?: Function): this {
+	protected $off(link: CanArray<EventId>): this;
+
+	/**
+	 * Detaches the specified event listeners from the component
+	 *
+	 * @param [event]
+	 * @param [handler]
+	 */
+	protected $off(event?: CanArray<string>, handler?: Function): this;
+
+	protected $off(_event?: CanArray<string | EventId>, _handler?: Function): this {
 		return Object.throw();
 	}
 
@@ -478,6 +591,27 @@ export abstract class ComponentInterface {
 	protected $resolveRef(_ref: null | undefined): undefined;
 	protected $resolveRef(_ref: unknown): string;
 	protected $resolveRef(_ref: unknown): CanUndef<string | Function> {
+		return Object.throw();
+	}
+
+	/**
+	 * Returns a function for getting the root component based on the context of the current component
+	 * @param _ctx
+	 */
+	protected $getRoot(_ctx: ComponentInterface): () => ComponentInterface {
+		return Object.throw();
+	}
+
+	/**
+	 * Returns a function for getting the parent component based on the context of the current component
+	 *
+	 * @param _ctx
+	 * @param _restArgs
+	 */
+	protected $getParent(
+		_ctx: ComponentInterface,
+		_restArgs?: {ctx?: ComponentInterface} | VNode
+	): () => ComponentInterface {
 		return Object.throw();
 	}
 

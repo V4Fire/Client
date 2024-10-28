@@ -11,5 +11,16 @@
 - include 'components/super/i-data'|b as placeholder
 
 - template index() extends ['i-data'].index
+	- forceRenderAsVNode = true
+
 	- block body
-		+= self.slot()
+		< template v-if = testComponent
+			< component &
+				ref = testComponent |
+				:is = testComponent |
+				v-attrs = testComponentAttrsNormalized |
+				v-render = testComponentSlots
+			.
+
+		< template v-else
+			+= self.slot()

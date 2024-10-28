@@ -16,6 +16,7 @@ import type { RenderFactory, RenderFn } from 'components/friends/vdom/interface'
  * Renders the specified VNode and returns the result
  *
  * @param vnode
+ * @param [group] - the name of the async group within which rendering takes place
  *
  * @example
  * ```js
@@ -25,12 +26,13 @@ import type { RenderFactory, RenderFn } from 'components/friends/vdom/interface'
  * console.log(div.classList.contains('foo')); // true
  * ```
  */
-export function render(this: Friend, vnode: VNode): Node;
+export function render(this: Friend, vnode: VNode, group?: string): Node;
 
 /**
  * Renders the specified list of VNodes and returns the result
  *
  * @param vnodes
+ * @param [group] - the name of the async group within which rendering takes place
  *
  * @example
  * ```js
@@ -43,9 +45,10 @@ export function render(this: Friend, vnode: VNode): Node;
  * console.log(div[1].classList.contains('bar')); // true
  * ```
  */
-export function render(this: Friend, vnodes: VNode[]): Node[];
-export function render(this: Friend, vnode: CanArray<VNode>): CanArray<Node> {
-	return this.ctx.$renderEngine.r.render(Object.cast(vnode), this.ctx);
+export function render(this: Friend, vnodes: VNode[], group?: string): Node[];
+
+export function render(this: Friend, vnode: CanArray<VNode>, group?: string): CanArray<Node> {
+	return this.ctx.$renderEngine.r.render(Object.cast(vnode), this.component, group);
 }
 
 /**
@@ -91,6 +94,8 @@ export function getRenderFactory(this: Friend, path: string): CanUndef<RenderFac
 		fn = Object.get(tpl, chunks.slice(1));
 
 	if (Object.isFunction(fn)) {
+		this.ctx.hydrateStyles(chunks[0]);
+
 		return fn();
 	}
 }
@@ -122,7 +127,7 @@ export function getRenderFactory(this: Friend, path: string): CanUndef<RenderFac
 export function getRenderFn(
 	this: Friend,
 	factoryOrPath: CanUndef<RenderFactory> | string,
-	ctx: ComponentInterface = this.ctx
+	ctx: ComponentInterface = this.component
 ): RenderFn {
 	const
 		factory = Object.isString(factoryOrPath) ? getRenderFactory.call(this, factoryOrPath) : factoryOrPath;
@@ -134,6 +139,13 @@ export function getRenderFn(
 	const
 		cache: unknown[] = [],
 		instanceCtx = Object.create(ctx, {isVirtualTpl: {value: true}});
+
+	Object.defineProperty(instanceCtx, '$slots', {
+		configurable: true,
+		enumerable: true,
+		writable: true,
+		value: {}
+	});
 
 	const render = factory(
 		instanceCtx,

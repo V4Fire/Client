@@ -6,16 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type Friend from 'components/friends/friend';
-import iBlock, { getPropertyInfo } from 'components/super/i-block/i-block';
+import { getPropertyInfo, V4_COMPONENT, PropertyInfo } from 'core/component';
+
+import type Field from 'components/friends/field';
+import type iBlock from 'components/super/i-block/i-block';
 
 import type { ValueGetter } from 'components/friends/field/interface';
 
 /**
- * Returns a component property by the specified path
+ * Returns a component property at the specified path
  *
- * @param path - the property path, for instance `foo.bla.bar`
- * @param getter - a function that is used to get a value from an object and a property
+ * @param path - the property path, for instance `foo.bla.bar`, or a property descriptor
+ * @param getter - a function used to get a value from an object and a property
  *
  * @example
  * ```typescript
@@ -39,12 +41,12 @@ import type { ValueGetter } from 'components/friends/field/interface';
  * }
  * ```
  */
-export function getField<T = unknown>(this: Friend, path: string, getter: ValueGetter): CanUndef<T>;
+export function getField<T = unknown>(this: Field, path: string | PropertyInfo, getter: ValueGetter): CanUndef<T>;
 
 /**
- * Returns a property from the passed object by the specified path
+ * Returns a property from the passed object at the specified path
  *
- * @param path - the property path, for instance `foo.bla.bar`
+ * @param path - the property path, for instance `foo.bla.bar`, or a property descriptor
  * @param [obj] - the object to search
  * @param [getter] - a function that is used to get a value from an object and a property
  *
@@ -58,15 +60,15 @@ export function getField<T = unknown>(this: Friend, path: string, getter: ValueG
  * ```
  */
 export function getField<T = unknown>(
-	this: Friend,
-	path: string,
+	this: Field,
+	path: string | PropertyInfo,
 	obj?: Nullable<object>,
 	getter?: ValueGetter
 ): CanUndef<T>;
 
 export function getField<T = unknown>(
-	this: Friend,
-	path: string,
+	this: Field,
+	path: string | PropertyInfo,
 	obj: Nullable<object | ValueGetter> = this.ctx,
 	getter?: ValueGetter
 ): CanUndef<T> {
@@ -79,29 +81,26 @@ export function getField<T = unknown>(
 		return;
 	}
 
-	let
-		{ctx} = this;
+	let {ctx} = this;
 
-	let
-		isComponent = false;
+	let isComponent = false;
 
-	if ((<Dictionary>obj).instance instanceof iBlock) {
+	if (typeof obj === 'object' && V4_COMPONENT in obj) {
 		ctx = (<iBlock>obj).unsafe;
 		isComponent = true;
 	}
 
 	let
 		res: unknown = obj,
-		chunks;
+		chunks: string[];
 
 	if (isComponent) {
-		const
-			info = getPropertyInfo(path, ctx);
+		const info = Object.isString(path) ? getPropertyInfo(path, Object.cast(ctx)) : path;
 
 		ctx = Object.cast(info.ctx);
 		res = ctx;
 
-		chunks = info.path.split('.');
+		chunks = info.path.includes('.') ? info.path.split('.') : [info.path];
 
 		if (info.accessor != null) {
 			chunks[0] = info.accessor;
@@ -116,7 +115,7 @@ export function getField<T = unknown>(
 					break;
 
 				case 'field':
-					res = ctx.isFunctional || ctx.lfc.isBeforeCreate() ? ctx.$fields : ctx;
+					res = this.getFieldsStore(ctx);
 					break;
 
 				default:
@@ -125,33 +124,82 @@ export function getField<T = unknown>(
 		}
 
 	} else {
-		chunks = path.split('.');
+		if (!Object.isString(path)) {
+			path = path.originalPath;
+		}
+
+		chunks = path.includes('.') ? path.split('.') : [path];
 	}
 
-	if (getter == null) {
-		res = Object.get<T>(res, chunks);
+	if (chunks.length === 1) {
+		const chunk = chunks[0];
 
-	} else {
-		for (let i = 0; i < chunks.length; i++) {
-			if (res == null) {
-				return undefined;
-			}
+		if (getter != null) {
+			res = getter(chunk, res);
 
-			const
-				key = chunks[i];
+		} else {
+			const obj = <object>res;
 
-			if (Object.isPromiseLike(res) && !(key in res)) {
-				res = res.then((res) => getter!(key, res));
+			if (Object.isMap(obj)) {
+				res = obj.get(chunk);
 
 			} else {
-				res = getter(key, res);
+				res = typeof obj !== 'object' || chunk in obj ? obj[chunk] : undefined;
 			}
+		}
+
+	} else {
+		const hasNoProperty = chunks.some((chunk) => {
+			if (res == null) {
+				return true;
+			}
+
+			if (Object.isPromiseLike(res) && !(chunk in res)) {
+				res = res.then((res) => {
+					if (getter != null) {
+						return getter(chunk, res);
+					}
+
+					if (res == null) {
+						return undefined;
+					}
+
+					const obj = <object>res;
+
+					if (Object.isMap(obj)) {
+						return obj.get(chunk);
+					}
+
+					return typeof obj !== 'object' || chunk in obj ? obj[chunk] : undefined;
+				});
+
+			} else if (getter != null) {
+				res = getter(chunk, res);
+
+			} else {
+				const obj = <object>res;
+
+				if (Object.isMap(obj)) {
+					res = obj.get(chunk);
+
+				} else {
+					res = typeof obj !== 'object' || chunk in obj ? obj[chunk] : undefined;
+				}
+			}
+
+			return false;
+		});
+
+		if (hasNoProperty) {
+			return undefined;
 		}
 	}
 
 	if (Object.isPromiseLike(res)) {
-		return Object.cast(this.async.promise(res));
+		// @ts-ignore (cast)
+		return this.async.promise(res);
 	}
 
-	return Object.cast(res);
+	// @ts-ignore (cast)
+	return res;
 }

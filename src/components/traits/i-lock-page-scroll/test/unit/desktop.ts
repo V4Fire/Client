@@ -60,12 +60,22 @@ test.describe('components/traits/i-lock-page-scroll - desktop', () => {
 	});
 
 	test.describe('unlock', () => {
-		test('should remove the `lock-page-scroll-desktop` modifier from the root element', async ({page}) => {
-			await lock();
-			await assertRootLockPageScrollModIs(page, true);
+		test.describe('should remove the `lock-page-scroll-desktop` modifier from the root element', () => {
+			test('when the `unlockPageScroll` method called', async ({page}) => {
+				await lock();
+				await assertRootLockPageScrollModIs(page, true);
 
-			await unlock();
-			await assertRootLockPageScrollModIs(page, false);
+				await unlock();
+				await assertRootLockPageScrollModIs(page, false);
+			});
+
+			test('when the component is destroyed', async ({page}) => {
+				await lock();
+				await assertRootLockPageScrollModIs(page, true);
+
+				await target.evaluate((ctx) => ctx.unsafe.$destroy());
+				await assertRootLockPageScrollModIs(page, false);
+			});
 		});
 
 		test('fast repetitive calls should remove the `lock-page-scroll-desktop` modifier from the root element', async ({page}) => {

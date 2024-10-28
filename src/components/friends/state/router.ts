@@ -19,6 +19,8 @@ const
  * This method is required for `syncRouterState` to work.
  */
 export function initFromRouter(this: State): boolean {
+	const that = this;
+
 	if (!this.needRouterSync) {
 		return false;
 	}
@@ -31,7 +33,10 @@ export function initFromRouter(this: State): boolean {
 	const routerWatchers = {group: 'routerWatchers'};
 	$a.clearAll(routerWatchers);
 
-	void this.lfc.execCbAtTheRightTime(async () => {
+	void this.lfc.execCbAtTheRightTime(loadFromRouter, {label: $$.initFromRouter});
+	return true;
+
+	async function loadFromRouter() {
 		const
 			{r} = ctx;
 
@@ -54,70 +59,66 @@ export function initFromRouter(this: State): boolean {
 			route = Object.mixin({deep: true, withProto: true}, {}, r.route),
 			stateFields = ctx.syncRouterState(Object.assign(Object.create(route), route.params, route.query));
 
-		set.call(this, stateFields);
+		set.call(that, stateFields);
 
-		if (ctx.syncRouterStoreOnInit) {
-			const
-				stateForRouter = ctx.syncRouterState(stateFields, 'remote'),
-				stateKeys = Object.keys(stateForRouter);
+		if (!SSR) {
+			if (ctx.syncRouterStoreOnInit) {
+				const
+					stateForRouter = ctx.syncRouterState(stateFields, 'remote'),
+					stateKeys = Object.keys(stateForRouter);
 
-			if (stateKeys.length > 0) {
-				let
-					query;
+				if (stateKeys.length > 0) {
+					let query: CanUndef<Dictionary>;
 
-				stateKeys.forEach((key) => {
+					stateKeys.forEach((key) => {
+						const
+							currentParams = route.params,
+							currentQuery = route.query;
+
+						const
+							val = stateForRouter[key],
+							currentVal = Object.get(currentParams, key) ?? Object.get(currentQuery, key);
+
+						if (currentVal === undefined && val !== undefined) {
+							query ??= {};
+							query[key] = val;
+						}
+					});
+
+					if (query != null) {
+						await router.replace(null, {query});
+					}
+				}
+			}
+
+			const sync = $a.debounce(saveToRouter.bind(that), 0, {
+				label: $$.syncRouter
+			});
+
+			if (Object.isDictionary(stateFields)) {
+				Object.keys(stateFields).forEach((key) => {
 					const
-						currentParams = route.params,
-						currentQuery = route.query;
+						p = key.split('.');
 
-					const
-						val = stateForRouter[key],
-						currentVal = Object.get(currentParams, key) ?? Object.get(currentQuery, key);
+					if (p[0] === 'mods') {
+						$a.on(ctx.localEmitter, `block.mod.*.${p[1]}.*`, sync, routerWatchers);
 
-					if (currentVal === undefined && val !== undefined) {
-						query ??= {};
-						query[key] = val;
+					} else {
+						ctx.watch(key, (val: unknown, ...args: unknown[]) => {
+							if (!Object.fastCompare(val, args[0])) {
+								sync();
+							}
+						}, {
+							...routerWatchers,
+							deep: true
+						});
 					}
 				});
-
-				if (query != null) {
-					await router.replace(null, {query});
-				}
 			}
 		}
 
-		const sync = $a.debounce(saveToRouter.bind(this), 0, {
-			label: $$.syncRouter
-		});
-
-		if (Object.isDictionary(stateFields)) {
-			Object.keys(stateFields).forEach((key) => {
-				const
-					p = key.split('.');
-
-				if (p[0] === 'mods') {
-					$a.on(this.localEmitter, `block.mod.*.${p[1]}.*`, sync, routerWatchers);
-
-				} else {
-					ctx.watch(key, (val, ...args) => {
-						if (!Object.fastCompare(val, args[0])) {
-							sync();
-						}
-					}, {
-						...routerWatchers,
-						deep: true
-					});
-				}
-			});
-		}
-
-		ctx.log('state:init:router', this, stateFields);
-
-	}, {
-		label: $$.initFromRouter
-	});
-
-	return true;
+		ctx.log('state:init:router', that, stateFields);
+	}
 }
 
 /**
@@ -140,7 +141,7 @@ export async function saveToRouter(this: State, data?: Dictionary): Promise<bool
 	data = ctx.syncRouterState(data, 'remote');
 	set.call(this, ctx.syncRouterState(data));
 
-	if (!ctx.isActivated || !router) {
+	if (!ctx.isActivated || router == null) {
 		return false;
 	}
 

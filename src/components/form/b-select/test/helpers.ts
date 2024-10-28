@@ -65,3 +65,28 @@ export async function setValue(target: JSHandle<bSelect>, value: string | number
 		ctx.value = value;
 	}, value);
 }
+
+/**
+ * Selects the value of the component by emulating user interaction
+ *
+ * @param page
+ * @param target
+ * @param value
+ */
+export async function selectValue(page: Page, target: JSHandle<bSelect>, value: CanArray<string>): Promise<void> {
+	const
+		isNative = await target.evaluate((ctx) => ctx.native),
+		input = page.locator(createSelector('input'));
+
+	if (isNative) {
+		await input.selectOption(value);
+
+	} else {
+		await input.focus();
+
+		const promises = Array.toArray(value)
+			.map((hasText) => page.locator(createSelector('item')).filter({hasText}).click());
+
+		await Promise.all(promises);
+	}
+}

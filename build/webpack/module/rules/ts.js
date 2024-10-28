@@ -29,7 +29,6 @@ const
 
 /**
  * Returns webpack rules for the typescript files
- *
  * @returns {import('webpack').RuleSetRule}
  */
 module.exports = function tsRules() {
@@ -38,21 +37,29 @@ module.exports = function tsRules() {
 	return {
 		test: isTsFile,
 		exclude: isExternalDep,
-		use: [
+		use: [].concat(
+			{
+				loader: 'swc-loader',
+				options: webpack.swc().ts
+			},
+
 			{
 				loader: 'ts-loader',
 				options: {
-					...typescript.client,
+					...(webpack.ssr ? typescript.server : typescript.client),
 					getCustomTransformers: tsTransformers
 				}
 			},
 
-			{
-				loader: 'symbol-generator-loader',
-				options: {
-					modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
-				}
-			},
+			webpack.ssr ?
+				[] :
+
+				{
+					loader: 'symbol-generator-loader',
+					options: {
+						modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
+					}
+				},
 
 			{
 				loader: 'monic-loader',
@@ -71,6 +78,6 @@ module.exports = function tsRules() {
 					)
 				})
 			}
-		]
+		)
 	};
 };

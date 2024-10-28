@@ -23,13 +23,27 @@ import iWidth from 'components/traits/i-width/i-width';
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
 import iActiveItems from 'components/traits/i-active-items/i-active-items';
 
-import { component, field, system, computed, hook, watch, ModsDecl } from 'components/super/i-data/i-data';
+import {
+
+	component,
+
+	field,
+	system,
+	computed,
+
+	hook,
+	watch,
+
+	ModsDecl,
+	UnsafeGetter
+
+} from 'components/super/i-data/i-data';
 
 import iListProps from 'components/base/b-list/props';
 import Values from 'components/base/b-list/modules/values';
 
 import { setActiveMod, normalizeItems } from 'components/base/b-list/modules/helpers';
-import type { Items } from 'components/base/b-list/interface';
+import type { Items, UnsafeBList } from 'components/base/b-list/interface';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-list/interface';
@@ -51,8 +65,7 @@ interface bList extends Trait<typeof iActiveItems> {}
 class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 	/** {@link bList.attrsProp} */
 	get attrs(): Dictionary {
-		const
-			attrs = {...this.attrsProp};
+		const attrs = {...this.attrsProp};
 
 		if (this.items.some((el) => el.href === undefined)) {
 			attrs.role = 'tablist';
@@ -88,6 +101,20 @@ class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 	readonly activeChangeEvent: string = 'change';
 
 	/**
+	 * {@link iActiveItems.activeStore}
+	 * {@link bList.activeProp}
+	 */
+	@system<bList>({
+		unique: true,
+		init: (o) => {
+			o.watch('modelValue', (val) => o.setActive(val, true));
+			return iActiveItems.linkActiveStore(o, (val) => o.modelValue ?? val);
+		}
+	})
+
+	activeStore!: this['Active'];
+
+	/**
 	 * {@link iActiveItems.active}
 	 * {@link bList.activeStore}
 	 */
@@ -95,16 +122,9 @@ class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 		return iActiveItems.getActive(this);
 	}
 
-	/**
-	 * {@link iActiveItems.activeStore}
-	 * {@link bList.activeProp}
-	 */
-	@system<bList>((o) => {
-		o.watch('modelValue', (val) => o.setActive(val, true));
-		return iActiveItems.linkActiveStore(o, (val) => o.modelValue ?? val);
-	})
-
-	activeStore!: this['Active'];
+	override get unsafe(): UnsafeGetter<UnsafeBList<this>> {
+		return Object.cast(this);
+	}
 
 	static override readonly mods: ModsDecl = {
 		...iVisible.mods,
@@ -133,7 +153,11 @@ class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 	/**
 	 * Internal API for working with component values
 	 */
-	@system((o) => new Values(o))
+	@system({
+		unique: true,
+		init: (o) => new Values(o)
+	})
+
 	protected values!: Values;
 
 	/** {@link iActiveItems.activeElement} */
@@ -204,7 +228,7 @@ class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 			}
 
 			SyncPromise.resolve(this.activeElement).then((selectedElement) => {
-				Array.concat([], selectedElement).forEach((el) => setActiveMod.call(this, el, true));
+				Array.toArray(selectedElement).forEach((el) => setActiveMod.call(this, el, true));
 			}, stderr);
 		}
 
@@ -229,7 +253,7 @@ class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 
 		if ($b != null) {
 			SyncPromise.resolve(activeElement).then((activeElement) => {
-				const els = Array.concat([], activeElement);
+				const els = Array.toArray(activeElement);
 
 				els.forEach((el) => {
 					const

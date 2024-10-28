@@ -15,7 +15,8 @@ import type bBottomSlide from 'components/base/b-bottom-slide/b-bottom-slide';
 const $$ = symbolGenerator();
 
 export default class Overlay extends Friend {
-	override readonly C!: bBottomSlide;
+	/** @inheritDoc */
+	declare readonly C: bBottomSlide;
 
 	/**
 	 * Current value of the overlay opacity

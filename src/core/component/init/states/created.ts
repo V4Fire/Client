@@ -8,46 +8,56 @@
 
 import { unmute } from 'core/object/watch';
 
-import { callMethodFromComponent } from 'core/component/method';
 import { runHook } from 'core/component/hook';
+import { destroyedHooks } from 'core/component/const';
+import { callMethodFromComponent } from 'core/component/method';
 
-import type { ComponentInterface, Hook } from 'core/component/interface';
+import type { ComponentDestructorOptions, ComponentInterface, Hook } from 'core/component/interface';
 
-const
-	remoteActivationLabel = Symbol('The remote activation label');
+const remoteActivationLabel = Symbol('The remote activation label');
 
 /**
  * Initializes the "created" state to the specified component instance
  * @param component
  */
 export function createdState(component: ComponentInterface): void {
-	const {
-		unsafe,
-		unsafe: {
-			$root: r,
-			$async: $a,
-			$normalParent: parent
-		}
-	} = component;
+	if (component.hook !== 'beforeDataCreate') {
+		return;
+	}
+
+	const {unsafe, unsafe: {$parent: parent}} = component;
 
 	unmute(unsafe.$fields);
 	unmute(unsafe.$systemFields);
 
-	const isDynamicallyMountedComponent =
-		parent != null && '$remoteParent' in r;
-
-	if (isDynamicallyMountedComponent) {
+	if (parent != null) {
 		const
-			p = parent.unsafe,
-			destroy = unsafe.$destroy.bind(unsafe);
+			isRegularComponent = unsafe.meta.params.functional !== true,
+			isDynamicallyMountedComponent = '$remoteParent' in unsafe.$root;
 
-		p.$on('on-hook:before-destroy', destroy);
-		$a.worker(() => p.$off('on-hook:before-destroy', destroy));
+		const destroy = (opts: Required<ComponentDestructorOptions>) => {
+			// A component might have already been removed by explicitly calling $destroy
+			if (destroyedHooks[unsafe.hook] != null) {
+				return;
+			}
 
-		const isRegular =
-			unsafe.meta.params.functional !== true;
+			if (opts.recursive || isDynamicallyMountedComponent) {
+				unsafe.$destroy(opts);
+			}
+		};
 
-		if (isRegular) {
+		parent.unsafe.$once('[[BEFORE_DESTROY]]', destroy);
+
+		unsafe.$destructors.push(() => {
+			// A component might have already been removed by explicitly calling $destroy
+			if (destroyedHooks[parent.hook] != null) {
+				return;
+			}
+
+			parent.unsafe.$off('[[BEFORE_DESTROY]]', destroy);
+		});
+
+		if (isDynamicallyMountedComponent && isRegularComponent) {
 			const activationHooks = Object.createDict({
 				activated: true,
 				deactivated: true
@@ -63,18 +73,20 @@ export function createdState(component: ComponentInterface): void {
 					return;
 				}
 
-				$a.requestIdleCallback(component.activate.bind(component), {
+				unsafe.$async.requestIdleCallback(component.activate.bind(component), {
 					label: remoteActivationLabel,
 					timeout: 50
 				});
 			};
 
-			if (activationHooks[p.hook] != null) {
-				onActivation(p.hook);
+			const normalParent = unsafe.$normalParent!.unsafe;
+
+			if (activationHooks[normalParent.hook] != null) {
+				onActivation(normalParent.hook);
 			}
 
-			p.$on('on-hook-change', onActivation);
-			$a.worker(() => p.$off('on-hook-change', onActivation));
+			normalParent.$on('onHookChange', onActivation);
+			unsafe.$destructors.push(() => normalParent.$off('onHookChange', onActivation));
 		}
 	}
 

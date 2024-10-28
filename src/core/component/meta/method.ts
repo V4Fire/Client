@@ -9,6 +9,8 @@
 import { defProp } from 'core/const/props';
 import type { ComponentMeta } from 'core/component/interface';
 
+const ALREADY_PASSED = Symbol('This target is passed');
+
 /**
  * Loops through the prototype of the passed component constructor and
  * adds methods and accessors to the specified metaobject
@@ -17,9 +19,12 @@ import type { ComponentMeta } from 'core/component/interface';
  * @param [constructor]
  */
 export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = meta.constructor): void {
-	const
-		proto = constructor.prototype,
-		ownProps = Object.getOwnPropertyNames(proto);
+	// For smart components, this method can be called more than once
+	if (constructor.hasOwnProperty(ALREADY_PASSED)) {
+		return;
+	}
+
+	Object.defineProperty(constructor, ALREADY_PASSED, {value: true});
 
 	const {
 		componentName: src,
@@ -31,22 +36,18 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 		methods
 	} = meta;
 
-	ownProps.forEach((name) => {
+	const
+		proto = constructor.prototype,
+		descriptors = Object.getOwnPropertyDescriptors(proto);
+
+	Object.entries(descriptors).forEach(([name, desc]) => {
 		if (name === 'constructor') {
-			return;
-		}
-
-		const
-			desc = Object.getOwnPropertyDescriptor(proto, name);
-
-		if (desc == null) {
 			return;
 		}
 
 		// Methods
 		if ('value' in desc) {
-			const
-				fn = desc.value;
+			const fn = desc.value;
 
 			if (!Object.isFunction(fn)) {
 				return;
@@ -61,12 +62,13 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				storeKey = `${name}Store`;
 
 			let
-				metaKey;
+				metaKey: string,
+				tiedWith: CanUndef<object>;
 
 			// Computed fields are cached by default
 			if (
 				name in computedFields ||
-				!(name in accessors) && (props[propKey] || fields[storeKey] || systemFields[storeKey])
+				!(name in accessors) && (tiedWith = props[propKey] ?? fields[storeKey] ?? systemFields[storeKey])
 			) {
 				metaKey = 'computedFields';
 
@@ -74,8 +76,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				metaKey = 'accessors';
 			}
 
-			let
-				field;
+			let field: Dictionary;
 
 			if (props[name] != null) {
 				field = props;
@@ -87,8 +88,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				field = systemFields;
 			}
 
-			const
-				obj = meta[metaKey];
+			const store = meta[metaKey];
 
 			// If we already have a property by this key, like a prop or field,
 			// we need to delete it to correct override
@@ -98,11 +98,11 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 			}
 
 			const
-				old = obj[name],
+				old = store[name],
 				set = desc.set ?? old?.set,
 				get = desc.get ?? old?.get;
 
-			// To use `super` within the setter we also create a new method with a name `${key}Setter`
+			// To use `super` within the setter, we also create a new method with a name `${key}Setter`
 			if (set != null) {
 				const nm = `${name}Setter`;
 				proto[nm] = set;
@@ -115,7 +115,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				};
 			}
 
-			// To using `super` within the getter we also create a new method with a name `${key}Getter`
+			// To using `super` within the getter, we also create a new method with a name `${key}Getter`
 			if (get != null) {
 				const nm = `${name}Getter`;
 				proto[nm] = get;
@@ -128,11 +128,22 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				};
 			}
 
-			obj[name] = Object.assign(obj[name] ?? {}, {
+			const acc = Object.assign(store[name] ?? {}, {
 				src,
 				get: desc.get ?? old?.get,
 				set
 			});
+
+			store[name] = acc;
+
+			// eslint-disable-next-line eqeqeq
+			if (acc.functional === undefined && meta.params.functional === null) {
+				acc.functional = false;
+			}
+
+			if (tiedWith != null) {
+				acc.tiedWith = tiedWith;
+			}
 		}
 	});
 }

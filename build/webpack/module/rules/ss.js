@@ -13,6 +13,7 @@ const
 
 const
 	snakeskin = config.snakeskin(),
+	swcOptions = config.webpack.swc(),
 	monic = config.monic();
 
 const
@@ -27,6 +28,10 @@ module.exports = function ssRules() {
 	return {
 		test: /\.ss$/,
 		use: [
+			{
+				loader: 'swc-loader',
+				options: swcOptions.ss
+			},
 			{
 				loader: 'monic-loader',
 				options: inherit(monic.javascript, {

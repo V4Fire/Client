@@ -17,6 +17,10 @@ if (!SSR) {
 		globalEmitter.emit('i18n.setLocale', ...args);
 	});
 
+	i18nEmitter.on('setRegion', (...args) => {
+		globalEmitter.emit('i18n.setRegion', ...args);
+	});
+
 	netEmitter.on('status', (...args) => {
 		globalEmitter.emit('net.status', ...args);
 	});

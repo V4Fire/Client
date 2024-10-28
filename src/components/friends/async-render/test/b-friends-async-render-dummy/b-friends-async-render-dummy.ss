@@ -55,14 +55,12 @@
 
 		< template v-if = stage === 'updating the parent component state'
 			< .&__result v-async-target
-				{{ void(tmp.oldRefs = $refs.btn) }}
-
 				< template v-for = el in asyncRender.iterate(2)
 					< b-button ref = btn | v-func = false
 						< template #default = {ctx}
 							Element: {{ el }}; Hook: {{ ctx.hook }};
 
-			< button.&__update @click = $forceUpdate
+			< button.&__update @click = tmp.oldRefs=$refs.btn.slice(), $forceUpdate()
 				Update state
 
 		< template v-if = stage === 'clearing by the specified group name'
@@ -77,6 +75,18 @@
 
 			< button.&__clear @click = async.clearAll({group: /foo/})
 				Clear
+
+		< template v-if = stage === 'check nested async render target'
+			< .&__wrapper v-async-target
+				< template v-for = _ in asyncRender.iterate(true, { &
+					filter: asyncRender.waitForceRender('items-wrapper')
+				}) .
+					< .&__items-wrapper
+						< .&__result v-async-target
+							< template v-for = n in asyncRender.iterate(2)
+								{{ n }}
+
+			< button.&__update @click = asyncRender.forceRender()
 
 		< template v-if = stage === 'loading dynamic modules'
 			< .&__result v-async-target

@@ -9,7 +9,31 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.?? (2023-??-??)
+## v4.0.0-beta.142 (2024-10-04)
+
+#### :bug: Bug Fix
+
+* Better fix for the exports in transpiled snakeskin module
+
+## v4.0.0-beta.138.dsl-speedup (2024-10-01)
+
+#### :house: Internal
+
+* Apply the `symbol-generator-loader` consistently to optimize Runtime performance
+
+## v4.0.0-beta.132 (2024-09-12)
+
+#### :bug: Bug Fix
+
+* Fix exports in transpiled snakeskin modules
+
+## v4.0.0-beta.131 (2024-09-11)
+
+#### :rocket: New Feature
+
+* Enhanced filesystem cache invalidation criteria by including the current branch name and the most recent merge
+
+## v4.0.0-beta.26 (2023-09-20)
 
 #### :rocket: New Feature
 

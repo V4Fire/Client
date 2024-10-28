@@ -16,6 +16,4 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 export * from 'components/super/i-block/i-block';
 
 @component({functional: true})
-export default class bProgressIcon extends iBlock {
-	override readonly rootTag: string = 'span';
-}
+export default class bProgressIcon extends iBlock {}

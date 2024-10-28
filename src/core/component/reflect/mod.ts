@@ -51,20 +51,17 @@ export function getComponentMods(component: ComponentConstructorInfo): ModsDecl 
 	if (Object.isDictionary(modsFromDS)) {
 		Object.entries(modsFromDS).forEach(([name, dsModDecl]) => {
 			const modDecl = modsFromConstructor[name];
-			modsFromConstructor[name] = Object.cast(Array.concat([], modDecl, dsModDecl));
+			modsFromConstructor[name] = Object.cast(Array.toArray(modDecl, dsModDecl));
 		});
 	}
 
 	Object.entries(modsFromConstructor).forEach(([modName, modDecl]) => {
-		const
-			modValues: Array<string | object> = [];
+		const modValues: Array<string | object> = [];
 
 		if (modDecl != null && modDecl.length > 0) {
-			const
-				cache = new Map();
+			const cache = new Map();
 
-			let
-				active;
+			let active: CanUndef<string>;
 
 			modDecl.forEach((modVal) => {
 				if (Object.isArray(modVal)) {
@@ -76,7 +73,7 @@ export function getComponentMods(component: ComponentConstructorInfo): ModsDecl 
 					cache.set(active, [active]);
 
 				} else {
-					const normalizedModVal = Object.isPlainObject(modVal) ?
+					const normalizedModVal = Object.isDictionary(modVal) ?
 						modVal :
 						String(modVal);
 

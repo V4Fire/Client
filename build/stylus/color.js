@@ -27,7 +27,7 @@ module.exports = function addPlugins(api) {
 	 *
 	 * @param {object} kit
 	 * @param {string} name
-	 * @param {boolean} [theme=false]
+	 * @param {boolean} [theme]
 	 */
 	api.define('registerColors', (kit, name, theme = false) => {
 		if (!name || !kit) {
@@ -42,8 +42,8 @@ module.exports = function addPlugins(api) {
 	 *
 	 * @param {object} hueInput - color
 	 * @param {object} numInput - color position in a kit
-	 * @param {(object|boolean)} [reservedInput=false] - is value in the reserved kit
-	 * @param {(object|boolean)} [baseInput=false] - prototype field name
+	 * @param {(object|boolean)} [reservedInput] - is value in the reserved kit
+	 * @param {(object|boolean)} [baseInput] - prototype field name
 	 * @returns {string}
 	 */
 	api.define('getGlobalColor', (hueInput, numInput, reservedInput = false, baseInput = false) => {

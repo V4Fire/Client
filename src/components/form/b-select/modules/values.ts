@@ -12,7 +12,8 @@ import type bSelect from 'components/form/b-select/b-select';
 import type { Item } from 'components/form/b-select/interface';
 
 export default class Values extends Friend {
-	override readonly C!: bSelect;
+	/** @inheritDoc */
+	declare readonly C: bSelect;
 
 	/**
 	 * A map of the item indexes and their values

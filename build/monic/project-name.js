@@ -15,7 +15,8 @@ const
 	projectNameRgxp = /@projectName\b/g;
 
 /**
- * Monic replacer that adds the "@projectName" declaration which indicates for which layer belong one or another file
+ * A Monic replacer that adds the `@projectName` declaration, which indicates to which layer a file belongs.
+ * This replacer allows you to specify the project name for each file.
  *
  * @param {string} str
  * @param {string} filePath

@@ -12,7 +12,8 @@ import type bBottomSlide from 'components/base/b-bottom-slide/b-bottom-slide';
 import type { Direction } from 'components/base/b-bottom-slide/interface';
 
 export default class SwipeControl extends Friend {
-	override readonly C!: bBottomSlide;
+	/** @inheritDoc */
+	declare readonly C: bBottomSlide;
 
 	/**
 	 * Current cursor direction
@@ -152,10 +153,10 @@ export default class SwipeControl extends Friend {
 
 		if (ctx.heightMode === 'content') {
 			if (!respectDirection && isThresholdPassed) {
-				void this[geometry.contentHeight / 2 < geometry.offset ? 'next' : 'prev']();
+				void ctx[geometry.contentHeight / 2 < geometry.offset ? 'next' : 'prev']();
 
 			} else if (respectDirection) {
-				void this[direction > 0 ? 'next' : 'prev']();
+				void ctx[direction > 0 ? 'next' : 'prev']();
 			}
 
 		} else {

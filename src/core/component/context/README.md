@@ -2,7 +2,7 @@
 
 This module provides a bunch of helpers to work with a component context.
 
-## What problem is being solved?
+## What Problem is Being Solved?
 
 The V4Fire library creates a domain-specific language (DSL) wrapper over the component libraries it uses.
 This allows developers to use TypeScript classes to describe their components, regardless of the underlying library.
@@ -22,3 +22,11 @@ Returns a wrapped component context object based on the passed one.
 This function allows developers to override component properties and methods without altering the original object.
 Essentially, override creates a new object that contains the original object as its prototype,
 allowing for the addition, modification, or removal of properties and methods without affecting the original object.
+
+### saveRawComponentContext
+
+Stores a reference to the "raw" component context in the main context.
+
+### dropRawComponentContext
+
+Drops a reference to the "raw" component context from the main context.

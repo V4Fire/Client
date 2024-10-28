@@ -11,5 +11,11 @@
  * @packageDocumentation
  */
 
-export * from 'core/component/functional/context';
+export { createVirtualContext } from 'core/component/functional/context';
+export { VHookLifeCycle } from 'core/component/functional/life-cycle';
+
 export * from 'core/component/functional/interface';
+
+//#if runtime has dummyComponents
+import('core/component/functional/test/b-functional-dummy');
+//#endif

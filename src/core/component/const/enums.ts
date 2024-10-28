@@ -7,7 +7,7 @@
  */
 
 /**
- * A dictionary with names of hooks that occur before a component is created
+ * A dictionary containing the names of hooks that occur before a component is created
  */
 export const beforeHooks = Object.createDict({
 	beforeRuntime: true,
@@ -16,19 +16,26 @@ export const beforeHooks = Object.createDict({
 });
 
 /**
- * A dictionary with names of hooks that occur before a component is mounted
+ * A dictionary containing the names of hooks that occur before a component is mounted
  */
 export const beforeMountHooks = Object.createDict({
 	...beforeHooks,
 	created: true,
-	beforeMount: true,
-	renderTracked: true
+	beforeMount: true
 });
 
 /**
- * A dictionary with names of hooks that occur before a component is rendered or re-rendered
+ * A dictionary containing the names of hooks that occur before a component is rendered or re-rendered
  */
 export const beforeRenderHooks = Object.createDict({
 	...beforeMountHooks,
 	beforeUpdate: true
+});
+
+/**
+ * A dictionary containing the names of hooks that occur after a component is destroyed
+ */
+export const destroyedHooks = Object.createDict({
+	beforeDestroy: true,
+	destroyed: true
 });

@@ -6,8 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 const
-	fs = require('fs');
+	fs = require('node:fs');
 
 const
 	{webpack, src, csp} = require('@config/config'),
@@ -18,9 +20,9 @@ exports.canLoadStylesDeferred = !webpack.externalizeInline() && !csp.nonce();
 exports.needInline = needInline;
 
 /**
- * Returns true if should include the code inline in the tag
+ * Returns true if the code should be included inline in the tag
  *
- * @param {boolean} [forceInline]
+ * @param {boolean} [forceInline] - if set to true, the function will always return true
  * @returns {boolean}
  */
 function needInline(forceInline) {
@@ -33,7 +35,7 @@ exports.addPublicPath = addPublicPath;
  * Attaches the `publicPath` property to the specified path
  *
  * @param {(string|Array<string>)} path
- * @returns {(string|Array<String>)}
+ * @returns {(string|Array<string>)}
  */
 function addPublicPath(path) {
 	const
@@ -73,10 +75,10 @@ function addPublicPath(path) {
 exports.emitFile = emitFile;
 
 /**
- * Information about output file paths
+ * Information about output file paths:
  *
- *  1. outputPath - absolute path to the file
- *  2. loadPath - path to load the file, taking into account the configured public path
+ *  1. outputPath - an absolute path to the file
+ *  2. loadPath - a path to load the file, taking into account the configured public path
  *
  * @typedef {{
  *   outputPath: string,

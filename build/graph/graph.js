@@ -57,7 +57,7 @@ let
 
 /**
  * Builds a project graph
- * @returns {Promise<{entry, components, processes, dependencies}>}
+ * @returns {Promise<{entry, entryDeps, components, processes, dependencies}>}
  */
 async function buildProjectGraph() {
 	const buildFinished = tracer.measure('Build graph', {cat: ['graph']});
@@ -111,6 +111,22 @@ async function buildProjectGraph() {
 		graph = await buildConfig.getUnionEntryPoints({cache: components}),
 		processes = $C(MIN_PROCESS).map(() => ({entries: {}}));
 
+	if (webpack.ssr) {
+		const ssrEntry = {
+			main: new Map()
+		};
+
+		Object.entries(graph.entry).forEach(([name, value]) => {
+			if (name === 'std' || !isStandalone(name)) {
+				for (const [entryPath, entryVal] of value) {
+					ssrEntry.main.set(entryPath, entryVal);
+				}
+			}
+		});
+
+		graph.entry = ssrEntry;
+	}
+
 	// Generate dynamic entries to build with webpack
 	const entry = await $C(graph.entry)
 		.parallel()
@@ -124,13 +140,23 @@ async function buildProjectGraph() {
 
 	// Add all other tasks as dependencies to the HTML task
 	processes[HTML].dependencies = processes
-		.map((proc) => proc.name)
-		.filter((name) => name !== 'html');
+		.filter((proc) => !Object.isEmpty(proc.entries) && proc.name !== 'html')
+		.map((proc) => proc.name);
 
 	const res = {
 		entry,
+
+		entryDeps: $C(graph.entry).reduce((res, deps) => {
+			deps.forEach((el, key) => {
+				res.set(key, el);
+			});
+
+			return res;
+		}, new Map()),
+
 		components,
 		processes,
+
 		dependencies: $C(graph.dependencies).map((el, key) => [...el, key])
 	};
 
@@ -157,6 +183,7 @@ async function buildProjectGraph() {
 
 		const
 			componentsToIgnore = /^[iv]-/,
+			usedLibs = new Set(),
 			cursor = isStandalone(name) ? STANDALONE : RUNTIME;
 
 		const
@@ -191,7 +218,12 @@ async function buildProjectGraph() {
 					logic = await component?.logic;
 
 				if (component) {
-					$C(component.libs).forEach((el) => str += `require('${el}');\n`);
+					$C(component.libs).forEach((el) => {
+						if (!usedLibs.has(el)) {
+							usedLibs.add(el);
+							str += `require('${el}');\n`;
+						}
+					});
 				}
 
 				const needRequireAsLogic = component ?

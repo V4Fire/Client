@@ -9,6 +9,26 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.138.dsl-speedup (2024-10-01)
+
+#### :rocket: New Feature
+
+* Introduced a new type of caching: `'forever'`
+
+## v4.0.0-beta.106 (2024-06-25)
+
+#### :bug: Bug Fix
+
+* Do not store computed values in the cache before the functional component is fully created.
+  This fixes hard-to-detect bugs that can occur due to context inheritance.
+  See: https://github.com/V4Fire/Client/issues/1292
+
+## v4.0.0-beta.51 (2024-01-19)
+
+#### :bug: Bug Fix
+
+* Fixed an error when deleting the getters cache
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :rocket: New Feature

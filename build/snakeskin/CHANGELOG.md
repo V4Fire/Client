@@ -9,6 +9,38 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.145 (2024-10-14)
+
+#### :bug: Bug Fix
+
+* Fixed the issue with incorrectly detecting the functional smart component
+
+## v4.0.0-beta.91 (2024-04-19)
+
+#### :house: Internal
+
+* Replaced anonymous functions for `getRoot` and `getParent` props
+  with calls to the `$getRoot` and `$getParent` methods of the component
+
+## v4.0.0-beta.52 (2023-01-31)
+
+#### :bug: Bug Fix
+
+* Fixed the memoization of `getParent`: it was saved in the context of the main component, as a
+  result of which the components in the slots had an incorrect `$parent`
+
+## v4.0.0-beta.49 (2024-01-17)
+
+#### :bug: Bug Fix
+
+* Added memoization for the `getParent` and `getRoot` props to prevent unnecessary re-renders
+
+## v4.0.0-beta.38 (2023-11-15)
+
+#### :bug: Bug Fix
+
+* The function `getParent` now checks if the component is inside a slot
+
 ## v4.0.0-beta.28 (2023-09-26)
 
 #### :rocket: New Feature

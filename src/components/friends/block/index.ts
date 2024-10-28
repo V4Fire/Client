@@ -15,7 +15,3 @@ export { default } from 'components/friends/block/class';
 
 export * from 'components/friends/block/api';
 export * from 'components/friends/block/interface';
-
-//#if runtime has dummyComponents
-import('components/friends/block/test/b-friends-block-dummy');
-//#endif

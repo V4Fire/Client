@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 module.exports = {
 	'b-input': {
 		'The value is not a number': 'Значение не является числом',

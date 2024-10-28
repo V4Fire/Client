@@ -29,17 +29,18 @@ console.log(getComponentMods(getInfoFromConstructor(bButton)));
 
 #### isSmartComponent
 
-This regular expression can be used to determine whether a component is a "smart" component based on its name.
+This API can be used to determine whether a component is a "smart" component based on its name.
 
 #### isAbstractComponent
 
-This regular expression allows you to determine if a component is abstract based on its name.
+This API allows you to determine if a component is abstract based on its name.
 
 ### Functions
 
 #### getComponentName
 
-Returns a component's name based on the given constructor. The name is returned in a dash-separated format.
+Returns a component's name based on the given constructor.
+The name is returned in dash-separated format.
 
 #### getInfoFromConstructor
 

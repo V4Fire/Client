@@ -11,42 +11,47 @@
  * @packageDocumentation
  */
 
-import { initGlobalEnv } from 'core/env';
+import dependencies from 'core/init/dependencies';
+import type { Dependency, DependencyFn } from 'core/init/dependencies';
+import { createDependencyIterator } from 'core/init/dependencies/helpers';
 
-import semaphore from 'core/init/semaphore';
-import type { InitAppOptions } from 'core/init/interface';
+import { createApp } from 'core/init/create-app';
+import { getAppParams } from 'core/init/helpers';
+
+import type { InitAppOptions, App } from 'core/init/interface';
+import type { State } from 'core/component/state';
+
+export * from 'core/init/dependencies/helpers';
+export * from 'core/init/helpers';
+export * from 'core/init/interface';
 
 /**
  * Initializes the application
  *
- * @param rootComponent - the root component name for initialization
- * @param [opts] - additional options
+ * @param rootComponent - the name of the created root component
+ * @param opts - additional options
  */
 export default async function initApp(
 	rootComponent: Nullable<string>,
-	opts?: InitAppOptions
-): Promise<string | Element> {
-	initGlobalEnv(opts);
+	opts: InitAppOptions
+): Promise<App> {
+	const {state, createAppOpts} = getAppParams(opts);
 
-	void loadModule(import('core/init/dom'));
-	void loadModule(import('core/init/state'));
-	void loadModule(import('core/init/abt'));
-	void loadModule(import('core/init/prefetch'));
-	void loadModule(import('core/init/hydrated-route'));
+	await initDependencies(dependencies, state);
 
-	const createApp = await semaphore('');
-	return createApp(rootComponent, opts);
+	return createApp(rootComponent, createAppOpts, state);
+}
 
-	async function loadModule(promise: Promise<{default?: unknown}>) {
-		try {
-			const {default: init} = await promise;
-
-			if (Object.isFunction(init)) {
-				init(opts);
-			}
-
-		} catch (err) {
-			stderr(err);
-		}
-	}
+/**
+ * Initializes dependencies of the application
+ *
+ * @param dependencies
+ * @param state
+ */
+export async function initDependencies(
+	dependencies: Dictionary<Dependency | DependencyFn>,
+	state: State
+): Promise<void> {
+	const tasks = [...createDependencyIterator(dependencies)].map(([_, {fn}]) => fn(state));
+	await Promise.all(tasks);
 }

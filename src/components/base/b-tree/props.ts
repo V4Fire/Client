@@ -12,12 +12,12 @@ import type iActiveItems from 'components/traits/i-active-items/i-active-items';
 import iData, { prop, component } from 'components/super/i-data/i-data';
 
 import type bTree from 'components/base/b-tree/b-tree';
-import type { Item, RenderFilter } from 'components/base/b-tree/interface';
+import type { Item, LazyRender, RenderFilter } from 'components/base/b-tree/interface';
 
 import type AsyncRender from 'components/friends/async-render';
 import type { TaskFilter } from 'components/friends/async-render';
 
-@component()
+@component({partial: 'bTree'})
 export default abstract class iTreeProps extends iData {
 	/** {@link iItems.Item} */
 	readonly Item!: Item;
@@ -56,7 +56,7 @@ export default abstract class iTreeProps extends iData {
 	readonly cancelable?: boolean;
 
 	/**
-	 * If true, then all nested elements are folded by default
+	 * If true, then all nested items are folded by default
 	 */
 	@prop(Boolean)
 	readonly folded: boolean = true;
@@ -70,16 +70,33 @@ export default abstract class iTreeProps extends iData {
 	readonly itemProps?: iItems['itemProps'];
 
 	/**
-	 * If true, then the component will be lazily rendered using `asyncRender`.
-	 * This mode allows you to optimize the rendering of large trees,
-	 * but there may be "flickering" when the component is completely re-rendered.
+	 * This option enables lazy rendering mode for the tree.
+	 * Lazy rendering is extremely useful when displaying large trees
+	 * and can have a dramatic effect on the rendering speed of the component.
+	 *
+	 * Lazy rendering has several operating strategies:
+	 *
+	 * 1. `'folded'` - In this mode, collapsed nodes will not be rendered.
+	 *   This is the default strategy.
+	 *
+	 * 2. `'items'` - In this mode, all nodes of the tree are rendered asynchronously using asyncRender.
+	 *   You can fine-tune the rendering strategy using the `renderFilter`, `nestedRenderFilter`,
+	 *   and `renderChunks` props.
+	 *   Please note that in this rendering mode, the tree may "flicker" during complete redrawing.
+	 *
+	 * 3. `'all'` - In this mode, the tree is rendered fully lazily, essentially combining the `folded` and `items` modes.
+	 *
+	 * Also, for backward compatibility, this prop can accept boolean values:
+	 *
+	 * 1. `false` - lazy rendering is disabled.
+	 * 2. `true` - lazy rendering in the `'items'` mode.
 	 */
-	@prop(Boolean)
-	readonly lazyRender: boolean = false;
+	@prop([Boolean, String])
+	readonly lazyRender: LazyRender = 'folded';
 
 	/**
 	 * A common filter to render items via `asyncRender`.
-	 * It is used to optimize the process of rendering items.
+	 * It is used to optimize the rendering process for items.
 	 * This option only works in `lazyRender` mode.
 	 *
 	 * {@link AsyncRender.iterate}
@@ -101,7 +118,7 @@ export default abstract class iTreeProps extends iData {
 
 	/**
 	 * A filter to render nested items via `asyncRender`.
-	 * It is used to optimize the process of rendering child items.
+	 * It is used to optimize the rendering process for child items.
 	 * This option only works in `lazyRender` mode.
 	 *
 	 * {@link AsyncRender.iterate}
@@ -111,7 +128,7 @@ export default abstract class iTreeProps extends iData {
 	readonly nestedRenderFilter?: RenderFilter;
 
 	/**
-	 * Number of chunks to render via `asyncRender`.
+	 * How many sections of items will be rendered at a time using `asyncRender`.
 	 * This option only works in `lazyRender` mode.
 	 */
 	@prop(Number)
@@ -124,7 +141,7 @@ export default abstract class iTreeProps extends iData {
 	readonly topProp?: bTree;
 
 	/**
-	 * Component nesting level (internal parameter)
+	 * The component nesting level (internal parameter)
 	 */
 	@prop(Number)
 	readonly level: number = 0;

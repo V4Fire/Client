@@ -6,9 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { HintPosition } from 'components/global/g-hint';
-import type { ModsDict } from 'components/super/i-data/i-data';
+import type { HintPosition } from 'components/global/g-hint/g-hint';
+
+import type { ModsDict, UnsafeIData } from 'components/super/i-data/i-data';
+
 import type { Item as Super } from 'components/traits/i-active-items/i-active-items';
+import type bList from 'components/base/b-list/b-list';
 
 export type Items = Item[];
 
@@ -88,4 +91,13 @@ export interface Item extends Super {
 	 * A dictionary with additional attributes of the item
 	 */
 	attrs?: Dictionary;
+}
+
+// @ts-ignore (extend)
+export interface UnsafeBList<CTX extends bList = bList> extends UnsafeIData<CTX> {
+	// @ts-ignore (access)
+	itemsStore: CTX['itemsStore'];
+
+	// @ts-ignore (access)
+	normalizeItems: CTX['normalizeItems'];
 }

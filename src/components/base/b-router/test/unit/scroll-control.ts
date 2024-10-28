@@ -37,68 +37,90 @@ test.describe('<b-router> scroll control', () => {
  */
 function generateSpecs(engineName: EngineName) {
 	/* eslint-disable playwright/require-top-level-describe */
-	const initRouter = createInitRouter(engineName);
+	const initRouter = createInitRouter(engineName, {
+		main: {
+			path: '/'
+		},
+
+		second: {
+			path: '/second'
+		}
+	});
 
 	let root: JSHandle<iStaticPage>;
 
 	test.beforeEach(async ({page}) => {
-		root = await initRouter(page);
+		root = await initRouter(page, {
+			initialRoute: 'main'
+		});
 
 		await page.addStyleTag({
 			content: '#root-component {height: 3000px;}'
 		});
 	});
 
-	test('should restore scroll position after the transition', async ({page}) => {
-		await scrollBy(page, [0, 500]);
+	test(
+		'the router should restore the scroll position after a transition',
 
-		await test.expect(getScrollPosition(page)).resolves.toEqual([0, 500]);
+		async ({page}) => {
+			await scrollBy(page, [0, 500]);
 
-		await root.evaluate(async ({router}) => {
-			// Reset scroll before the transition ends to check scroll restoration
-			router?.once('transition', () => {
-				// @ts-ignore "instance" behavior is available according to MDN docs
-				globalThis.scrollTo({top: 0, left: 0, behavior: 'instant'});
+			await test.expect(getScrollPosition(page)).resolves.toEqual([0, 500]);
+
+			await root.evaluate(async ({router}) => {
+				// Reset scroll before the transition ends to check scroll restoration
+				router?.once('transition', () => {
+					// @ts-ignore "instant" behavior is available according to MDN docs
+					globalThis.scrollTo({top: 0, left: 0, behavior: 'instant'});
+				});
+
+				await router?.push(null, {query: {bla: 1}});
 			});
 
-			await router?.push(null, {query: {bla: 1}});
-		});
+			await test.expect(getScrollPosition(page)).resolves.toEqual([0, 0]);
 
-		await test.expect(getScrollPosition(page)).resolves.toEqual([0, 0]);
+			await root.evaluate(({router}) => router?.back());
+			await BOM.waitForIdleCallback(page);
 
-		await root.evaluate(({router}) => router?.back());
-		await BOM.waitForIdleCallback(page);
+			await test.expect(getScrollPosition(page)).resolves.toEqual([0, 500]);
+		}
+	);
 
-		await test.expect(getScrollPosition(page)).resolves.toEqual([0, 500]);
-	});
+	test(
+		'the router should reset the scroll position on the hard change',
 
-	test('should reset scroll position on the hard change', async ({page}) => {
-		await scrollBy(page, [0, 500]);
+		async ({page}) => {
+			await scrollBy(page, [0, 500]);
 
-		await test.expect(getScrollPosition(page)).resolves.toEqual([0, 500]);
+			await test.expect(getScrollPosition(page)).resolves.toEqual([0, 500]);
 
-		await root.evaluate((ctx) => ctx.router?.push('second'));
-		await BOM.waitForIdleCallback(page);
+			await root.evaluate((ctx) => ctx.router?.push('second'));
+			await BOM.waitForIdleCallback(page);
 
-		await test.expect(getScrollPosition(page)).resolves.toEqual([0, 0]);
-	});
+			await test.expect(getScrollPosition(page)).resolves.toEqual([0, 0]);
+		}
+	);
 
-	test('should add scroll position to the current route meta', async ({page}) => {
-		await scrollBy(page, [0, 500]);
+	test(
+		'the router should add the scroll position to the current route meta',
 
-		await test.expect(getScrollPosition(page)).resolves.toEqual([0, 500]);
+		async ({page}) => {
+			await scrollBy(page, [0, 500]);
 
-		await root.evaluate(({router}) => router?.push(null, {query: {bla: 1}}));
-		await root.evaluate(({router}) => router?.back());
+			await test.expect(getScrollPosition(page)).resolves.toEqual([0, 500]);
 
-		// Check that router.engine route has scroll
-		await test.expect(root.evaluate(({router}) => router?.unsafe.engine.route?.meta.scroll))
-			.resolves.toEqual({x: 0, y: 500});
+			await root.evaluate(({router}) => router?.push(null, {query: {bla: 1}}));
+			await root.evaluate(({router}) => router?.back());
 
-		// Check that root component route has scroll
-		await test.expect(root.evaluate(({route}) => route?.meta.scroll))
-			.resolves.toEqual({x: 0, y: 500});
-	});
+			// Check that router.engine route has scroll
+			await test.expect(root.evaluate(({router}) => router?.unsafe.engine.route?.meta.scroll))
+				.resolves.toEqual({x: 0, y: 500});
+
+			// Check that root component route has scroll
+			await test.expect(root.evaluate(({route}) => route?.meta.scroll))
+				.resolves.toEqual({x: 0, y: 500});
+		}
+	);
 
 	/**
 	 * Returns the scroll position: [x, y]

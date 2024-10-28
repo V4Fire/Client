@@ -30,7 +30,7 @@ export * from 'core/abt/interface';
  */
 export default async function saveABT(opts: unknown, remoteState: State): Promise<void> {
 	let
-		config = <CanPromise<CanUndef<Experiments>>>adapter(opts);
+		config = <CanPromise<CanUndef<Experiments>>>adapter(opts, remoteState);
 
 	if (Object.isPromise(config)) {
 		try {

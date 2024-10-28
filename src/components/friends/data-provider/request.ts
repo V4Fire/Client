@@ -7,7 +7,7 @@
  */
 
 import type Provider from 'core/data';
-import type { RequestQuery, RequestBody, ModelMethod } from 'core/data';
+import type { RequestQuery, RequestBody, RequestPromise, ModelMethod } from 'core/data';
 
 import { asyncOptionsKeys } from 'core/async';
 import type { CreateRequestOptions } from 'components/traits/i-data-provider/i-data-provider';
@@ -16,12 +16,12 @@ import type DataProvider from 'components/friends/data-provider/class';
 import type { DefaultRequest } from 'components/friends/data-provider/interface';
 
 /**
- * Returns the full URL of any provider request
+ * Returns the full URL of any provider's request
  */
 export function url(): CanUndef<string>;
 
 /**
- * Sets an optional URL part for any provider request (it is concatenated with the base part of the URL).
+ * Sets an optional URL part for any provider request (which is concatenated with the base part of the URL).
  * This method returns a new DataProvider object with the additional context.
  *
  * @param [value]
@@ -43,13 +43,13 @@ export function url(this: DataProvider, value?: string): CanUndef<string> | Data
 }
 
 /**
- * Returns the base part of the URL of any provider request
+ * Returns the base part of the URL for any provider request
  */
 export function base(): CanUndef<string>;
 
 /**
  * Sets the base part of the URL for any provider request.
- * This method returns a new DataProvider object with the additional context.
+ * This method returns a new Data for the additional context.
  *
  * @param [value]
  *
@@ -70,7 +70,7 @@ export function base(this: DataProvider, value?: string): CanUndef<string> | Dat
 }
 
 /**
- * Requests data from the provider by a query
+ * Requests data from the provider using a query
  *
  * @param [query] - the request query
  * @param [opts] - additional request options
@@ -80,8 +80,7 @@ export function get<D = unknown>(
 	query?: RequestQuery,
 	opts?: CreateRequestOptions<D>
 ): Promise<CanUndef<D>> {
-	const
-		args = arguments.length > 0 ? [query, opts] : getDefaultRequestParams.call(this, 'get');
+	const args = arguments.length > 0 ? [query, opts] : getDefaultRequestParams.call(this, 'get');
 
 	if (Object.isArray(args)) {
 		return createRequest.call(this, 'get', ...Object.cast<[RequestQuery, CreateRequestOptions<D>]>(args));
@@ -91,7 +90,7 @@ export function get<D = unknown>(
 }
 
 /**
- * Checks the provider availability by a query
+ * Checks the provider availability using a query
  *
  * @param [query] - the request query
  * @param [opts] - additional request options
@@ -101,8 +100,7 @@ export function peek<D = unknown>(
 	query?: RequestQuery,
 	opts?: CreateRequestOptions<D>
 ): Promise<CanUndef<D>> {
-	const
-		args = arguments.length > 0 ? [query, opts] : getDefaultRequestParams.call(this, 'peek');
+	const args = arguments.length > 0 ? [query, opts] : getDefaultRequestParams.call(this, 'peek');
 
 	if (Object.isArray(args)) {
 		return createRequest.call(this, 'peek', ...Object.cast<[RequestQuery, CreateRequestOptions<D>]>(args));
@@ -112,7 +110,10 @@ export function peek<D = unknown>(
 }
 
 /**
- * Sends data to the provider without any semantic effects
+ * Sends data to the provider without any semantic effects.
+ * This operation typically involves transmitting data to the provider for purposes such as logging,
+ * caching, or simple storage, where the data sent does not trigger any processing or change
+ * in state within the provider's system.
  *
  * @param [body] - the request body
  * @param [opts] - additional request options
@@ -122,8 +123,7 @@ export function post<D = unknown>(
 	body?: RequestBody,
 	opts?: CreateRequestOptions<D>
 ): Promise<CanUndef<D>> {
-	const
-		args = arguments.length > 0 ? [body, opts] : getDefaultRequestParams.call(this, 'post');
+	const args = arguments.length > 0 ? [body, opts] : getDefaultRequestParams.call(this, 'post');
 
 	if (Object.isArray(args)) {
 		return createRequest.call(this, 'post', ...Object.cast<[RequestBody, CreateRequestOptions<D>]>(args));
@@ -135,7 +135,7 @@ export function post<D = unknown>(
 /**
  * Adds new data to the provider
  *
- * @param [body] - request body
+ * @param [body] - the request body
  * @param [opts] - additional request options
  */
 export function add<D = unknown>(
@@ -143,8 +143,7 @@ export function add<D = unknown>(
 	body?: RequestBody,
 	opts?: CreateRequestOptions<D>
 ): Promise<CanUndef<D>> {
-	const
-		args = arguments.length > 0 ? [body, opts] : getDefaultRequestParams.call(this, 'add');
+	const args = arguments.length > 0 ? [body, opts] : getDefaultRequestParams.call(this, 'add');
 
 	if (Object.isArray(args)) {
 		return createRequest.call(this, 'add', ...Object.cast<[RequestBody, CreateRequestOptions<D>]>(args));
@@ -154,7 +153,7 @@ export function add<D = unknown>(
 }
 
 /**
- * Updates the provider data by a query
+ * Updates the provider's data based on a query
  *
  * @param [body] - the request body
  * @param [opts] - additional request options
@@ -164,8 +163,7 @@ export function update<D = unknown>(
 	body?: RequestBody,
 	opts?: CreateRequestOptions<D>
 ): Promise<CanUndef<D>> {
-	const
-		args = arguments.length > 0 ? [body, opts] : getDefaultRequestParams.call(this, 'update');
+	const args = arguments.length > 0 ? [body, opts] : getDefaultRequestParams.call(this, 'update');
 
 	if (Object.isArray(args)) {
 		return createRequest.call(this, 'update', ...Object.cast<[RequestBody, CreateRequestOptions<D>]>(args));
@@ -175,7 +173,7 @@ export function update<D = unknown>(
 }
 
 /**
- * Deletes the provider data by a query
+ * Deletes the provider's data based on a query
  *
  * @param [body] - the request body
  * @param [opts] - additional request options
@@ -185,8 +183,7 @@ export function deleteData<D = unknown>(
 	body?: RequestBody,
 	opts?: CreateRequestOptions<D>
 ): Promise<CanUndef<D>> {
-	const
-		args = arguments.length > 0 ? [body, opts] : getDefaultRequestParams.call(this, 'delete');
+	const args = arguments.length > 0 ? [body, opts] : getDefaultRequestParams.call(this, 'delete');
 
 	if (Object.isArray(args)) {
 		return createRequest.call(this, 'delete', ...Object.cast<[RequestBody, CreateRequestOptions<D>]>(args));
@@ -208,16 +205,14 @@ export function createRequest<D = unknown>(
 	body?: RequestQuery | RequestBody,
 	opts: CreateRequestOptions<D> = {}
 ): Promise<CanUndef<D>> {
-	const
-		{ctx} = this;
+	const {ctx} = this;
 
 	const
 		reqParams = Object.reject(opts, asyncOptionsKeys),
 		asyncParams = Object.select(opts, asyncOptionsKeys);
 
 	const req = ctx.waitPermissionToRequest().then(() => {
-		let
-			rawRequest;
+		let rawRequest: RequestPromise<D>;
 
 		if (Object.isFunction(method)) {
 			rawRequest = method(Object.cast(body), reqParams);
@@ -230,8 +225,7 @@ export function createRequest<D = unknown>(
 	});
 
 	if (ctx.mods.progress !== 'true') {
-		const
-			is = (v) => v !== false;
+		const is = (v: boolean | undefined) => v !== false;
 
 		if (is(opts.showProgress)) {
 			void ctx.setMod('progress', true);
@@ -244,51 +238,64 @@ export function createRequest<D = unknown>(
 		};
 
 		req
-			.then(then, (err) => {
-				try {
-					this.provider.emitter.emit('error', err, () => createRequest.call(this, method, body, opts));
-				} catch {}
+			.then(
+				(res) => {
+					try {
+						this.provider.emitter.emit('response', res);
+					} catch {}
 
-				return then();
-			})
+					return then();
+				},
+
+				(err) => {
+					try {
+						this.provider.emitter.emit('error', err, () => createRequest.call(this, method, body, opts));
+					} catch {}
+
+					return then();
+				}
+			)
 
 			.catch(stderr);
 	}
 
-	return req.then((res) => res.data).then((data) => data ?? undefined);
+	return req
+		// `res.data` returns a promise that may execute slowly, for example, due to the application of decoders.
+		// This can lead to a situation where the component is destroyed, but the request is not canceled.
+		.then((res) => this.async.request(res.data, asyncParams))
+		.then((data) => data ?? undefined);
 }
 
 /**
- * Returns the default query options for the specified data provider method
+ * Returns the default query options for the specified method of the data provider
  * @param method
  */
 export function getDefaultRequestParams<T = unknown>(
 	this: DataProvider,
 	method: ModelMethod
 ): CanNull<DefaultRequest<T>> {
-	const
-		{field} = this;
+	const {ctx} = this;
+
+	const [customData, customOpts] = Object.cast<DefaultRequest<T>>(
+		Array.toArray(ctx.request?.[method])
+	);
 
 	const
-		[customData, customOpts] = Array.concat([], field.get(`request.${method}`));
-
-	const
-		p = field.get(`requestParams.${method}`),
+		p = Object.isDictionary(ctx.requestParams) ? ctx.requestParams[method] : undefined,
 		isGet = /^get(:|$)/.test(method);
 
-	let
-		res;
+	let requestParams: [Nullable<DefaultRequest<T>[0]>, DefaultRequest<T>[1]];
 
 	if (Object.isArray(p)) {
 		p[1] = p[1] ?? {};
-		res = p;
+		requestParams = Object.cast(p);
 
 	} else {
-		res = [p, {}];
+		requestParams = [Object.cast(p), {}];
 	}
 
-	if (Object.isPlainObject(res[0]) && Object.isPlainObject(customData)) {
-		res[0] = Object.mixin({
+	if (Object.isPlainObject(requestParams[0]) && Object.isPlainObject(customData)) {
+		requestParams[0] = Object.mixin({
 			propsToCopy: 'new',
 			filter: (el) => {
 				if (isGet) {
@@ -297,29 +304,33 @@ export function getDefaultRequestParams<T = unknown>(
 
 				return el !== undefined;
 			}
-		}, undefined, res[0], customData);
+		}, undefined, requestParams[0], customData);
 
 	} else {
-		res[0] = res[0] != null ? res[0] : customData;
+		requestParams[0] ??= customData;
 	}
 
-	res[1] = Object.mixin({deep: true}, undefined, res[1], customOpts);
+	requestParams[1] = Object.mixin({deep: true}, undefined, requestParams[1], customOpts);
+
+	const defaultRequest: DefaultRequest<T> = [
+		requestParams[0],
+		requestParams[1]
+	];
 
 	const
 		requestFilter = this.ctx.defaultRequestFilter,
-		isEmpty = Object.size(res[0]) === 0;
+		isEmpty = Object.size(requestParams[0]) === 0;
 
 	const info = {
 		isEmpty,
 		method,
-		params: res[1]
+		params: requestParams[1]
 	};
 
-	let
-		needSkip = false;
+	let needSkip = false;
 
 	if (Object.isFunction(requestFilter)) {
-		needSkip = !Object.isTruly(requestFilter.call(this, res[0], info));
+		needSkip = !Object.isTruly(requestFilter.call(this, requestParams[0], info));
 
 	} else if (requestFilter === true) {
 		needSkip = isEmpty;
@@ -329,5 +340,5 @@ export function getDefaultRequestParams<T = unknown>(
 		return null;
 	}
 
-	return res;
+	return defaultRequest;
 }

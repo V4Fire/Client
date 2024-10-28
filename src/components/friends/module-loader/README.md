@@ -2,11 +2,11 @@
 
 This module provides a class to manage dynamically loaded modules.
 
-## How to include this module in your component?
+## How to Include this Module in Your Component?
 
 By default, any component that inherits from [[iBlock]] has the `moduleLoader` property.
 However, to use the module methods, attach them explicitly to enable tree-shake code optimizations.
-Simply place the required import declaration within your component file.
+Place the required import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -31,7 +31,8 @@ Alternatively, if you're using the module with Snakeskin helpers, all dependenci
 ## Usage
 
 The module API is designed for use with [[AsyncRender]].
-For example, you can dynamically require dependencies when needed and render a fragment that uses these modules asynchronously.
+For example, you can dynamically require dependencies as needed and render a fragment
+that uses these modules asynchronously.
 
 ```
 /// Don't forget to declare where to mount dynamically rendered fragments
@@ -71,9 +72,9 @@ To avoid this, you should use the special Snakeskin helpers available to all [[i
 ### load
 
 Loads the specified modules.
-If some modules are already loaded, they won't be loaded twice.
-If all specified modules are already loaded, the function returns a simple value rather than a promise.
-The resulting value is designed for use with [[AsyncRender]].
+If some modules are already loaded, they won't be loaded again.
+If all specified modules are already loaded, the function returns a simple value instead of a promise.
+The resulting value is intended for use with [[AsyncRender]].
 
 ```js
 const modules = await this.moduleLoader.load(
@@ -94,8 +95,9 @@ console.log([...modules]);
 
 ### addToBucket
 
-Adds the specified modules to a load bucket by the specified name.
-Note that adding modules does not force them to load. To load the created bucket, use the `loadBucket` method.
+Adds the specified modules to a load bucket under the passed name.
+Note that adding modules does not trigger their loading.
+To load the created bucket, use the `loadBucket` method.
 The function returns the number of modules added to the bucket.
 
 ```js
@@ -113,9 +115,9 @@ this.moduleLoader.addToBucket('form', {
 ### loadBucket
 
 Loads a bucket of modules by the specified name.
-If some modules are already loaded, they won't be loaded twice.
-If all specified modules are already loaded, the function returns a simple value rather than a promise.
-The resulting value is designed for use with [[AsyncRender]].
+If some modules are already loaded, they won't be loaded again.
+If all specified modules are already loaded, the function returns a simple value instead of a promise.
+The resulting value is intended for use with [[AsyncRender]].
 
 ```js
 this.moduleLoader.addToBucket('form', {
@@ -130,6 +132,36 @@ await this.moduleLoader.addToBucket('form', {
 
 [[/* Module 1 */, /* Module 2 */]]
 console.log([...await this.moduleLoader.loadBucket('form')]);
+```
+
+### sendSignal
+
+Sends a signal to load the modules associated with the specified name.
+
+```
+< . v-async-target
+  += self.loadModules('base/b-settings', { &
+    renderKey: 'b-settings',
+    wait: "moduleLoader.waitSignal('b-settings')"
+  }) .
+```
+
+```js
+this.moduleLoader.sendSignal('b-settings');
+```
+
+### waitSignal
+
+Returns a function that, when called, returns a promise.
+This promise resolves when the signal to load the associated modules is received.
+The resulting value is intended for use with [[AsyncRender]].
+
+```
+< . v-async-target
+  += self.loadModules('base/b-settings', { &
+    renderKey: 'b-settings',
+    wait: "moduleLoader.waitSignal('b-settings')"
+  }) .
 ```
 
 ## Snakeskin helpers
@@ -175,4 +207,19 @@ This option expects a string expression (because it is code-generation) with a f
 
 < button @click = emit('forceRender')
   Show form
+```
+
+Alternatively, you can use the Signal API to defer loading modules.
+
+```
+< .container v-async-target
+  += self.loadModules(['components/form/b-button', 'components/form/b-input'], {wait: 'moduleLoader.waitSignal("load-controls")'})
+    < b-button
+      Press on me!
+
+    < b-input :placeholder = 'Enter your name'
+```
+
+```
+this.moduleLoader.sendSignal('load-controls');
 ```

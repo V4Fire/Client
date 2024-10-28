@@ -11,6 +11,7 @@
 - include 'components/super/i-input-text'|b as placeholder
 
 - template index() extends ['i-input-text'].index
+	- rootTag = 'span'
 	- rootWrapper = true
 
 	- block headHelpers
@@ -35,7 +36,7 @@
 					:key = getItemKey(el, i) |
 					:-id = values.getIndex(el.value) |
 
-					:class = Array.concat([], el.classes, provide.elementClasses({
+					:class = Array.toArray(el.classes, provide.elementClasses({
 						item: {
 							id: values.getIndex(el.value),
 							selected: isSelected(el.value),
@@ -51,7 +52,7 @@
 						< template v-if = item
 							< component &
 								:is = Object.isFunction(item) ? item(el, i) : item |
-								:v-attrs = getItemProps(el, i)
+								v-attrs = getItemProps(el, i)
 							.
 
 						< template v-else
@@ -135,7 +136,7 @@
 
 				- block icons
 
-	- block helpers
+	- block bodyFooter
 		- super
 
 		- block dropdown

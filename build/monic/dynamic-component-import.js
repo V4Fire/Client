@@ -12,6 +12,9 @@ const
 	{typescript, webpack, webpack: {ssr}} = require('@config/config'),
 	{commentModuleExpr: commentExpr} = include('build/const');
 
+const
+	graph = include('build/graph');
+
 const importRgxp = new RegExp(
 	`\\bimport${commentExpr}\\((${commentExpr})(["'])((?:.*?[\\\\/]|)([bp]-[^.\\\\/"')]+)+)\\2${commentExpr}\\)`,
 	'g'
@@ -19,11 +22,11 @@ const importRgxp = new RegExp(
 
 const
 	hasImport = importRgxp.removeFlags('g'),
-	isESImport = typescript().client.compilerOptions.module === 'ES2020',
+	isESImport = !ssr && typescript().client.compilerOptions.module === 'ES2020',
 	fatHTML = webpack.fatHTML();
 
 /**
- * Monic replacer to enable dynamic imports of components
+ * A Monic replacer is used to enable dynamic imports of components
  *
  * @param {string} str
  * @returns {string}
@@ -35,17 +38,19 @@ const
  * });
  * ```
  */
-module.exports = function dynamicComponentImportReplacer(str) {
-	return str.replace(importRgxp, (str, magicComments, q, path, nm) => {
+module.exports = async function dynamicComponentImportReplacer(str) {
+	const {entryDeps} = await graph;
+
+	return str.replace(importRgxp, (str, magicComments, q, resourcePath, resourceName) => {
 		const
-			chunks = path.split(/[\\/]/);
+			chunks = resourcePath.split(/[/\\]/);
 
 		if (chunks.length > 1 && chunks[chunks.length - 1] === chunks[chunks.length - 2]) {
 			return str;
 		}
 
 		const
-			fullPath = `${path}/${nm}`,
+			fullPath = `${resourcePath}/${resourceName}`,
 			imports = [];
 
 		{
@@ -69,37 +74,23 @@ module.exports = function dynamicComponentImportReplacer(str) {
 			imports.push(decl);
 		}
 
-		if (!ssr && !fatHTML) {
-			let
-				decl;
-
-			if (isESImport) {
-				decl = `import(${magicComments} '${fullPath}.styl')`;
-
-			} else {
-				decl = `new Promise(function (r) { return r(require('${fullPath}.styl')); })`;
-			}
-
-			decl = `function () { return ${decl}; }`;
-			imports[0] = `TPLS['${nm}'] ? ${imports[0]} : ${imports[0]}.then(${decl}, function (err) { stderr(err); return ${decl}(); })`;
-		}
-
 		{
 			const
-				regTpl = `function (module) { TPLS['${nm}'] = module${isESImport ? '.default' : ''}['${nm}']; return module; }`;
+				tplPath = `${fullPath}.ss`,
+				regTpl = `function (module) { TPLS['${resourceName}'] = module${isESImport ? '.default' : ''}['${resourceName}']; return module; }`;
 
 			let
 				decl;
 
 			if (ssr) {
-				decl = `(${regTpl})(require('${fullPath}.ss'))`;
+				decl = `(${regTpl})(require('${tplPath}'))`;
 
 			} else {
 				if (isESImport) {
-					decl = `import(${magicComments} '${fullPath}.ss').then(${regTpl})`;
+					decl = `import(${magicComments} '${tplPath}').then(${regTpl})`;
 
 				} else {
-					decl = `new Promise(function (r) { return r(require('${fullPath}.ss')); }).then(${regTpl})`;
+					decl = `new Promise(function (r) { return r(require('${tplPath}')); }).then(${regTpl})`;
 				}
 
 				decl += '.catch(function (err) { stderr(err) })';
@@ -108,8 +99,32 @@ module.exports = function dynamicComponentImportReplacer(str) {
 			imports.push(decl);
 		}
 
-		if (ssr) {
-			return `[${imports.join(',')}]`;
+		// In FatHTML, we do not include dynamically loaded CSS because it leads to duplication
+		// of the CSS and its associated assets
+		if (!fatHTML) {
+			const
+				stylPath = `${fullPath}.styl`;
+
+			let
+				decl;
+
+			if (ssr || isESImport) {
+				decl = `import(${magicComments} '${stylPath}')`;
+
+			} else {
+				decl = `new Promise(function (r) { return r(require('${stylPath}')); })`;
+			}
+
+			if (ssr) {
+				if (!entryDeps.has(resourceName)) {
+					imports.unshift(`require('core/hydration-store').styles.set('${resourceName}', (${decl})).get('${resourceName}')`);
+				}
+
+				return `[${imports.join(',')}]`;
+			}
+
+			decl = `function () { return ${decl}; }`;
+			imports[0] = `TPLS['${resourceName}'] ? ${imports[0]} : ${imports[0]}.then(${decl}, function (err) { stderr(err); return ${decl}(); })`;
 		}
 
 		return `Promise.all([${imports.join(',')}])`;

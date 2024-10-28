@@ -11,7 +11,6 @@ import type Friend from 'components/friends/friend';
 import type iBlock from 'components/super/i-block/i-block';
 import type { ModsProp } from 'components/super/i-block/i-block';
 
-import { baseClassesCache, componentClassesCache, elementClassesCache } from 'components/friends/provide/const';
 import { fullComponentName, fullElementName } from 'components/friends/provide/names';
 
 import type { Classes } from 'components/friends/provide/interface';
@@ -38,7 +37,7 @@ import type { Classes } from 'components/friends/provide/interface';
  * this.provide.classes({button: ['submit', 'focused', 'true']});
  * ```
  */
-export function classes(this: Friend, classes: Classes): Readonly<Dictionary<string>>;
+export function classes(this: Friend, classes: Classes): Dictionary<string>;
 
 /**
  * Returns a dictionary that maps classes from one component to the elements of another component.
@@ -67,15 +66,14 @@ export function classes(
 	this: Friend,
 	componentName: string,
 	classes: Classes
-): Readonly<Dictionary<string>>;
+): Dictionary<string>;
 
 export function classes(
 	this: Friend,
 	componentNameOrClasses: string | Classes,
 	classes?: Classes
-): Readonly<Dictionary<string>> {
-	let
-		{componentName} = this;
+): Dictionary<string> {
+	let {componentName} = this;
 
 	if (Object.isString(componentNameOrClasses)) {
 		componentName = componentNameOrClasses;
@@ -86,16 +84,7 @@ export function classes(
 
 	classes ??= {};
 
-	const
-		key = JSON.stringify(classes) + componentName,
-		cacheVal = baseClassesCache[key];
-
-	if (cacheVal != null) {
-		return cacheVal;
-	}
-
-	const
-		map = {};
+	const map = {};
 
 	Object.entries(classes).forEach(([innerEl, outerEl]) => {
 		if (outerEl === true) {
@@ -117,10 +106,9 @@ export function classes(
 			});
 		}
 
-		map[innerEl.dasherize()] = fullElementName.apply(this, Object.cast(Array.concat([componentName], outerEl)));
+		map[innerEl.dasherize()] = fullElementName.apply(this, Array.toArray(componentName, outerEl));
 	});
 
-	baseClassesCache[key] = Object.freeze(map);
 	return map;
 }
 
@@ -140,7 +128,7 @@ export function classes(
  * this.provide.componentClasses({checked: true});
  * ```
  */
-export function componentClasses(this: Friend, mods?: ModsProp): readonly string[];
+export function componentClasses(this: Friend, mods?: ModsProp): string[];
 
 /**
  * Returns a list of classes for the specified component
@@ -163,15 +151,14 @@ export function componentClasses(
 	this: Friend,
 	componentName: string,
 	mods?: ModsProp
-): readonly string[];
+): string[];
 
 export function componentClasses(
 	this: Friend,
 	componentNameOrMods?: string | ModsProp,
 	mods?: ModsProp
-): readonly string[] {
-	let
-		{componentName} = this;
+): string[] {
+	let {componentName} = this;
 
 	if (arguments.length === 1) {
 		if (Object.isString(componentNameOrMods)) {
@@ -187,19 +174,7 @@ export function componentClasses(
 
 	mods ??= {};
 
-	const cache = componentClassesCache[this.componentName] ?? Object.createDict();
-	componentClassesCache[this.componentName] = cache;
-
-	const
-		key = JSON.stringify(mods) + componentName,
-		cacheVal = cache[key];
-
-	if (cacheVal != null) {
-		return cacheVal;
-	}
-
-	const
-		classes = [(<Function>fullComponentName).call(this, componentName)];
+	const classes = [(<Function>fullComponentName).call(this, componentName)];
 
 	Object.entries(mods).forEach(([key, val]) => {
 		if (val !== undefined) {
@@ -207,7 +182,6 @@ export function componentClasses(
 		}
 	});
 
-	cache[key] = Object.freeze(classes);
 	return classes;
 }
 
@@ -225,7 +199,7 @@ export function componentClasses(
  * this.provide.elementClasses({button: {focused: true}});
  * ```
  */
-export function elementClasses(this: Friend, els: Dictionary<ModsProp>): readonly string[];
+export function elementClasses(this: Friend, els: Dictionary<ModsProp>): string[];
 
 /**
  * Returns a list of classes for a specified element of the current component
@@ -253,18 +227,16 @@ export function elementClasses(
 	this: Friend,
 	componentNameOrCtx: string | iBlock,
 	els: Dictionary<ModsProp>
-): readonly string[];
+): string[];
 
 export function elementClasses(
 	this: Friend,
 	nameCtxEls: string | iBlock | Dictionary<ModsProp>,
 	els?: Dictionary<ModsProp>
-): readonly string[] {
-	let
-		componentId: CanUndef<string>;
+): string[] {
+	let componentId: CanUndef<string>;
 
-	let
-		{componentName} = this;
+	let {componentName} = this;
 
 	if (arguments.length === 1) {
 		componentId = this.componentId;
@@ -282,25 +254,10 @@ export function elementClasses(
 	}
 
 	if (els == null) {
-		return Object.freeze([]);
+		return [];
 	}
 
-	const
-		cacheId = componentId ?? componentName,
-		cache = elementClassesCache[cacheId] ?? Object.createDict();
-
-	elementClassesCache[cacheId] = cache;
-
-	const
-		key = JSON.stringify(els),
-		cacheVal = cache[key];
-
-	if (cacheVal != null) {
-		return cacheVal;
-	}
-
-	const
-		classes = componentId != null ? [componentId] : [];
+	const classes = componentId != null ? [componentId] : [];
 
 	Object.entries(els).forEach(([el, mods]) => {
 		classes.push(
@@ -318,7 +275,6 @@ export function elementClasses(
 		});
 	});
 
-	cache[key] = Object.freeze(classes);
 	return classes;
 }
 
@@ -333,6 +289,6 @@ export function elementClasses(
  * this.provide.hintClasses();
  * ```
  */
-export function hintClasses(this: Friend, pos: string = 'bottom'): readonly string[] {
+export function hintClasses(this: Friend, pos: string = 'bottom'): string[] {
 	return componentClasses.call(this, 'g-hint', {pos});
 }

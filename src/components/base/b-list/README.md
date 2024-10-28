@@ -57,11 +57,9 @@ import bList, { component } from 'components/super/b-list/b-list';
 
 @component()
 export default class MyList extends bList {
-  /** @override */
-  readonly ActiveProp!: CanIter<number>;
+  declare readonly ActiveProp: CanIter<number>;
 
-  /** @override */
-  readonly Active!: number | Set<number>;
+  declare readonly Active: number | Set<number>;
 }
 ```
 
@@ -72,8 +70,7 @@ import bList, { component } from 'components/super/b-list/b-list';
 
 @component()
 export default class MyList extends bList {
-  /** @override */
-  readonly Item!: MyItem;
+  declare readonly Item: MyItem;
 }
 ```
 
@@ -258,8 +255,7 @@ Returns true if the specified value is active.
 
 ```typescript
 class Test extends iData {
-  /** @override */
-  protected $refs!: {
+  declare protected readonly $refs: iData['$refs'] & {
     list: bList
   };
 
@@ -277,8 +273,7 @@ If the component is switched to the `multiple` mode, the method can take an iter
 
 ```typescript
 class Test extends iData {
-  /** @override */
-  protected $refs!: {
+  declare protected readonly $refs: iData['$refs'] & {
     list: bList
   };
 
@@ -295,8 +290,7 @@ If the component is switched to the `multiple` mode, the method can take an iter
 
 ```typescript
 class Test extends iData {
-  /** @override */
-  protected $refs!: {
+  declare protected readonly $refs: iData['$refs'] & {
     list: bList
   };
 
@@ -313,8 +307,7 @@ The methods return a new active component item(s).
 
 ```typescript
 class Test extends iData {
-  /** @override */
-  protected $refs!: {
+  declare protected readonly $refs: iData['$refs'] & {
     list: bList
   };
 

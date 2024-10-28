@@ -9,19 +9,19 @@ import iBlock, { component, prop } from 'components/super/i-block/i-block';
 class bExample extends iBlock {
   // The decorator can be called either without parameters
   @prop()
-  foo: number = 0;
+  value1: number = 0;
 
   // Or by passing a constructor function of the prop
   @prop(Number)
-  bla: number = 0;
+  value2: number = 0;
 
   // Or a dictionary with additional options
   @prop({type: Number, default: Math.random})
-  bar!: number;
+  value3!: number;
 
   // If the prop can be of different types, then pass an array of constructors
   @prop({type: [Number, String], required: false})
-  baz?: number | string;
+  value4?: number | string;
 }
 ```
 
@@ -35,11 +35,11 @@ import iBlock, { component, prop } from 'components/super/i-block/i-block';
 @component()
 class bExample extends iBlock {
   @prop(Number)
-  readonly foo: number = 0;
+  readonly value: number = 0;
 }
 ```
 
-## Naming conventions and linking fields with props
+## Naming Conventions and Linking Fields with Props
 
 As mentioned earlier, component props cannot be changed from within the component.
 However, very often there is a need to violate this rule.
@@ -154,7 +154,7 @@ And calling our component from another template will be like this.
 
 As you can see, we got rid of unnecessary boilerplate code and the need to remember the name of the component prop.
 
-## Additional options
+## Additional Options
 
 ### [type]
 
@@ -167,10 +167,10 @@ import iBlock, { component, prop } from 'components/super/i-block/i-block';
 @component()
 class bExample extends iBlock {
   @prop({type: Number})
-  bla!: number;
+  value1!: number;
 
   @prop({type: [Number, String]})
-  baz!: number | string;
+  value2!: number | string;
 }
 ```
 
@@ -186,10 +186,10 @@ import iBlock, { component, prop } from 'components/super/i-block/i-block';
 @component()
 class bExample extends iBlock {
   @prop({required: false})
-  bla?: number;
+  value1?: number;
 
   @prop()
-  baz: number = 0;
+  value2: number = 0;
 }
 ```
 
@@ -257,8 +257,88 @@ import iBlock, { component, prop } from 'components/super/i-block/i-block';
 @component()
 class bExample extends iBlock {
   @prop({type: Number, validator: Number.isPositive})
-  bla!: number;
+  value!: number;
 }
+```
+
+### [forceUpdate = `true`]
+
+If set to false, changing the prop will never trigger a re-render of the component template.
+Use this mode for props that are not used in the template to reduce the number of unwanted re-renders.
+The need for this property arose after upgrading to Vue3,
+where any change to a component's prop always triggers a re-render of its template.
+
+```typescript
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
+
+@component()
+class bExample extends iBlock {
+  // Note that this logic only applies to non-functional components, as a functional component updates
+  // with any change in the parent state
+  @prop({type: Number, forceUpdate: false})
+  value!: number;
+}
+```
+
+Keep in mind that if you use this option, you must ensure that the prop is never used explicitly or
+implicitly in the template.
+
+For instance, consider a situation where you have a field bound to such a prop,
+and it is used in the template in conjunction with `v-model`.
+This will lead to incorrect behavior (updating the prop will not lead to updating the value in the input).
+
+```typescript
+import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
+
+@component()
+class bExample extends iBlock {
+  @prop({type: Number, forceUpdate: false})
+  valueProp!: number;
+
+  @field((o) => o.syn.link())
+  value!: number;
+}
+```
+
+```
+/// This code may function incorrectly
+< input v-model = value
+```
+
+#### Usage
+
+As a rule, adding the property `forceUpdate: false` is the only thing needed to activate this mode for the prop.
+However, if you are creating a component using `component :is`,
+you may be required to explicitly set accessors for this prop.
+
+```
+< component :is = 'b-example' | :value = someValue | @:value = createPropAccessors(() => someValue)()
+```
+
+__Note that you need to explicitly pass both the prop and the accessor.
+This is necessary for the correct functioning of the reactive effect on the parent component.__
+
+The `createPropAccessors` function generates accessor functions for `someValue`,
+effectively allowing you to manage how prop changes affect component re-rendering.
+By doing this, you can ensure that updates to `someValue` do not automatically
+trigger a re-render unless explicitly required, enhancing the performance and efficiency of the application.
+
+Alternatively, you can specify the supertype of your component using the prop `:instanceOf`,
+and then the necessary accessors will be passed automatically.
+
+```
+< component :is = 'b-example' | :instanceOf = bExample | :value = someValue
+```
+
+##### Passing Through v-attrs
+
+Please note that when setting such props using the `v-attrs` directive,
+you need to define them differently from other props.
+See the example below.
+
+```
+/// Note that we do not invoke the result of createPropAccessors, but pass it as is
+< b-example v-attrs = {'@:value': createPropAccessors(() => someValue)}
 ```
 
 ### [watch]
@@ -282,7 +362,7 @@ class bExample extends iBlock {
 
     // Also, see core/object/watch
     {
-      // If set to false, then a handler that is invoked on the watcher event does not take any arguments from the event
+      // If set to false, then a handler invoked on the watcher event does not take any arguments from the event
       provideArgs: false,
 
       // How the event handler should be called:

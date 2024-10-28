@@ -13,13 +13,15 @@ const
 	Snakeskin = require('snakeskin');
 
 const
-	fs = require('fs'),
+	fs = require('node:fs'),
 	path = require('upath'),
-	glob = require('glob'),
+	glob = require('fast-glob'),
 	isPathInside = require('is-path-inside');
 
-const
-	{validators, config: {dependencies, superRgxp}} = require('@pzlr/build-core');
+const {
+	validators,
+	config: {dependencies, superRgxp}
+} = require('@pzlr/build-core');
 
 const
 	{resources} = include('build/graph'),
@@ -32,8 +34,8 @@ const
 Snakeskin.importFilters({
 	/**
 	 * Resolves the specified namespace and returns it.
-	 * This filter is necessary for correctly resolving templates
-	 * that exist within the same namespace but are declared in multiple files.
+	 * This filter is essential for correctly resolving templates that exist within the same namespace
+	 * but are declared across multiple files.
 	 *
 	 * @param {string} namespace
 	 * @returns {string}
@@ -50,12 +52,13 @@ Snakeskin.importFilters({
 	},
 
 	/**
-	 * Resolves the specified file path to use with the Snakeskin include directive.
-	 * The filter adds the support of layers.
+	 * Resolves the specified file path for use with the Snakeskin include directive, also adding support for layers.
 	 *
-	 * If the path ends with the symbols `:$postfix`,
-	 * then during path resolution a hard link will be created to the original file with the name `$fname_$postfix`.
-	 * This functionality is necessary for correctly overriding templates in a layered monorepository.
+	 * If the path ends with the symbols `:$postfix`, during the path resolution,
+	 * a hard link will be created to the original file named `$fileName_$postfix`.
+	 * This functionality is critical for correctly overriding templates in a layered mono-repository,
+	 * ensuring that the integrity and the separation of layers are maintained even when templates
+	 * are extended or customized.
 	 *
 	 * @param {string} filePath
 	 * @param {string} sourceFilePath - the original source file path
@@ -75,8 +78,7 @@ Snakeskin.importFilters({
 
 		filePath = chunks[0];
 
-		let
-			start = 0;
+		let start = 0;
 
 		if (RegExp.test(superRgxp, filePath)) {
 			filePath = filePath.replace(superRgxp, '');
@@ -90,8 +92,7 @@ Snakeskin.importFilters({
 
 		} else {
 			for (let i = 0; i < resourcesRgxp.length; i++) {
-				const
-					rgxp = resourcesRgxp[i];
+				const rgxp = resourcesRgxp[i];
 
 				if (rgxp.test(filePath)) {
 					filePath = filePath.replace(rgxp, '');
@@ -102,15 +103,14 @@ Snakeskin.importFilters({
 		}
 
 		const
-			hasMagic = glob.hasMagic(filePath),
+			isDynamicPattern = glob.isDynamicPattern(filePath),
 			end = ssExtRgxp.removeFlags('g').test(filePath) ? '' : '/',
 			ends = [];
 
 		if (end) {
-			const
-				basename = path.basename(filePath);
+			const basename = path.basename(filePath);
 
-			if (!glob.hasMagic(basename)) {
+			if (!glob.isDynamicPattern(basename)) {
 				ends.push(`${basename}.ss`);
 			}
 
@@ -127,10 +127,9 @@ Snakeskin.importFilters({
 
 		for (let i = start; i < resources.length; i++) {
 			for (let j = 0; j < ends.length; j++) {
-				const
-					fullPath = path.join(resources[i], filePath, ends[j] || '');
+				const fullPath = path.join(resources[i], filePath, ends[j] || '');
 
-				if (hasMagic) {
+				if (isDynamicPattern) {
 					paths.push(...glob.sync(fullPath));
 
 				} else if (fs.existsSync(fullPath)) {
@@ -139,7 +138,7 @@ Snakeskin.importFilters({
 			}
 		}
 
-		if (hasMagic) {
+		if (isDynamicPattern) {
 			return paths.map(applyAsModifier);
 		}
 

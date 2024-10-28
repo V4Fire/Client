@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { getComponentContext } from 'core/component/context';
+
 import type { DirectiveBinding, VNode } from 'core/component/engines';
 import type { ComponentInterface } from 'core/component/interface';
 
@@ -51,5 +53,19 @@ export function getDirectiveComponent(vnode: Nullable<VNode>): CanNull<Component
 		return null;
 	}
 
-	return Object.cast(vnode.virtualComponent ?? vnode.component?.['ctx'] ?? null);
+	if (vnode.el?.component != null) {
+		return vnode.el.component;
+	}
+
+	if (vnode.virtualComponent != null) {
+		return Object.cast(vnode.virtualComponent);
+	}
+
+	const component = vnode.component?.['ctx'];
+
+	if (component != null) {
+		return getComponentContext(component, true).unsafe;
+	}
+
+	return null;
 }

@@ -300,4 +300,17 @@ test.describe('<b-list>', () => {
 			[[0, 1], [0], 'active']
 		]);
 	});
+
+	test('should remove focus from previous active element', async ({page}) => {
+		const
+			target = await renderList(page);
+
+		const links = await page.locator(`${createListSelector('link')}`);
+
+		await links.first().click();
+		await test.expect(links.first()).toBeFocused();
+
+		await target.evaluate((ctx) => ctx.setActive(1));
+		await test.expect(() => test.expect(links.first()).not.toBeFocused()).toPass();
+	});
 });

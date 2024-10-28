@@ -54,9 +54,11 @@ const
 })
 
 export default class bTextarea extends iInputText {
-	override readonly Value!: Value;
-	override readonly FormValue!: FormValue;
-	override readonly rootTag: string = 'span';
+	/** @inheritDoc */
+	declare readonly Value: Value;
+
+	/** @inheritDoc */
+	declare readonly FormValue: FormValue;
 
 	@prop({type: String, required: false})
 	override readonly valueProp?: this['Value'];
@@ -139,7 +141,7 @@ export default class bTextarea extends iInputText {
 	@system()
 	protected override valueStore!: this['Value'];
 
-	@system({
+	@system<bTextarea>({
 		after: 'valueStore',
 		init: (o) => o.sync.link((text) => {
 			o.watch('valueProp', {label: $$.textStoreValueProp}, watcher);
@@ -183,7 +185,8 @@ export default class bTextarea extends iInputText {
 	@system()
 	protected minHeight: number = 0;
 
-	protected override readonly $refs!: iInputText['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iInputText['$refs'] & {
 		input: HTMLTextAreaElement;
 	};
 

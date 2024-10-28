@@ -71,9 +71,9 @@ export * from 'components/base/b-virtual-scroll/interface';
 
 export { RequestFn, RemoteData, RequestQueryFn, GetData };
 
-DOM.addToPrototype(watchForIntersection, appendChild);
-VDOM.addToPrototype(render, create);
-Block.addToPrototype(getFullElementName);
+DOM.addToPrototype({watchForIntersection, appendChild});
+VDOM.addToPrototype({render, create});
+Block.addToPrototype({getFullElementName});
 
 const
 	$$ = symbolGenerator();
@@ -86,7 +86,8 @@ export default class bVirtualScroll extends iData implements iItems {
 	/** {@link iItems.Items} */
 	readonly Items!: Array<this['Item']>;
 
-	override readonly DB!: RemoteData;
+	/** @inheritDoc */
+	declare readonly DB: RemoteData;
 
 	override readonly checkDBEquality: CheckDBEquality = false;
 
@@ -105,6 +106,10 @@ export default class bVirtualScroll extends iData implements iItems {
 	/** {@link iItems.itemProps} */
 	@prop({type: [Function, Object], default: () => ({})})
 	readonly itemProps!: iItems['itemProps'];
+
+	/** {@link iItems.items} */
+	@prop(Array)
+	readonly itemsProp: this['Items'] = [];
 
 	/**
 	 * The maximum number of elements to cache
@@ -247,7 +252,8 @@ export default class bVirtualScroll extends iData implements iItems {
 	@system<bVirtualScroll>((o) => new ComponentRender(o))
 	protected componentRender!: ComponentRender;
 
-	protected override readonly $refs!: iData['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iData['$refs'] & {
 		container: HTMLElement;
 		loader?: HTMLElement;
 		tombstones?: HTMLElement;

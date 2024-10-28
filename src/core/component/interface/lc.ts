@@ -20,11 +20,12 @@ export type Hook =
 	'before:mounted' |
 	'mounted' |
 	'beforeUpdate' |
+	'before:updated' |
 	'updated' |
 	'activated' |
 	'deactivated' |
 	'beforeDestroy' |
 	'destroyed' |
+	'errorCaptured' |
 	'renderTracked' |
-	'renderTriggered' |
-	'errorCaptured';
+	'renderTriggered';

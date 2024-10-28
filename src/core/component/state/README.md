@@ -1,69 +1,137 @@
 # core/component/state
 
-The module provides a global store for all components to access,
-which can be used to provide data from external modules to components.
-The store is similar to Redux, but much simpler and easier to use.
-Components can subscribe to the store to receive updates whenever the data in the store changes,
-and they can also update the store themselves if necessary.
-This allows for a centralized location for managing data that can be accessed by all components throughout
-the application.
+This module defines an interface for the entire application's state.
+The state can include user sessions, cookie store, etc.
+Please note that this module only provides types.
 
-## Usage
+## How to use the state?
 
-```js
-import state, { watch, set, unset } from 'core/component/state';
+The state of the application is set during its initialization in the `core/init` module.
+Also, in the case of SSR, you can explicitly pass state parameters in the render function call.
 
-// Online status check
-console.log(state.isOnline);
+```typescript
+import { initApp } from 'core';
+import { createCookieStore } from 'core/cookies';
 
-// Watching the session
-watch('isAuth', (value, oldValue) => {
-  console.log(value, oldValue);
+initApp('p-v4-components-demo', {
+  location: new URL('https://example.com/user/12345'),
+  cookies: createCookieStore('id=1')
+}).then(({content: renderedHTML, styles: inlinedStyles, state}) => {
+  console.log(renderedHTML, inlinedStyles, state);
 });
-
-// Addin a new property to the state
-set('newProp', someValue);
 ```
 
-## Built-in state
+To work with the state from a component context, you should use a special getter called `remoteState`.
 
-V4Fire supports out of the box integration with the `core/session`, `core/net`, and `core/abt` modules.
+```typescript
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-### state.isAuth
-
-This property signifies if the session has been authorized or not.
-
-### state.isOnline
-
-This property signifies if an Internet connection is currently active or not.
-
-### state.lastOnlineDate
-
-This property indicates the date of the most recent Internet connection.
-
-### state.experiments
-
-This property contains a list of registered AB experiments.
-
-### state.globalEnv
-
-An object whose properties will extend the global object.
-For example, for SSR rendering, the proper functioning of APIs such as `document.cookie` or `location` is required.
-Using this object, polyfills for all necessary APIs can be passed through.
-
-```js
-import { set } from 'core/component/state';
-
-set('globalEnv', {
-  location: {
-    href: 'https://foo.com'
+@component()
+class bExample extends iBlock {
+  created() {
+    console.log(this.remoteState.location.href);
   }
-});
+}
 ```
 
-## API
+To access the state via a global reference, you can use `app.state` from the `core/component` module.
+But keep in mind that working with state through global import will not work with SSR.
 
-By default, this module exports a link to the store object itself.
-Additionally, it provides methods for setting and unsetting new store properties, as well as watching for changes.
-To observe store modifications, the module utilizes the `core/watch` functionality.
-For a comprehensive understanding of object observation, please consult the documentation for this module.
+```typescript
+import { app } from 'core/component';
+
+console.log(app.state?.location);
+```
+
+## Interface
+
+```typescript
+import type Async from 'core/async';
+import type * as net from 'core/net';
+
+import type { Session } from 'core/session';
+import type { Cookies } from 'core/cookies';
+
+import type ThemeManager from 'core/theme-manager';
+import type PageMetaData from 'core/page-meta-data';
+
+import type { Experiments } from 'core/abt';
+import type { InitialRoute, AppliedRoute } from 'core/router';
+
+export interface State {
+  /**
+   * The unique identifier for the application process
+   */
+  appProcessId: string;
+
+  /**
+   * True, if the current user session is authorized
+   */
+  isAuth?: boolean;
+
+  /**
+   * An API for managing user session
+   */
+  session: Session;
+
+  /**
+   * An API for working with cookies
+   */
+  cookies: Cookies;
+
+  /**
+   * An API for working with the target document's URL
+   */
+  location: URL;
+
+  /**
+   * An API for managing app themes from the Design System
+   */
+  theme: ThemeManager;
+
+  /**
+   * An API for working with the meta information of the current page
+   */
+  pageMetaData: PageMetaData;
+
+  /**
+   * A storage for hydrated data.
+   * During SSR, data is saved in this storage and then restored from it on the client.
+   */
+  hydrationStore?: HydrationStore;
+
+  /**
+   * True, if the application is connected to the Internet
+   */
+  isOnline?: boolean;
+
+  /**
+   * Date of the last Internet connection
+   */
+  lastOnlineDate?: Date;
+
+  /**
+   * An API to work with a network, such as testing of the network connection, etc.
+   */
+  net: typeof net;
+
+  /**
+   * The initial value for the active route.
+   * This field is typically used in cases of SSR and hydration.
+   */
+  route?: InitialRoute | AppliedRoute;
+
+  /**
+   * The application default locale
+   */
+  locale?: Language;
+
+  /**
+   * A list of registered AB experiments
+   */
+  experiments?: Experiments;
+
+  /** {@link Async} */
+  async: Async;
+}
+```

@@ -13,12 +13,12 @@ import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scro
 import Component from 'tests/helpers/component';
 import Scroll from 'tests/helpers/scroll';
 import BOM from 'tests/helpers/bom';
-import { interceptPaginationRequest } from 'tests/helpers/providers/pagination';
+import { interceptPaginationRequest } from 'tests/network-interceptors/pagination';
 
 test.describe('b-virtual-scroll render', () => {
 
 	const baseAttrs = {
-		theme: 'demo',
+		exterior: 'demo',
 		item: 'section',
 		id: 'target',
 		itemProps: ({current}) => ({'data-index': current.i})

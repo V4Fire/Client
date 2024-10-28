@@ -6,28 +6,31 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable max-lines-per-function */
+
 import watch, { mute, unmute, unwrap, getProxyType, isProxy, WatchHandlerParams } from 'core/object/watch';
+import { getPropertyInfo, isPrivateField, PropertyInfo } from 'core/component/reflect';
 
 import { tiedWatchers, watcherInitializer } from 'core/component/watch/const';
 import { cloneWatchValue } from 'core/component/watch/clone';
-import { attachDynamicWatcher } from 'core/component/watch/helpers';
-
-import { getPropertyInfo, PropertyInfo } from 'core/component/reflect';
+import { attachDynamicWatcher, canSkipWatching } from 'core/component/watch/helpers';
 
 import type { ComponentMeta } from 'core/component/meta';
-import type { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
+import type { ComponentInterface, WatchPath, WatchOptions, RawWatchHandler } from 'core/component/interface';
 
 /**
  * Creates a function to watch property changes from the specified component instance and returns it
  * @param component
  */
-// eslint-disable-next-line max-lines-per-function
 export function createWatchFn(component: ComponentInterface): ComponentInterface['$watch'] {
-	const
-		watchCache = new Map();
+	const watchCache = new Map();
 
-	// eslint-disable-next-line @typescript-eslint/typedef,max-lines-per-function
-	return function watchFn(this: ComponentInterface, path, optsOrHandler, rawHandler?) {
+	return function watchFn(
+		this: ComponentInterface,
+		path: WatchPath | object,
+		optsOrHandler: WatchOptions | RawWatchHandler,
+		rawHandler?: RawWatchHandler
+	) {
 		let
 			info: PropertyInfo,
 			opts: WatchOptions,
@@ -38,17 +41,21 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			opts = {};
 
 		} else {
+			if (!Object.isFunction(rawHandler)) {
+				throw new ReferenceError('The handler function is not specified');
+			}
+
 			handler = rawHandler;
-			opts = optsOrHandler ?? {};
+			opts = optsOrHandler;
 		}
 
-		const
-			originalHandler = handler;
+		const originalHandler = handler;
 
 		if (Object.isString(path)) {
 			info = getPropertyInfo(path, component);
 
 		} else {
+			// TODO: Implement a more accurate check
 			if (isProxy(path)) {
 				info = Object.cast({ctx: path});
 
@@ -63,9 +70,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 		}
 
-		const
-			isDefinedPath = Object.size(info.path) > 0;
-
 		let
 			isRoot = false,
 			isFunctional = false,
@@ -78,34 +82,10 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 			meta = propCtx.meta;
 			isRoot = Boolean(ctxParams.root);
-			isFunctional = !isRoot && ctxParams.functional === true;
+			isFunctional = SSR || !isRoot && ctxParams.functional === true;
 		}
 
-		let canSkipWatching =
-			(isRoot || isFunctional) &&
-			(info.type === 'prop' || info.type === 'attr');
-
-		if (!canSkipWatching && isFunctional) {
-			let
-				f;
-
-			switch (info.type) {
-				case 'system':
-					f = meta?.systemFields[info.name];
-					break;
-
-				case 'field':
-					f = meta?.fields[info.name];
-					break;
-
-				default:
-					// Do nothing
-			}
-
-			if (f != null) {
-				canSkipWatching = f.functional === false || f.functionalWatching === false;
-			}
-		}
+		const skipWatching = canSkipWatching(info);
 
 		const
 			isAccessor = Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor),
@@ -122,32 +102,31 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		};
 
 		const
-			needCollapse = normalizedOpts.collapse,
-			needImmediate = normalizedOpts.immediate,
+			needCollapse = Boolean(normalizedOpts.collapse),
+			needImmediate = Boolean(normalizedOpts.immediate),
 			needCache = (handler['originalLength'] ?? handler.length) > 1 && needCollapse;
 
-		if (canSkipWatching && !needImmediate) {
+		if (skipWatching && !needImmediate) {
 			return null;
 		}
 
-		const
-			{flush} = normalizedOpts;
+		const isDefinedPath = Object.size(info.path) > 0;
+
+		const {flush} = normalizedOpts;
 
 		delete normalizedOpts.flush;
 		normalizedOpts.immediate = flush === 'sync';
 
-		let
-			oldVal;
+		let oldVal: unknown;
 
 		if (needCache) {
-			let
-				cacheKey;
+			let cacheKey: unknown[];
 
 			if (Object.isString(info.originalPath)) {
 				cacheKey = [info.originalPath];
 
 			} else {
-				cacheKey = Array.concat([info.ctx], info.path);
+				cacheKey = Array.toArray(info.ctx, Object.cast(info.path));
 			}
 
 			if (Object.has(watchCache, cacheKey)) {
@@ -158,34 +137,35 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				Object.set(watchCache, cacheKey, oldVal);
 			}
 
-			handler = (val, _, i) => {
-				const h = () => {
-					if (!isDefinedPath && Object.isArray(val) && val.length > 0) {
-						i = (<[unknown, unknown, PropertyInfo]>val[val.length - 1])[2];
+			handler = (value: unknown, _: unknown, i?: WatchHandlerParams) => {
+				const that = this;
+
+				if (flush === 'post') {
+					return component.$nextTick().then(exec);
+				}
+
+				return exec();
+
+				function exec() {
+					if (!isDefinedPath && Object.isArray(value) && value.length > 0) {
+						i = (<[any, any, WatchHandlerParams]>value[value.length - 1])[2];
 					}
 
 					if (isMountedWatcher) {
-						val = info.ctx;
+						value = info.ctx;
 						patchPath(i);
 
 					} else if (isAccessor) {
-						val = Object.get(info.ctx, info.accessor ?? info.name);
+						value = Object.get(info.ctx, info.accessor ?? info.name);
 					}
 
-					const
-						res = originalHandler.call(this, val, oldVal, i);
+					const res = originalHandler.call(that, value, oldVal, i);
 
-					oldVal = cloneWatchValue(isDefinedPath ? val : getVal(), normalizedOpts);
+					oldVal = cloneWatchValue(isDefinedPath ? value : getVal(), normalizedOpts);
 					Object.set(watchCache, cacheKey, oldVal);
 
 					return res;
-				};
-
-				if (flush === 'post') {
-					return component.$nextTick().then(h);
 				}
-
-				return h();
 			};
 
 			handler[tiedWatchers] = originalHandler[tiedWatchers];
@@ -198,64 +178,75 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 		} else {
 			if (isMountedWatcher) {
-				handler = (val, ...args) => {
-					const h = () => {
+				handler = (value: unknown, ...args: [unknown?, WatchHandlerParams?]) => {
+					const that = this;
+
+					if (flush === 'post') {
+						return component.$nextTick().then(exec);
+					}
+
+					return exec();
+
+					function exec() {
 						let
 							oldVal = args[0],
 							handlerParams = args[1];
 
-						if (!isDefinedPath && needCollapse && Object.isArray(val) && val.length > 0) {
-							handlerParams = (<[unknown, unknown, PropertyInfo]>val[val.length - 1])[2];
+						if (!isDefinedPath && needCollapse && Object.isArray(value) && value.length > 0) {
+							handlerParams = (<[any, any, WatchHandlerParams]>value[value.length - 1])[2];
 
-						} else if (args.length === 0) {
-							return originalHandler.call(this, val.map(([val, oldVal, i]) => {
+						} else if (args.length === 0 && Object.isArray(value)) {
+							const args = Object.cast<Array<[unknown, unknown, WatchHandlerParams]>>(value).map(([v, o, i]) => {
 								patchPath(i);
-								return [val, oldVal, i];
-							}));
+								return [v, o, i];
+							});
+
+							return originalHandler.call(that, args);
 						}
 
 						if (needCollapse) {
-							val = info.ctx;
-							oldVal = val;
+							value = info.ctx;
+							oldVal = value;
 						}
 
 						patchPath(handlerParams);
-						return originalHandler.call(this, val, oldVal, handlerParams);
-					};
-
-					if (flush === 'post') {
-						return component.$nextTick().then(h);
+						return originalHandler.call(that, value, oldVal, handlerParams);
 					}
-
-					return h();
 				};
 
 			} else if (isAccessor) {
-				handler = (val, _, i) => {
-					const h = () => {
-						if (needCollapse) {
-							val = Object.get(info.ctx, info.accessor ?? info.name);
-
-						} else {
-							val = Object.get(component, info.originalPath);
-						}
-
-						if (!isDefinedPath && Object.isArray(i?.path)) {
-							oldVal = Object.get(oldVal, [i.path[0]]);
-						}
-
-						const res = originalHandler.call(this, val, oldVal, i);
-						oldVal = isDefinedPath ? val : getVal();
-
-						return res;
-					};
+				handler = (value: unknown, _: unknown, i?: WatchHandlerParams) => {
+					const that = this;
 
 					if (flush === 'post') {
-						return component.$nextTick().then(h);
+						return component.$nextTick().then(exec);
 					}
 
-					return h();
+					return exec();
+
+					function exec() {
+						if (needCollapse) {
+							value = Object.get(info.ctx, info.accessor ?? info.name);
+
+						} else {
+							value = Object.get(component, info.originalPath);
+						}
+
+						const path = i?.path;
+
+						if (!isDefinedPath && Object.isArray(path)) {
+							oldVal = Object.get(oldVal, [path[0]]);
+						}
+
+						const res = originalHandler.call(that, value, oldVal, i);
+						oldVal = isDefinedPath ? value : getVal();
+
+						return res;
+					}
 				};
+
+			} else if (flush === 'post') {
+				handler = (...args: unknown[]) => component.$nextTick().then(() => originalHandler.call(this, ...args));
 			}
 
 			if (needImmediate) {
@@ -263,7 +254,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 		}
 
-		if (canSkipWatching) {
+		if (skipWatching) {
 			return null;
 		}
 
@@ -321,10 +312,10 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						attr = info.name;
 
 					let
-						unwatch;
+						unwatch: Function;
 
 					if ('watch' in watchInfo) {
-						unwatch = watchInfo.watch(attr, (value, oldValue) => {
+						unwatch = watchInfo.watch(attr, (value: object, oldValue: object) => {
 							const info = {
 								obj: component,
 								root: component,
@@ -352,16 +343,106 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						slicedPathChunks = pathChunks.slice(1);
 
 					const
+						forceUpdate = meta?.props[info.name]?.forceUpdate !== false,
 						destructors: Function[] = [];
 
-					const watchHandler = (value, oldValue, info) => {
-						for (let i = destructors.length; --i > 0;) {
-							destructors[i]();
-							destructors.pop();
+					const attachDeepProxy = (forceUpdate = true) => {
+						const getAccessors: CanUndef<ReturnType<ComponentInterface['createPropAccessors']>> = Object.cast(
+							this.$attrs[`on:${prop}`]
+						);
+
+						let accessors: Nullable<ReturnType<NonNullable<typeof getAccessors>>>;
+
+						if (!forceUpdate) {
+							accessors = getAccessors?.();
 						}
 
-						// eslint-disable-next-line @typescript-eslint/no-use-before-define
-						attachDeepProxy();
+						const
+							parent = component.$parent,
+							propVal = forceUpdate ? proxy[prop] : accessors?.[0];
+
+						if (parent == null || getProxyType(propVal) == null) {
+							return;
+						}
+
+						const normalizedOpts = {
+							collapse: true,
+
+							...opts,
+
+							pathModifier: (path: unknown[]) => {
+								const
+									valueFromParent = Object.unwrapProxy(parent[<any>path[0]]),
+									valueFromHandler = Object.unwrapProxy(propVal);
+
+								// Since the root property of the path for this prop will differ in the context of the parent component,
+								// we explicitly fix it
+								if (valueFromParent === valueFromHandler) {
+									return [pathChunks[0], ...path.slice(1)];
+								}
+
+								return path;
+							}
+						};
+
+						type WatchHandlerArgs = [unknown, unknown, WatchHandlerParams];
+
+						const watchHandler = (...args: [WatchHandlerArgs[]] | WatchHandlerArgs) => {
+							if (args.length === 1) {
+								args = args[0][args[0].length - 1];
+							}
+
+							const [value, oldValue, info] = args;
+
+							if (info.originalPath.length <= 1) {
+								return;
+							}
+
+							const tiedLinks = handler[tiedWatchers];
+
+							if (Object.isArray(tiedLinks)) {
+								tiedLinks.forEach((path) => {
+									if (!Object.isArray(path)) {
+										return;
+									}
+
+									const modifiedInfo: WatchHandlerParams = {
+										...info,
+										path,
+										parent: {value, oldValue, info}
+									};
+
+									handler.call(this, value, oldValue, modifiedInfo);
+								});
+
+							} else {
+								handler.call(this, value, oldValue, info);
+							}
+						};
+
+						const watcher = forceUpdate ?
+							watch(<object>propVal, info.path, normalizedOpts, watchHandler) :
+							accessors?.[1](info.path, normalizedOpts, watchHandler);
+
+						if (watcher != null) {
+							destructors.push(watcher.unwatch.bind(watcher));
+						}
+					};
+
+					const externalWatchHandler = (value: unknown, oldValue: unknown, i?: WatchHandlerParams) => {
+						const fromSystem = i != null && Object.isString(i.path[0]) && isPrivateField.test(i.path[0]);
+
+						// This situation occurs when the root observable object has changed,
+						// and we need to remove the watchers of all its "nested parts", but leave the root watcher intact
+						destructors.splice(1, destructors.length).forEach((destroy) => destroy());
+
+						if (fromSystem) {
+							i.path = [isPrivateField.replace(String(i.path[0])), ...i.path.slice(1)];
+							attachDeepProxy(false);
+
+						} else {
+							attachDeepProxy();
+						}
 
 						let valueByPath = Object.get(value, slicedPathChunks);
 						valueByPath = unwrap(valueByPath) ?? valueByPath;
@@ -371,20 +452,19 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 						if (valueByPath !== oldValueByPath) {
 							if (needCollapse) {
-								handler.call(this, value, oldValue, info);
+								handler.call(this, value, oldValue, i);
 
 							} else {
-								handler.call(this, valueByPath, oldValueByPath, info);
+								handler.call(this, valueByPath, oldValueByPath, i);
 							}
 						}
 					};
 
-					let
-						unwatch;
+					let unwatch: Function;
 
-					if ('watch' in watchInfo) {
-						unwatch = watchInfo.watch(prop, (value, oldValue) => {
-							const info = {
+					if (forceUpdate && 'watch' in watchInfo) {
+						unwatch = watchInfo.watch(prop, (value: object, oldValue?: object) => {
+							const info: WatchHandlerParams = {
 								obj: component,
 								root: component,
 								path: [prop],
@@ -393,22 +473,25 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 								fromProto: false
 							};
 
-							const
-								tiedLinks = handler[tiedWatchers];
+							const tiedLinks = handler[tiedWatchers];
 
 							if (Object.isArray(tiedLinks)) {
 								tiedLinks.forEach((path) => {
-									const modifiedInfo = {
+									if (!Object.isArray(path)) {
+										return;
+									}
+
+									const modifiedInfo: WatchHandlerParams = {
 										...info,
 										path,
 										parent: {value, oldValue, info}
 									};
 
-									watchHandler(value, oldValue, modifiedInfo);
+									externalWatchHandler(value, oldValue, modifiedInfo);
 								});
 
 							} else {
-								watchHandler(value, oldValue, info);
+								externalWatchHandler(value, oldValue, info);
 							}
 						});
 
@@ -419,57 +502,27 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 							collapse: true
 						};
 
-						// eslint-disable-next-line @v4fire/unbound-method
-						unwatch = watch(proxy, prop, topOpts, Object.cast(watchHandler)).unwatch;
+						if (forceUpdate) {
+							// eslint-disable-next-line @v4fire/unbound-method
+							unwatch = watch(proxy, prop, topOpts, Object.cast(externalWatchHandler)).unwatch;
+
+						} else {
+							if (topOpts.immediate) {
+								topOpts.flush = 'sync';
+								delete topOpts.immediate;
+							}
+
+							unwatch = watchFn.call(this, `[[${prop}]]`, topOpts, externalWatchHandler);
+						}
 					}
 
 					destructors.push(unwatch);
+					attachDeepProxy(forceUpdate);
 
-					const attachDeepProxy = () => {
-						const
-							propVal = proxy[prop];
-
-						if (getProxyType(propVal) != null) {
-							const
-								parent = component.$parent;
-
-							if (parent == null) {
-								return;
-							}
-
-							const normalizedOpts = {
-								collapse: true,
-								...opts,
-								pathModifier: (path) => {
-									if (parent[path[0]] === propVal) {
-										return [pathChunks[0], ...path.slice(1)];
-									}
-
-									return path;
-								}
-							};
-
-							const watchHandler = (...args) => {
-								if (args.length === 1) {
-									args = args[0][args[0].length - 1];
-								}
-
-								const
-									[val, oldVal, mutInfo] = args;
-
-								if (mutInfo.originalPath.length > 1) {
-									handler.call(this, val, oldVal, mutInfo);
-								}
-							};
-
-							// eslint-disable-next-line @v4fire/unbound-method
-							const {unwatch} = watch(<object>propVal, info.path, normalizedOpts, watchHandler);
-							destructors.push(unwatch);
-						}
-					};
-
-					attachDeepProxy();
-					return wrapDestructor(() => destructors.forEach((destroy) => destroy()));
+					return wrapDestructor(() => {
+						destructors.forEach((destroy) => destroy());
+						destructors.splice(0, destructors.length);
+					});
 				}
 
 				default:
@@ -519,13 +572,18 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 		function wrapDestructor<T>(destructor: T): T {
 			if (Object.isFunction(destructor)) {
-				// Every worker that passed to Async have a counter with a number of consumers of this worker,
-				// but in this case this behaviour is redundant and can produce an error,
-				// that why we wrap original destructor with a new function
-				component.unsafe.$async.worker(() => destructor());
+				component.unsafe.$destructors.push(wrappedDestructor);
 			}
 
 			return destructor;
+
+			function wrappedDestructor() {
+				watchCache.clear();
+
+				if (Object.isFunction(destructor)) {
+					return destructor();
+				}
+			}
 		}
 	};
 }

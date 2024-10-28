@@ -129,7 +129,8 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 		]
 	};
 
-	protected override readonly $refs!: iButtonProps['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iButtonProps['$refs'] & {
 		button: HTMLButtonElement;
 		file?: HTMLInputElement;
 		dropdown?: Element;
@@ -161,6 +162,7 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 		super.initModEvents();
 
 		iProgress.initModEvents(this);
+		iProgress.initDisableBehavior(this);
 		iAccess.initModEvents(this);
 		iOpenToggle.initModEvents(this);
 		iVisible.initModEvents(this);
@@ -204,10 +206,6 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 	 * @emits `click(e: Event)`
 	 */
 	protected async onClick(e: Event): Promise<void> {
-		if (this.type !== 'link') {
-			e.stopPropagation();
-		}
-
 		switch (this.type) {
 			case 'link':
 				break;

@@ -9,6 +9,24 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.138.dsl-speedup (2024-10-01)
+
+#### :rocket: New Feature
+
+* Added the `partial` parameter for the declaration of components consisting of multiple classes
+
+## v4.0.0-beta.137 (2024-09-24)
+
+#### :house: Internal
+
+* Added a [[RENDER]] event before calling the component's render function
+
+## v4.0.0-beta.71 (2024-03-12)
+
+#### :rocket: New Feature
+
+* Added a new field `layer`, which allows you to obtain information about the package in which the component was declared
+
 ## v4.0.0-beta.21 (2023-09-14)
 
 #### :rocket: New Feature

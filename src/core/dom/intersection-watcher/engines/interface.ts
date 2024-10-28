@@ -24,3 +24,5 @@ export interface WatcherPosition extends ElementPosition {
 
 export type RegisteredWatchers = Map<WatchLink, Writable<Watcher> | Set<Writable<Watcher>>>;
 export type ObservableElements = Map<Element, RegisteredWatchers>;
+
+export type PartialIOEntry = Pick<IntersectionObserverEntry, 'time'>;

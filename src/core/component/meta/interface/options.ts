@@ -33,6 +33,39 @@ export interface ComponentOptions {
 	name?: string;
 
 	/**
+	 * The name of the component to which this one belongs.
+	 * This option is used when we want to split the component into multiple classes.
+	 *
+	 * Please note that in partial classes,
+	 * there should be no overrides in methods or properties with other partial classes of this component.
+	 *
+	 * @example
+	 * ```typescript
+	 * @component({partial: 'bExample'})
+	 * class bExampleProps extends iBlock {
+	 *   @prop({type: Number})
+	 *   value: number = 0;
+	 * }
+	 *
+	 * @component({partial: 'bExample'})
+	 * class bExampleAPI extends bExampleProps {
+	 *   getName(): string {
+	 *     return this.meta.componentName;
+	 *   }
+	 * }
+	 *
+	 * @component()
+	 * class bExample extends bExampleAPI {
+	 *   // This override will not work correctly, as it overrides what was added within the partial class
+	 *   override getName(): string {
+	 *     return this.meta.componentName;
+	 *   }
+	 * }
+	 * ```
+	 */
+	partial?: string;
+
+	/**
 	 * If set to true, the component is registered as the root component.
 	 * The root component sits at the top of the component hierarchy and contains all components in the application.
 	 * By default, all components have a link to the root component.
@@ -69,7 +102,7 @@ export interface ComponentOptions {
 	 *    depending on the values of its props:
 	 *
 	 *    1. If an empty dictionary is passed, the component will always be created as a functional one.
-	 *       However, you still have the option to create it like a regular component using the `v-func` directive.
+	 *       However, you can still create it like a regular component using the `v-func` directive.
 	 *
 	 *       ```
 	 *       < b-button v-func = false
@@ -193,4 +226,9 @@ export interface ComponentOptions {
 	 * @default `true`
 	 */
 	inheritMods?: boolean;
+
+	/**
+	 * The name of the NPM package in which the component is defined or overridden
+	 */
+	layer?: string;
 }

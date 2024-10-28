@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { LogLevel } from 'core/log';
 import type { UnsafeComponentInterface } from 'core/component';
 
 import type iBlock from 'components/super/i-block/i-block';
@@ -34,11 +33,6 @@ export interface CallChild<CTX extends iBlockEvent = iBlockEvent> {
 export type Stage =
 	string |
 	number;
-
-export interface ComponentEvent {
-	event: string;
-	logLevel?: LogLevel;
-}
 
 export interface InitLoadOptions {
 	/**
@@ -68,40 +62,43 @@ export interface InitLoadCb<R = unknown, CTX extends iBlock = iBlock> {
 
 export interface UnsafeIBlock<CTX extends iBlock = iBlock> extends UnsafeComponentInterface<CTX> {
 	// @ts-ignore (access)
-	state: CTX['state'];
+	get state(): CTX['state'];
 
 	// @ts-ignore (access)
-	storage: CTX['storage'];
+	get storage(): CTX['storage'];
 
 	// @ts-ignore (access)
-	opt: CTX['opt'];
+	get opt(): CTX['opt'];
 
 	// @ts-ignore (access)
-	dom: CTX['dom'];
+	get dom(): CTX['dom'];
 
 	// @ts-ignore (access)
 	block: CTX['block'];
 
 	// @ts-ignore (access)
-	asyncRender: CTX['asyncRender'];
+	get browser(): CTX['browser'];
 
 	// @ts-ignore (access)
-	moduleLoader: CTX['moduleLoader'];
+	get presets(): CTX['presets'];
 
 	// @ts-ignore (access)
-	sync: CTX['sync'];
+	get h(): CTX['h'];
 
 	// @ts-ignore (access)
-	localEmitter: CTX['localEmitter'];
+	get moduleLoader(): CTX['moduleLoader'];
 
 	// @ts-ignore (access)
-	parentEmitter: CTX['parentEmitter'];
+	get localEmitter(): CTX['localEmitter'];
 
 	// @ts-ignore (access)
-	rootEmitter: CTX['rootEmitter'];
+	get parentEmitter(): CTX['parentEmitter'];
 
 	// @ts-ignore (access)
-	globalEmitter: CTX['globalEmitter'];
+	get rootEmitter(): CTX['rootEmitter'];
+
+	// @ts-ignore (access)
+	get globalEmitter(): CTX['globalEmitter'];
 
 	// @ts-ignore (access)
 	blockReadyListeners: CTX['blockReadyListeners'];
@@ -119,7 +116,10 @@ export interface UnsafeIBlock<CTX extends iBlock = iBlock> extends UnsafeCompone
 	ifOnceStore: CTX['ifOnceStore'];
 
 	// @ts-ignore (access)
-	hydrationStore: CTX['hydrationStore'];
+	reactiveModsStore: CTX['reactiveModsStore'];
+
+	// @ts-ignore (access)
+	rootAttrsStore: CTX['rootAttrsStore'];
 
 	// @ts-ignore (access)
 	syncRouterState: CTX['syncRouterState'];
@@ -135,4 +135,10 @@ export interface UnsafeIBlock<CTX extends iBlock = iBlock> extends UnsafeCompone
 
 	// @ts-ignore (access)
 	waitRef: CTX['waitRef'];
+
+	// @ts-ignore (access)
+	initInfoRender: CTX['initInfoRender'];
+
+	// @ts-ignore (access)
+	initDaemons: CTX['initDaemons'];
 }

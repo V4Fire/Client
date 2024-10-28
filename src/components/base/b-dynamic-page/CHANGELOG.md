@@ -9,6 +9,62 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.145 (2024-10-14)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the comment node in `$refs` that occurs when rendering an `undefined` page
+
+## v4.0.0-beta.126 (2024-08-23)
+
+#### :rocket: New Feature
+
+* The `eventConverter` function can now return a tuple consisting of the page component name and page component key, instead of just a string representing the page component name `bDynamicPage`
+
+#### :bug: Bug Fix
+
+* Fixed an issue where a new page component instance was not created when switching between routes that use the same page component `bDynamicPage`
+
+## v4.0.0-beta.115.the-force-awakens (2024-07-26)
+
+#### :bug: Bug Fix
+
+* Fixed an issue to prevent the `hookChange` event from bubbling up
+
+## v4.0.0-beta.112 (2024-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed a bug by ensuring the onPageChange callback is cleaned up in
+  renderFilter to prevent execution by syncPageWatcher before the next
+  renderFilter call, maintaining proper rendering sequence
+
+## v4.0.0-beta.108.a-new-hope (2024-07-15)
+
+#### :bug: Bug Fix
+
+* Attached a handler to ensure the correct lifecycle for pages with keep-alive strategy
+
+## v4.0.0-beta.98 (2024-05-21)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition when changing props
+
+## v4.0.0-beta.92 (2024-04-19)
+
+#### :rocket: New Feature
+
+* Introduced a `beforeSwitchPage` event that is emitted prior to the removal of the current page element
+* Implemented an API for saving the scroll of nested DOM nodes on the page.
+  [Learn more](./README.md#api-for-saving-scroll-of-nested-dom-nodes).
+
+## v4.0.0-beta.49 (2024-01-17)
+
+#### :bug: Bug Fix
+
+* Fixed memory leaks when switching pages
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change

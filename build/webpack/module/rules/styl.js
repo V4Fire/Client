@@ -29,13 +29,6 @@ const
  * @returns {import('webpack').RuleSetRule}
  */
 module.exports = function stylRules({plugins}) {
-	if (webpack.ssr) {
-		return {
-			test: isStylFile,
-			loader: 'ignore-loader'
-		};
-	}
-
 	plugins.set('extractCSS', new MiniCssExtractPlugin(inherit(config.miniCssExtractPlugin(), {
 		filename: `${hash(output, true)}.css`,
 		chunkFilename: '[id].css'
@@ -57,10 +50,9 @@ module.exports = function stylRules({plugins}) {
 
 	// Load via import() functions
 	const dynamicCSSFiles = [].concat(
-		{
-			loader: 'style-loader',
-			options: config.style()
-		},
+		webpack.ssr ?
+			{loader: 'to-string-loader'} :
+			{loader: 'style-loader', options: config.style()},
 
 		styleHelperLoaders(),
 
@@ -97,9 +89,9 @@ module.exports = function stylRules({plugins}) {
  * @param {boolean} isStatic
  * @returns {Array<import('webpack').RuleSetRuleItem | string>}
  */
-function styleHelperLoaders(isStatic) {
+function styleHelperLoaders(isStatic = false) {
 	const
-		useLink = /linkTag/i.test(config.style().injectType),
+		useLink = /link[Tt]ag/.test(config.style().injectType),
 		usePureCSSFiles = isStatic || useLink;
 
 	return [].concat(
@@ -122,6 +114,7 @@ function styleHelperLoaders(isStatic) {
 					postcssOptions: {
 						plugins: [].concat(
 							require('autoprefixer')(config.autoprefixer()),
+							require('postcss-discard-comments')(),
 
 							webpack.mode() === 'production' && !usePureCSSFiles ?
 								require('cssnano')(config.cssMinimizer().minimizerOptions) :

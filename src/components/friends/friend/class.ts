@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { gc } from 'core/component';
+
 import type iBlock from 'components/super/i-block/i-block';
 
 export default class Friend {
@@ -114,8 +116,27 @@ export default class Friend {
 		return this.ctx.dom;
 	}
 
-	constructor(component: iBlock) {
-		this.ctx = component.unsafe;
-		this.component = component;
+	/** {@link iBlock.remoteState} */
+	protected get remoteState(): this['CTX']['remoteState'] {
+		return this.ctx.remoteState;
+	}
+
+	constructor(component: iBlock | iBlock['unsafe']) {
+		this.component = Object.cast<iBlock>(component);
+		this.ctx = Object.cast<iBlock['unsafe']>(component);
+
+		this.ctx.$async.worker(() => {
+			const that = this;
+
+			// We are cleaning memory in a deferred way, because this API may be necessary when processing the destroyed hook
+			// eslint-disable-next-line require-yield
+			gc.add(function* destructor() {
+				// @ts-ignore (unsafe)
+				delete that['ctx'];
+
+				// @ts-ignore (unsafe)
+				delete that['component'];
+			}());
+		});
 	}
 }

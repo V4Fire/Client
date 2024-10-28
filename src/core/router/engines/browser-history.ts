@@ -120,11 +120,11 @@ try {
 
 /**
  * Creates an engine (browser history api) for the `bRouter` component
- * @param component
+ * @param routerCtx
  */
-export default function createRouter(component: bRouter): Router {
+export default function createRouter(routerCtx: bRouter): Router {
 	const
-		{async: $a} = component;
+		{async: $a} = routerCtx;
 
 	const
 		engineGroup = {group: 'routerEngine'},
@@ -339,7 +339,7 @@ export default function createRouter(component: bRouter): Router {
 			}
 		}
 
-		await component.emitTransition(location.href, history.state, 'event');
+		await routerCtx.emitTransition(location.href, history.state, 'event');
 	}, popstateLabel);
 
 	$a.on(globalThis, 'pageshow', (event: PageTransitionEvent) => {
@@ -452,7 +452,7 @@ export default function createRouter(component: bRouter): Router {
 				return;
 			}
 
-			Promise.resolve(load()).then(() => resolve()).catch(stderr);
+			Promise.resolve(load(routerCtx)).then(() => resolve()).catch(stderr);
 
 			/**
 			 * Parses parameters from a query string

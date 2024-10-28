@@ -9,6 +9,24 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.125 (2024-08-12)
+
+#### :bug: Bug Fix
+
+* Fixed the dynamic component import transformer for the SSR build
+
+## v4.0.0-beta.97 (2024-05-21)
+
+#### :bug: Bug Fix
+
+* Reverted v4.0.0-beta.94
+
+## v4.0.0-beta.94 (2024-04-24)
+
+#### :bug: Bug Fix
+
+* Now styles for dynamically loaded components with `loadModules` are included in the fat-html build
+
 ## v4.0.0-beta.20 (2023-09-13)
 
 #### :rocket: New Feature

@@ -12,7 +12,7 @@ export * from 'components/dummies/b-dummy/b-dummy';
 
 @component()
 class bFriendsProvideDummy extends bDummy {
-	override get sharedMods(): CanNull<Readonly<ModsDict>> {
+	override get sharedMods(): CanNull<ModsDict> {
 		return {foo: 'bar'};
 	}
 }

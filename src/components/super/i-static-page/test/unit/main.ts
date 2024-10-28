@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable require-atomic-updates */
-
 import type { JSHandle, Page } from 'playwright';
 
 import test from 'tests/config/unit/test';
@@ -116,55 +114,8 @@ test.describe('<i-static-page>', () => {
 		});
 	});
 
-	test.describe('`locale`', () => {
-		test('should set a locale of the root component and read it\'s value', async () => {
-			await test.expect(root.evaluate((ctx) => Boolean(ctx.locale))).resolves.toBeTruthy();
-
-			const locale = await root.evaluate((ctx) => {
-				ctx.locale = 'ru';
-				return ctx.locale;
-			});
-
-			test.expect(locale).toBe('ru');
-		});
-
-		test('should set the `lang` attribute of the html root element', async ({page}) => {
-			await test.expect(page.locator(':root')).toHaveAttribute('lang', 'en');
-
-			await root.evaluate((ctx) => {
-				ctx.locale = 'ru';
-			});
-
-			await test.expect(page.locator(':root')).toHaveAttribute('lang', 'ru');
-		});
-
-		test('should be watchable', async () => {
-			const scan = await root.evaluate(async (ctx) => {
-				const res: any[] = [];
-
-				ctx.locale = 'ru';
-				ctx.watch('locale', (val, oldVal) => {
-					res.push([val, oldVal]);
-				});
-
-				ctx.locale = 'en';
-				await ctx.nextTick();
-
-				ctx.locale = 'ru';
-				await ctx.nextTick();
-
-				return res;
-			});
-
-			test.expect(scan).toEqual([
-				['en', undefined],
-				['ru', 'en']
-			]);
-		});
-	});
-
 	test.describe('`reset`', () => {
-		test('should emit `reset` event on the globalEmitter when the `reset` method is invoked', async () => {
+		test('should emit the `reset` event on the globalEmitter when the `reset` method is invoked', async () => {
 			const scan = await root.evaluate(async (ctx) => {
 				let res = false;
 
@@ -181,7 +132,7 @@ test.describe('<i-static-page>', () => {
 			test.expect(scan).toBeTruthy();
 		});
 
-		test('should emit `reset.silence` event on the globalEmitter when the `silence` method is invoked', async () => {
+		test('should emit the `reset.silence` event on the globalEmitter when the `silence` method is invoked', async () => {
 			const scan = await root.evaluate(async (ctx) => {
 				let res = false;
 

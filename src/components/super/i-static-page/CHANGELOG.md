@@ -9,12 +9,75 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.?? (2023-??-??)
+## v4.0.0-beta.129 (2024-09-04)
+
+#### :nail_care: Polish
+
+* Now, if an external link is passed to `initLibs()`, `PUBLIC_PATH` won't be added to it.
+
+## 4.0.0-beta.108.a-new-hope (2024-07-15)
+
+#### :boom: Breaking Change
+
+* Removed the `locale` field
+* Removed the `globalEnv` field
+
+## v4.0.0-beta.62 (2024-02-19)
+
+#### :bug: Bug Fix
+
+* Fixed bugs in the initialization of SSR rendering
+
+## v4.0.0-beta.59 (2024-02-15)
+
+#### :bug: Bug Fix
+
+* Removed all references to the global state
+
+## v4.0.0-beta.58 (2024-02-14)
+
+#### :bug: Bug Fix
+
+* Fixed a memory leak
+
+## v4.0.0-beta.57 (2024-02-13)
+
+#### :bug: Bug Fix
+
+* Fixed a memory leak
+
+## v4.0.0-beta.55 (2024-02-08)
+
+#### :bug: Bug Fix
+
+* Added cleanup of hydrated data upon component destroying
+
+## v4.0.0-beta.41 (2023-11-21)
+
+#### :boom: Breaking Change
+
+* Removed generation of init.js
+
+#### :rocket: New Feature
+
+* Now styles are always inlined in html
+
+#### :bug: Bug Fix
+
+* Now the `nonce` attribute is correctly set in inline mode
+
+## v4.0.0-beta.37 (2023-10-27)
+
+#### :bug: Bug Fix
+
+* Fixed declarations of optional deps
+
+## v4.0.0-beta.33 (2023-10-18)
 
 #### :rocket: New Feature
 
 * Added the ability to build initial HTML file without any inline Javascript by configuring `webpack.externalizeInline`
-*
+
 ## v4.0.0-beta.30 (2023-10-11)
 
 #### :bug: Bug Fix

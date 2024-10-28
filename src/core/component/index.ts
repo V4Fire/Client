@@ -14,18 +14,16 @@
 import 'core/component/directives';
 
 export * as init from 'core/component/init';
+export * as gc from 'core/component/gc';
 
-export { default as remoteState } from 'core/component/state';
-export { default as clientState, State, GlobalEnvironment } from 'core/component/client-state';
-
+export type { State } from 'core/component/state';
 export { ComponentEngine as default } from 'core/component/engines';
 
 export { runHook } from 'core/component/hook';
-export { bindRemoteWatchers, customWatcherRgxp } from 'core/component/watch';
+export { bindRemoteWatchers, canSkipWatching, isCustomWatcher, customWatcherRgxp } from 'core/component/watch';
 
 export { callMethodFromComponent } from 'core/component/method';
-export { normalizeClass, normalizeStyle } from 'core/component/render';
-export { default as hydrationStore, HydrationStore } from 'core/component/hydration';
+export { normalizeClass, normalizeStyle, normalizeComponentForceUpdateProps } from 'core/component/render';
 
 export {
 
@@ -34,6 +32,8 @@ export {
 	isComponent,
 	rootComponents,
 
+	V4_COMPONENT,
+	ASYNC_RENDER_ID,
 	PARENT
 
 } from 'core/component/const';
@@ -49,6 +49,8 @@ export {
 	ComponentResetType
 
 } from 'core/component/event';
+
+export { getFieldsStore } from 'core/component/field';
 
 export * from 'core/component/reflect';
 export * from 'core/component/decorators';

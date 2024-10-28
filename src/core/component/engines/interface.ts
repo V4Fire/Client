@@ -24,16 +24,22 @@ import type { ComponentInterface } from 'core/component/interface';
 export * from '@vue/runtime-dom';
 //#endif
 
+export interface VNodeVirtualParent {
+	value: CanNull<ComponentInterface>;
+}
+
 export type VNode<
 	HostNode = RendererNode,
 	HostElement = RendererElement,
 	ExtraProps = {[key: string]: any}
 > = Overwrite<SuperVNode<HostNode, HostElement, ExtraProps>, {
 	ignore?: boolean;
+	skipDestruction?: boolean;
 	dynamicProps?: string[];
 	dynamicChildren?: VNode[];
 	virtualContext?: ComponentInterface;
 	virtualComponent?: ComponentInterface;
+	virtualParent?: VNodeVirtualParent;
 	ref: SuperVNode['ref'] & Nullable<{i?: Nullable<{refs: Dictionary; setupState?: Dictionary}>}>;
 }>;
 

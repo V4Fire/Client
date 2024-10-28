@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { Page } from 'playwright';
+
 import test from 'tests/config/unit/test';
 
 import { createInitRouter } from 'components/base/b-router/test/helpers';
@@ -15,7 +17,7 @@ test.describe('<b-router> passing transition parameters', () => {
 		await demoPage.goto();
 	});
 
-	test.describe('transition through paths that include interpolation of values from transition parameters', () => {
+	test.describe('transition through paths, including interpolation of values from transition parameters', () => {
 		test(
 			'parameters from `params` should be passed as values into the transition path where `:paramName` constructs are located',
 
@@ -30,28 +32,16 @@ test.describe('<b-router> passing transition parameters', () => {
 					}
 				})(page);
 
-				await test.expect(root.evaluate(async (ctx) => {
-					const
-						router = ctx.router!,
-						transitions: Dictionary = {};
+				await root.evaluate((ctx) => ctx.router!.push('user', {params: {userId: '42'}}));
+				await test.expect(page.evaluate(() => location.pathname)).toBeResolvedTo('/user/42');
 
-					await router.push('user', {params: {userId: '42'}});
-					transitions.user = location.pathname;
-
-					await router.push('userProfile', {params: {userId: '42'}});
-					transitions.userProfile = location.pathname;
-
-					return transitions;
-
-				})).resolves.toEqual({
-					user: '/user/42',
-					userProfile: '/user/42/profile'
-				});
+				await root.evaluate((ctx) => ctx.router!.push('userProfile', {params: {userId: '42'}}));
+				await test.expect(page.evaluate(() => location.pathname)).toBeResolvedTo('/user/42/profile');
 			}
 		);
 
 		test(
-			'if path parameters are not passed along with the transition, the transition to this path will not be made',
+			'if the path parameters are not included in the transition, the transition will not take place',
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {
@@ -69,7 +59,7 @@ test.describe('<b-router> passing transition parameters', () => {
 		);
 
 		test(
-			'if a parameter in the path has a `?` symbol at the end during interpolation, it should be optional',
+			'if a parameter in the path ends with a `?` symbol, it should be optional',
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {
@@ -78,28 +68,17 @@ test.describe('<b-router> passing transition parameters', () => {
 					}
 				})(page);
 
-				await test.expect(root.evaluate(async (ctx) => {
-					const
-						router = ctx.router!,
-						transitions: Dictionary = {};
+				await root.evaluate((ctx) => ctx.router!.push('direct', {params: {userId: 42}}));
+				await test.expect(page.evaluate(() => location.pathname)).toBeResolvedTo('/user/42/direct');
 
-					await router.push('direct', {params: {userId: 42}});
-					transitions.direct = location.pathname;
-
-					await router.push('direct', {params: {userId: 42, conversationId: 15}});
-					transitions.conversation = location.pathname;
-
-					return transitions;
-
-				})).resolves.toEqual({
-					direct: '/user/42/direct',
-					conversation: '/user/42/direct/15'
-				});
+				await root.evaluate((ctx) => ctx.router!.push('direct', {params: {userId: 42, conversationId: 15}}));
+				await test.expect(page.evaluate(() => location.pathname)).toBeResolvedTo('/user/42/direct/15');
 			}
 		);
 
 		test(
-			'correctly parses parameters in href with query parameters',
+			'the router should be able to parse parameters from an href with query parameters',
+
 			async ({page}) => {
 				const root = await createInitRouter('history', {
 					user: {
@@ -107,15 +86,14 @@ test.describe('<b-router> passing transition parameters', () => {
 					}
 				})(page);
 
-				await test.expect(root.evaluate(async (ctx) => {
-					await ctx.router!.push('/user/42?from=testFrom');
-					return location.pathname + location.search;
-				})).resolves.toBe('/user/42?from=testFrom');
+				await root.evaluate(async (ctx) => ctx.router!.push('/user/42?from=testFrom'));
+
+				await assertPathWithQueryIs(page, '/user/42?from=testFrom');
 			}
 		);
 
 		test(
-			'by default, parameters for path interpolation can be taken not only from params, but also from query',
+			'by default, path interpolation parameters can be taken not only from params, but also from the query',
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {
@@ -124,16 +102,15 @@ test.describe('<b-router> passing transition parameters', () => {
 					}
 				})(page);
 
-				await test.expect(root.evaluate(async (ctx) => {
-					await ctx.router!.push('direct', {params: {userId: 42}, query: {conversationId: 15, utm: 'portal'}});
-					return location.pathname + location.search;
+				await root.evaluate(async (ctx) =>
+					ctx.router!.push('direct', {params: {userId: 42}, query: {conversationId: 15, utm: 'portal'}}));
 
-				})).toBeResolvedTo('/user/42/direct/15?utm=portal');
+				await assertPathWithQueryIs(page, '/user/42/direct/15?utm=portal');
 			}
 		);
 
 		test(
-			"if the route's `paramsFromQuery` option is set to false, the parameters for interpolation should only be taken from `params`",
+			'if the route\'s `paramsFromQuery` option is set to `false`, interpolation parameters should be taken only from the `params`',
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {
@@ -143,187 +120,142 @@ test.describe('<b-router> passing transition parameters', () => {
 					}
 				})(page);
 
-				await test.expect(root.evaluate(async (ctx) => {
-					await ctx.router!.push('direct', {params: {userId: 42}, query: {conversationId: 15, utm: 'portal'}});
-					return location.pathname + location.search;
+				await root.evaluate(async (ctx) =>
+					ctx.router!.push('direct', {params: {userId: 42}, query: {conversationId: 15, utm: 'portal'}}));
 
-				})).toBeResolvedTo('/user/42/direct?conversationId=15&utm=portal');
+				await assertPathWithQueryIs(page, '/user/42/direct?conversationId=15&utm=portal');
 			}
 		);
 
-		test('support for aliases for interpolation parameters', async ({page}) => {
-			const root = await createInitRouter('history', {
-				tpl: {
-					path: '/tpl/:param1/:param2?',
-					pathOpts: {
-						aliases: {
-							param1: ['_param1', 'Param1'],
-							param2: ['Param2']
+		test(
+			'the router should support aliases for interpolation parameters',
+
+			async ({page}) => {
+				const root = await createInitRouter('history', {
+					tpl: {
+						path: '/tpl/:param1/:param2?',
+						pathOpts: {
+							aliases: {
+								param1: ['_param1', 'Param1'],
+								param2: ['Param2']
+							}
 						}
 					}
-				}
-			})(page);
+				})(page);
 
-			await test.expect(root.evaluate(async (ctx) => {
-				const
-					router = ctx.router!,
-					transitions: Dictionary = {};
+				await root.evaluate((ctx) => ctx.router!.push('tpl', {params: {param1: 'foo'}}));
+				await assertPathWithQueryIs(page, '/tpl/foo');
 
-				await router.push('tpl', {params: {param1: 'foo'}});
-				transitions.path1 = getPath();
+				await root.evaluate((ctx) => ctx.router!.push('tpl', {params: {param1: 'foo', _param1: 'bar'}}));
+				await assertPathWithQueryIs(page, '/tpl/foo');
 
-				await router.push('tpl', {params: {param1: 'foo', _param1: 'bar'}});
-				transitions.path2 = getPath();
+				await root.evaluate((ctx) => ctx.router!.push('tpl', {params: {Param1: 'foo'}}));
+				await assertPathWithQueryIs(page, '/tpl/foo');
 
-				await router.push('tpl', {params: {Param1: 'foo'}});
-				transitions.path3 = getPath();
+				await root.evaluate((ctx) => ctx.router!.push('tpl', {params: {Param1: 'bar', _param1: 'foo'}}));
+				await assertPathWithQueryIs(page, '/tpl/foo');
 
-				await router.push('tpl', {params: {Param1: 'bar', _param1: 'foo'}});
-				transitions.path4 = getPath();
-
-				await router.push('tpl', {params: {_param1: 'foo'}, query: {Param1: 'bla', Param2: 'bar'}});
-				transitions.path5 = getPath();
-
-				return transitions;
-
-				function getPath() {
-					return location.pathname + location.search;
-				}
-
-			})).resolves.toEqual({
-				path1: '/tpl/foo',
-				path2: '/tpl/foo',
-				path3: '/tpl/foo',
-				path4: '/tpl/foo',
-				path5: '/tpl/foo/bar?Param1=bla'
-			});
-		});
+				await root.evaluate((ctx) => ctx.router!.push('tpl', {params: {_param1: 'foo'}, query: {Param1: 'bla', Param2: 'bar'}}));
+				await assertPathWithQueryIs(page, '/tpl/foo/bar?Param1=bla');
+			}
+		);
 	});
 
 	test.describe('passing parameters to a route with the same name as the current one', () => {
 		test(
-			'if the route name is set to null, then the new parameters should be merged with the old ones',
+			'if the route name is set to `null`, new parameters should be merged with the existing ones',
 
 			async ({page}) => {
-				const root = await createInitRouter('history')(page);
-
-				await test.expect(root.evaluate(async (ctx) => {
-					const
-						router = ctx.router!,
-						transitions: Dictionary = {};
-
-					await router.push('main', {query: {foo: 1}});
-					transitions.path1 = getPath();
-
-					await router.push(null, {query: {baz: 1}});
-					transitions.path2 = getPath();
-
-					await router.push(null, {query: {bar: 2}});
-					transitions.path3 = getPath();
-
-					await router.push(null, {query: {bar: null}});
-					transitions.path4 = getPath();
-
-					return transitions;
-
-					function getPath() {
-						return location.pathname + location.search;
+				const root = await createInitRouter('history', {
+					main: {
+						path: '/'
 					}
+				})(page);
 
-				})).resolves.toEqual({
-					path1: '/?foo=1',
-					path2: '/?baz=1&foo=1',
-					path3: '/?bar=2&baz=1&foo=1',
-					path4: '/?baz=1&foo=1'
-				});
+				await root.evaluate((ctx) => ctx.router!.push('main', {query: {foo: 1}}));
+				await assertPathWithQueryIs(page, '/?foo=1');
+
+				await root.evaluate((ctx) => ctx.router!.push(null, {query: {baz: 1}}));
+				await assertPathWithQueryIs(page, '/?baz=1&foo=1');
+
+				await root.evaluate((ctx) => ctx.router!.push(null, {query: {bar: 2}}));
+				await assertPathWithQueryIs(page, '/?bar=2&baz=1&foo=1');
+
+				await root.evaluate((ctx) => ctx.router!.push(null, {query: {bar: null}}));
+				await assertPathWithQueryIs(page, '/?baz=1&foo=1');
 			}
 		);
 
 		test(
 			[
-				'if the route name is explicitly set as a string, ',
-				'then the new parameters should completely replace the old ones'
-			].join(''),
+				'if the route name is explicitly specified as a string,',
+				'then the new parameters should entirely replace the existing ones'
+			].join(' '),
 
 			async ({page}) => {
-				const root = await createInitRouter('history')(page);
+				const root = await createInitRouter('history', {
+					main: {
+						path: '/'
+					},
 
-				await test.expect(root.evaluate(async (ctx) => {
-					const
-						router = ctx.router!,
-						transitions: Dictionary = {};
-
-					await router.push('main', {query: {foo: 1}});
-					transitions.path1 = getPath();
-
-					await router.push('main', {query: {baz: 1}});
-					transitions.path2 = getPath();
-
-					await router.push('second', {query: {bar: 1}});
-					transitions.path3 = getPath();
-
-					await router.push('second', {query: {}});
-					transitions.path4 = getPath();
-
-					return transitions;
-
-					function getPath() {
-						return location.pathname + location.search;
+					second: {
+						path: '/second-page'
 					}
+				})(page);
 
-				})).resolves.toEqual({
-					path1: '/?foo=1',
-					path2: '/?baz=1',
-					path3: '/second-page?bar=1',
-					path4: '/second-page'
-				});
+				await root.evaluate((ctx) => ctx.router!.push('main', {query: {foo: 1}}));
+				await assertPathWithQueryIs(page, '/?foo=1');
+
+				await root.evaluate((ctx) => ctx.router!.push('main', {query: {baz: 1}}));
+				await assertPathWithQueryIs(page, '/?baz=1');
+
+				await root.evaluate((ctx) => ctx.router!.push('second', {query: {bar: 1}}));
+				await assertPathWithQueryIs(page, '/second-page?bar=1');
+
+				await root.evaluate((ctx) => ctx.router!.push('second', {query: {}}));
+				await assertPathWithQueryIs(page, '/second-page');
 			}
 		);
 
 		test(
-			'parameters should never be merged if we are navigating through the history',
+			'parameters should not merge if navigation occurs through history',
 
 			async ({page}) => {
-				const root = await createInitRouter('history')(page);
-
-				await test.expect(root.evaluate(async (ctx) => {
-					const
-						router = ctx.router!,
-						transitions: Dictionary = {};
-
-					await router.push('main', {query: {foo: 1}});
-					transitions.path1 = getPath();
-
-					await router.push(null, {query: {baz: 1}});
-					transitions.path2 = getPath();
-
-					await router.push('main', {query: {baz: 2}});
-					transitions.path3 = getPath();
-
-					await router.back();
-					transitions.path4 = getPath();
-
-					await router.back();
-					transitions.path5 = getPath();
-
-					await router.forward();
-					transitions.path6 = getPath();
-
-					return transitions;
-
-					function getPath() {
-						return location.pathname + location.search;
+				const root = await createInitRouter('history', {
+					main: {
+						path: '/'
 					}
+				})(page);
 
-				})).resolves.toEqual({
-					path1: '/?foo=1',
-					path2: '/?baz=1&foo=1',
-					path3: '/?baz=2',
-					path4: '/?baz=1&foo=1',
-					path5: '/?foo=1',
-					path6: '/?baz=1&foo=1'
-				});
+				await root.evaluate((ctx) => ctx.router!.push('main', {query: {foo: 1}}));
+				await assertPathWithQueryIs(page, '/?foo=1');
+
+				await root.evaluate((ctx) => ctx.router!.push(null, {query: {baz: 1}}));
+				await assertPathWithQueryIs(page, '/?baz=1&foo=1');
+
+				await root.evaluate((ctx) => ctx.router!.push('main', {query: {baz: 2}}));
+				await assertPathWithQueryIs(page, '/?baz=2');
+
+				await root.evaluate((ctx) => ctx.router!.back());
+				await assertPathWithQueryIs(page, '/?baz=1&foo=1');
+
+				await root.evaluate((ctx) => ctx.router!.back());
+				await assertPathWithQueryIs(page, '/?foo=1');
+
+				await root.evaluate((ctx) => ctx.router!.forward());
+				await assertPathWithQueryIs(page, '/?baz=1&foo=1');
 			}
 		);
 	});
+
+	/**
+	 * Checks whether the location pathname with query params matches the assertion.
+	 * The function returns a Promise.
+	 *
+	 * @param page
+	 * @param assertion
+	 */
+	async function assertPathWithQueryIs(page: Page, assertion: string): Promise<void> {
+		await test.expect(page.evaluate(() => location.pathname + location.search)).toBeResolvedTo(assertion);
+	}
 });

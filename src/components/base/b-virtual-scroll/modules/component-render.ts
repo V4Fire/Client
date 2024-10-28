@@ -15,7 +15,8 @@ import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scro
 import type { RenderItem, DataToRender, ItemAttrs, VirtualItemEl } from 'components/base/b-virtual-scroll/interface';
 
 export default class ComponentRender extends Friend {
-	override readonly C!: bVirtualScroll;
+	/** @inheritDoc */
+	declare readonly C: bVirtualScroll;
 
 	/**
 	 * Async group
@@ -63,6 +64,7 @@ export default class ComponentRender extends Friend {
 		});
 
 		this.nodesCache = Object.createDict();
+		this.ctx.async.clearAll({group: new RegExp(this.asyncGroup)});
 	}
 
 	/**
@@ -172,13 +174,14 @@ export default class ComponentRender extends Friend {
 	 */
 	protected createComponents(items: RenderItem[]): HTMLElement[] {
 		const
-			{ctx: c, scrollRender: {items: totalItems}} = this;
+			{ctx: c, scrollRender: {items: totalItems}} = this,
+			state = c.getCurrentDataState();
 
 		const render = (children: DataToRender[]) => {
 			const map = ({itemAttrs, itemParams, index}) =>
 				this.ctx.vdom.create(c.getItemComponentName(itemParams, index), itemAttrs);
 
-			return <HTMLElement[]>c.vdom.render(children.map(map));
+			return <HTMLElement[]>c.vdom.render(children.map(map), `${this.asyncGroup}:${state.currentPage}`);
 		};
 
 		const getChildrenAttrs = (props: ItemAttrs) => ({

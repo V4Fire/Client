@@ -22,7 +22,7 @@ import type iBlock from 'components/super/i-block/i-block';
 import {
 
 	component,
-	hydrationStore,
+	computed,
 
 	InitLoadCb,
 	InitLoadOptions,
@@ -60,6 +60,7 @@ const
 
 @component({functional: null})
 export default abstract class iData extends iDataHandlers {
+	@computed({functional: true})
 	override get unsafe(): UnsafeGetter<UnsafeIData<this>> {
 		return Object.cast(this);
 	}
@@ -70,7 +71,8 @@ export default abstract class iData extends iDataHandlers {
 		}
 
 		const {
-			async: $a
+			async: $a,
+			remoteState: {hydrationStore}
 		} = this;
 
 		const label = <AsyncOptions>{
@@ -78,8 +80,7 @@ export default abstract class iData extends iDataHandlers {
 			join: 'replace'
 		};
 
-		const
-			callSuper = () => super.initLoad(() => this.db, opts);
+		const callSuper = $a.proxy(() => super.initLoad(() => this.db, opts));
 
 		try {
 			if (opts.emitStartEvent !== false) {
@@ -90,12 +91,18 @@ export default abstract class iData extends iDataHandlers {
 				this.syncDataProviderWatcher(false);
 			}
 
-			const
-				providerHydrationKey = '[[DATA_PROVIDER]]';
+			const providerHydrationKey = '[[DATA_PROVIDER]]';
 
 			const setDBData = (data: CanUndef<this['DB']>) => {
 				this.saveDataToRootStore(data);
-				this.hydrationStore?.set(this.componentId, providerHydrationKey, Object.cast(data));
+
+				if (data !== undefined) {
+					hydrationStore.set(this.componentId, providerHydrationKey, Object.cast(data));
+
+				} else {
+					hydrationStore.setEmpty(this.componentId, providerHydrationKey);
+				}
+
 				this.db = this.convertDataToDB<this['DB']>(data);
 
 				// During hydration, there may be a situation where the cache on the DB getter is set before rendering occurs,
@@ -103,7 +110,9 @@ export default abstract class iData extends iDataHandlers {
 				void this.db;
 			};
 
-			if (HYDRATION && hydrationStore.has(this.componentId)) {
+			const hydrationMode = this.canUseHydratedData && Boolean(this.field.getFieldsStore<this>().ssrRendering);
+
+			if (hydrationMode) {
 				const
 					store = hydrationStore.get(this.componentId),
 					data = Object.cast<CanUndef<this['DB']>>(store?.[providerHydrationKey]);
@@ -122,8 +131,7 @@ export default abstract class iData extends iDataHandlers {
 				...opts
 			};
 
-			$a
-				.clearAll({group: 'requestSync:get'});
+			$a.clearAll({group: 'requestSync:get'});
 
 			if (this.isFunctional && !SSR) {
 				const res = super.initLoad(() => {
@@ -141,8 +149,7 @@ export default abstract class iData extends iDataHandlers {
 				return res;
 			}
 
-			const
-				{dataProvider} = this;
+			const {dataProvider} = this;
 
 			if (!opts.silent) {
 				this.componentStatus = 'loading';
@@ -153,8 +160,7 @@ export default abstract class iData extends iDataHandlers {
 				void this.lfc.execCbAtTheRightTime(() => this.db = db, label);
 
 			} else if ((!SSR || this.ssrRendering) && dataProvider?.provider.baseURL != null) {
-				const
-					needRequest = Object.isArray(dataProvider.getDefaultRequestParams('get'));
+				const needRequest = Object.isArray(dataProvider.getDefaultRequestParams('get'));
 
 				if (needRequest) {
 					const res = $a
@@ -168,13 +174,13 @@ export default abstract class iData extends iDataHandlers {
 								return;
 							}
 
-							const
-								query = defParams[0],
-								opts = {
-									...defParams[1],
-									...label,
-									important: this.componentStatus === 'unloaded'
-								};
+							const query = defParams[0];
+
+							const opts = {
+								...defParams[1],
+								...label,
+								important: this.componentStatus === 'unloaded'
+							};
 
 							if (this.dependencies.length > 0) {
 								void this.moduleLoader.load(...this.dependencies);
@@ -184,7 +190,36 @@ export default abstract class iData extends iDataHandlers {
 								void this.state.initFromStorage();
 							}
 
-							return dataProvider.get(<RequestQuery>query, opts);
+							const req = dataProvider.get(<RequestQuery>query, opts);
+
+							const timeout = $a.sleep(SSR ? 20 : (3).seconds()).then(() => {
+								throw 'timeout';
+							});
+
+							void Promise.race([req, timeout]).catch((err) => {
+								if (err !== 'timeout') {
+									return;
+								}
+
+								this.log(
+									{
+										logLevel: 'warn',
+										context: 'initLoad:dataProvider'
+									},
+
+									{
+										message: 'The component is waiting too long for data from its data provider. It is recommended to add data prefetching for the page.',
+										waitFor: {
+											route: this.route,
+											globalName: this.globalName,
+											component: this.componentName,
+											dataProvider: this.dataProvider!.provider.constructor.name
+										}
+									}
+								);
+							});
+
+							return req;
 						})
 
 						.then(
@@ -227,12 +262,10 @@ export default abstract class iData extends iDataHandlers {
 		return super.initLoad(data, opts);
 	}
 
-	override reload(opts?: InitLoadOptions): Promise<void> {
-		if (!this.r.isOnline && !this.offlineReload) {
-			return Promise.resolve();
+	override async reload(opts?: InitLoadOptions): Promise<void> {
+		if ((await this.remoteState.net.isOnline()).status || this.offlineReload) {
+			return super.reload(opts);
 		}
-
-		return super.reload(opts);
 	}
 
 	/**
@@ -250,7 +283,7 @@ export default abstract class iData extends iDataHandlers {
 			return;
 		}
 
-		this.r.providerDataStore.set(key, data);
+		this.r.providerDataStore?.set(key, data);
 
 		function getKey(val: string | CanUndef<iData['dataProviderProp']>): CanUndef<string> {
 			if (val == null || Object.isString(val)) {

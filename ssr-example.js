@@ -24,26 +24,39 @@
    ```
 */
 
-require('./dist/ssr/std');
+const v4app = require('./dist/ssr/main');
 
-require('./dist/ssr/p-v4-components-demo')
-	.initApp('p-v4-components-demo', {
-		route: '/user/12345',
+const
+	fs = require('node:fs'),
+	express = require('express');
 
-		globalEnv: {
-			ssr: {
-				document: {
+const app = express();
+const port = 3000;
 
-				}
-			},
+app.use('/dist', express.static('dist'));
 
-			location: {
-				href: 'https://example.com/user/12345'
-			}
-		}
-	})
+app.get('/', (req, res) => {
+	v4app
+		.initApp('p-v4-components-demo', {
+			location: new URL('https://example.com/user/12345'),
 
-	.then((res) => {
-		require('fs').writeFileSync('ssr-example.html', res);
-	});
+			cookies: v4app.cookies.createCookieStore(''),
+			session: v4app.session.from(v4app.kvStorage.asyncSessionStorage)
+		})
 
+		.then(({content, styles}) => {
+			fs.writeFileSync('./ssr-example.html', content);
+
+			const html = fs.readFileSync('./dist/client/p-v4-components-demo.html', 'utf8');
+
+			res.send(
+				html
+					.replace(/<!--SSR-->/, content)
+					.replace(/<!--STYLES-->/, styles)
+			);
+		});
+});
+
+app.listen(port, () => {
+	console.log(`Start: http://localhost:${port}`);
+});

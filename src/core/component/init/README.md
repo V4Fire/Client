@@ -6,8 +6,9 @@ Basically, this API is used by adaptors of component libraries, and you don't ne
 ## Registering a component
 
 V4Fire provides the ability to describe components using native JavaScript classes and decorators,
-instead of using the API of the component library being used. But in order to convert a component from a class form
-to a form understood by the used component library, it is necessary to register the component.
+instead of using the API of the component library being used.
+But to convert a component from a class form to a form understood by the used component library,
+it is necessary to register the component.
 
 Registering a component in V4Fire is a lazy and one-time operation. That is, the component is only registered when
 it is actually used in the template. Once a component has been registered once, it can already be used
@@ -86,10 +87,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 
     errorCaptured(...args: unknown[]): void {
       init.errorCapturedState(getComponentContext(this), ...args);
-    },
-
-    renderTracked(...args: unknown[]): void {
-      init.renderTrackedState(getComponentContext(this), ...args);
     },
 
     renderTriggered(...args: unknown[]): void {

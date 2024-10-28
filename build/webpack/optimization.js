@@ -18,7 +18,6 @@ const
 
 const {
 	isLayerDep,
-	isLayerCoreDep,
 	isExternalDep,
 
 	RUNTIME
@@ -26,7 +25,7 @@ const {
 
 const
 	{inherit} = include('build/helpers'),
-	{ssr, optimize} = config.webpack;
+	{optimize} = config.webpack;
 
 /**
  * Returns parameters for `webpack.optimization`
@@ -38,12 +37,8 @@ const
  */
 module.exports = function optimization({buildId, plugins}) {
 	const
-		params = {};
-
-	if (ssr) {
-		params.minimizer = [];
-		return params;
-	}
+		params = {},
+		cssMinimizer = new CssMinimizerPlugin(config.cssMinimizer());
 
 	if (optimize.minChunkSize) {
 		plugins.set(
@@ -55,15 +50,6 @@ module.exports = function optimization({buildId, plugins}) {
 	if (buildId === RUNTIME) {
 		params.splitChunks = inherit(optimize.splitChunks(), {
 			cacheGroups: {
-				index: {
-					name: 'index-core',
-					chunks: 'all',
-					minChunks: 2,
-					enforce: true,
-					reuseExistingChunk: true,
-					test: isLayerCoreDep
-				},
-
 				async: {
 					chunks: 'async',
 					minChunks: 1,
@@ -86,32 +72,31 @@ module.exports = function optimization({buildId, plugins}) {
 	const
 		es = config.es();
 
-	params.minimizer = [
-		new CssMinimizerPlugin(config.cssMinimizer()),
+	/* eslint-disable camelcase */
 
-		/* eslint-disable camelcase */
+	const jsMinimizer = new TerserPlugin({
+		parallel: true,
 
-		new TerserPlugin({
-			parallel: true,
-			// Disable extraction of license headers into separate files
-			extractComments: false,
-			terserOptions: inherit({
-				ecma: es,
+		// Disable extraction of license headers into separate files
+		extractComments: false,
 
-				safari10: true,
-				warnings: false,
+		terserOptions: inherit({
+			ecma: es,
 
-				keep_fnames: /ES[35]$/.test(es),
-				keep_classnames: true,
+			safari10: true,
+			warnings: false,
 
-				output: {
-					comments: false
-				}
-			}, config.terser())
-		})
+			keep_fnames: /ES[35]$/.test(es),
+			keep_classnames: true,
 
-		/* eslint-enable camelcase */
-	];
+			output: {
+				comments: false
+			}
+		}, config.terser())
+	});
 
+	/* eslint-enable camelcase */
+
+	params.minimizer = [cssMinimizer, jsMinimizer];
 	return params;
 };

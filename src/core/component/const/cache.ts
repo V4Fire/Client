@@ -16,48 +16,62 @@ import type {
 import type {
 
 	ComponentMeta,
+
 	ComponentOptions,
+	ComponentConstructorInfo,
+
 	RenderFactory,
 	App
 
 } from 'core/component/interface';
 
 /**
- * A dictionary with the component declaration parameters
+ * A dictionary containing the component declaration parameters
  */
 export const componentParams = new Map<Function | string, ComponentOptions>();
 
 /**
- * A dictionary with the registered root components
+ * A dictionary containing the component declaration parameters that are declared as partial.
+ */
+export const partialInfo = new Map<string, ComponentConstructorInfo>();
+
+/**
+ * A dictionary containing the registered root components
  */
 export const rootComponents = Object.createDict<CanPromise<ComponentEngineOptions<typeof ComponentEngine>>>();
 
 /**
- * A link to the application context and the root component
- */
-export const app: App = {
-	context: null,
-	component: null
-};
-
-/**
- * A dictionary with the registered components
+ * A dictionary containing the registered components
  */
 export const components = new Map<Function | string, ComponentMeta>();
 
 /**
- * A dictionary with the registered component initializers.
- * By default, components are not registered automatically, but only upon the component's first call from a template.
+ * A dictionary containing the registered component initializers.
+ *
+ * By default, components are not registered automatically;
+ * they are only registered upon the component's first call from a template or when idle.
+ *
  * This dictionary contains functions to register components.
  */
 export const componentRegInitializers = Object.createDict<Function[]>();
 
 /**
- * A dictionary with the registered component render factories
+ * A dictionary containing the registered component render factories
  */
 export const componentRenderFactories = Object.createDict<RenderFactory>();
 
 /**
- * A dictionary with component pointers for metatables
+ * A map representing a dictionary where the key is the component name,
+ * and the value is a Set of all keys that have a decorator specified
+ * within the component declaration
  */
-export const metaPointers = Object.createDict<Dictionary<boolean>>();
+export const componentDecoratedKeys = Object.createDict<Set<string>>();
+
+/**
+ * Globally initialized application (not supported in SSR)
+ */
+export const app: App = {
+	context: null,
+	component: null,
+	state: null
+};

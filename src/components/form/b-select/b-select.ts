@@ -15,7 +15,8 @@ import SyncPromise from 'core/promise/sync';
 
 import { derive } from 'core/functools/trait';
 
-import Block, { setElementMod, removeElementMod } from 'components/friends/block';
+import Block, { setElementMod, removeElementMod, getElementSelector, element, elements } from 'components/friends/block';
+import DOM, { delegateElement } from 'components/friends/dom';
 
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
 import iActiveItems from 'components/traits/i-active-items/i-active-items';
@@ -59,7 +60,8 @@ export * from 'components/form/b-select/interface';
 
 export { Value, FormValue };
 
-Block.addToPrototype({setElementMod, removeElementMod});
+DOM.addToPrototype({delegateElement});
+Block.addToPrototype({setElementMod, removeElementMod, getElementSelector, element, elements});
 Mask.addToPrototype(MaskAPI);
 
 interface bSelect extends Trait<typeof iOpenToggle>, Trait<typeof iActiveItems>, Trait<typeof SelectEventHandlers> {}
@@ -111,10 +113,13 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	 * {@link iActiveItems.activeStore}
 	 * {@link iActiveItems.linkActiveStore}
 	 */
-	@system<bSelect>((o) => {
-		o.watch('valueProp', (val) => o.setActive(val, true));
-		o.watch('modelValue', (val) => o.setActive(val, true));
-		return iActiveItems.linkActiveStore(o, (val) => o.resolveValue(o.valueProp ?? o.modelValue ?? val));
+	@system<bSelect>({
+		unique: true,
+		init: (o) => {
+			o.watch('valueProp', (val) => o.setActive(val, true));
+			o.watch('modelValue', (val) => o.setActive(val, true));
+			return iActiveItems.linkActiveStore(o, (val) => o.resolveValue(o.valueProp ?? o.modelValue ?? val));
+		}
 	})
 
 	activeStore!: iActiveItems['activeStore'];
@@ -138,18 +143,13 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 			this.selectValue(value, true);
 			void this.setScrollToMarkedOrSelectedItem();
 		}
-
-		if (!this.multiple) {
-			const item = this.values.getItemByValue(value);
-			this.text = item?.label ?? '';
-		}
 	}
 
 	override get default(): this['Active'] {
 		const val = this.field.get('defaultProp');
 
 		if (this.multiple) {
-			return new Set(Object.isIterable(val) ? val : Array.concat([], val));
+			return new Set(Object.isIterable(val) ? val : Array.toArray(val));
 		}
 
 		return val;
@@ -224,7 +224,11 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	/**
 	 * Internal API for working with component values
 	 */
-	@system<bSelect>((o) => new Values(o))
+	@system<bSelect>({
+		unique: true,
+		init: (o) => new Values(o)
+	})
+
 	protected values!: Values;
 
 	/** {@link bSelect.items} */
@@ -238,7 +242,15 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 
 	protected itemsStore!: this['Items'];
 
-	protected override readonly $refs!: iInputText['$refs'] & {
+	/**
+	 * True if keydown handler is enabled.
+	 * This flag is needed to restore event handler for functional components.
+	 */
+	@system()
+	protected keydownHandlerEnabled: boolean = false;
+
+	/** @inheritDoc */
+	declare protected readonly $refs: iInputText['$refs'] & {
 		dropdown?: Element;
 	};
 
@@ -270,6 +282,11 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 			return false;
 		}
 
+		if (!this.multiple) {
+			const item = this.values.getItemByValue(value);
+			this.text = item?.label ?? '';
+		}
+
 		const {block: $b} = this;
 
 		if ($b == null) {
@@ -289,7 +306,7 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 		}
 
 		SyncPromise.resolve(this.activeElement).then((els) => {
-			Array.concat([], els).forEach((el) => {
+			Array.toArray(els).forEach((el) => {
 				h.setSelectedMod.call(this, el, true);
 			});
 		}).catch(stderr);
@@ -305,12 +322,16 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 			return false;
 		}
 
+		if (!this.multiple) {
+			this.text = '';
+		}
+
 		if (this.block == null) {
 			return true;
 		}
 
 		SyncPromise.resolve(previousActiveElement).then((els) => {
-			Array.concat([], els).forEach((el) => {
+			Array.toArray(els).forEach((el) => {
 				const
 					id = el.getAttribute('data-id'),
 					item = this.values.getItem(id ?? -1);
@@ -406,6 +427,13 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 		SelectEventHandlers.onItemClick(this, itemEl);
 	}
 
+	/** {@link iOpenToggle.prototype.onKeyClose} */
+	async onKeyClose(e: KeyboardEvent): Promise<void> {
+		if (e.key === 'Escape' || (e.key === 'Tab' && !this.isFocused)) {
+			await this.close();
+		}
+	}
+
 	/** {@link h.setScrollToMarkedOrSelectedItem} */
 	protected setScrollToMarkedOrSelectedItem(): Promise<boolean> {
 		return h.setScrollToMarkedOrSelectedItem.call(this);
@@ -423,7 +451,7 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	/** {@link iOpenToggle.initCloseHelpers} */
 	@hook('beforeDataCreate')
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
-		iOpenToggle.initCloseHelpers(this, events);
+		iOpenToggle.initCloseHelpers(this, events, {capture: true});
 	}
 
 	/** {@link Values.init} */
@@ -486,6 +514,17 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 		}
 	}
 
+	protected override updateTextStore(value: string): void {
+		this.field.set('textStore', value);
+
+		const {input} = this.$refs;
+
+		// Sync value of the <input /> with the text
+		if (!this.native && Object.isTruly(input)) {
+			input.value = value;
+		}
+	}
+
 	protected override initModEvents(): void {
 		super.initModEvents();
 		this.sync.mod('native', 'native', Boolean);
@@ -512,6 +551,15 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	protected override onFocus(): void {
 		super.onFocus();
 		void this.open();
+	}
+
+	protected override mounted(): void {
+		super.mounted();
+
+		// Restore event handlers for functional components
+		if (this.isFunctional && this.keydownHandlerEnabled) {
+			this.handleKeydown(true);
+		}
 	}
 }
 

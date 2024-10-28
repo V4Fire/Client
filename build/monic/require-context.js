@@ -12,7 +12,7 @@ const
 	config = require('@config/config');
 
 const
-	fs = require('fs'),
+	fs = require('node:fs'),
 	path = require('upath');
 
 const
@@ -26,7 +26,7 @@ const
 	tplRgxp = /\/?\${(.*?)}/g;
 
 /**
- * Monic replacer to enable `require.context` declarations through multiple contexts
+ * A Monic replacer that enables `require.context` declarations through multiple contexts
  *
  * @param {string} str
  * @returns {string}

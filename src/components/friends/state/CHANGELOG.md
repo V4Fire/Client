@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.43 (2023-11-26)
+
+#### :bug: Bug Fix
+
+* There is no need to synchronize router data during SSR
+
 ## v4.0.0-beta.29 (2023-10-02)
 
 #### :bug: Bug Fix

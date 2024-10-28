@@ -11,7 +11,6 @@ import type { JSHandle } from 'playwright';
 import test from 'tests/config/unit/test';
 
 import type bSlider from 'components/base/b-slider/b-slider';
-
 import { renderSlider, current, lastIndex } from 'components/base/b-slider/test/helpers';
 
 test.use({
@@ -136,5 +135,4 @@ test.describe('<b-slider> gestures', () => {
 			test.expect(curr).toBe(lastIdx);
 		});
 	});
-
 });

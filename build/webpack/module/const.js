@@ -10,7 +10,7 @@
 
 const
 	config = require('@config/config'),
-	path = require('path');
+	path = require('upath');
 
 const
 	{assetsOutput} = include('build/helpers');
@@ -29,6 +29,7 @@ exports.urlLoaderOpts = {
 	outputPath: path.dirname(assetsOutput),
 	limit: webpack.optimize.dataURILimit(),
 	encoding: true,
+	emitFile: !webpack.ssr,
 	esModule: false
 };
 

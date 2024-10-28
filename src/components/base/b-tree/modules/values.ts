@@ -13,7 +13,8 @@ import type bTree from 'components/base/b-tree/b-tree';
 import type { Item } from 'components/base/b-tree/b-tree';
 
 export default class Values extends Friend {
-	override readonly C!: bTree;
+	/** @inheritDoc */
+	declare readonly C: bTree;
 
 	/**
 	 * A map of the item indexes and their values
@@ -69,7 +70,7 @@ export default class Values extends Friend {
 
 	/**
 	 * Initializes component values
-	 * @param [itemsChanged] - true, if the method is invoked after items changed
+	 * @param [itemsChanged] - set to true, if the method is invoked after items changed
 	 */
 	init(itemsChanged: boolean = false): void {
 		const
@@ -78,7 +79,7 @@ export default class Values extends Friend {
 
 		let
 			hasActive = false,
-			activeItem;
+			activeItem: Nullable<Item>;
 
 		if (ctx.topProp == null) {
 			this.itemKeyPrefix++;
@@ -95,7 +96,7 @@ export default class Values extends Friend {
 				}
 
 				if (activeItem != null) {
-					iActiveItems.initItem(ctx, activeItem);
+					iActiveItems.initItem(this.component, activeItem);
 				}
 			}
 

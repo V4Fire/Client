@@ -11,56 +11,62 @@
  * @packageDocumentation
  */
 
+import type { ModsProp, ModsDict } from 'core/component';
+
 import type iBlock from 'components/super/i-block/i-block';
-import type { ComponentInterface, ModsProp, ModsDict } from 'core/component';
 
 export * from 'components/super/i-block/modules/mods/interface';
 
 /**
- * Initializes the component modifiers
+ * Initializes the component modifiers by extracting them from the `modsProps` property,
+ * attributes of the component whose names match the names of the modifiers described in the static `mods` property
+ * of the component class, and the design system
+ *
  * @param component
  */
-export function initMods(component: iBlock): ModsDict {
-	const
-		ctx = component.unsafe,
-		declMods = ctx.meta.component.mods;
+export function initMods(component: iBlock['unsafe']): ModsDict {
+	const declMods = component.meta.component.mods;
 
 	const
-		attrMods: string[][] = [],
-		modVal = (val) => val != null ? String(val) : undefined;
+		attrMods: Array<[string, () => CanUndef<string>]> = [],
+		modVal = (val: unknown) => val != null ? String(val) : undefined;
 
-	Object.entries(ctx.$attrs).forEach(([key, val]) => {
-		const
-			modName = key.camelize(false);
+	Object.keys(component.$attrs).forEach((attrName) => {
+		const modName = attrName.camelize(false);
 
 		if (modName in declMods) {
-			let
-				el;
+			let el: Nullable<Node>;
 
-			ctx.watch(`$attrs.${key}`, (attrs: Dictionary = {}) => {
-				el ??= ctx.$el;
-				el?.removeAttribute(key);
-				void ctx.setMod(modName, modVal(attrs[key]));
+			component.watch(`$attrs.${attrName}`, (attrs: Dictionary = {}) => {
+				el ??= component.$el;
+
+				if (el instanceof Element) {
+					el.removeAttribute(attrName);
+				}
+
+				void component.setMod(modName, modVal(attrs[attrName]));
 			});
 
-			ctx.meta.hooks['before:mounted'].push({
+			component.meta.hooks['before:mounted'].push({
 				fn: () => {
-					el = ctx.$el;
-					el?.removeAttribute(key);
+					el = component.$el;
+
+					if (el instanceof Element) {
+						el.removeAttribute(attrName);
+					}
 				}
 			});
 
-			if (val == null) {
-				return;
-			}
-
-			attrMods.push([modName, String(val)]);
+			attrMods.push([modName, () => modVal(component.$attrs[attrName])]);
 		}
 	});
 
+	return Object.cast(component.sync.link(link));
+
 	function link(propMods: CanUndef<ModsProp>): ModsDict {
 		const
-			mods = Object.isDictionary(ctx.mods) ? ctx.mods : {...declMods};
+			isModsInitialized = Object.isDictionary(component.mods),
+			mods = isModsInitialized ? component.mods : {...declMods};
 
 		if (propMods != null) {
 			Object.entries(propMods).forEach(([key, val]) => {
@@ -70,89 +76,86 @@ export function initMods(component: iBlock): ModsDict {
 			});
 		}
 
-		attrMods.forEach(([key, val]) => {
-			mods[key] = val;
+		attrMods.forEach(([name, getter]) => {
+			const val = getter();
+
+			if (isModsInitialized || val != null) {
+				mods[name] = val;
+			}
 		});
 
-		const
-			{experiments} = ctx.r.remoteState;
+		const {experiments} = component.r.remoteState;
 
 		if (Object.isArray(experiments)) {
 			experiments.forEach((exp) => {
-				const
-					experimentMods = exp.meta?.mods;
+				const experimentMods = exp.meta?.mods;
 
-				if (Object.isDictionary(experimentMods)) {
-					Object.entries(experimentMods).forEach(([name, val]) => {
-						if (val != null || mods[name] == null) {
-							mods[name] = modVal(val);
-						}
-					});
+				if (!Object.isDictionary(experimentMods)) {
+					return;
 				}
+
+				Object.entries(experimentMods).forEach(([name, val]) => {
+					if (val != null || mods[name] == null) {
+						mods[name] = modVal(val);
+					}
+				});
 			});
 		}
 
-		Object.entries(mods).forEach(([key, val]) => {
-			val = modVal(mods[key]);
-			mods[key] = val;
+		Object.entries(mods).forEach(([name, val]) => {
+			val = modVal(mods[name]);
+			mods[name] = val;
 
-			if (ctx.hook !== 'beforeDataCreate') {
-				void ctx.setMod(key, val);
+			if (component.hook !== 'beforeDataCreate') {
+				void component.setMod(name, val);
 			}
 		});
 
 		return mods;
 	}
-
-	return Object.cast(ctx.sync.link(link));
 }
 
 /**
- * Merges old component modifiers with new modifiers
- * (for functional components)
+ * Merges the old component modifiers with the new modifiers,
+ * ensuring that the component maintains any previously applied settings while integrating new changes.
+ * This function is invoked when a functional component is re-created during a re-render.
  *
  * @param component
  * @param oldComponent
- * @param key
- * @param link
+ * @param name - the field name that is merged when the component is re-created (this will be `mods`)
+ * @param [link] - the reference name which takes its value based on the current field
  */
 export function mergeMods(
-	component: iBlock,
-	oldComponent: iBlock,
-	key: string,
+	component: iBlock['unsafe'],
+	oldComponent: iBlock['unsafe'],
+	name: string,
 	link?: string
 ): void {
 	if (link == null) {
 		return;
 	}
 
-	const
-		ctx = component.unsafe,
-		cache = ctx.$syncLinkCache.get(link);
+	const cache = component.$syncLinkCache.get(link);
 
 	if (cache == null) {
 		return;
 	}
 
-	const
-		l = cache[key];
+	const l = cache[name];
 
 	if (l == null) {
 		return;
 	}
 
 	const
-		modsProp = getExpandedModsProp(ctx),
+		modsProp = getExpandedModsProp(component),
 		mods = {...oldComponent.mods};
 
-	for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i];
-
-		if (ctx.sync.syncModCache[key]) {
+	Object.keys(mods).forEach((key) => {
+		if (component.sync.syncModCache[key] != null) {
 			delete mods[key];
 		}
-	}
+	});
 
 	if (Object.fastCompare(modsProp, getExpandedModsProp(oldComponent))) {
 		l.sync(mods);
@@ -161,29 +164,25 @@ export function mergeMods(
 		l.sync(Object.assign(mods, modsProp));
 	}
 
-	function getExpandedModsProp(component: ComponentInterface): ModsDict {
-		const
-			{unsafe} = component;
-
+	function getExpandedModsProp(component: iBlock['unsafe']): ModsDict {
 		if (link == null) {
 			return {};
 		}
 
-		const
-			modsProp = unsafe.$props[link];
+		const modsProp = component.$props[link];
 
 		if (!Object.isDictionary(modsProp)) {
 			return {};
 		}
 
 		const
-			declMods = unsafe.meta.component.mods,
+			declMods = component.meta.component.mods,
 			res = <ModsDict>{...modsProp};
 
-		Object.entries(unsafe.$attrs).forEach(([name, attr]) => {
+		Object.entries(component.$attrs).forEach(([name, attr]) => {
 			if (name in declMods) {
 				if (attr != null) {
-					res[key] = attr;
+					res[name] = attr;
 				}
 			}
 		});
@@ -199,9 +198,7 @@ export function mergeMods(
 export function getReactiveMods(component: iBlock): Readonly<ModsDict> {
 	const
 		watchMods = {},
-		watchers = component.field.get<ModsDict>('reactiveModsStore')!;
-
-	const
+		watchers = component.field.get<ModsDict>('reactiveModsStore')!,
 		systemMods = component.mods;
 
 	Object.entries(systemMods).forEach(([name, val]) => {

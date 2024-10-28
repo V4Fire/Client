@@ -11,15 +11,12 @@
  * @packageDocumentation
  */
 
-import iStaticPage, { component, prop, field, system } from 'components/super/i-static-page/i-static-page';
+import iStaticPage, { component, prop, field, system, hook } from 'components/super/i-static-page/i-static-page';
 import VDOM, * as VDOMAPI from 'components/friends/vdom';
 
 export * from 'components/super/i-static-page/i-static-page';
 
 VDOM.addToPrototype(VDOMAPI);
-
-// eslint-disable-next-line no-console
-console.time('Initializing');
 
 /**
  * Page with component demos.
@@ -46,10 +43,12 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	@field()
 	someField: unknown = 'foo';
 
-	protected beforeCreate(): void {
-		//#unless runtime has storybook
-		// eslint-disable-next-line no-console
-		console.time('Render');
-		//#endunless
+	@hook('beforeCreate')
+	setStageFromLocation(): void {
+		const matches = /stage=(.*)/.exec(globalThis.location.search);
+
+		if (matches != null) {
+			this.stage = decodeURIComponent(matches[1]);
+		}
 	}
 }

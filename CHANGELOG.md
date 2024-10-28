@@ -11,6 +11,1150 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.148 (2024-10-28)
+
+#### :house: Internal
+
+* Create a `normalizeComponentForceUpdateProps` for normalizing the props with `forceUpdate = false` `core/component/render`
+* Exclude SSR shims for non-SSR environments `core/shims`
+
+## v4.0.0-beta.147 (2024-10-25)
+
+#### :bug: Bug Fix
+
+* Fixed the bug with previous active element not loosing its focus state `bList`
+
+## v4.0.0-beta.146 (2024-10-18)
+
+#### :bug: Bug Fix
+
+* Fixed `$attrs` not being watched `core/component/watch`
+
+## v4.0.0-beta.145 (2024-10-14)
+
+#### :bug: Bug Fix
+
+* Fixed the issue with incorrectly detecting the functional smart component `build/snakeskin`
+* Create a fallback for the addEventListener method on the MediaQueryList
+  `core/theme-manager/system-theme-extractor/engines/web`
+* Fixed an issue with the comment node in `$refs` that occurs when rendering an `undefined` page `bDynamicPage`
+
+## v4.0.0-beta.144 (2024-10-09)
+
+#### :bug: Bug Fix
+
+* Override a component name in the shared meta `core/component/decorators`
+
+## v4.0.0-beta.143 (2024-10-09)
+
+#### :rocket: New Feature
+
+* Added `JSHandle` representing the mock agent in `SpyObject.handle` `tests/helpers/mock`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with updating the `componentStatus` after destroying the component `iData`
+
+## v4.0.0-beta.142 (2024-10-04)
+
+#### :bug: Bug Fix
+
+* Better fix for the exports in transpiled snakeskin modules `build/webpack`
+
+## v4.0.0-beta.141 (2024-10-03)
+
+#### :bug: Bug Fix
+
+* Do not call destructor recursively on before unmount `core/component/engines/vue3`
+
+## v4.0.0-beta.140 (2024-10-03)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect `shapeFlag` on a functional vnode `core/component/render`
+
+## v4.0.0-beta.139.dsl-speedup-2 (2024-10-03)
+
+#### :rocket: New Feature
+
+* Added a new default prop `getPassedProps`, which allows identifying which props were passed through the template `core/component`
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the removal of modifiers from a comment node `components/friends/block`
+
+#### :house: Internal
+
+* Performance improvements `components/friends/sync` `iBlock`
+* `core/component/engines/vue3`:
+  * Migration to the Composition API
+  * Added support for the `renderTracked` hook
+
+## v4.0.0-beta.138.dsl-speedup (2024-10-01)
+
+#### :boom: Breaking Change
+
+* The `Async` module  has been moved to `V4/Core`
+
+#### :rocket: New Feature
+
+* Added the `partial` parameter for the declaration of components consisting of multiple classes `core/component/meta`
+* Added a new method for efficient access to the field store `getFieldsStore` `components/friends/field`
+* Introduced a new type of caching: `'forever'` `core/component/accessors`
+* Added the `test` parameter for fine-tuning watchers `core/component/decorators`
+
+#### :house: Internal
+
+* `iBlock`:
+  * Set all friend classes now through getters with `cache: 'forever'`
+  * Modules for friend classes are now loaded lazily
+
+* Apply the `symbol-generator-loader` consistently to optimize Runtime performance `build/webpack`
+* A lot of TypeScript type fixes
+* Performance improvements
+
+## 4.0.0-beta.137 (2024-09-24)
+
+#### :bug: Bug Fix
+
+* Fix the bug when the global event listener might be called after the component has been destroyed `iBlock`
+
+#### :house: Internal
+
+* Removed method calls from the `iBlock` template
+* Added a [[RENDER]] event before calling the component's render function `core/component/meta`
+
+## 4.0.0-beta.136 (2024-09-17)
+
+#### :house: Internal
+
+* Added sanitizing to `toString` method to prevent XSS vulnerabilities `core/hydration-store`
+
+## v4.0.0-beta.135 (2024-09-17)
+
+#### :bug: Bug Fix
+
+* Removed the array merging logic from the old and current options during `replace(null, opts)`
+
+## v4.0.0-beta.134 (2024-09-16)
+
+#### :house: Internal
+
+* Modified the method for checking the stylesheet loading status `core/prelude/webpack`
+
+## v4.0.0-beta.133 (2024-09-13)
+
+#### :bug: Bug Fix
+
+* Support for the recursive `dropCache` operation by adding the `recursive` argument `components/friends/data-provider`
+
+## v4.0.0-beta.132 (2024-09-12)
+
+#### :boom: Breaking Change
+
+* To improve performance, the `std.js` chunk has been moved back as the standalone entry
+
+#### :bug: Bug Fix
+
+* Fix exports in transpiled snakeskin modules `build/webpack`
+
+#### :house: Internal
+
+* Add ResizeObserver polyfill for legacy build
+
+## v4.0.0-beta.131 (2024-09-11)
+
+#### :rocket: New Feature
+
+* Enhanced filesystem cache invalidation criteria by including the current branch name and the most recent merge `build/webpack`
+
+#### :bug: Bug Fix
+
+* Fixed `env` argument for autoprefixer
+
+## v4.0.0-beta.130 (2024-09-05)
+
+#### :bug: Bug Fix
+
+* Fixed re-rendering issue when the value passed in `v-safe-html` changed. Added innerHTML updating in the `updated` hook.
+
+## v4.0.0-beta.129 (2024-09-04)
+
+#### :nail_care: Polish
+
+* Now, if an external link is passed to `initLibs()`, `PUBLIC_PATH` won't be added to it
+
+## v4.0.0-beta.128 (2024-09-03)
+
+#### :bug: Bug Fix
+
+* Fix normalization of the `forceUpdate` props declared as `*Prop` in:
+  * `bDummy`
+  * `bVirtualScrollNew`
+
+## v4.0.0-beta.127 (2024-08-29)
+
+#### :bug: Bug Fix
+
+* Fixed the RegExp for determining cookie in the `withIdempotent` decorator
+
+## v4.0.0-beta.126 (2024-08-23)
+
+#### :rocket: New Feature
+
+* The `eventConverter` function can now return a tuple consisting of the page component name and page component key, instead of just a string representing the page component name `bDynamicPage`
+
+#### :bug: Bug Fix
+
+* Fixed an issue where a new page component instance was not created when switching between routes that use the same page component `bDynamicPage`
+
+## v4.0.0-beta.125 (2024-08-12)
+
+#### :bug: Bug Fix
+
+* Fixed the dynamic component import transformer for the SSR build `build/monic`
+* Fixed the TypeScript configuration for SSR builds using SWC `config`
+
+## v4.0.0-beta.124 (2024-08-12)
+
+#### :house: Internal
+
+* Updated `monic-loader` to version `3.0.5` to include a fix for the rebuild speed regression
+
+## v4.0.0-beta.123 (2024-08-09)
+
+#### :bug: Bug Fix
+
+* Fix the browserslist for correct CSS autoprefixer work
+
+## v4.0.0-beta.122 (2024-08-06)
+
+#### :rocket: New Feature
+
+* Added settings for the component garbage collector `config`
+* Added a new module with an implementation of the garbage collector for components `core/component/gc`
+
+## v4.0.0-beta.121.the-phantom-menace (2024-08-05)
+
+#### :boom: Breaking Change
+
+* `core/component/interface`:
+  * Removed the `renderedOnce` field
+  * The `$renderCounter` field is now public and updates after each call to the render function
+
+#### :rocket: New Feature
+
+* Added the `createPropAccessors` method for creating accessors
+  for props marked as `forceUpdate: false` `core/component/interface`
+
+* Added the `forceUpdate: false` property to designate props whose changes
+  should not lead to a template re-render `core/component/decorators/prop`
+
+#### :bug: Bug Fix
+
+* Fixed a bug where adding refs to components could cause them to re-render `core/component/directives/ref`
+* Fixed a bug where adding `v-attrs` to components could cause them to re-render `core/component/directives/attrs`
+* Fixed an issue with updating modifier values `iBlock`
+
+## v4.0.0-beta.120 (2024-09-05)
+
+#### :boom: Breaking Change
+
+* Removed the ES build option
+* Added `edition` build option for configuring environment support
+* Added browserslist support
+
+#### :house: Internal
+
+* Use SWC with support for browserslist
+
+## v4.0.0-beta.119 (2024-08-02)
+
+#### :rocket: New Feature
+
+* Added decorator for cookie store `core/cookies`
+
+#### :bug: Bug Fix
+
+* Fixed a bug of re-applying `maxAge` parameter on storage update `core/kv-storage/engines/cookie`
+
+## v4.0.0-beta.118 (2024-08-01)
+
+#### :bug: Bug Fix
+
+* Added `join: 'replace'` for router transitions. It allows to avoid collisions during calls of `push` and `replace` `b-router`
+
+## v4.0.0-beta.117 (2024-07-31)
+
+#### :house: Internal
+
+* Added a new `rootContent` layout wrapper block `iBlock`
+
+## v4.0.0-beta.116 (2024-07-29)
+
+#### :house: Internal
+
+* Now JSDOM used as singleton in server render `core/const/browser`
+
+## v4.0.0-beta.115.the-force-awakens (2024-07-26)
+
+#### :bug: Bug Fix
+
+* `core/component/init`:
+  * Fixed a typo in the event name `hookChange` which is responsible for processing activation and deactivation in the component
+  * Amended the deactivation sequence within the component to ensure that children are deactivated first
+
+* Fixed an issue to prevent the `hookChange` event from bubbling up `bDynamicPage`
+* Fixed the `$el` property of the teleported component `iBlock`
+
+#### :house: Internal
+
+* Added unit tests that use synchronous rendering
+
+## v4.0.0-beta.114 (2024-07-24)
+
+#### :house: Internal
+
+* Removed unnecessary rerendering of container in case of `request` prop change;
+rerendering of the container and all nodes inside occurs only when `firstChunkRender` is changed. `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.113 (2024-07-24)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with canceling a request when resolving response data. `components/friends/data-provider`
+
+## v4.0.0-beta.112 (2024-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed a bug by ensuring the onPageChange callback is cleaned up in
+  renderFilter to prevent execution by syncPageWatcher before the next
+  renderFilter call, maintaining proper rendering sequence `bDynamicPage`
+* Resolved the issue with consecutive router calls and option merging during `replace(null)` `bRouter`
+* Fixed a bug in `core/component/engines/vue3/render`, when passing a `nullable` value to a directive would result in it not being bound to the vNode
+
+## v4.0.0-beta.111 (2024-07-18)
+
+#### :house: Internal
+
+* Removed dead code `core/component/attrs`
+* Updated `monic-loader` to version `3.0.4` to fix regression
+
+## v4.0.0-beta.110 (2024-07-17)
+
+#### :bug: Bug Fix
+
+* Set global `Session` instance in the application state in `core/index`.
+  It fixes the session events not being emitted in `core/init/dependencies/load-session`.
+* Fixed the bug where the event name was set as an event modifier in the `v-attrs` directive `component/directives/attrs`
+* Replaced the method calls to `componentCtx.$once` and `componentCtx.$on` with correct event handling based on the isOnceEvent flag in `component/directives/attrs`
+* The page description element is now expected to be a meta tag
+  with the attribute `name='description'` instead of the `description` tag `core/page-meta-data`
+
+## v4.0.0-beta.109 (2024-07-16)
+
+#### :house: Internal
+
+* Updated `monic-loader` to version `3.0.3` to fix memory leak on rebuild in watch mode
+
+## v4.0.0-beta.108.a-new-hope (2024-07-15)
+
+#### :boom: Breaking Change
+
+* `iStaticPage`:
+  * Removed the `locale` field
+  * Removed the `globalEnv` field
+
+* The modules `core/init` and `core/component/state` have been completely redesigned for the new API
+* The module `core/component/state` has been completely redesigned for the new API
+* Moved the hydration store to a separate module from `core/component/hydration` -> `core/hydration-store`
+* Added a wrapper for middleware with additional parameters `core/data/middlewares/hydration-cache`
+
+#### :rocket: New Feature
+
+* Added a new component `bPreventSSR`
+* Added a new component `bCacheSSR`
+* Added a new module `core/html/xss`
+* Added a new module `core/cache/decorators/hydration`
+* Added style registration in the `getRenderFactory` method for templates in SSR `components/friends/vdom`
+
+* `iBlock`:
+  * Added Snakeskin constant `SSR` to determine that the template is being assembled for SSR
+  * Added Snakeskin constant `renderSSRAsString` for optimizing component assembly under SSR
+  * Added an optional `componentName` parameter to the `hydrateStyles` method.
+    This parameter allows for specifying the name of the component for which styles should be hydrated.
+  * Added registration of styles for templates in SSR
+
+* `core/hydration-store`:
+  * Added the ability to set the current environment in the hydration store
+  * Added getting and removing the hydration store value by path
+
+#### :bug: Bug Fix
+
+* Attached a handler to ensure the correct lifecycle for pages with keep-alive strategy `bDynamicPage`
+
+#### :house: Internal
+
+* The `hydrateStyles` method has been made public `iBlock`
+* Added a new `response` event upon successful data retrieval `components/friends/data-provider`
+
+* `build`:
+  * Now SSR build is bundled into a single file
+  * Use the forked `lib/server-renderer` everywhere in the SSR build
+
+## v4.0.0-beta.107 (2024-07-10)
+
+#### :bug: Bug Fix
+
+* Corrected the improper conversion of cookie attributes that are passed in camelCase format:
+  now all are forcibly converted to dash-style `core/cookies`
+* Fixed incorrect `patchFlag` when creating vnode with event handler `core/component/render`
+
+## v4.0.0-beta.106 (2024-06-25)
+
+#### :bug: Bug Fix
+
+* Do not store computed values in the cache before the functional component is fully created.
+  This fixes hard-to-detect bugs that can occur due to context inheritance.
+  See: https://github.com/V4Fire/Client/issues/1292 `core/component/accessor`
+
+## v4.0.0-beta.105 (2024-06-24)
+
+#### :bug: Bug Fix
+
+* Fixed unwanted execution of unmount handlers in the directives used
+  within the functional component during its re-creation.
+  The `$destroy` method now accepts an object with options, which enables control over
+  both the recursion of the destructor and the unmounting of vnodes
+  within the component `core/component/interface`
+
+## v4.0.0-beta.104 (2024-06-19)
+
+#### :rocket: New Feature
+
+* The `$destroy` method now accepts a recursive parameter for targeted removal
+  of the component without deleting its children and vice versa `core/component/interface`
+* Added the `consoleTracker` fixture to enable access to console messages in unit tests `tests/fixtures`
+
+#### :bug: Bug Fix
+
+* Fixed an error where a component could transition to a hook in which it was already located `core/component/hook`
+
+#### :house: Internal
+
+* The getter `r` has been moved from `iBlock` to `ComponentInterface`
+
+## v4.0.0-beta.103 (2024-06-14)
+
+#### :house: Internal
+
+* Updated `terser` to version `5.31.0` to include [bug fix](https://github.com/terser/terser/issues/1432)
+
+## v4.0.0-beta.102 (2024-06-11)
+
+#### :bug: Bug Fix
+
+* Removed the use of `$a.promise` in the `execute` method of the `Transition` class. This previously caused only
+the last `replace` method call to be executed when multiple calls were made `components/base/b-router`
+
+## v4.0.0-beta.101 (2024-05-30)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with intersection-observer in `b-virtual-scroll-new`: added `watchForIntersection` method to `DOM` prototype
+
+## v4.0.0-beta.100 (2024-05-24)
+
+#### :bug: Bug Fix
+
+* Fixed an issue in `b-virtual-scroll-new` where nodes from the previous rendering cycle were not being hidden and remained displayed.
+Now, the container will always be hidden if it is empty or during the loading process until an initial render occurs.
+It is important to note that the nodes are hidden, not deleted, and will later be replaced by new nodes.
+This approach helps avoid unnecessary re-renders.
+Additionally, this fix can be considered a breaking change because the container
+node inside b-virtual-scroll will now be hidden (display: none) by default until the first successful render in the rendering cycle. `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.99 (2024-05-23)
+
+#### :rocket: New Feature
+
+* Added color param to `i` mixin `components/global/g-def/funcs/ds.styl`
+
+## v4.0.0-beta.98 (2024-05-21)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition when changing props `bDynamicPage`
+
+## v4.0.0-beta.97 (2024-05-21)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition when switching routes `bRouter`
+* Reverted style dynamic load for fat-html from v4.0.0-beta.94 `build/monic`
+
+## v4.0.0-beta.96 (2024-05-16)
+
+#### :rocket: New Feature
+
+* Added new methods waitSignal and sendSignal for deferred module loading `components/friends/module-loader`
+
+## v4.0.0-beta.95 (2024-05-06)
+
+#### :house: Internal
+
+* Add `REGION` to webpack globals `build`
+* Listen for i18n `setRegion` event `core/component/event`
+
+#### :bug: Bug Fix
+
+* Renamed `bRouterProps` to `iRouterProps`. The incorrect name had caused infinite
+retries to load a non-existent template.
+
+## v4.0.0-beta.94 (2024-04-24)
+
+#### :bug: Bug Fix
+
+* Unlock the page scroll when the component is destroyed `bBottomSlide`
+* Now styles for dynamically loaded components with `loadModules` are included in the fat-html build `build/monic`
+
+#### :rocket: New Feature
+
+* The destructor, which unlocks the page scroll when the component is destroyed, will be registered once the `lockPageScroll` method is called `iLockPageScroll`
+
+## v4.0.0-beta.93 (2024-04-19)
+
+#### :house: Internal
+
+* Use the `v-on-resize` directive to recalculate state instead of `window:resize` and `DOMChange` watchers `bBottomSlide`
+
+## v4.0.0-beta.92 (2024-04-19)
+
+#### :rocket: New Feature
+
+* Introduced a `beforeSwitchPage` event that is emitted prior to the removal of the current page element
+* Implemented an API for saving the scroll of nested DOM nodes on the page.
+  [Learn more](./README.md#api-for-saving-scroll-of-nested-dom-nodes).
+
+## v4.0.0-beta.91 (2024-04-19)
+
+#### :rocket: New Feature
+
+* The `dataOffset` property is now public in the `VirtualScrollState` interface `components/base/b-virtual-scroll`
+* Added `$getRoot` and `$getParent` methods to the `ComponentInterface`
+* Implemented the `$getRoot` and `$getParent` methods on the component's instance `core/component/init`
+* Added a new `rootMargin` property to the intersection-watcher `core/dom/intersection-watcher`.
+  Note: this should only be used for the IntersectionObserver strategy.
+
+#### :house: Internal
+
+* Replaced anonymous functions for `getRoot` and `getParent` props
+  with calls to the `$getRoot` and `$getParent` methods of the component `build/snakeskin`
+* Removed optional chaining from load function in loadModules block
+  to ensure compliance with ES2018 `iBlock`
+
+## v4.0.0-beta.90 (2024-04-17)
+
+#### :rocket: New Feature
+
+* Supported the insertion of a primitive as a value `directives/safe-html`
+
+#### :bug: Bug Fix
+
+* The `onEnter` parameter for the `v-in-view` directive is now passed as the `handler` parameter `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.88 (2024-04-12)
+
+#### :boom: Breaking Change
+
+* The behavior of blocking the component during progress has been removed from `initModsEvents` `iProgress`
+
+#### :rocket: New Feature
+
+* Added a new static method `initDisableBehavior` `iProgress`
+
+#### :bug: Bug Fix
+
+* Fixed the issue of the on-screen keyboard disappearing when validators are specified on the input field `iInput`
+
+## 4.0.0-beta.87 (2024-04-12)
+
+#### :bug: Bug Fix
+
+* Fixed an error with recursive rendering through `getRenderFn` and the slot `components/friends/vdom`
+
+## 4.0.0-beta.86 (2024-04-11)
+
+#### :boom: Breaking Change
+
+* The directive cannot be applied to img, picture, or object elements `components/directives/image`
+
+#### :rocket: New Feature
+
+* Added support for standard img tag attributes `components/directives/image`
+
+## 4.0.0-beta.85 (2024-04-11)
+
+#### :bug: Bug Fix
+
+* Reverted https://github.com/V4Fire/Client/commit/83005d73fcb96f98928a9ba7831d886a22d5f5a3
+
+## 4.0.0-beta.84 (2024-04-11)
+
+#### :bug: Bug Fix
+
+* Fixed the full upward/downward slide in `heightMode = content` `bBottomSlide`
+* Fixed an error with incorrect handling of the empty required `src` attribute `components/directives/image`
+
+## v4.0.0-beta.83 (2024-04-08)
+
+#### :house: Internal
+
+* Re-export `withMemo` `core/component/engines/vue3`
+
+## v4.0.0-beta.82 (2024-04-02)
+
+#### :bug: Bug Fix
+
+* Fixed crash on undefined value in renderList source `AsyncRender`
+
+## 4.0.0-beta.81 (2024-04-01)
+
+#### :bug: Bug Fix
+
+* Fixed an error with incorrect handling of errors caused by the Async wrapper `directives/image`
+* Passed `remoteState` to the adapter `core/abt`
+* Fixed rendering of nested asynchronous tasks `AsyncRender`
+* Fixed an error with canceling handlers added with `prepend` `core/component/event`
+
+## 4.0.0-beta.80 (2024-03-29)
+
+#### :boom: Breaking Change
+
+* Now, the `component` property of the `ComponentObject` always returns a promise.
+  It also means that the `component` property will not be cached anymore,
+  but will be calculated every time it is accessed `tests/helpers/component-object`
+
+#### :rocket: New Feature
+
+* The ComponentObject can now accept a third argument — a component selector.
+  If the selector is passed, it means there is no need to call pick or build,
+  as the component will be taken from the page using the passed selector `tests/helpers/component-object`
+
+## 4.0.0-beta.79 (2024-03-29)
+
+#### :house: Internal
+
+* Fixed the signature of the i18n factory passed to the data provider's parameters
+
+## 4.0.0-beta.78 (2024-03-29)
+
+#### :bug: Bug Fix
+
+* Fixed binding of the data provider to the component during initialization
+* Fixed an issue with the event emitter being wrapped unnecessarily into async wrapper,
+  which was causing the :suspend flag and mute/unmute functions not to work correctly during deactivation/activation
+  of components `src/core/component/event/component`. [see https://github.com/V4Fire/Client/pull/1199](https://github.com/V4Fire/Client/pull/1199)
+
+## v4.0.0-beta.77 (2024-03-27)
+
+#### :rocket: New Feature
+
+* Implemented a new engine for translate keys `lang/engines`
+
+#### :house: Internal
+
+* Refactored the build ssr: all code has now been bundled into one file `build/graph`
+* Replaced the progress plugin's total time log with measure-loader `build/webpack/plugins/progress-plugin`
+
+#### :bug: Bug Fix
+
+* Resolved an issue with the progress plugin's view in relation to empty builds
+* Corrected the theme-manager to function properly in server-side rendering (ssr)
+* Added synchronous rendering of the first chunk using `v-for`. This is because SSR does not have access to the DOM API required for `vdom`. Therefore, we leverage Vue functionality to render the first chunk equally for SSR and CSR. `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.76 (2023-03-25)
+
+#### :boom: Breaking Change
+
+* The `stopPropagation` for the native click event has been removed.
+  Now, native click events bubble up the DOM tree `bButton`.
+
+#### :house: Internal
+
+* Changed the API usage of the `addToPrototype`
+
+## 4.0.0-beta.75 (2024-03-22)
+
+#### :rocket: New Feature
+
+* Added the ability to add event handlers before the others `iBlock`
+
+#### :house: Internal
+
+* Removed the restriction on loading styles if a template is loaded `build`
+
+## 4.0.0-beta.74 (2024-03-20)
+
+#### :house: Internal
+
+* Hardcode the ID during the client rendering in data provider's options.
+  This is a temporary solution until PR#1171 is merged `iBlockProviders`
+
+## 4.0.0-beta.73 (2024-03-19)
+
+#### :house: Internal
+
+* Rename `appId` to `appProcessId` `ComponentInterface`
+
+## 4.0.0-beta.72 (2024-03-13)
+
+#### :bug: Bug Fix
+
+* Fixed the loss of the keydown event handler when recreating a functional component `bSelect`
+* Fixed the issue of the dropdown not closing when clicking on an element with stop propagation `bSelect`
+* Fixed getting a component in `getComponent` when an additional root selector is passed `components/friends/dom`
+
+## 4.0.0-beta.71 (2024-03-12)
+
+#### :rocket: New Feature
+
+* Created a new global component `g-slider` that encapsulates CSS `scroll snap` logic `gSlider`
+* Added `useScrollSnap` prop, which enables the use of CSS scroll snap in the `scroll` mode `bSlider`
+* Added a new field `layer`, which allows you to obtain information about the package in which the component was declared `core/component/meta`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with missing methods `element` and `elements` in the Block prototype `bSelect`
+* Fixed the operation of loadModules during SSR `iBlock`
+
+#### :house: Internal
+
+* Added support for the `layer` property `core/component/reflect`
+
+## v4.0.0-beta.70 (2024-03-05)
+
+#### :bug: Bug Fix
+
+* Fixed the order of setting the "textStore" property in the "updateTextStore" method, which led to a bug with a non-disappearing "textHint" when input overflows
+* The `activeStore` system field is marked as unique in the `bList`, `bTree`, `bSelect`
+components because it has an `unknown` type and it cannot be correctly merged
+* Fixed an error that the text in native mode was not synchronized with the value `bSelect`
+* Implemented correct switching between elements when pressing the `Tab` key `bSelect`
+
+## v4.0.0-beta.69 (2024-03-04)
+
+#### :rocket: New Feature
+
+* Added a new `v-safe-html` directive for inserting sanitized HTML `components/directives/safe-html`
+
+## v4.0.0-beta.68 (2024-02-29)
+
+#### :bug: Bug Fix
+
+* Fixed the `wait` option in `loadModules` for SSR build `iBlock`
+* Fix the disappearance of functional components in cached pages:
+do not call the destroy method on the rendering engine if `$el` has the `component` property
+`core/component/init/states/before-destroy`
+
+## v4.0.0-beta.67 (2024-02-26)
+
+#### :bug: Bug Fix
+
+* Fixed an with transition into loading success state was not made `components/b-virtual-scroll-new`
+* Fixed synchronous render for functional components in `waitForceRender` `components/friends/async-render`
+
+## v4.0.0-beta.66 (2024-02-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the incorrect transition into the loading state. Now the loading state will be removed in one requestAnimationFrame call along with the content insertion into the DOM,
+and the loading state will be restored on the following one. This trick helps avoid generating CLS errors. `components/base/b-virtual-scroll-new`
+
+* Fixed a race condition when calling `initLoad` multiple times `components/base/b-virtual-scroll-new`
+
+* Added visibility tracking for the tombstones slot, now if this slot is on the screen,
+an attempt will be made to render the data regardless of what the client returned in `shouldPerformDataRender`.
+Also added a flag in VirtualScrollState indicating the visibility of the slot.
+All this will help avoid situations when for some reason the `IntersectionObserver` did not trigger on the elements and as a result `shouldPerformDataRender` was not called. `components/base/b-virtual-scroll-new`
+
+#### :rocket: New Feature
+
+* Added the `BOM.clsScore` method that allows measuring Cumulative Layout Shift (CLS) during any actions.
+
+## v4.0.0-beta.65 (2024-02-21)
+
+#### :bug: Bug Fix
+
+* `iBlock`:
+  * Created separate buckets for each `loadModules` call
+  * Fixed the `wait` option in `loadModules`: now, all modules are not loaded until the wait option is resolved
+
+## v4.0.0-beta.64 (2024-02-19)
+
+#### :bug: Bug Fix
+
+* Fixed a typo when extending the property for inject `core/init`
+* Need to check for the existence of provide properties using `in` `iBlock`
+
+## v4.0.0-beta.63 (2024-02-20)
+
+#### :bug: Bug Fix
+
+* Removed an unnecessary next data chunk response checking `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.62 (2024-02-19)
+
+#### :rocket: New Feature
+
+* Added an app property to get a reference to the application object `core/component`
+
+#### :bug: Bug Fix
+
+* Fixed bugs in the initialization of SSR rendering `core/init` `iStaticPage` `core/cookies`
+
+## v4.0.0-beta.61 (2024-02-15)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with missing aliases `build/webpack/resolve/alias`
+
+## v4.0.0-beta.60 (2024-02-15)
+
+#### :boom: Breaking Change
+
+* Removed `shouldPerformDataRequest` prop in `b-virtual-scroll-new` `components/base/b-virtual-scroll-new`
+* `tests/helpers/network/interceptor` no longer has a named export, the `RequestInterceptor` class is now exported as the default export `tests/helpers/network/interceptor`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with aliases being set for build in ssr `build/webpack/resolve/alias`
+
+#### :rocket: New Feature
+
+* Added `preloadAmount` prop in b`-virtual-scroll-new` `components/base/b-virtual-scroll-new`
+
+#### :house: Internal
+
+* Added re-export of modules from `tests/helpers`:
+ - Request
+ - RequestInterceptor
+ - Mock
+
+* Removed bad import of async module from `tests/helpers/network/interceptor`
+
+## v4.0.0-beta.59 (2024-02-15)
+
+#### :boom: Breaking Change
+
+* Everything except for interfaces has been moved to `core/component/client-state` `core/component/state`
+
+#### :rocket: New Feature
+
+* Added adapters for easy creation of cookie stores `core/cookies/stores`
+
+#### :bug: Bug Fix
+
+* Removed all references to the global state `iStaticPage`
+
+## v4.0.0-beta.58 (2024-02-14)
+
+#### :rocket: New Feature
+
+* Added support for different cookie stores: `core/cookies`, `core/kv-storage/engines/cookie`
+* Added support for different session stores `core/session`
+
+#### :bug: Bug Fix
+
+* Fixed memory leaks `core/init/semaphore` `iStaticPage`
+
+#### :house: Internal
+
+* Moved `system-theme-extractor` from `core` to `components/super/i-static-page/modules/theme`
+
+## v4.0.0-beta.57 (2024-02-13)
+
+#### :bug: Bug Fix
+
+* Fixed memory leaks in:
+  * `components/super/i-block/providers`
+  * `core/init/semaphore`
+  * `components/super/i-static-page/i-static-page`
+* Fixed the loss of event handlers in functional components `core/component/render/wrappers`
+
+#### :house: Internal
+
+* Removed `id` property from `ProviderOptions` interface `core/data/interface/types`
+
+## v4.0.0-beta.56 (2024-02-09)
+
+#### :rocket: New Feature
+
+* New test APIs:
+  * Request interceptor `tests/helpers/network/interceptor`;
+  * ComponentObject `tests/helpers/component-object`;
+  * Spy and mock `tests/helpers/mock`;
+  * Component.createComponentInDummy `tests/helpers/component`.
+
+#### :bug: Bug Fix
+
+* Fixed the problem that the `lifecycleDone` event could fire before `renderDone` `components/components/base/b-virtual-scroll-new`
+
+#### :house:  Internal
+
+* Added tests for `b-virtual-scroll-new` `components/components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.55 (2024-02-08)
+
+#### :boom: Breaking Change
+
+* `bTree`:
+  * Now all nested trees are rendered as functional
+  * Now, by default, folded items are not rendered
+
+#### :rocket: New Feature
+
+* Added new values for the `lazyRender` prop `bTree`
+
+#### :bug: Bug Fix
+
+* Fixed errors when using the tree as a functional component `bTree`
+* Fixed move to the closest step in `heightMode = content` `bBottomSlide`
+* Added cleanup of hydrated data upon component destroying `iStaticPage`
+
+#### :house: Internal
+
+* Create a `mono` template in `i-block` for dynamic mono components. It disables vnode attribute hoisting.
+
+## v4.0.0-beta.54 (2024-02-06)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with memory leaks in `vdom.render` `core/component/engines/vue3`
+* Changed `$parent` property to getter in `i-block`. This fixes the incorrect functional parent for a regular component.
+* Changed component deactivation behavior: the component is now deactivated before the deactivation hooks are called `components/super/i-block/modules/activation`
+
+#### :house: Internal
+
+* The entry threshold for counting an element as visible is set to the minimum value `components/components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.53 (2024-01-31)
+
+#### :rocket: New Feature
+
+* Released module `b-virtual-scroll-new`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with memory leaks in `b-virtual-scroll`
+
+## v4.0.0-beta.52 (2024-01-31)
+
+#### :boom: Breaking Change
+
+* Refactored api: replaced the getter/setter named `current` with get/set methods `components/super/i-static-page/modules/theme/theme-manager`
+
+#### :rocket: New Feature
+
+* `components/super/i-static-page/modules/theme/theme-manager`
+  * Added possibility to get/set theme from/to cookie
+  * Added possibility to specify system theme extractor for theme-manager
+  * Added possibility to use systemTheme by calling `useSystem` method
+* Released module `core/system-theme-extractor`
+
+#### :bug: Bug Fix
+
+* Fixed the memoization of `getParent`: it was saved in the context of the main component, as a
+result of which the components in the slots had an incorrect `$parent` `build/snakeskin`
+* Fixed loss of refs in slots inside async render `core/component/render`
+* Fixed unexpected async chunk generation during build
+* Fixed an issue where Intersection Watcher would not remove nodes from memory, resulting in leaks `core/dom/intersection-watcher/engines`
+
+## v4.0.0-beta.51 (2024-01-19)
+
+#### :bug: Bug Fix
+
+* Fixed an error when deleting the getters cache `core/component/accessor`
+
+## v4.0.0-beta.50 (2024-01-19)
+
+#### :bug: Bug Fix
+
+* When calling the destructor, it is necessary to clean up nodes of any components `core/component/init`
+* Fixes an error that caused the application to go into an infinite loop when deleting nodes `core/component/engines/vue3`
+
+## v4.0.0-beta.49 (2024-01-17)
+
+#### :rocket: New Feature
+
+* Now the `render` method can accept the name of an asynchronous group to control the invocation of destructors `components/friends/vdom`
+
+#### :bug: Bug Fix
+
+* Fixed memory leaks when switching pages `bDynamicPage`
+* Fixed a memory leak when creating dynamic components via the VDOM API `core/component/engines/vue3`
+* Fixed memory leaks when removing components `core/component/init`
+* Added memoization for the `getParent` and `getRoot` props to prevent unnecessary re-renders `build/snakeskin`
+
+## v4.0.0-beta.48 (2024-01-17)
+
+#### :boom: Breaking Change
+
+* Now it is necessary to pass the application initialization flags to the `ready` method from
+  the initialization parameters, instead of importing it from `core/init`, due to SSR
+
+## v4.0.0-beta.47 (2024-01-16)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect image state during hydration `components/directives/image`
+
+## v4.0.0-beta.46 (2024-01-11)
+
+#### :bug: Bug Fix
+
+* `components/friends/async-render/iterate`:
+  * Fixed `asyncRenderComplete` event not being emitted
+  ([issue 1057](https://github.com/V4Fire/Client/issues/1057))
+  * Fixed race condition
+
+## v4.0.0-beta.45 (2023-12-07)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with clearing event listeners on ios `components/traits/i-lock-page-scroll`
+
+## v4.0.0-beta.44 (2023-12-06)
+
+#### :boom: Breaking Change
+
+* Now, the `initApp` call returns an object in the form `{content, styles}` `core/init`
+
+#### :rocket: New Feature
+
+* Reworked the theme manager to work with SSR `components/super/i-static-page`
+
+#### :bug: Bug Fix
+
+* Fixes for SSR `iBlock`
+
+#### :house: Internal
+
+* Removed comments in CSS for the development build
+
+## v4.0.0-beta.43 (2023-11-26)
+
+#### :rocket: New Feature
+
+* Added data deduplication `core/component/hydration`
+
+#### :bug: Bug Fix
+
+* There is no need to synchronize router data during SSR `components/friends/state`
+* Fixed cache key generation `core/data`
+
+## v4.0.0-beta.42 (2023-11-23)
+
+#### :rocket: New Feature
+
+* The `load` function now accepts the router context `core/router`
+
+## v4.0.0-beta.41 (2023-11-21)
+
+#### :boom: Breaking Change
+
+* Removed generation of init.js `iStaticPage`
+
+#### :rocket: New Feature
+
+* Now styles are always inlined in html `iStaticPage`
+
+#### :bug: Bug Fix
+
+* Now the `nonce` attribute is correctly set in inline mode `iStaticPage`
+
+#### :house: Internal
+
+* Fixed typings in `core/data`
+* Moved to yarn@4
+* Migrated to node@20
+* Updated actions in CI
+
+## v4.0.0-beta.40 (2023-11-17)
+
+#### :boom: Breaking Change
+
+* Moved `dropdown` block from `helpers` to `bodyFooter` block `components/form/b-select`
+* Moved `limit` block from `helpers` to `bodyFooter` block `components/form/b-textarea`
+* Moved `message` block from `helpers` to `bodyFooter` block `components/super/i-block`
+
+#### :rocket: New Feature
+
+* Added new layout blocks - `bodyHeader` and `bodyFooter` `components/super/i-block`
+
+## v4.0.0-beta.39 (2023-11-16)
+
+#### :house: Internal
+
+* Fixed typings in `core/init` and `models/modules/session`
+
+#### :boom: Breaking Change
+
+* Now `i18n` is a factory for creating internationalizing function `components/super/i-block/state`
+* Now `t` is an internationalization function for the component, and not an alias for `i18n` `components/super/i-block/state`
+
+## v4.0.0-beta.38 (2023-11-15)
+
+#### :bug: Bug Fix
+
+* The function `getParent` now checks if the component is inside a slot `core/component/render` `build/snakeskin`
+* Fixed incorrect slide alignment when there is only one slide presented `base/b-slider`
+
+## v4.0.0-beta.37 (2023-10-27)
+
+#### :rocket: New Feature
+
+* Added a new method `strictEmit` for strict event type checking `iBlock`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with passing Iterable strings as values `iActiveItems`
+* Fixed an issue with folding tree items `bTree`
+* Fixed declarations of optional deps `iStaticPage`
+
+## v4.0.0-beta.36 (2023-10-23)
+
+#### :bug: Bug Fix
+
+* Added the missed `itemsProp` property `bVirtualScroll`
+
+## v4.0.0-beta.35 (2023-10-20)
+
+#### :rocket: New Feature
+
+* Added the ability to type events `iBlock`
+
+## v4.0.0-beta.34 (2023-10-20)
+
+#### :bug: Bug Fix
+
+* The method `createDataProviderInstance` should be accessible at `beforeCreate` `iBlock`
+
+## v4.0.0-beta.33 (2023-10-18)
+
+#### :rocket: New Feature
+
+* Added new config option `webpack.externalizeInline` `config`
+* Added the ability to build initial HTML file without any inline Javascript by configuring `webpack.externalizeInline` `iStaticPage`
+
+## v4.0.0-beta.32 (2023-10-17)
+
+#### :rocket: New Feature
+
+* Added a factory to create data providers `iBlock`
+* Added support for setting a global application ID `core/init`
+
 ## v4.0.0-beta.31 (2023-10-12)
 
 #### :rocket: New Feature
@@ -75,6 +1219,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed icons' size in multi-theme mode `components/global/g-def`
+
+## v4.0.0-beta.26 (2023-09-20)
 
 #### :bug: Bug Fix
 

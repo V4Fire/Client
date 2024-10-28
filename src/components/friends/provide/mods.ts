@@ -16,7 +16,6 @@ import type Friend from 'components/friends/friend';
 import type iBlock from 'components/super/i-block/i-block';
 import type { ModsDict } from 'components/super/i-block/i-block';
 
-import { modsCache } from 'components/friends/provide/const';
 import type { Mods } from 'components/friends/provide/interface';
 
 /**
@@ -38,31 +37,20 @@ import type { Mods } from 'components/friends/provide/interface';
  * console.log(this.provide.mods({size: 'x'}));
  * ```
  */
-export function mods(this: Friend, mods?: Mods): CanUndef<Readonly<ModsDict>> {
-	const
-		{sharedMods} = this.ctx;
+export function mods(this: Friend, mods?: Mods): CanNull<ModsDict> {
+	const {sharedMods} = this.ctx;
 
-	if (!sharedMods && !mods) {
-		return;
+	if (sharedMods == null && mods == null) {
+		return null;
 	}
 
-	const
-		key = JSON.stringify(sharedMods) + JSON.stringify(mods),
-		cacheVal = modsCache[key];
-
-	if (cacheVal != null) {
-		return cacheVal;
-	}
-
-	const
-		res = {...sharedMods};
+	const resolvedMods = {...sharedMods};
 
 	if (mods != null) {
 		Object.entries(mods).forEach(([key, val]) => {
-			res[key.dasherize()] = val != null ? String(val) : undefined;
+			resolvedMods[key.dasherize()] = val != null ? String(val) : undefined;
 		});
 	}
 
-	modsCache[key] = Object.freeze(res);
-	return res;
+	return resolvedMods;
 }

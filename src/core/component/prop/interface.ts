@@ -16,13 +16,19 @@ export interface InitPropsObjectOptions {
 	from?: Dictionary;
 
 	/**
+	 * If set to false, changing the specified props should not lead to the re-rendering of the template
+	 * @default `true`
+	 */
+	forceUpdate?: boolean;
+
+	/**
 	 * A store for the initialized props
 	 * @default `{}`
 	 */
 	store?: Dictionary;
 
 	/**
-	 * If set to true, then the initialized prop values will be written in the provided store object
+	 * If set to true, the initialized property values will be written into the provided store object
 	 * @default `false`
 	 */
 	saveToStore?: boolean;

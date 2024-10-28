@@ -16,7 +16,7 @@ import type { ComponentElement, UnsafeIData } from 'components/super/i-dynamic-p
 export type Include = CanArray<string> | RegExp | IncludeFn;
 
 export interface PageGetter {
-	(route: iDynamicPage['route'], ctx: bDynamicPage): CanUndef<string>;
+	(route: iDynamicPage['route'], ctx: bDynamicPage): CanUndef<PageComponentName | PageInfo>;
 }
 
 export interface IncludeFn {
@@ -66,8 +66,21 @@ export interface UnsafeBDynamicPage<CTX extends bDynamicPage = bDynamicPage> ext
 	renderFilter: CTX['renderFilter'];
 
 	// @ts-ignore (access)
-	getKeepAliveStrategy: CTX['getKeepAliveStrategy'];
+	addClearListenersToCache: CTX['addClearListenersToCache'];
 
 	// @ts-ignore (access)
-	wrapCache: CTX['wrapCache'];
+	getKeepAliveStrategy: CTX['getKeepAliveStrategy'];
 }
+
+export interface OnBeforeSwitchPage {
+	/**
+	 * Saves the scroll position of an element
+	 * @param el
+	 */
+	saveScroll(el: Element): void;
+}
+
+type PageComponentName = string;
+type PageKey = string;
+
+export type PageInfo = [PageComponentName, PageKey?];

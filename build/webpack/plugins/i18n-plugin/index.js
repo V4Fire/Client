@@ -9,12 +9,11 @@
 'use strict';
 
 const
-	fs = require('fs'),
+	fs = require('node:fs'),
 	glob = require('fast-glob'),
 	path = require('upath');
 
 const
-	{collectI18NKeysets} = include('build/helpers'),
 	{src, i18n, locale, webpack} = require('@config/config');
 
 module.exports = class I18NGeneratorPlugin {
@@ -34,7 +33,9 @@ module.exports = class I18NGeneratorPlugin {
 				const
 					configLocale = locale,
 					locales = i18n.supportedLocales(),
-					localizations = collectI18NKeysets(locales);
+					// Extract translates from DefinePlugin
+					// translates declared in build/globals.webpack.js
+					localizations = JSON.parse(compilation.valueCacheVersions.get('webpack/DefinePlugin LANG_KEYSETS'));
 
 				const htmlFiles = () =>
 					glob.sync(path.normalize(src.clientOutput('*.html')), {

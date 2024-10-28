@@ -48,9 +48,11 @@ export { Value, FormValue };
 })
 
 export default class bCheckbox extends iInput implements iSize {
-	override readonly Value!: Value;
-	override readonly FormValue!: FormValue;
-	override readonly rootTag: string = 'span';
+	/** @inheritDoc */
+	declare readonly Value: Value;
+
+	/** @inheritDoc */
+	declare readonly FormValue: FormValue;
 
 	/**
 	 * If true, the component is checked by default.
@@ -184,7 +186,8 @@ export default class bCheckbox extends iInput implements iSize {
 	@system()
 	protected override valueStore!: this['Value'];
 
-	protected override readonly $refs!: iInput['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iInput['$refs'] & {
 		input: HTMLInputElement;
 	};
 

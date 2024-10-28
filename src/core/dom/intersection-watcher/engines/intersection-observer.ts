@@ -13,6 +13,8 @@ import { isElementInView, resolveScrollTarget } from 'core/dom/intersection-watc
 
 import type { Watcher } from 'core/dom/intersection-watcher/interface';
 
+import type { PartialIOEntry } from 'core/dom/intersection-watcher/engines/interface';
+
 export default class IntersectionObserverEngine extends AbstractEngine {
 	/**
 	 * A map of IntersectionObserver instances
@@ -23,6 +25,11 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 	 * A map of IntersectionObserver pools
 	 */
 	protected observersPool: Map<Element, Pool<IntersectionObserver>> = new Map();
+
+	/**
+	 * A map of currently intersecting elements
+	 */
+	protected intersectingTargets: Map<IntersectionObserver, Set<Element>> = new Map();
 
 	override destroy(): void {
 		this.observers.forEach((observer) => {
@@ -70,21 +77,51 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 			this.observersPool.set(resolvedRoot, observerPool);
 		}
 
-		const observer = observerPool.borrowOrCreate(handler, opts);
-		observer.value.observe(watcher.target);
+		const
+			observer = observerPool.borrowOrCreate(handler, opts);
+
+		const
+			targets = this.intersectingTargets.get(observer.value);
+
+		if (targets?.has(watcher.target)) {
+			this.onObservableIn(watcher, {
+				time: performance.now()
+			});
+
+		} else {
+			observer.value.observe(watcher.target);
+		}
 
 		watcher.unwatch = () => {
 			unwatch();
 			this.observers.delete(watcher);
+			this.removeIntersectingTarget(observer.value, watcher.target);
 
-			if (this.elements.has(watcher.target)) {
-				observer.value.unobserve(watcher.target);
-				observer.free();
+			let
+				observerHasWatchers = false,
+				elementHasWatchers = false;
 
-			} else {
-				this.observersPool.delete(watcher.target);
+			for (const [watcherItem, observerItem] of this.observers) {
+				if (observerItem === observer.value) {
+					observerHasWatchers = true;
+				}
+
+				if (watcherItem.target === watcher.target) {
+					elementHasWatchers = true;
+				}
+			}
+
+			if (!observerHasWatchers) {
 				observer.value.disconnect();
 				observer.destroy();
+
+				if (observerPool?.size === 0) {
+					this.observersPool.delete(resolvedRoot);
+				}
+
+			} else if (!elementHasWatchers) {
+				observer.value.unobserve(watcher.target);
+				observer.free();
 			}
 		};
 
@@ -120,6 +157,7 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 				this.setWatcherSize(watcher, entry.boundingClientRect);
 
 				if (watcher.isLeaving) {
+					this.removeIntersectingTarget(observer, watcher.target);
 					this.onObservableOut(watcher, entry);
 
 				} else if (
@@ -127,6 +165,7 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 						isElementInView(watcher.target, watcher.root, watcher.threshold) > 0 :
 						entry.intersectionRatio >= watcher.threshold
 				) {
+					this.addIntersectingTarget(observer, watcher.target);
 					this.onObservableIn(watcher, entry);
 				}
 			});
@@ -139,7 +178,7 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 	 * @param watcher
 	 * @param entry
 	 */
-	protected onObservableIn(watcher: Writable<Watcher>, entry: IntersectionObserverEntry): void {
+	protected onObservableIn(watcher: Writable<Watcher>, entry: PartialIOEntry): void {
 		watcher.time = entry.time;
 		watcher.timeIn = entry.time;
 
@@ -154,7 +193,7 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 	 * @param watcher
 	 * @param entry
 	 */
-	protected onObservableOut(watcher: Writable<Watcher>, entry: IntersectionObserverEntry): void {
+	protected onObservableOut(watcher: Writable<Watcher>, entry: PartialIOEntry): void {
 		watcher.time = entry.time;
 		watcher.timeOut = entry.time;
 
@@ -162,5 +201,42 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 		watcher.isLeaving = false;
 
 		this.async.clearAll({group: watcher.id});
+	}
+
+	/**
+	 * Stores the intersecting target of the specified intersection observer instance
+	 *
+	 * @param observer
+	 * @param target
+	 */
+	protected addIntersectingTarget(observer: IntersectionObserver, target: Element): void {
+		let
+			targets = this.intersectingTargets.get(observer);
+
+		if (!Object.isSet(targets)) {
+			targets = new Set();
+			this.intersectingTargets.set(observer, targets);
+		}
+
+		targets.add(target);
+	}
+
+	/**
+	 * Removes the stored intersecting target for the specified intersection observer instance
+	 *
+	 * @param observer
+	 * @param target
+	 */
+	protected removeIntersectingTarget(observer: IntersectionObserver, target: Element): void {
+		const
+			targets = this.intersectingTargets.get(observer);
+
+		if (Object.isSet(targets)) {
+			targets.delete(target);
+
+			if (targets.size === 0) {
+				this.intersectingTargets.delete(observer);
+			}
+		}
 	}
 }

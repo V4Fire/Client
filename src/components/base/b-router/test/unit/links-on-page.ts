@@ -12,6 +12,7 @@ import { Component } from 'tests/helpers';
 import { createInitRouter } from 'components/base/b-router/test/helpers';
 import type { HrefTransitionEvent } from 'components/base/b-router';
 
+// eslint-disable-next-line max-lines-per-function
 test.describe('<b-router> intercepting links on a page', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
@@ -22,62 +23,64 @@ test.describe('<b-router> intercepting links on a page', () => {
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
-				second: {
-					path: '/second'
+				main: {
+					path: '/'
 				}
 			})(page);
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
-				href: '/second',
+				href: '/',
 				text: 'Go'
 			});
 
 			await page.getByTestId('target').click();
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('second');
+			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
 		}
 	);
 
 	test(
-		'a link with the `data-router-prevent-transition` attribute should not be intercepted by the router and the browser',
+		[
+			'a click on a link with the `data-router-prevent-transition` attribute',
+			'should not be intercepted by the router and the browser'
+		].join(' '),
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
-				second: {
-					path: '/second'
+				main: {
+					path: '/'
 				}
 			})(page);
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
-				href: '/second',
+				href: '/',
 				text: 'Go',
 				'data-router-prevent-transition': 'true'
 			});
 
 			await page.getByTestId('target').click();
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).resolves.not.toBe('second');
+			await test.expect(root.evaluate((ctx) => ctx.route?.name)).resolves.not.toBe('main');
 		}
 	);
 
 	test(
-		'clicks on links should not be intercepted if the router is initialized with the prop `interceptLinks` set to false',
+		'clicking on links should not be intercepted when the router is initialized with `interceptLinks` set to `false`',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
-				second: {
-					path: '/second'
+				main: {
+					path: '/'
 				}
 			}, {interceptLinks: false})(page);
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
-				href: '/second',
+				href: '/',
 				text: 'Go'
 			});
 
 			await page.getByTestId('target').click();
-
 			await test.expect(
 				root.evaluate((ctx) => ctx.route?.name).catch((err) => err.message)
 			).toBeResolvedTo('jsHandle.evaluate: Execution context was destroyed, most likely because of a navigation');
@@ -85,136 +88,135 @@ test.describe('<b-router> intercepting links on a page', () => {
 	);
 
 	test.describe('links that should not be intercepted by the router but should be intercepted by the browser', () => {
-		test('links with absolute URLs', async ({page}) => {
-			await createInitRouter('history', {
-				second: {
-					path: '/second'
-				}
-			})(page);
+		test(
+			'links with absolute URLs',
 
-			await Component.createComponent(page, 'a', {
-				'data-testid': 'target',
-				href: 'https://www.google.com',
-				text: 'Go'
-			});
+			async ({page}) => {
+				await createInitRouter('history')(page);
 
-			await page.getByTestId('target').click();
-			test.expect(page.url()).toBe('https://www.google.com/');
-		});
+				await Component.createComponent(page, 'a', {
+					'data-testid': 'target',
+					href: 'https://www.google.com',
+					text: 'Go'
+				});
 
-		test('anchor links', async ({page}) => {
-			const root = await createInitRouter('history', {
-				main: {
-					path: '/'
-				},
+				await page.getByTestId('target').click();
+				test.expect(page.url()).toBe('https://www.google.com/');
+			}
+		);
 
-				second: {
-					path: '/second'
-				}
-			})(page);
+		test(
+			'anchor links',
 
-			await Component.createComponent(page, 'a', {
-				'data-testid': 'target',
-				href: '#foo',
-				text: 'Go'
-			});
+			async ({page}) => {
+				const root = await createInitRouter('history', {
+					main: {
+						path: '/'
+					}
+				})(page, {
+					initialRoute: 'main'
+				});
 
-			await root.evaluate((ctx) => ctx.router?.push('main'));
-			await page.getByTestId('target').click();
+				await Component.createComponent(page, 'a', {
+					'data-testid': 'target',
+					href: '#foo',
+					text: 'Go'
+				});
 
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
-			test.expect(new URL(page.url()).hash).toBe('#foo');
-		});
+				await page.getByTestId('target').click();
+				await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
+				test.expect(new URL(page.url()).hash).toBe('#foo');
+			}
+		);
 
-		test('`javascript:` links', async ({page}) => {
-			const root = await createInitRouter('history', {
-				main: {
-					path: '/'
-				},
+		test(
+			'`javascript:` links',
 
-				second: {
-					path: '/second'
-				}
-			})(page);
+			async ({page}) => {
+				const root = await createInitRouter('history', {
+					main: {
+						path: '/'
+					}
+				})(page, {
+					initialRoute: 'main'
+				});
 
-			await Component.createComponent(page, 'a', {
-				'data-testid': 'target',
-				href: 'javascript:void(globalThis.foo = "bar")',
-				text: 'Go'
-			});
+				await Component.createComponent(page, 'a', {
+					'data-testid': 'target',
+					href: 'javascript:void(globalThis.foo = "bar")',
+					text: 'Go'
+				});
 
-			await root.evaluate((ctx) => ctx.router?.push('main'));
-			await page.getByTestId('target').click();
+				await page.getByTestId('target').click();
+				await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
+				await test.expect(root.evaluate(() => globalThis.foo)).toBeResolvedTo('bar');
+			}
+		);
 
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
-			await test.expect(root.evaluate(() => globalThis.foo)).toBeResolvedTo('bar');
-		});
+		test(
+			'`mailto:` links',
 
-		test('`mailto:` links', async ({page}) => {
-			const root = await createInitRouter('history', {
-				main: {
-					path: '/'
-				},
+			async ({page}) => {
+				const root = await createInitRouter('history', {
+					main: {
+						path: '/'
+					}
+				})(page, {
+					initialRoute: 'main'
+				});
 
-				second: {
-					path: '/second'
-				}
-			})(page);
+				await Component.createComponent(page, 'a', {
+					'data-testid': 'target',
+					href: 'mailto:foo@bar.com',
+					text: 'Go'
+				});
 
-			await Component.createComponent(page, 'a', {
-				'data-testid': 'target',
-				href: 'mailto:foo@bar.com',
-				text: 'Go'
-			});
+				await page.getByTestId('target').click();
+				await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
+			}
+		);
 
-			await root.evaluate((ctx) => ctx.router?.push('main'));
-			await page.getByTestId('target').click();
+		test(
+			'`tel:` links',
 
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
-		});
+			async ({page}) => {
+				const root = await createInitRouter('history', {
+					main: {
+						path: '/'
+					}
+				})(page, {
+					initialRoute: 'main'
+				});
 
-		test('`tel:` links', async ({page}) => {
-			const root = await createInitRouter('history', {
-				main: {
-					path: '/'
-				},
+				await Component.createComponent(page, 'a', {
+					'data-testid': 'target',
+					href: 'tel:+71234567890',
+					text: 'Go'
+				});
 
-				second: {
-					path: '/second'
-				}
-			})(page);
-
-			await Component.createComponent(page, 'a', {
-				'data-testid': 'target',
-				href: 'tel:+71234567890',
-				text: 'Go'
-			});
-
-			await root.evaluate((ctx) => ctx.router?.push('main'));
-			await page.getByTestId('target').click();
-
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
-		});
+				await page.getByTestId('target').click();
+				await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
+			}
+		);
 	});
 
 	test(
-		'query parameters in the link should be passed to the transition',
+		'the query parameters in the link should be passed to the transition',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
-				second: {
-					path: '/second'
+				main: {
+					path: '/'
 				}
 			})(page);
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
-				href: '/second?foo=bar&baz=bla',
+				href: '/?foo=bar&baz=bla',
 				text: 'Go'
 			});
 
 			await page.getByTestId('target').click();
-
 			await test.expect(root.evaluate((ctx) => ctx.route?.query)).resolves.toEqual({
 				foo: 'bar',
 				baz: 'bla'
@@ -223,7 +225,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 	);
 
 	test(
-		'the `data-router-method` attribute should set the method of transition used by the router',
+		'the `data-router-method` attribute should set the transition method used by the router',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -233,6 +235,10 @@ test.describe('<b-router> intercepting links on a page', () => {
 
 				second: {
 					path: '/second'
+				},
+
+				notFound: {
+					default: true
 				}
 			})(page);
 
@@ -254,7 +260,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 	);
 
 	test(
-		'the `data-router-go` attribute should set the parameters for the transition using the `router.go` method',
+		'the `data-router-go` attribute should set the transition parameters when using the `router.go` method',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -286,18 +292,18 @@ test.describe('<b-router> intercepting links on a page', () => {
 	);
 
 	test(
-		'the `data-router-query` attribute should set the query parameters for the transition',
+		'the `data-router-query` attribute should set the query parameters for a transition',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
-				second: {
-					path: '/second'
+				main: {
+					path: '/'
 				}
 			})(page);
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
-				href: '/second',
+				href: '/',
 				text: 'Go',
 				'data-router-query': JSON.stringify({foo: 'bar'})
 			});
@@ -310,18 +316,21 @@ test.describe('<b-router> intercepting links on a page', () => {
 	);
 
 	test(
-		'the query parameters passed through the URL link and the `data-router-query` attribute should be merged together',
+		[
+			'the query parameters passed in through the URL link and',
+			'the `data-router-query` attribute should be merged together'
+		].join(' '),
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
-				second: {
-					path: '/second'
+				main: {
+					path: '/'
 				}
 			})(page);
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
-				href: '/second?a=1&b=2',
+				href: '/?a=1&b=2',
 				text: 'Go',
 				'data-router-query': JSON.stringify({a: 3, c: 4})
 			});
@@ -336,7 +345,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 	);
 
 	test(
-		'the `data-router-params` attribute should set the path parameters for the transition',
+		'the `data-router-params` attribute should set the path parameters for a transition',
 
 		async ({page}) => {
 			await createInitRouter('history', {
@@ -358,18 +367,18 @@ test.describe('<b-router> intercepting links on a page', () => {
 	);
 
 	test(
-		'the `data-router-meta` attribute should set the meta parameters for the transition',
+		'the `data-router-meta` attribute should set the meta parameters for a transition',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
-				second: {
-					path: '/second'
+				main: {
+					path: '/'
 				}
 			})(page);
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
-				href: '/second',
+				href: '/',
 				text: 'Go',
 				'data-router-meta': JSON.stringify({foo: 'bar'})
 			});
@@ -379,15 +388,15 @@ test.describe('<b-router> intercepting links on a page', () => {
 				foo: 'bar',
 				default: false,
 				external: false,
-				name: 'second',
-				path: '/second'
+				name: 'main',
+				path: '/'
 			});
 		}
 	);
 
-	test.describe('should emit the `hrefTransition` event when clicking a link', () => {
+	test.describe('the router should emit the `hrefTransition` event when a link is clicked', () => {
 		test(
-			'the event object should contain information about the link that was clicked',
+			'the event object should contain the information about the link that has been clicked',
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {
@@ -444,14 +453,14 @@ test.describe('<b-router> intercepting links on a page', () => {
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {
-					second: {
-						path: '/second'
+					main: {
+						path: '/'
 					}
 				})(page);
 
 				await Component.createComponent(page, 'a', {
 					'data-testid': 'target',
-					href: '/second',
+					href: '/',
 					text: 'Go'
 				});
 
@@ -460,26 +469,26 @@ test.describe('<b-router> intercepting links on a page', () => {
 				}));
 
 				await page.getByTestId('target').click();
-				await test.expect(root.evaluate((ctx) => ctx.route?.name)).resolves.not.toBe('second');
+				await test.expect(root.evaluate((ctx) => ctx.route?.name)).resolves.not.toBe('main');
 			}
 		);
 
 		test(
 			[
-				"calling the `preventRouterTransition` method on the event object should cancel the router's transition, " +
+				"calling the `preventRouterTransition` method on the event object should cancel the router's transition,",
 				"but not the browser's transition"
-			].join(''),
+			].join(' '),
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {
-					second: {
-						path: '/second'
+					main: {
+						path: '/'
 					}
 				}, {interceptLinks: false})(page);
 
 				await Component.createComponent(page, 'a', {
 					'data-testid': 'target',
-					href: '/second',
+					href: '/',
 					text: 'Go'
 				});
 

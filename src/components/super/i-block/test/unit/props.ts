@@ -6,11 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { LIGHT } from 'core/theme-manager';
+
 import test from 'tests/config/unit/test';
 
 import { DOM } from 'tests/helpers';
 
-import { renderDummy } from 'components/super/i-block/test/helpers';
+import { renderDummy, renderModsDummy } from 'components/super/i-block/test/helpers';
 
 test.describe('<i-block> props', () => {
 	const
@@ -29,45 +31,118 @@ test.describe('<i-block> props', () => {
 		await test.expect(target.evaluate((ctx) => ctx.$el!.tagName)).toBeResolvedTo('MAIN');
 	});
 
-	test('`mods` should set default values for the component modifiers', async ({page}) => {
-		const target = await renderDummy(page, {
-			mods: {
-				foo: 1,
-				bla: true,
-				baz: 'ban'
-			}
+	test.describe('modifiers', () => {
+		test('`mods` should set default values for the component modifiers', async ({page}) => {
+			const target = await renderModsDummy(page, {
+				stage: 'providing mods using modsProp',
+
+				modsToProvide: {
+					foo: 1,
+					bla: true,
+					baz: 'ban'
+				}
+			});
+
+			await test.expect(
+				target.evaluate((ctx) => Object.fastClone(ctx.providedMods))
+
+			).resolves.toEqual({
+				foo: '1',
+				bla: 'true',
+				baz: 'ban',
+				context: undefined,
+				progress: undefined,
+				diff: undefined,
+				theme: LIGHT,
+				exterior: undefined,
+				stage: undefined
+			});
 		});
 
-		await test.expect(
-			target.evaluate((ctx) => Object.fastClone(ctx.mods))
+		test('should accept modifiers as props', async ({page}) => {
+			const target = await renderDummy(page, {
+				exterior: 'foo',
+				diff: true
+			});
 
-		).resolves.toEqual({
-			foo: '1',
-			bla: 'true',
-			baz: 'ban',
-			progress: undefined,
-			diff: undefined,
-			theme: undefined,
-			exterior: undefined,
-			stage: undefined
-		});
-	});
+			await test.expect(
+				target.evaluate((ctx) => Object.fastClone(ctx.mods))
 
-	test('should accept modifiers as props', async ({page}) => {
-		const target = await renderDummy(page, {
-			exterior: 'foo',
-			diff: true
+			).resolves.toEqual({
+				context: undefined,
+				exterior: 'foo',
+				diff: 'true',
+				progress: undefined,
+				theme: LIGHT,
+				stage: undefined
+			});
 		});
 
-		await test.expect(
-			target.evaluate((ctx) => Object.fastClone(ctx.mods))
+		test('should accept mixing modifiers as props, `modsProp` and `sharedMods`', async ({page}) => {
+			const target = await renderModsDummy(page, {
+				stage: 'providing mods using modsProp, provide.mods and attributes',
 
-		).resolves.toEqual({
-			exterior: 'foo',
-			diff: 'true',
-			progress: undefined,
-			theme: undefined,
-			stage: undefined
+				modsToProvide: {
+					foo: 1,
+					bla: true,
+					baz: 'ban'
+				}
+			});
+
+			await test.expect(
+				target.evaluate((ctx) => Object.fastClone(ctx.providedMods))
+
+			).resolves.toEqual({
+				foo: '1',
+				bla: 'true',
+				baz: 'ban',
+				checked: 'false',
+				form: 'true',
+				hidden: 'false',
+				showError: 'false',
+				showInfo: 'false',
+				size: 'm',
+				theme: LIGHT
+			});
+
+			await target.evaluate((ctx) => {
+				ctx.checked = true;
+			});
+
+			await test.expect(
+				target.evaluate((ctx) => Object.fastClone(ctx.providedMods))
+
+			).resolves.toEqual({
+				foo: '1',
+				bla: 'true',
+				baz: 'ban',
+				checked: 'true',
+				form: 'true',
+				hidden: 'false',
+				showError: 'false',
+				showInfo: 'false',
+				size: 'm',
+				theme: LIGHT
+			});
+		});
+
+		test('modifiers passed as `undefined` should use the default value, if it is set', async ({page}) => {
+			const target = await renderModsDummy(page, {
+				stage: 'passing mods as undefined'
+			});
+
+			await test.expect(
+				target.evaluate((ctx) => Object.fastClone(ctx.providedMods))
+
+			).resolves.toEqual({
+				checked: 'false',
+				form: 'true',
+				hidden: 'false',
+				showError: 'false',
+				showInfo: 'false',
+				size: 'm',
+				theme: LIGHT
+			});
 		});
 	});
 
@@ -108,7 +183,7 @@ test.describe('<i-block> props', () => {
 	});
 
 	test.describe('`watchProp` should call `setStage` method', () => {
-		test('when the parent\'s `stage` property changes', async ({page}) => {
+		test("when the parent's `stage` property changes", async ({page}) => {
 			const target = await renderDummy(page, {
 				watchProp: {
 					setStage: 'stage'
@@ -156,7 +231,7 @@ test.describe('<i-block> props', () => {
 			test.expect(scan).toBe('bar');
 		});
 
-		test('when parent emits the `onNewStage` event', async ({page}) => {
+		test('when the parent emits the `onNewStage` event', async ({page}) => {
 			const target = await renderDummy(page, {
 				watchProp: {
 					setStage: [':onNewStage']

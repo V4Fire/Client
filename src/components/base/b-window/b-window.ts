@@ -143,7 +143,8 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 		]
 	};
 
-	protected override readonly $refs!: iData['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iData['$refs'] & {
 		window: HTMLElement;
 	};
 

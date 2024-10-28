@@ -8,12 +8,14 @@
 
 import type { ElementHandle, JSHandle, Page } from 'playwright';
 
+import type { VNodeDescriptor } from 'components/friends/vdom';
 import { expandedStringify } from 'core/prelude/test-env/components/json';
 
 import type iBlock from 'components/super/i-block/i-block';
 
-import BOM, { WaitForIdleOptions } from 'tests/helpers/bom';
-import { isRenderComponentsVnodeParams } from 'tests/helpers/component/helpers';
+import type { ComponentInDummy } from 'tests/helpers/component/interface';
+import type bDummy from 'components/dummies/b-dummy/b-dummy';
+import { isRenderComponentsVNodeParams } from 'tests/helpers/component/helpers';
 
 /**
  * Class provides API to work with components on a page
@@ -81,7 +83,7 @@ export default class Component {
 			attrs: RenderComponentsVnodeParams['attrs'],
 			children: RenderComponentsVnodeParams['children'];
 
-		if (isRenderComponentsVnodeParams(schemeOrAttrs)) {
+		if (isRenderComponentsVNodeParams(schemeOrAttrs)) {
 			attrs = schemeOrAttrs.attrs;
 			children = schemeOrAttrs.children;
 
@@ -108,6 +110,74 @@ export default class Component {
 		}, [{componentName, schemeAsString}]);
 
 		return this.waitForComponentByQuery(page, `[data-render-id="${renderId}"]`);
+	}
+
+	/**
+	 * Creates a component inside the `b-dummy` component and uses the `field-like` property of `b-dummy`
+	 * to pass props to the inner component.
+	 *
+	 * This function can be useful when you need to test changes to component props.
+	 * Since component props are readonly properties, you cannot change them directly;
+	 * changes are only available through the parent component. This is why the `b-dummy` wrapper is created,
+	 * and the props for the component you want to render are passed as references to the property of `b-dummy`.
+	 *
+	 * The function returns a `handle` to the created component (not to `b-dummy`)
+	 * and adds a method and property for convenience:
+	 *
+	 * - `update` - a method that allows you to modify the component's props.
+	 *
+	 * - `dummy` - the `handle` of the `b-dummy` component.
+	 *
+	 * @param page
+	 * @param componentName
+	 * @param params
+	 */
+	static async createComponentInDummy<T extends iBlock>(
+		page: Page,
+		componentName: string,
+		params: RenderComponentsVnodeParams
+	): Promise<ComponentInDummy<T>> {
+		const dummy = await this.createComponent<bDummy>(page, 'b-dummy');
+
+		const update = async (props, mixInitialProps = false) => {
+			await dummy.evaluate((ctx, [name, props, mixInitialProps]) => {
+				const parsed: RenderComponentsVnodeParams = globalThis.expandedParse(props);
+
+				ctx.testComponentAttrs = mixInitialProps ?
+					{...ctx.testComponentAttrs, ...parsed.attrs} :
+					parsed.attrs ?? {};
+
+				const shouldSetSlots = !Object.isEmpty(parsed.children) ||
+					(!Object.isEmpty(ctx.testComponentSlots) && Object.isEmpty(parsed.children));
+
+				if (shouldSetSlots) {
+					ctx.testComponentSlots = compileChild();
+				}
+
+				ctx.testComponent = name;
+
+				function compileChild() {
+					return ctx.vdom.create(Object.entries(parsed.children ?? {}).map(([slotName, child]) => ({
+						type: 'template',
+						attrs: {
+							slot: slotName
+						},
+						children: (<VNodeDescriptor[]>[]).concat(<VNodeDescriptor>(child ?? []))
+					})));
+				}
+
+			}, <const>[componentName, expandedStringify(props), mixInitialProps]);
+		};
+
+		await update(params);
+		const component = await dummy.evaluateHandle((ctx) => ctx.unsafe.$refs.testComponent);
+
+		Object.assign(component, {
+			update,
+			dummy
+		});
+
+		return <ComponentInDummy<T>>component;
 	}
 
 	/**
@@ -160,39 +230,6 @@ export default class Component {
 		}
 
 		return components;
-	}
-
-	/**
-	 * Sets the passed props to a component by the specified selector and waits for `nextTick` after that
-	 *
-	 * @param page
-	 * @param componentSelector
-	 * @param props
-	 * @param [opts]
-	 */
-	static async setPropsToComponent<T extends iBlock>(
-		page: Page,
-		componentSelector: string,
-		props: Dictionary,
-		opts?: WaitForIdleOptions
-	): Promise<JSHandle<T>> {
-		const ctx = await this.waitForComponentByQuery(page, componentSelector);
-
-		await ctx.evaluate(async (ctx, props) => {
-			for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
-				const
-					prop = keys[i],
-					val = props[prop];
-
-				ctx.field.set(prop, val);
-			}
-
-			await ctx.nextTick();
-		}, props);
-
-		await BOM.waitForIdleCallback(page, opts);
-
-		return this.waitForComponentByQuery(page, componentSelector);
 	}
 
 	/**

@@ -11,30 +11,85 @@
  * @packageDocumentation
  */
 
-import { toRaw, wrappedContexts } from 'core/component/context/const';
+import { toRaw, toWrapped } from 'core/component/context/const';
 import type { ComponentInterface } from 'core/component/interface';
 
 export * from 'core/component/context/const';
 
+type ComponentContext = Dictionary & ComponentInterface;
+type UnsafeComponentContext = Dictionary & ComponentInterface['unsafe'];
+
+interface ComponentContextStructure {
+	ctx: ComponentContext;
+	unsafe: UnsafeComponentContext;
+}
+
 /**
  * Returns a wrapped component context object based on the passed one.
  * This function allows developers to override component properties and methods without altering the original object.
+ *
  * Essentially, override creates a new object that contains the original object as its prototype,
  * allowing for the addition, modification, or removal of properties and methods without affecting the original object.
  *
  * @param component
  */
-export function getComponentContext(component: object): Dictionary & ComponentInterface['unsafe'] {
-	component = toRaw in component ? component[toRaw] : component;
+export function getComponentContext(component: object): ComponentContext;
 
-	let
-		v = wrappedContexts.get(component);
+/**
+ * This override allows returning an unsafe interface
+ *
+ * @param component
+ * @param unsafe
+ */
+export function getComponentContext(component: object, unsafe: true): ComponentContextStructure;
 
-	if (v == null) {
-		v = Object.create(component);
-		Object.defineProperty(v, toRaw, {value: component});
-		wrappedContexts.set(component, v);
+export function getComponentContext(
+	component: object,
+	unsafe?: true
+): ComponentContext | ComponentContextStructure {
+	if (toRaw in component) {
+		const ctx = Object.cast<ComponentContext>(component);
+
+		if (unsafe) {
+			return {ctx, unsafe: Object.cast<UnsafeComponentContext>(ctx)};
+		}
+
+		return ctx;
 	}
 
-	return v;
+	if (!(toWrapped in component)) {
+		const wrappedCtx = Object.create(component);
+		saveRawComponentContext(wrappedCtx, component);
+	}
+
+	const ctx = Object.cast<ComponentContext>(component[toWrapped]);
+
+	if (unsafe) {
+		return {ctx, unsafe: Object.cast<UnsafeComponentContext>(ctx)};
+	}
+
+	return ctx;
+}
+
+/**
+ * Stores a reference to the "raw" component context in the main context
+ *
+ * @param ctx - the main context object
+ * @param rawCtx - the raw context object to be stored
+ */
+export function saveRawComponentContext(ctx: object, rawCtx: object): void {
+	Object.defineProperty(ctx, toRaw, {configurable: true, value: rawCtx});
+	Object.defineProperty(rawCtx, toWrapped, {configurable: true, value: ctx});
+}
+
+/**
+ * Drops a reference to the "raw" component context from the main context
+ * @param ctx - the main context object
+ */
+export function dropRawComponentContext(ctx: object): void {
+	if (toRaw in ctx) {
+		delete ctx[toRaw]?.[toWrapped];
+	}
+
+	delete ctx[toRaw];
 }

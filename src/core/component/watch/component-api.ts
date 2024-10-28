@@ -47,16 +47,15 @@ import type { ComponentInterface, RawWatchHandler } from 'core/component/interfa
 export function implementComponentWatchAPI(component: ComponentInterface): void {
 	const {
 		unsafe,
-		unsafe: {$async: $a, meta: {computedFields, watchDependencies, watchPropDependencies, params}},
+		unsafe: {$destructors, meta: {computedFields, watchDependencies, watchPropDependencies, params}},
 		$renderEngine: {proxyGetters}
 	} = component;
 
 	const
-		isFunctional = params.functional === true,
+		isFunctional = SSR || params.functional === true,
 		usedHandlers = new Set<Function>();
 
-	let
-		timerId;
+	let timerId: CanUndef<ReturnType<typeof setImmediate>>;
 
 	const
 		fieldsInfo = proxyGetters.field(component),
@@ -168,8 +167,7 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 
 	// Watcher of fields
 
-	let
-		fieldsWatcher;
+	let fieldsWatcher;
 
 	if (isFunctional) {
 		// Don't force watching of fields until it becomes necessary
@@ -197,17 +195,16 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 			createComputedCacheInvalidator()
 		);
 
-		$a.worker(() => systemFieldsWatcher.unwatch());
+		const accessorsWatcher = watch(
+			systemFieldsWatcher.proxy,
+			watchOpts,
+			createAccessorMutationEmitter()
+		);
 
-		{
-			const w = watch(
-				systemFieldsWatcher.proxy,
-				watchOpts,
-				createAccessorMutationEmitter()
-			);
-
-			$a.worker(() => w.unwatch());
-		}
+		$destructors.push(() => {
+			systemFieldsWatcher.unwatch();
+			accessorsWatcher.unwatch();
+		});
 
 		initWatcher(systemFieldsInfo.key, systemFieldsWatcher);
 	};
@@ -259,7 +256,7 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 			// we need to wrap a prop object by myself
 			if (!('watch' in props)) {
 				const propsWatcher = watch(propsStore, propWatchOpts);
-				$a.worker(() => propsWatcher.unwatch());
+				$destructors.push(() => propsWatcher.unwatch());
 				initWatcher(props.key, propsWatcher);
 			}
 
@@ -303,11 +300,11 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 		if (isFunctional) {
 			// We need to track all modified fields of the functional instance
 			// to restore state if a parent has re-created the component
-			const w = watch(watcher.proxy, {deep: true, collapse: true, immediate: true}, (v, o, i) => {
+			const w = watch(watcher.proxy, {deep: true, collapse: true, immediate: true}, (_v, _o, i) => {
 				unsafe.$modifiedFields[String(i.path[0])] = true;
 			});
 
-			$a.worker(() => w.unwatch());
+			$destructors.push(() => w.unwatch());
 		}
 	}
 
@@ -323,17 +320,16 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 			createComputedCacheInvalidator()
 		);
 
-		$a.worker(() => fieldsWatcher.unwatch());
+		const accessorsWatcher = watch(
+			fieldsWatcher.proxy,
+			watchOpts,
+			createAccessorMutationEmitter()
+		);
 
-		{
-			const w = watch(
-				fieldsWatcher.proxy,
-				watchOpts,
-				createAccessorMutationEmitter()
-			);
-
-			$a.worker(() => w.unwatch());
-		}
+		$destructors.push(() => {
+			fieldsWatcher.unwatch();
+			accessorsWatcher.unwatch();
+		});
 
 		initWatcher(fieldsInfo.key, fieldsWatcher);
 	}
@@ -349,8 +345,7 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 				return;
 			}
 
-			const
-				rootKey = String(info.path[0]);
+			const rootKey = String(info.path[0]);
 
 			// If there has been changed properties that can affect memoized computed fields,
 			// then we need to invalidate these caches

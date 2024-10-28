@@ -59,6 +59,18 @@ export interface UnsafeBSelect<CTX extends bSelect = bSelect> extends UnsafeIInp
 	values: CTX['values'];
 
 	// @ts-ignore (access)
+	keydownHandlerEnabled: CTX['keydownHandlerEnabled'];
+
+	// @ts-ignore (access)
+	compiledMask: CTX['compiledMask'];
+
+	// @ts-ignore (access)
+	itemsStore: CTX['itemsStore'];
+
+	// @ts-ignore (access)
+	normalizeItems: CTX['normalizeItems'];
+
+	// @ts-ignore (access)
 	setScrollToMarkedOrSelectedItem: CTX['setScrollToMarkedOrSelectedItem'];
 
 	onNativeChange: SelectEventHandlers['onNativeChange'];

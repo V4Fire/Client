@@ -31,14 +31,16 @@ export const enum Hooks {
  *
  * @param page
  * @param attrs
+ * @param routesConfig
  */
 export async function renderDynamicPage(
 	page: Page,
-	attrs: RenderComponentsVnodeParams['attrs'] = {}
+	attrs: RenderComponentsVnodeParams['attrs'] = {},
+	routesConfig?: Dictionary
 ): Promise<JSHandle<bDynamicPage>> {
 	await Component.createComponent(page, 'b-router', {
 		attrs: {
-			routes: {
+			routes: routesConfig ?? {
 				page1: {
 					path: '/page-1',
 					component: Pages.DYNAMIC_1

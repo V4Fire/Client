@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.108.a-new-hope (2024-07-15)
+
+#### :boom: Breaking Change
+
+* The module has been completely redesigned for the new API
+
+## v4.0.0-beta.59 (2024-02-15)
+
+#### :boom: Breaking Change
+
+* Everything except for interfaces has been moved to `core/component/client-state`
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :rocket: New Feature

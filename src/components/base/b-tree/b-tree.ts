@@ -17,7 +17,8 @@ import SyncPromise from 'core/promise/sync';
 import { derive } from 'core/functools/trait';
 
 import AsyncRender, { iterate, TaskOptions } from 'components/friends/async-render';
-import Block, { getElementMod, setElementMod } from 'components/friends/block';
+import Block, { getElementMod, setElementMod, getElementSelector, getFullElementName } from 'components/friends/block';
+import DOM, { delegateElement } from 'components/friends/dom';
 
 import iItems from 'components/traits/i-items/i-items';
 import iActiveItems, { IterationKey } from 'components/traits/i-active-items/i-active-items';
@@ -27,7 +28,7 @@ import type { Item, ItemMeta, UnsafeBTree } from 'components/base/b-tree/interfa
 
 import iTreeProps from 'components/base/b-tree/props';
 
-import Foldable from 'components/base/b-tree/modules/foldable';
+import iFoldable from 'components/base/b-tree/modules/foldable';
 import Values from 'components/base/b-tree/modules/values';
 
 import { setActiveMod, normalizeItems } from 'components/base/b-tree/modules/helpers';
@@ -36,12 +37,13 @@ export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-tree/interface';
 
 AsyncRender.addToPrototype({iterate});
-Block.addToPrototype({getElementMod, setElementMod});
+Block.addToPrototype({getElementMod, setElementMod, getElementSelector, getFullElementName});
+DOM.addToPrototype({delegateElement});
 
 const
 	$$ = symbolGenerator();
 
-interface bTree extends Trait<typeof iActiveItems>, Trait<typeof Foldable> {}
+interface bTree extends Trait<typeof iActiveItems>, Trait<typeof iFoldable> {}
 
 @component({
 	functional: {
@@ -49,8 +51,8 @@ interface bTree extends Trait<typeof iActiveItems>, Trait<typeof Foldable> {}
 	}
 })
 
-@derive(iActiveItems, Foldable)
-class bTree extends iTreeProps implements iActiveItems, Foldable {
+@derive(iActiveItems, iFoldable)
+class bTree extends iTreeProps implements iActiveItems, iFoldable {
 	override get unsafe(): UnsafeGetter<UnsafeBTree<this>> {
 		return Object.cast(this);
 	}
@@ -73,16 +75,19 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	 * {@link iActiveItems.activeStore}
 	 * {@link iActiveItems.linkActiveStore}
 	 */
-	@system<bTree>((o) => {
-		o.watch('modelValue', (val) => o.setActive(val, true));
-		return iActiveItems.linkActiveStore(o, (val) => o.modelValue ?? val);
+	@system<bTree>({
+		unique: true,
+		init: (o) => {
+			o.watch('modelValue', (val: bTree['modelValue']) => o.setActive(val, true));
+			return iActiveItems.linkActiveStore(o, (val) => o.modelValue ?? val);
+		}
 	})
 
 	activeStore!: iActiveItems['activeStore'];
 
-	/** {@link Foldable.unfoldedStore} */
-	@system()
-	unfoldedStore: Foldable['unfoldedStore'] = new Set();
+	/** {@link iFoldable.unfoldedStore} */
+	@system<bTree>((o) => o.topProp?.unfoldedStore ?? new Set())
+	unfoldedStore!: iFoldable['unfoldedStore'];
 
 	/** {@link iActiveItems.activeChangeEvent} */
 	@system()
@@ -120,8 +125,8 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	}
 
 	/**
-	 * Stores `bTree` normalized items.
-	 * This store is needed because the `items` property should only be accessed via get/set.
+	 * Stores bTree normalized items.
+	 * This store is needed because the `items` property should only be accessed through the get/set methods.
 	 */
 	@field<bTree>((o) => o.sync.link<Item[]>((val) => {
 		if (o.dataProvider != null) {
@@ -133,14 +138,19 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 
 	protected itemsStore: this['Items'] = [];
 
-	protected override readonly $refs!: iData['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iData['$refs'] & {
 		children?: bTree[];
 	};
 
 	/**
 	 * Internal API for working with component values
 	 */
-	@system<bTree>((o) => new Values(o))
+	@system<bTree>({
+		unique: true,
+		init: (o) => new Values(o)
+	})
+
 	protected values!: Values;
 
 	/**
@@ -153,7 +163,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	}
 
 	/**
-	 * Props for recursively inserted tree components
+	 * Props for recursively inserted bTree components
 	 */
 	protected get nestedTreeProps(): Dictionary {
 		const
@@ -253,7 +263,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 
 		// Activate current active nodes
 		SyncPromise.resolve(this.activeElement).then((activeElement) => {
-			Array.concat([], activeElement).forEach((activeElement) => setActiveMod.call(top, activeElement, true));
+			Array.toArray(activeElement).forEach((activeElement) => setActiveMod.call(top, activeElement, true));
 		}).catch(stderr);
 
 		return true;
@@ -353,7 +363,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	 * Returns a dictionary with props for the specified item
 	 *
 	 * @param item
-	 * @param i - position index
+	 * @param i - the position index
 	 */
 	protected getItemProps(item: this['Item'], i: number): Dictionary {
 		const
@@ -385,7 +395,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	}
 
 	/**
-	 * Returns a value of the `folded` property from the specified item
+	 * Returns the value of the `folded` property from the specified item
 	 * @param item
 	 */
 	protected getFoldedPropValue(item: this['Item']): boolean {
@@ -404,7 +414,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	 * Searches an HTML element by the specified item value and returns it
 	 * @param value
 	 */
-	protected findItemElement(value: this['Item']['value']): HTMLElement | null {
+	protected findItemElement(value: this['Item']['value']): CanNull<HTMLElement> {
 		const
 			{top} = this,
 			id = this.values.getIndex(value);
@@ -417,7 +427,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	}
 
 	/**
-	 * Synchronization of items
+	 * Synchronization of tree items
 	 *
 	 * @param items
 	 * @param [oldItems]
@@ -435,7 +445,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	@hook('beforeDataCreate')
 	protected initComponentValues(itemsChanged: boolean = false): void {
 		if (itemsChanged) {
-			this.field.set('unfoldedStore', new Set());
+			this.field.get<typeof this['unfoldedStore']>('unfoldedStore')!.clear();
 		}
 
 		this.values.init(itemsChanged);
@@ -450,7 +460,45 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	}
 
 	/**
-	 * Handler: fold element has been clicked
+	 * Returns a filter function to check if an item needs to be rendered in a nested tree
+	 * @param item
+	 */
+	protected getNestedTreeFilter(item: this['Item']): CanNull<() => CanPromise<boolean>> {
+		const canRenderSynchronously = () =>
+			!this.getFoldedPropValue(item) ||
+			Object.isBoolean(this.lazyRender) ||
+			this.lazyRender === 'items';
+
+		if (SSR && canRenderSynchronously()) {
+			return null;
+		}
+
+		return () => {
+			if (canRenderSynchronously()) {
+				return true;
+			}
+
+			const group = {
+				group: 'nestedTree',
+				label: String(this.values.getIndex(item.value)),
+				join: true
+			};
+
+			const promise = () => new Promise<boolean>((resolve) => {
+				const id = this.top.on('onUnfold', (_, el) => {
+					if (item.value === el.value) {
+						resolve(true);
+						this.top.off(id);
+					}
+				}, group);
+			});
+
+			return this.top.async.promise(promise, group);
+		};
+	}
+
+	/**
+	 * Handler: the fold element has been clicked
 	 * @param item
 	 */
 	protected onFoldClick(item: this['Item']): void {
@@ -458,14 +506,14 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	}
 
 	/**
-	 * Handler: click to some item element
+	 * Handler: click on some item element
 	 *
 	 * @param e
 	 * @emits `actionChange(active: this['Active'])`
 	 */
 	@watch<bTree>({
 		path: '?$el:click',
-		wrapper: (o, cb) => o.dom.delegateElement('node', cb)
+		wrapper: (o, cb) => o.dom.delegateElement('node', Object.cast(cb))
 	})
 
 	protected onItemClick(e: Event): void {

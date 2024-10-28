@@ -9,6 +9,28 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.144 (2024-10-09)
+
+#### :bug: Bug Fix
+
+* Override a component name in the shared meta
+
+## v4.0.0-beta.138.dsl-speedup (2024-10-01)
+
+#### :rocket: New Feature
+
+* Added the `test` parameter for fine-tuning watchers
+
+#### :house: Internal
+
+* Performance improvements
+
+## v4.0.0-beta.121.the-phantom-menace (2024-08-05)
+
+#### :rocket: New Feature
+
+* Added the `forceUpdate: false` property to designate props whose changes should not lead to a template re-render
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change

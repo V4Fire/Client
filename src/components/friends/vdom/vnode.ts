@@ -6,8 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { isComponent } from 'core/component';
-import type { VNode } from 'core/component/engines';
+import { isComponent, V4_COMPONENT } from 'core/component';
+import { getDirectiveComponent } from 'core/component/directives';
+import type { VNode, VNodeVirtualParent } from 'core/component/engines';
 
 import type VDOM from 'components/friends/vdom/class';
 import type { VNodeOptions, VNodeDescriptor } from 'components/friends/vdom/interface';
@@ -101,7 +102,7 @@ export function create(
 	}
 
 	const
-		resolvedDescriptors = Array.concat([], typeOrDesc, Object.cast(descriptors)),
+		resolvedDescriptors = Array.toArray(typeOrDesc, Object.cast(descriptors)),
 		vnodes = new Array(resolvedDescriptors.length);
 
 	resolvedDescriptors.forEach((descriptor, i) => {
@@ -118,11 +119,18 @@ export function create(
  * @param [opts]
  * @param [opts.attrs]
  * @param [opts.children]
+ * @param [virtualParent]
  */
 function createVNode(
 	this: VDOM,
 	type: string,
-	{attrs, children}: VNodeOptions = {}
+
+	{
+		attrs,
+		children
+	}: VNodeOptions = {},
+
+	virtualParent?: VNodeVirtualParent
 ): VNode {
 	return this.withRenderContext(() => {
 		const {
@@ -130,12 +138,18 @@ function createVNode(
 			ctx: {$renderEngine: {r}}
 		} = this;
 
-		let
-			resolvedChildren: CanUndef<VNode[] | Dictionary<() => VNode>>;
+		let resolvedChildren: CanUndef<
+			VNode[] |
+			Dictionary<() => VNode>
+		>;
+
+		const current: VNodeVirtualParent = {
+			value: null
+		};
 
 		const factory = (vnode: Nullable<string | VNode | VNodeDescriptor>) => {
 			if (Object.isDictionary(vnode) && !('patchFlag' in vnode)) {
-				return createVNode.call(this, (Object.cast<VNode>(vnode)).type, vnode);
+				return createVNode.call(this, (Object.cast<VNode>(vnode)).type, vnode, current);
 			}
 
 			return vnode;
@@ -162,10 +176,10 @@ function createVNode(
 					slots[key] = Object.isFunction(slot) ?
 						function slotWrapper(this: unknown) {
 							// eslint-disable-next-line prefer-rest-params
-							return Array.concat([], slot.apply(this, arguments)).map(Object.cast(factory));
+							return Array.toArray(slot.apply(this, arguments)).map(Object.cast(factory));
 						} :
 
-						() => Array.concat([], slot).map(factory);
+						() => Array.toArray(slot).map(factory);
 				});
 
 				resolvedChildren = slots;
@@ -183,6 +197,30 @@ function createVNode(
 			vnode = r.createVNode.call(ctx, type, {'v-attrs': attrs}, resolvedChildren);
 		}
 
+		Object.defineProperty(current, 'value', {
+			enumerable: true,
+			configurable: true,
+
+			get() {
+				let
+					ctxFromVNode = getDirectiveComponent(vnode);
+
+				if (ctxFromVNode?.$parent != null && !(V4_COMPONENT in ctxFromVNode.$parent)) {
+					ctxFromVNode = Object.create(ctxFromVNode, {
+						$parent: {
+							enumerable: true,
+							configurable: true,
+							writable: false,
+							value: ctx.r
+						}
+					});
+				}
+
+				return ctxFromVNode;
+			}
+		});
+
+		vnode.virtualParent = virtualParent;
 		return vnode;
 	});
 }

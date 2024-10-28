@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 require('@config/config');
 
 const
@@ -97,8 +99,8 @@ describe('components/super/i-static-page/modules/ss-helpers/libs', () => {
 
 	describe('`loadStyles`', () => {
 		it('loading from a Map', async () => {
-			const
-				decl = (await ss.loadStyles(styles, {assets: await assets})).replace(/[\n\t]/g, '');
+			const decl = (await ss.loadStyles(styles, {assets: await assets}))
+				.replace(/[\n\t]/g, '');
 
 			expect(decl).toBe(
 				'' +
@@ -120,8 +122,8 @@ describe('components/super/i-static-page/modules/ss-helpers/libs', () => {
 
 		describe('`loadLinks`', () => {
 			it('loading from a Map', async () => {
-				const
-					decl = (await ss.loadLinks(styles, {assets: await assets})).replace(/[\n\t]/g, '');
+				const decl = (await ss.loadLinks(styles, {assets: await assets}))
+					.replace(/[\n\t]/g, '');
 
 				expect(decl).toBe('<link href="/dist/client/lib/font-awesome.styl"><link href="/dist/client/animate/dist/animate">');
 			});

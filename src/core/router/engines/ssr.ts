@@ -17,10 +17,13 @@ import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { fromQueryString, toQueryString } from 'core/url';
 import type { Route, Router } from 'core/router';
 
+import type bRouter from 'components/base/b-router/b-router';
+
 /**
  * Creates an SSR engine for `bRouter` component
+ * @param routerCtx
  */
-export default function createRouter(): Router {
+export default function createRouter(routerCtx: bRouter): Router {
 	const emitter = new EventEmitter({
 		maxListeners: 1e3,
 		newListener: false
@@ -105,7 +108,7 @@ export default function createRouter(): Router {
 			}
 
 			historyLog[0] = params;
-			SyncPromise.resolve(load()).then(() => resolve()).catch(stderr);
+			SyncPromise.resolve(load(routerCtx)).then(() => resolve()).catch(stderr);
 
 			/**
 			 * Parses parameters from a query string

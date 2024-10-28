@@ -9,6 +9,24 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.133 (2024-09-13)
+
+#### :bug: Bug Fix
+
+* Support for the recursive `dropCache` operation by adding the `recursive` argument
+
+## v4.0.0-beta.113 (2024-07-24)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with canceling a request when resolving response data
+
+## v4.0.0-beta.108.a-new-hope (2024-07-15)
+
+#### :house: Internal
+
+* Added a new `response` event upon successful data retrieval
+
 ## v4.0.0-beta.22 (2023-09-15)
 
 #### :rocket: New Feature

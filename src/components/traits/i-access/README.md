@@ -26,7 +26,7 @@ or disabling.
   class bButton extends iBlock implements iAccess {
     static override readonly mods: ModsDecl = {
       ...iAccess.mods
-    }
+    };
 
     protected override initModEvents(): void {
       super.initModEvents();
@@ -53,7 +53,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 export default class bButton extends iBlock implements iAccess {
   static override readonly mods: ModsDecl = {
     ...iAccess.mods
-  }
+  };
 }
 ```
 

@@ -19,6 +19,7 @@ import type { ComponentMeta, ComponentConstructorInfo } from 'core/component/int
 export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 	const meta: ComponentMeta = {
 		name: component.name,
+		layer: component.layer,
 		componentName: component.componentName,
 
 		parentMeta: component.parentMeta,
@@ -28,7 +29,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		params: component.params,
 
 		props: {},
-		mods: getComponentMods(component),
+		mods: component.params.partial == null ? getComponentMods(component) : {},
 
 		fields: {},
 		tiedFields: {},
@@ -53,14 +54,15 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			'before:mounted': [],
 			mounted: [],
 			beforeUpdate: [],
+			'before:updated': [],
 			updated: [],
 			activated: [],
 			deactivated: [],
 			beforeDestroy: [],
 			destroyed: [],
+			errorCaptured: [],
 			renderTracked: [],
-			renderTriggered: [],
-			errorCaptured: []
+			renderTriggered: []
 		},
 
 		component: {
@@ -68,6 +70,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 
 			mods: {},
 			props: {},
+			attrs: {},
 
 			computed: {},
 			methods: {},
@@ -79,28 +82,46 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 	};
 
 	const
-		cache = new WeakMap();
+		label = Symbol('Render cache'),
+		cache = new Map();
 
 	meta.component[SSR ? 'ssrRender' : 'render'] = Object.cast((ctx: object, ...args: unknown[]) => {
-		const
-			unsafe = getComponentContext(ctx);
+		const {unsafe} = getComponentContext(ctx, true);
 
-		if (cache.has(ctx)) {
-			return cache.get(ctx)();
+		unsafe.$emit('[[RENDER]]');
+
+		const res = callRenderFunction();
+
+		// @ts-ignore (unsafe)
+		unsafe['$renderCounter'] = unsafe.$renderCounter + 1;
+
+		return res;
+
+		function callRenderFunction() {
+			if (cache.has(ctx)) {
+				return cache.get(ctx)();
+			}
+
+			const render = meta.methods.render!.fn.call(unsafe, unsafe, ...args);
+
+			if (!Object.isFunction(render)) {
+				return render;
+			}
+
+			// With SSR or functional components, the render function is always called exactly once,
+			// so there's no point in caching the context
+			const needCacheRenderFn = !SSR && unsafe.meta.params.functional !== true;
+
+			if (needCacheRenderFn) {
+				cache.set(ctx, render);
+				unsafe.$async.worker(() => cache.delete(ctx), {label});
+			}
+
+			return render();
 		}
-
-		const
-			render = meta.methods.render!.fn.call(unsafe, unsafe, ...args);
-
-		if (!Object.isFunction(render)) {
-			return render;
-		}
-
-		cache.set(ctx, render);
-		return render();
 	});
 
-	if (component.parentMeta) {
+	if (component.parentMeta != null) {
 		inheritMeta(meta, component.parentMeta);
 	}
 

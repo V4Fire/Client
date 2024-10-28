@@ -15,12 +15,12 @@ this.field.get('foo.bla.bar', this.r);
 this.field.delete('foo.bla.bar', this.r);
 ```
 
-## How to include this module in your component?
+## How to Include this Module in Your Component?
 
 By default, any component that inherits from [[iBlock]] has the `field` property.
 Some methods, such as `get` and `set`, are always available,
 while others need to be explicitly included to enable tree-shaking code optimization.
-To do this, simply add the necessary import declaration within your component file.
+To do this, add the necessary import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -33,7 +33,7 @@ Field.addToPrototype({delete: deleteField});
 export default class bExample extends iBlock {}
 ```
 
-## Why not use `Object.set/get/delete`?
+## Why Not Use `Object.set/get/delete`?
 
 There are three reasons to use `Field` instead of Prelude methods.
 
@@ -74,7 +74,7 @@ There are three reasons to use `Field` instead of Prelude methods.
    ```
 
 2. Prelude methods are not aware of component states and hooks.
-   For example, before the component switches to the "created" hook,
+   For example, before the component switches to the `created` hook,
    we cannot directly set the field values because all fields are initialized during `created`.
    In this case, the `Field` class can optionally set the value to the internal store.
 
@@ -135,8 +135,8 @@ There are three reasons to use `Field` instead of Prelude methods.
 
 ### get
 
-Returns a property based on the specified path.
-This method is plugged in by default.
+Returns a property from the provided object or the source component at the specified path.
+This method is enabled by default.
 
 ```typescript
 import iBlock, { component, field } from 'components/super/i-block/i-block';
@@ -167,8 +167,8 @@ export default class bInput extends iBlock {
 
 ### set
 
-Sets a new property based on the specified path.
-This method is plugged in by default.
+Sets a new property on the provided object or the source component at the specified path.
+This method is enabled by default.
 
 ```typescript
 import iBlock, { component, field } from 'components/super/i-block/i-block';
@@ -198,7 +198,7 @@ export default class bInput extends iBlock {
 
 ### delete
 
-Deletes a property based on the specified path.
+Deletes a property from the provided object or the source component at the specified path.
 
 ```typescript
 import iBlock, { component, field } from 'components/super/i-block/i-block';

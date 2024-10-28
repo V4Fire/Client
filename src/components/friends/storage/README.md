@@ -10,11 +10,11 @@ this.storage.get('foo');
 this.storage.remove('foo');
 ```
 
-## How to include this module in your component?
+## How to Include this Module in Your Component?
 
 By default, any component that inherits from [[iBlock]] has the `storage` property.
 
-## Why not use `core/kv-storage`?
+## Why Not Use `core/kv-storage`?
 
 There are two reasons to use the `Storage` class instead of the pure `core/kv-storage` module.
 
@@ -45,7 +45,7 @@ There are two reasons to use the `Storage` class instead of the pure `core/kv-st
    < b-example :globalName = 'myComponent'
    ```
 
-## How to specify an engine for the storage?
+## How to Specify an Engine for the Storage?
 
 Нou can pass the engine as a parameter when creating an instance of the `Storage` class.
 
@@ -55,9 +55,8 @@ import iBlock, { component, system } from 'components/super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock {
-  /** @override */
   @system((ctx) => new Storage(ctx, IDBEngine.asyncLocalStorage))
-  protected readonly storage!: Storage;
+  protected override readonly storage!: Storage;
 }
 ```
 

@@ -9,6 +9,49 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.108.a-new-hope (2024-07-15)
+
+#### :boom: Breaking Change
+
+* The module has been completely redesigned for the new API
+
+## v4.0.0-beta.64 (2024-02-19)
+
+#### :bug: Bug Fix
+
+* Fixed a typo when extending the property for inject
+
+## v4.0.0-beta.58 (2024-02-14)
+
+#### :bug: Bug Fix
+
+* Fixed a memory leak
+
+## v4.0.0-beta.57 (2024-02-13)
+
+#### :bug: Bug Fix
+
+* Fixed a memory leak
+
+## v4.0.0-beta.48 (2024-01-17)
+
+#### :boom: Breaking Change
+
+* Now it is necessary to pass the application initialization flags to the `ready` method from
+  the initialization parameters, instead of importing it from `core/init`, due to SSR
+
+## v4.0.0-beta.44 (2023-12-06)
+
+#### :boom: Breaking Change
+
+* Now, the `initApp` call returns an object in the form `{content, styles}`
+
+## v4.0.0-beta.32 (2023-10-17)
+
+#### :rocket: New Feature
+
+* Added support for setting a global application ID
+
 ## v4.0.0-beta.22 (2023-09-15)
 
 #### :rocket: New Feature

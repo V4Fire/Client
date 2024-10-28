@@ -14,6 +14,7 @@
 	- block rootAttrs
 		- super
 		? rootAttrs['v-async-target'] = TRUE
+		? rootAttrs['v-memo'] = '[]'
 
 	- block body
 		: graph = include('build/graph/component-params')
@@ -23,14 +24,16 @@
 		? delete attrs[':keepAlive']
 		? delete attrs[':dispatching']
 
-		< template v-for = el in asyncRender.iterate(renderIterator, {filter: renderFilter, group: registerRenderingGroup()})
+		< template v-for = el in asyncRender.iterate(renderIterator, {filter: renderFilter, group: registerRenderGroup})
 			< component.&__component &
-				v-if = !pageTakenFromCache |
+				v-if = !pageTakenFromCache && page != null |
 				ref = component |
 
 				:is = page |
+				:instanceOf = iDynamicPage |
 				:dispatching = true |
-				:renderComponentId = true |
+				:canFunctional = false |
 
+				v-attrs = {'@hook:destroyed': createPageDestructor()} |
 				${attrs}
 			.

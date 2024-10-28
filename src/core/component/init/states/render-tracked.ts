@@ -6,19 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { callMethodFromComponent } from 'core/component/method';
 import { runHook } from 'core/component/hook';
 
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
- * Initializes the "renderTracked" state to the specified component instance
+ * Initializes the "renderCaptured" state to the specified component instance
  *
  * @param component
  * @param args - additional arguments
  */
 export function renderTrackedState(component: ComponentInterface, ...args: unknown[]): void {
-	runHook('renderTracked', component, ...args).then(() => {
-		callMethodFromComponent(component, 'renderTracked', ...args);
-	}).catch(stderr);
+	runHook('renderTracked', component, ...args).catch(stderr);
 }

@@ -13,6 +13,7 @@
 
 import symbolGenerator from 'core/symbol';
 import { is } from 'core/browser';
+import type { WorkerLikeP } from 'core/async';
 
 import type iBlock from 'components/super/i-block/i-block';
 import type { ModEvent } from 'components/super/i-block/i-block';
@@ -29,17 +30,29 @@ const
 
 export default abstract class iLockPageScroll {
 	/** {@link iLockPageScroll.prototype.lockPageScroll} */
-	static lockPageScroll: AddSelf<iLockPageScroll['lockPageScroll'], iBlock> = (component, scrollableNode?) => {
+	static lockPageScroll: AddSelf<iLockPageScroll['lockPageScroll'], iBlock & iLockPageScroll> = (component, scrollableNode?) => {
 		const {
 			r,
-			r: {unsafe: {async: $a}}
+			r: {unsafe: {async: $a}},
+			unsafe: {async: componentAsync, tmp: componentTmp}
 		} = component;
+
+		componentAsync.worker(
+			<WorkerLikeP>(componentTmp[$$.unlockPageScrollDestructor] ??= () => {
+				component.unlockPageScroll().catch(stderr);
+				delete r[$$.paddingRight];
+				delete r[$$.scrollTop];
+			})
+		);
+
+		if (is.mobile !== false && is.iOS !== false) {
+			iLockPageScroll.initIOSScrollableNodeListeners(component, scrollableNode);
+		}
 
 		let
 			promise = Promise.resolve();
 
 		if (r[$$.isLocked] === true) {
-			$a.clearAll({group});
 			return promise;
 		}
 
@@ -51,52 +64,6 @@ export default abstract class iLockPageScroll {
 
 		if (is.mobile !== false) {
 			if (is.iOS !== false) {
-				if (scrollableNode) {
-					const
-						onTouchStart = (e: TouchEvent) => component[$$.initialY] = e.targetTouches[0].clientY;
-
-					$a.on(scrollableNode, 'touchstart', onTouchStart, {
-						group,
-						label: $$.touchstart
-					});
-
-					const onTouchMove = (e: TouchEvent) => {
-						let
-							scrollTarget = <HTMLElement>(e.target ?? scrollableNode);
-
-						while (scrollTarget !== scrollableNode) {
-							if (scrollTarget.scrollHeight > scrollTarget.clientHeight || !scrollTarget.parentElement) {
-								break;
-							}
-
-							scrollTarget = scrollTarget.parentElement;
-						}
-
-						const {
-							scrollTop,
-							scrollHeight,
-							clientHeight
-						} = scrollTarget;
-
-						const
-							clientY = e.targetTouches[0].clientY - component[$$.initialY],
-							isOnTop = clientY > 0 && scrollTop === 0,
-							isOnBottom = clientY < 0 && scrollTop + clientHeight + 1 >= scrollHeight;
-
-						if ((isOnTop || isOnBottom) && e.cancelable) {
-							return e.preventDefault();
-						}
-
-						e.stopPropagation();
-					};
-
-					$a.on(scrollableNode, 'touchmove', onTouchMove, {
-						group,
-						label: $$.touchmove,
-						options: {passive: false}
-					});
-				}
-
 				$a.on(document, 'touchmove', (e: TouchEvent) => e.cancelable && e.preventDefault(), {
 					group,
 					label: $$.preventTouchMove,
@@ -116,7 +83,7 @@ export default abstract class iLockPageScroll {
 						body.scrollTop;
 
 					r[$$.scrollTop] = scrollTop;
-					body.style.top = `-${scrollTop}px`;
+					body.style.top = (-scrollTop).px;
 					r.setRootMod('lockPageScrollMobile', true);
 
 					r[$$.isLocked] = true;
@@ -135,7 +102,7 @@ export default abstract class iLockPageScroll {
 						scrollBarWidth = globalThis.innerWidth - body.clientWidth;
 
 					r[$$.paddingRight] = body.style.paddingRight;
-					body.style.paddingRight = `${scrollBarWidth}px`;
+					body.style.paddingRight = scrollBarWidth.px;
 					r.setRootMod('lockPageScrollDesktop', true);
 
 					r[$$.isLocked] = true;
@@ -166,6 +133,7 @@ export default abstract class iLockPageScroll {
 				r.removeRootMod('lockPageScrollMobile', true);
 				r.removeRootMod('lockPageScrollDesktop', true);
 				r[$$.isLocked] = false;
+				this.scrollableNodes = new WeakSet<Element>();
 
 				if (is.mobile !== false) {
 					globalThis.scrollTo(0, r[$$.scrollTop]);
@@ -192,11 +160,8 @@ export default abstract class iLockPageScroll {
 	 * @param component
 	 */
 	static initModEvents<T extends iBlock>(component: T & iLockPageScroll): void {
-		const {
-			r,
-			$async: $a,
-			localEmitter: $e
-		} = component.unsafe;
+		const
+			{localEmitter: $e} = component.unsafe;
 
 		$e.on('block.mod.*.opened.*', (e: ModEvent) => {
 			if (e.type === 'remove' && e.reason !== 'removeMod') {
@@ -205,11 +170,69 @@ export default abstract class iLockPageScroll {
 
 			void component[e.value === 'false' || e.type === 'remove' ? 'unlockPageScroll' : 'lockPageScroll']();
 		});
+	}
 
-		$a.worker(() => {
-			component.unlockPageScroll().catch(stderr);
-			delete r[$$.paddingRight];
-			delete r[$$.scrollTop];
+	/**
+	 * Set of scrollable nodes for iOS platform
+	 */
+	protected static scrollableNodes: WeakSet<Element> = new WeakSet<Element>();
+
+	/**
+	 * Initializes touch event listeners for the provided node on the iOS platform
+	 *
+	 * @see https://stackoverflow.com/questions/59193062/how-to-disable-scrolling-on-body-in-ios-13-safari-when-saved-as-pwa-to-the-hom
+	 * @param component
+	 * @param [scrollableNode]
+	 */
+	protected static initIOSScrollableNodeListeners(component: iBlock, scrollableNode?: Element): void {
+		const
+			{r: {unsafe: {async: $a}}} = component;
+
+		if (scrollableNode == null || iLockPageScroll.scrollableNodes.has(scrollableNode)) {
+			return;
+		}
+
+		iLockPageScroll.scrollableNodes.add(scrollableNode);
+
+		const
+			onTouchStart = (e: TouchEvent) => component[$$.initialY] = e.targetTouches[0].clientY;
+
+		$a.on(scrollableNode, 'touchstart', onTouchStart, {
+			group
+		});
+
+		const onTouchMove = (e: TouchEvent) => {
+			let
+				scrollTarget = <HTMLElement>(e.target ?? scrollableNode);
+
+			while (
+				scrollTarget !== scrollableNode &&
+				scrollTarget.scrollHeight <= scrollTarget.clientHeight && scrollTarget.parentElement
+			) {
+				scrollTarget = scrollTarget.parentElement;
+			}
+
+			const {
+				scrollTop,
+				scrollHeight,
+				clientHeight
+			} = scrollTarget;
+
+			const
+				clientY = e.targetTouches[0].clientY - component[$$.initialY],
+				isOnTop = clientY > 0 && scrollTop === 0,
+				isOnBottom = clientY < 0 && scrollTop + clientHeight + 1 >= scrollHeight;
+
+			if ((isOnTop || isOnBottom) && e.cancelable) {
+				return e.preventDefault();
+			}
+
+			e.stopPropagation();
+		};
+
+		$a.on(scrollableNode, 'touchmove', onTouchMove, {
+			group,
+			options: {passive: false}
 		});
 	}
 

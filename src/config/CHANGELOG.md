@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.122 (2024-08-06)
+
+#### :rocket: New Feature
+
+* Added settings for the component garbage collector
+
 ## v3.0.0-rc.85 (2020-10-09)
 
 #### :rocket: New Feature

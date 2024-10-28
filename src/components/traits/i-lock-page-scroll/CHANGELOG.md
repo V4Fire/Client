@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.94 (2024-04-24)
+
+#### :rocket: New Feature
+
+* The destructor, which unlocks the page scroll when the component is destroyed, will be registered once the `lockPageScroll` method is called
+
+## v4.0.0-beta.45 (2023-12-07)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with clearing event listeners on ios
+
 ## v4.0.0-beta.11 (2023-08-18)
 
 #### :bug: Bug Fix

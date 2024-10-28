@@ -33,7 +33,7 @@ export default abstract class AbstractEngine {
 	protected elements: ObservableElements = new Map();
 
 	/** {@link Async} */
-	protected async: Async<this> = new Async(this);
+	protected async: Async = new Async();
 
 	/**
 	 * Tracks the intersection of the passed element with the viewport,
@@ -86,7 +86,8 @@ export default abstract class AbstractEngine {
 		const opts = {
 			once: false,
 			threshold: 1,
-			delay: 0
+			delay: 0,
+			onlyRoot: true
 		};
 
 		if (Object.isFunction(optsOrHandler)) {
@@ -308,6 +309,10 @@ export default abstract class AbstractEngine {
 
 		if (Object.isSet(thresholdGroup)) {
 			thresholdGroup.delete(watcher);
+
+			if (thresholdGroup.size === 0) {
+				s.delete(watcher.threshold);
+			}
 
 		} else {
 			s.delete(watcher.threshold);

@@ -13,15 +13,20 @@ const
 	{config, resolve} = require('@pzlr/build-core');
 
 const
-	glob = require('glob'),
-	path = require('path');
+	glob = require('fast-glob'),
+	path = require('upath');
 
 /**
  * Map with aliases for custom (not external) loaders from all layers
  * @type {object}
  */
 const alias = $C([resolve.cwd, ...config.dependencies]).to({}).reduce((loaders, el, i) => {
-	$C(glob.sync(path.join(i ? resolve.lib : '', el, 'build/webpack/loaders/*/index.js'))).forEach((loaderPath) => {
+	const loaderPaths = [].concat(
+		glob.sync(path.join(i ? resolve.lib : '', el, 'build/webpack/loaders/*.js')),
+		glob.sync(path.join(i ? resolve.lib : '', el, 'build/webpack/loaders/*/index.js'))
+	);
+
+	$C(loaderPaths).forEach((loaderPath) => {
 		const
 			chunks = loaderPath.split(path.sep),
 			loaderName = chunks[chunks.length - 2];

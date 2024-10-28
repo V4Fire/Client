@@ -12,7 +12,6 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import type Async from 'core/async';
 
 import globalRoutes from 'routes';
 import * as router from 'core/router';
@@ -34,7 +33,7 @@ import {
 
 import type { StaticRoutes, TransitionMethod, UnsafeBRouter } from 'components/base/b-router/interface';
 
-import bRouterProps from 'components/base/b-router/props';
+import iRouterProps from 'components/base/b-router/props';
 import Transition from 'components/base/b-router/modules/transition';
 
 import * as on from 'components/base/b-router/modules/handlers';
@@ -51,8 +50,9 @@ const
 	$$ = symbolGenerator();
 
 @component()
-export default class bRouter extends bRouterProps {
-	public override async!: Async<this>;
+export default class bRouter extends iRouterProps {
+	/** @inheritDoc */
+	declare public async: iRouterProps['async'];
 
 	/**
 	 * Compiled application route map
@@ -60,7 +60,6 @@ export default class bRouter extends bRouterProps {
 	 */
 	@system<bRouter>({
 		after: 'engine',
-		// eslint-disable-next-line @v4fire/unbound-method
 		init: (o) => o.sync.link(o.compileStaticRoutes)
 	})
 
@@ -84,6 +83,13 @@ export default class bRouter extends bRouterProps {
 	 */
 	@system()
 	protected routeStore?: router.Route;
+
+	/**
+	 * Parameters of the previous transition.
+	 * Used for merging query parameters when replacing null.
+	 */
+	@system()
+	private previousTransitionOptions: Nullable<router.TransitionOptions>;
 
 	override get unsafe(): UnsafeGetter<UnsafeBRouter<this>> {
 		return Object.cast(this);
@@ -258,6 +264,15 @@ export default class bRouter extends bRouterProps {
 		opts?: router.TransitionOptions,
 		method: TransitionMethod = 'push'
 	): Promise<CanUndef<router.Route>> {
+		if (method === 'replace' && ref == null) {
+			opts = Object.mixin({
+				deep: true,
+				skipUndefs: false,
+				extendFilter: (el) => !Object.isArray(el)
+			}, {}, this.previousTransitionOptions, opts);
+		}
+
+		this.previousTransitionOptions = opts;
 		return new Transition(this, {ref, opts, method}).execute();
 	}
 

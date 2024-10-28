@@ -2,7 +2,7 @@
 
 This module provides a class with helper methods to work with a component life cycle.
 
-## Why is this module needed?
+## Why is This Module Necessary?
 
 One of the main causes of performance problems in applications with automatic view updates is uncontrolled work with component states.
 In simple terms, if we change the component state too often, then this forces it to do more re-renders, which in turn reduces performance.

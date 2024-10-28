@@ -115,9 +115,10 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 
 		const
 			{slideRects, current, align, viewRect} = this,
+			slidesCount = slideRects.length,
 			slideRect = slideRects[current];
 
-		if (current >= slideRects.length || viewRect == null) {
+		if (current >= slidesCount || viewRect == null) {
 			return 0;
 		}
 
@@ -125,7 +126,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 			return 0;
 		}
 
-		if (this.alignLastToEnd && current === slideRects.length - 1) {
+		if (this.alignLastToEnd && current === slidesCount - 1 && slidesCount !== 1) {
 			return slideRect.offsetLeft + slideRect.width - viewRect.width;
 		}
 
@@ -171,7 +172,8 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	@field((o) => o.sync.link())
 	protected mode!: Mode;
 
-	protected override readonly $refs!: iSliderProps['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iSliderProps['$refs'] & {
 		view?: HTMLElement;
 		content?: HTMLElement;
 		contentWrapper?: HTMLElement;
@@ -564,6 +566,16 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 		} else {
 			this.async.off(group);
 			content && iObserveDOM.unobserve(this, content);
+		}
+	}
+
+	/**
+	 * Validates the component props values
+	 */
+	@hook('beforeDataCreate')
+	protected validateProps(): void {
+		if (this.useScrollSnap && this.modeProp === 'slide') {
+			throw new Error('Scroll snap cannot be enabled in `slide` mode');
 		}
 	}
 

@@ -6,11 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Page, JSHandle, ElementHandle } from 'playwright';
+import type { Page, JSHandle } from 'playwright';
 
 import { evalFn } from 'core/prelude/test-env/components/json';
 
 import BOM, { WaitForIdleOptions } from 'tests/helpers/bom';
+import type { ExtractFromJSHandle } from 'tests/helpers/mock';
 
 const
 	logsMap = new WeakMap<Page, string[]>();
@@ -30,10 +31,12 @@ export default class Utils {
 	 * // `ctx` refers to `imgNode`
 	 * Utils.waitForFunction(imgNode, (ctx, imgUrl) => ctx.src === imgUrl, imgUrl)
 	 * ```
+	 *
+	 * @deprecated https://playwright.dev/docs/api/class-page#page-wait-for-function
 	 */
-	static waitForFunction<ARGS extends any[] = any[]>(
-		ctx: ElementHandle,
-		fn: (this: any, ctx: any, ...args: ARGS) => unknown,
+	static waitForFunction<ARGS extends any[] = any[], CTX extends JSHandle = JSHandle>(
+		ctx: CTX,
+		fn: (this: any, ctx: ExtractFromJSHandle<CTX>, ...args: ARGS) => unknown,
 		...args: ARGS
 	): Promise<void> {
 		const

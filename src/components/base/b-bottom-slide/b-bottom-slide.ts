@@ -20,7 +20,6 @@ import History from 'components/traits/i-history/history';
 import type iHistory from 'components/traits/i-history/i-history';
 
 import iLockPageScroll from 'components/traits/i-lock-page-scroll/i-lock-page-scroll';
-import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
 
 import iOpen from 'components/traits/i-open/i-open';
 import iVisible from 'components/traits/i-visible/i-visible';
@@ -44,14 +43,11 @@ const $$ = symbolGenerator();
 
 Block.addToPrototype({getFullElementName});
 
-interface bBottomSlide extends
-	Trait<typeof iLockPageScroll>,
-	Trait<typeof iObserveDOM>,
-	Trait<typeof iOpen> {}
+interface bBottomSlide extends Trait<typeof iLockPageScroll>, Trait<typeof iOpen> {}
 
 @component()
-@derive(iLockPageScroll, iObserveDOM, iOpen)
-class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iObserveDOM, iOpen, iVisible, iHistory {
+@derive(iLockPageScroll, iOpen)
+class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iOpen, iVisible, iHistory {
 	override get unsafe(): UnsafeGetter<UnsafeBBottomSlide<this>> {
 		return Object.cast(this);
 	}
@@ -100,7 +96,7 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/** {@link iHistory.history} */
-	@system<iHistory>((ctx) => new History(ctx))
+	@system<iHistory>((o) => new History(Object.cast(o)))
 	readonly history!: History;
 
 	static override readonly mods: ModsDecl = {
@@ -123,7 +119,8 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iObserv
 		]
 	};
 
-	protected override readonly $refs!: iBlock['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iBlock['$refs'] & {
 		view: HTMLElement;
 		window: HTMLElement;
 		header: HTMLElement;
@@ -350,21 +347,6 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iObserv
 		// Loopback
 	}
 
-	/** {@link iObserveDOM.observe} */
-	@watch('heightMode')
-	@hook('mounted')
-	@wait('ready')
-	async initDOMObservers(): Promise<void> {
-		const
-			content = await this.waitRef<HTMLElement>('content', {label: $$.initDOMObservers});
-
-		iObserveDOM.observe(this, {
-			node: content,
-			childList: true,
-			subtree: true
-		});
-	}
-
 	protected override initModEvents(): void {
 		super.initModEvents();
 		this.sync.mod('heightMode', 'heightMode', String);
@@ -423,7 +405,7 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iObserv
 	/**
 	 * Recalculates the component state: sizes, positions, etc.
 	 */
-	@watch(['window:resize', 'localEmitter:DOMChange', ':history:transition'])
+	@watch(':history:transition')
 	@wait('ready')
 	protected async recalculateState(): Promise<void> {
 		try {

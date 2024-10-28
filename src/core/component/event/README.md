@@ -28,6 +28,11 @@ requiring additional configuration or setup.
 This event is triggered when there is a change in the language locale of the application.
 See the `core/i18n` module for details.
 
+### i18n.setRegion
+
+This event is triggered when there is a change in the region of the application.
+See the `core/i18n` module for details.
+
 ### net.status
 
 This event is triggered whenever there is a change in the status of the Internet connection.
@@ -88,7 +93,7 @@ Additionally, you can choose from several types of component resets:
 4. `'router.silence'` - resets all components' bindings to the application router without changing components' statuses to `loading`;
 
 5. `'storage'` - reloads all storages bound to components;
-6. `'storage'` - reload all storages bound to components without changing components' statuses to `loading`;
+6. `'storage.silence'` - reload all storages bound to components without changing components' statuses to `loading`;
 
 7. `'silence'` - reloads all providers and storages bound to components without changing components' statuses to `loading`.
 

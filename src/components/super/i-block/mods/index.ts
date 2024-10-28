@@ -11,36 +11,29 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from 'core/symbol';
 import { component, PARENT } from 'core/component';
 
-import { field, system, computed, hook } from 'components/super/i-block/decorators';
+import { field, system, computed } from 'components/super/i-block/decorators';
 import { initMods, mergeMods, getReactiveMods, ModsDict, ModsDecl } from 'components/super/i-block/modules/mods';
 
 import type iBlock from 'components/super/i-block/i-block';
 import iBlockEvent from 'components/super/i-block/event';
 
-const
-	$$ = symbolGenerator();
+export * from 'components/super/i-block/mods/interface';
 
-@component()
+@component({partial: 'iBlock'})
 export default abstract class iBlockMods extends iBlockEvent {
 	@system({merge: mergeMods, init: initMods})
 	override readonly mods!: ModsDict;
 
-	@computed({cache: 'auto'})
-	override get sharedMods(): CanNull<Readonly<ModsDict>> {
-		const
-			m = this.mods;
-
-		let
-			res: CanUndef<ModsDict>;
+	override get sharedMods(): CanNull<ModsDict> {
+		const m = this.mods;
 
 		if (m.theme != null) {
-			res = {theme: m.theme};
+			return {theme: m.theme};
 		}
 
-		return res != null ? Object.freeze(res) : null;
+		return null;
 	}
 
 	/**
@@ -207,27 +200,5 @@ export default abstract class iBlockMods extends iBlockEvent {
 	 */
 	removeRootMod(name: string, value?: unknown): boolean {
 		return this.r.removeRootMod(name, value, Object.cast(this));
-	}
-
-	/**
-	 * Initializes modifier event listeners
-	 */
-	@hook('beforeCreate')
-	protected initModEvents(): void {
-		this.sync.mod('stage', 'stageStore', (v) => v == null ? v : String(v));
-	}
-
-	/**
-	 * Initializes the theme modifier and attaches a listener to watch changing of the theme
-	 */
-	@hook('created')
-	protected initThemeModListener(): void {
-		void this.setMod('theme', this.r.theme?.current);
-
-		this.rootEmitter.on(
-			'onTheme:change',
-			(v: string) => this.setMod('theme', v),
-			{label: $$.themeChanged}
-		);
 	}
 }

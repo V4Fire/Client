@@ -25,8 +25,8 @@ const importRgxp = new RegExp(
 );
 
 /**
- * Monic replacer to enable the import/export/etc. constructions from one TS project to another TS project,
- * because TS have problems with it
+ * A Monic replacer to enable import/export/etc. constructions from one TS project to another TS project,
+ * addressing the problems TS faces with these constructions
  *
  * @param {string} str
  * @param {string} filePath

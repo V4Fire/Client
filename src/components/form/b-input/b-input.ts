@@ -40,8 +40,7 @@ export { default as InputValidators } from 'components/form/b-input/validators';
 
 export { Value, FormValue };
 
-const
-	$$ = symbolGenerator();
+const $$ = symbolGenerator();
 
 @component({
 	functional: {
@@ -51,9 +50,11 @@ const
 })
 
 export default class bInput extends iInputText {
-	override readonly Value!: Value;
-	override readonly FormValue!: FormValue;
-	override readonly rootTag: string = 'span';
+	/** @inheritDoc */
+	declare readonly Value: Value;
+
+	/** @inheritDoc */
+	declare readonly FormValue: FormValue;
 
 	@prop({type: String, required: false})
 	override readonly valueProp?: this['Value'];
@@ -220,7 +221,8 @@ export default class bInput extends iInputText {
 		...Validators
 	};
 
-	protected override readonly $refs!: iInputText['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iInputText['$refs'] & {
 		textHint?: HTMLSpanElement;
 	};
 
@@ -238,7 +240,7 @@ export default class bInput extends iInputText {
 		return `${this.text}${this.textHint}`;
 	}
 
-	@system({
+	@system<bInput>({
 		after: 'valueStore',
 		init: (o) => o.sync.link((text) => {
 			o.watch('valueProp', {label: $$.textStore}, () => {
@@ -246,7 +248,7 @@ export default class bInput extends iInputText {
 					label: $$.textStoreToValueStore
 				};
 
-				o.watch('valueStore', label, (v) => {
+				o.watch('valueStore', label, (v: CanUndef<string>) => {
 					o.async.clearAll(label);
 					return link(v);
 				});
@@ -256,7 +258,7 @@ export default class bInput extends iInputText {
 
 			function link(textFromValue: CanUndef<string>): string {
 				const
-					resolvedText = textFromValue === undefined ? text ?? o.field.get('valueStore') : textFromValue,
+					resolvedText = textFromValue ?? text ?? o.field.get('valueStore'),
 					str = resolvedText !== undefined ? String(resolvedText) : '';
 
 				if (o.isFunctional) {

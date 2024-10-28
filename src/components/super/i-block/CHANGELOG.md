@@ -9,6 +9,174 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.139.dsl-speedup-2 (2024-10-03)
+
+#### :house: Internal
+
+* Performance improvements
+
+## v4.0.0-beta.138.dsl-speedup (2024-10-01)
+
+#### :house: Internal
+
+* Set all friend classes now through getters with `cache: 'forever'`
+* Modules for friend classes are now loaded lazily
+* Performance improvements
+
+## v4.0.0-beta.137 (2024-09-24)
+
+#### :bug: Bug Fix
+
+* Fix the bug when the global event listener might be called after the component has been destroyed
+
+#### :house: Internal
+
+* Removed method calls from the template
+
+## v4.0.0-beta.117 (2024-07-31)
+
+#### :house: Internal
+
+* Added a new `rootContent` layout wrapper block
+
+## v4.0.0-beta.115.the-force-awakens (2024-07-26)
+
+#### :bug: Bug Fix
+
+* Fixed the `$el` property of the teleported component
+
+## 4.0.0-beta.108.a-new-hope (2024-07-15)
+
+#### :rocket: New Feature
+
+* Added Snakeskin constant `SSR` to determine that the template is being assembled for SSR
+* Added Snakeskin constant `renderSSRAsString` for optimizing component assembly under SSR
+* Added an optional `componentName` parameter to the `hydrateStyles` method.
+  This parameter allows for specifying the name of the component for which styles should be hydrated.
+* Added registration of styles for templates in SSR
+
+#### :house: Internal
+
+* The `hydrateStyles` method has been made public
+
+## v4.0.0-beta.104 (2024-06-19)
+
+#### :house: Internal
+
+* The getter `r` has been moved from `iBlock` to `ComponentInterface`
+
+## v4.0.0-beta.91 (2024-04-19)
+
+#### :house: Internal
+
+* Updated the `ssrRendering` prop usage mechanism
+
+## v4.0.0-beta.91 (2024-04-19)
+
+#### :house: Internal
+
+* Removed optional chaining from load function in loadModules block to ensure compliance with ES2018
+
+## 4.0.0-beta.79 (2024-03-29)
+
+#### :house: Internal
+
+* Fixed the signature of the i18n factory passed to the data provider's parameters
+
+## 4.0.0-beta.78 (2024-03-29)
+
+#### :bug: Bug Fix
+
+* Fixed binding of the data provider to the component during initialization
+
+## 4.0.0-beta.75 (2024-03-22)
+
+#### :rocket: New Feature
+
+* Added the ability to add event handlers before the others
+
+## 4.0.0-beta.71 (2024-03-12)
+
+#### :bug: Bug Fix
+
+* Fixed the operation of loadModules during SSR
+
+## v4.0.0-beta.68 (2024-02-29)
+
+#### :bug: Bug Fix
+
+* Fixed the `wait` option in `loadModules` for SSR build
+
+## v4.0.0-beta.65 (2024-02-21)
+
+#### :bug: Bug Fix
+
+* Created separate buckets for each `loadModules` call
+* Fixed the `wait` option in `loadModules`: now, all modules are not loaded until the wait option is resolved
+
+## v4.0.0-beta.64 (2024-02-19)
+
+#### :bug: Bug Fix
+
+* Need to check for the existence of provide properties using `in`
+
+## v4.0.0-beta.57 (2024-02-13)
+
+#### :bug: Bug Fix
+
+* Fixed a memory leak in `components/super/i-block/providers`
+
+## v4.0.0-beta.55 (2024-02-08)
+
+#### :house: Internal
+
+* Create a `mono` template in `i-block` for dynamic mono components. It disables vnode attribute hoisting.
+
+## v4.0.0-beta.54 (2024-02-06)
+
+#### :bug: Bug Fix
+
+* Changed component deactivation behavior: the component is now deactivated
+before the deactivation hooks are called
+* Changed `$parent` property to getter.
+This fixes the incorrect functional parent for a regular component.
+
+## v4.0.0-beta.44 (2023-12-06)
+
+#### :bug: Bug Fix
+
+* Fixes for SSR
+
+## v4.0.0-beta.40 (2023-11-17)
+
+#### :rocket: New Feature
+
+* Added new layout blocks - `bodyHeader` and `bodyFooter`
+
+## v4.0.0-beta.37 (2023-10-27)
+
+#### :rocket: New Feature
+
+* Added a new method `strictEmit` for strict event type checking
+
+## v4.0.0-beta.35 (2023-10-20)
+
+#### :rocket: New Feature
+
+* Added the ability to type events
+
+## v4.0.0-beta.34 (2023-10-20)
+
+#### :bug: Bug Fix
+
+* The method `createDataProviderInstance` should be accessible at `beforeCreate`
+
+## v4.0.0-beta.32 (2023-10-17)
+
+#### :rocket: New Feature
+
+* Added a factory to create data providers
+
 ## v4.0.0-beta.31 (2023-10-12)
 
 #### :rocket: New Feature

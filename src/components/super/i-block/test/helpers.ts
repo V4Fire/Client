@@ -10,7 +10,9 @@ import type { JSHandle, Page } from 'playwright';
 import { Component } from 'tests/helpers';
 
 import type bSuperIBlockDummy from 'components/super/i-block/test/b-super-i-block-dummy/b-super-i-block-dummy';
+import type bSuperIBlockModsDummy from 'components/super/i-block/test/b-super-i-block-mods-dummy/b-super-i-block-mods-dummy';
 import type bSuperIBlockWatchDummy from 'components/super/i-block/test/b-super-i-block-watch-dummy/b-super-i-block-watch-dummy';
+import type bSuperIBlockDestructorDummy from 'components/super/i-block/test/b-super-i-block-destructor-dummy/b-super-i-block-destructor-dummy';
 
 /**
  * Returns the rendered `b-super-i-block-dummy` component
@@ -19,9 +21,23 @@ import type bSuperIBlockWatchDummy from 'components/super/i-block/test/b-super-i
  * @param attrs
  */
 export async function renderDummy(
-	page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}
+	page: Page,
+	attrs: RenderComponentsVnodeParams['attrs'] = {}
 ): Promise<JSHandle<bSuperIBlockDummy>> {
 	return Component.createComponent(page, 'b-super-i-block-dummy', attrs);
+}
+
+/**
+ * Returns the rendered `b-super-i-block-mods-dummy` component
+ *
+ * @param page
+ * @param attrs
+ */
+export async function renderModsDummy(
+	page: Page,
+	attrs: RenderComponentsVnodeParams['attrs'] = {}
+): Promise<JSHandle<bSuperIBlockModsDummy>> {
+	return Component.createComponent(page, 'b-super-i-block-mods-dummy', attrs);
 }
 
 /**
@@ -32,4 +48,14 @@ export async function renderWatchDummy(
 	page: Page
 ): Promise<JSHandle<bSuperIBlockWatchDummy>> {
 	return Component.createComponent(page, 'b-super-i-block-watch-dummy');
+}
+
+/**
+ * Returns the rendered `b-super-i-block-destructor-dummy` component
+ * @param page
+ */
+export async function renderDestructorDummy(
+	page: Page
+): Promise<JSHandle<bSuperIBlockDestructorDummy>> {
+	return Component.createComponent(page, 'b-super-i-block-destructor-dummy');
 }

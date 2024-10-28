@@ -6,14 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-require('./modules/interface');
+'use strict';
 
 const
 	config = require('@config/config'),
-	runtime = config.runtime();
+	{Libs, StyleLibs, Links} = require('./modules/interface');
 
 const
-	{ssr} = config.webpack;
+	{ssr} = config.webpack,
+	runtime = config.runtime();
 
 const deps = {
 	/**
@@ -21,13 +22,10 @@ const deps = {
 	 * @type {Libs}
 	 */
 	scripts: new Map(
-		ssr ?
-			[] :
-
-			[
-				['requestidlecallback', {source: 'src', src: 'assets/lib/requestidlecallback.js'}],
-				['eventemitter2', {source: 'src', src: 'assets/lib/eventemitter2.js'}]
-			]
+		[
+			['requestidlecallback', {source: 'src', src: 'assets/lib/requestidlecallback.js'}],
+			['eventemitter2', {source: 'src', src: 'assets/lib/eventemitter2.js'}]
+		]
 	),
 
 	/**
@@ -57,7 +55,7 @@ if (!ssr) {
 
 		default:
 			if (!runtime.engine) {
-				throw new Error('An engine to use is not specified');
+				throw new Error('The engine to use is not specified');
 			}
 	}
 }

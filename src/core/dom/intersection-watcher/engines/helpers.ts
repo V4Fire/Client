@@ -17,7 +17,7 @@ const
 		setToCache = rectCache.set.bind(rectCache);
 
 	let
-		timer: Nullable<NodeJS.Timeout>;
+		timer: CanNull<ReturnType<typeof setTimeout>> = null;
 
 	rectCache.get = (key) => {
 		let
@@ -135,42 +135,95 @@ export function isElementInView(el: Element, root: Element, threshold: number): 
 	const
 		rect = rectCache.get(el)!;
 
-	const
-		minWidth = rect.width * threshold,
-		minHeight = rect.height * threshold;
-
 	if (root !== document.documentElement) {
 		const
-			rootRect = rectCache.get(root)!;
+			rootRect = rectCache.get(root)!,
+			areaInView = calcElementAreaInView(rect, rootRect);
 
+		if (areaInView < threshold) {
+			if (
+				rect.bottom > rootRect.bottom ||
+				rect.right > rootRect.right
+			) {
+				return InViewStatus.left;
+			}
+
+			if (
+				rect.top > rootRect.top ||
+				rect.left > rootRect.left
+			) {
+				return InViewStatus.right;
+			}
+		}
+	}
+
+	const areaInView = calcElementAreaInView(rect);
+
+	if (areaInView < threshold) {
 		if (
-			rootRect.bottom - rect.top < minHeight ||
-			rootRect.right - rect.left < minWidth
+			rect.bottom > innerHeight ||
+			rect.right > innerWidth
 		) {
 			return InViewStatus.left;
 		}
 
 		if (
-			rect.top - rootRect.top + rect.height < minHeight ||
-			rect.left - rootRect.left + rect.width < minWidth
+			rect.top < 0 ||
+			rect.left < 0
 		) {
 			return InViewStatus.right;
 		}
 	}
 
-	if (
-		rect.bottom - minHeight > innerHeight ||
-		rect.right - minWidth > innerWidth
-	) {
-		return InViewStatus.left;
-	}
-
-	if (
-		rect.top + minHeight < 0 ||
-		rect.left + minWidth < 0
-	) {
-		return InViewStatus.right;
-	}
-
 	return InViewStatus.true;
+}
+
+/**
+ * Calculates the area of the specified element that is in the viewport / in the view of a
+ * given scrollable root element.
+ * The function returns the size of the area in relative units.
+ *
+ * @param rect
+ * @param rootRect
+ */
+function calcElementAreaInView(rect: DOMRect, rootRect?: DOMRect): number {
+	const
+		topBound = rootRect?.top ?? 0,
+		rightBound = rootRect?.right ?? innerWidth,
+		bottomBound = rootRect?.bottom ?? innerHeight,
+		leftBound = rootRect?.left ?? 0,
+		rootWidth = rootRect?.width ?? innerWidth,
+		rootHeight = rootRect?.height ?? innerHeight;
+
+	let
+		heightInView: number,
+		widthInView: number;
+
+	if (rect.left >= leftBound && rect.right <= rightBound) {
+		widthInView = rect.width;
+
+	} else if (rect.left < leftBound && rect.right > rightBound) {
+		widthInView = rootWidth;
+
+	} else if (rect.right > rightBound) {
+		widthInView = Math.max(0, rect.width - (rect.right - rightBound));
+
+	} else {
+		widthInView = Math.max(0, rect.right);
+	}
+
+	if (rect.top >= topBound && rect.bottom <= bottomBound) {
+		heightInView = rect.height;
+
+	} else if (rect.top < topBound && rect.bottom > bottomBound) {
+		heightInView = rootHeight;
+
+	} else if (rect.bottom > bottomBound) {
+		heightInView = Math.max(0, rect.height - (rect.bottom - bottomBound));
+
+	} else {
+		heightInView = Math.max(0, rect.bottom);
+	}
+
+	return (widthInView / rect.width) * (heightInView / rect.height);
 }

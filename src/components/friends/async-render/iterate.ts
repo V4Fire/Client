@@ -8,32 +8,35 @@
 
 import type { TaskCtx } from 'core/async';
 
-import type { ComponentElement } from 'core/component';
+import { ASYNC_RENDER_ID, ComponentElement } from 'core/component';
 import type { VNode } from 'core/component/engines';
 
 import type Friend from 'components/friends/friend';
 import { render } from 'components/friends/vdom';
 
-import { addRenderTask, destroyNode as nodeDestructor } from 'components/friends/async-render/helpers/render';
+import { addRenderTask } from 'components/friends/async-render/helpers/render';
 import { getIterDescriptor } from 'components/friends/async-render/helpers/iter';
 
-import type { TaskOptions, IterDescriptor } from 'components/friends/async-render/interface';
+import type { TaskOptions, TaskParams, IterDescriptor } from 'components/friends/async-render/interface';
 
 const
 	isCached = Symbol('Is cached');
 
+let
+	iteratorCounter = 0;
+
 /**
- * Creates an asynchronous render stream from the specified value.
- * It returns a list of element to the first synchronous render.
+ * Creates an asynchronous render stream from the specified value and returns a list of elements for
+ * the first synchronous render.
  *
- * This function helps optimize component rendering by splitting big render tasks into smaller ones.
+ * This function optimizes component rendering by splitting large render tasks into smaller ones.
  *
  * @param value
  * @param [sliceOrOpts] - elements per chunk or `[start position, elements per chunk]` or additional options
  * @param [opts] - additional options
  *
- * @emits `localEmitter` `asyncRenderChunkComplete(e: TaskParams)`
- * @emits `localEmitter` `asyncRenderComplete(e: TaskParams)`
+ * @emits `localEmitter.asyncRenderChunkComplete(e: TaskParams)`
+ * @emits `localEmitter.asyncRenderComplete(e: TaskParams)`
  *
  * @example
  * ```
@@ -47,9 +50,12 @@ const
 export function iterate(
 	this: Friend,
 	value: unknown,
-	sliceOrOpts: number | [number?, number?] | TaskOptions = 1,
+	sliceOrOpts?: number | [number?, number?] | TaskOptions,
 	opts: TaskOptions = {}
 ): unknown[] {
+	const
+		iterateId = iteratorCounter++;
+
 	if (value == null) {
 		return [];
 	}
@@ -72,26 +78,29 @@ export function iterate(
 		{filter, weight = 1} = opts;
 
 	let
-		start,
-		perChunk;
+		start: CanUndef<number>,
+		perChunk = 1;
 
 	if (Object.isArray(sliceOrOpts)) {
 		start = sliceOrOpts[0];
-		perChunk = sliceOrOpts[1];
+		perChunk = sliceOrOpts[1] ?? perChunk;
 
 	} else {
-		perChunk = sliceOrOpts;
+		perChunk = sliceOrOpts ?? perChunk;
 	}
 
-	const
-		iter: IterDescriptor = getIterDescriptor.call(this, value, {start, perChunk, filter});
+	const iter: IterDescriptor = getIterDescriptor.call(this, value, {
+		start,
+		perChunk,
+		filter
+	});
 
 	let
 		toVNode: AnyFunction<unknown[], CanArray<VNode>>,
 		target: VNode;
 
-	ctx.$once('[[V_FOR_CB]]', setVNodeCompiler);
-	ctx.$once('[[V_ASYNC_TARGET]]', setTarget);
+	ctx.$on('[[V_FOR_CB]]', setVNodeCompiler, {prepend: true});
+	ctx.$on('[[V_ASYNC_TARGET]]', setTarget, {prepend: true});
 
 	let
 		iterI = iter.readI + 1,
@@ -106,199 +115,247 @@ export function iterate(
 
 	let
 		group = 'asyncComponents',
-		valsToRender: unknown[] = [];
+		valuesToRender: Array<CanPromise<unknown>> = [];
 
 	let
-		lastTask,
-		lastEvent;
+		lastTask: Nullable<() => CanPromise<void>>,
+		lastTaskParams: Nullable<TaskParams>;
 
-	if (!SSR) {
-		$a.setImmediate(async () => {
-			ctx.$off('[[V_FOR_CB]]', setVNodeCompiler);
-			ctx.$off('[[V_ASYNC_TARGET]]', setTarget);
+	// This ID will mark the vnode array to ensure that async-render is used for the correct async-target
+	Object.defineProperty(iter.readEls, ASYNC_RENDER_ID, {
+		enumerable: false,
+		configurable: false,
+		writable: false,
+		value: iterateId
+	});
 
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (target == null) {
-				throw new ReferenceError('There is no host node to append asynchronously render elements');
+	if (SSR) {
+		return iter.readEls;
+	}
+
+	let
+		nextIter: CanUndef<CanPromise<IteratorResult<unknown>>>;
+
+	$a.setImmediate(async () => {
+		ctx.$off('[[V_FOR_CB]]', setVNodeCompiler);
+		ctx.$off('[[V_ASYNC_TARGET]]', setTarget);
+		iteratorCounter = 0;
+
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		if (target == null) {
+			throw new ReferenceError('There is no host node to append asynchronously render elements');
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		if (toVNode == null) {
+			return;
+		}
+
+		// Using `while` instead of `for of` helps to iterate over synchronous and asynchronous iterators
+		// with a single loop
+		// eslint-disable-next-line no-constant-condition
+		rendering: while (true) {
+			if (opts.group != null) {
+				group = `asyncComponents:${Object.isFunction(opts.group) ? opts.group() : opts.group}:${chunkI}`;
 			}
 
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (toVNode == null) {
-				return;
-			}
+			let
+				iterRes: CanPromise<IteratorResult<unknown>> = nextIter ?? iter.iterator.next();
 
-			// Using `while` instead of `for of` helps to iterate over synchronous and asynchronous iterators
-			// with a single loop
-			// eslint-disable-next-line no-constant-condition
-			rendering: while (true) {
-				if (opts.group != null) {
-					group = `asyncComponents:${opts.group}:${chunkI}`;
-				}
+			try {
+				iterRes = Object.isPromise(iterRes) ? await $a.promise(iterRes, {group}) : iterRes;
 
-				let
-					el: CanPromise<IteratorResult<unknown>> = iter.iterator.next();
-
-				try {
-					el = Object.isPromise(el) ? await $a.promise(el, {group}) : el;
-
-					if (el.done) {
-						break;
-					}
-
-				} catch (err) {
-					stderr(err);
+				if (iterRes.done) {
 					break;
 				}
 
-				try {
-					const
-						iterVal = Object.isPromise(el.value) ? await $a.promise(el.value, {group}) : el.value;
+			} catch (err) {
+				stderr(err);
+				break;
+			}
 
-					if (filter != null) {
-						const needRender = filter.call(this.ctx, iterVal, iterI, {
-							total,
-							chunk: chunkI,
-							iterable: iter.iterable
-						});
+			// eslint-disable-next-line require-atomic-updates
+			nextIter = iter.iterator.next();
 
-						if (Object.isPromise(needRender)) {
-							await $a.promise(needRender, {group}).then(
-								(res) => resolveTask(iterVal, res === undefined || Object.isTruly(res))
-							);
+			try {
+				const el = Object.isPromise(iterRes.value) ?
+					await $a.promise(iterRes.value, {group}) :
+					iterRes.value;
 
-						} else {
-							const
-								res = resolveTask(iterVal, Object.isTruly(needRender));
+				if (filter != null) {
+					const needRender = filter.call(this.ctx, el, iterI, {
+						total,
+						chunk: chunkI,
+						iterable: iter.iterable
+					});
 
-							if (res != null) {
-								await res;
-							}
-						}
+					if (Object.isPromise(needRender)) {
+						await $a.promise(needRender, {group}).then(
+							(res) => createRenderTask(el, res === undefined || Object.isTruly(res))
+						);
 
 					} else {
-						const
-							res = resolveTask(iterVal);
+						const res = createRenderTask(el, Object.isTruly(needRender));
 
 						if (res != null) {
 							await res;
 						}
 					}
 
-					iterI++;
+				} else {
+					const res = createRenderTask(el);
+
+					if (res != null) {
+						await res;
+					}
+				}
+
+				iterI++;
+
+			} catch (err) {
+				if (Object.get(err, 'type') === 'clearAsync') {
+					const
+						taskCtx = Object.cast<TaskCtx>(err);
+
+					switch (taskCtx.reason) {
+						case 'all':
+							break rendering;
+
+						case 'rgxp':
+						case 'group':
+							if (taskCtx.link.group === group) {
+								break rendering;
+							}
+
+							break;
+
+						default:
+							// Ignore
+					}
+				}
+
+				stderr(err);
+
+				// Avoiding infinite loop
+				await $a.sleep(0, {group});
+			}
+		}
+
+		if (lastTask != null) {
+			awaiting++;
+
+			const
+				res = lastTask();
+
+			if (res != null) {
+				await res;
+			}
+		}
+
+		if (awaiting <= 0) {
+			localEmitter.emit('asyncRenderComplete', lastTaskParams);
+
+		} else {
+			const id = localEmitter.on('asyncRenderChunkComplete', async () => {
+				try {
+					// eslint-disable-next-line require-atomic-updates
+					nextIter = Object.isPromise(nextIter) ? await $a.promise(nextIter, {group}) : nextIter;
 
 				} catch (err) {
-					if (Object.get(err, 'type') === 'clearAsync') {
-						const
-							taskCtx = Object.cast<TaskCtx>(err);
-
-						switch (taskCtx.reason) {
-							case 'all':
-								break rendering;
-
-							case 'rgxp':
-							case 'group':
-								if (taskCtx.link.group === group) {
-									break rendering;
-								}
-
-								break;
-
-							default:
-							// Ignore
-						}
-					}
-
 					stderr(err);
-
-					// Avoiding infinite loop
-					await $a.sleep(0, {group});
 				}
-			}
 
-			if (lastTask != null) {
-				awaiting++;
-
-				const
-					res = lastTask();
-
-				if (res != null) {
-					await res;
+				if (awaiting <= 0) {
+					localEmitter.emit('asyncRenderComplete', lastTaskParams);
+					localEmitter.off(id);
 				}
-			}
-
-			if (awaiting <= 0) {
-				localEmitter.emit('asyncRenderComplete', lastEvent);
-
-			} else {
-				const id = localEmitter.on('asyncRenderChunkComplete', () => {
-					if (awaiting <= 0) {
-						localEmitter.emit('asyncRenderComplete', lastEvent);
-						localEmitter.off(id);
-					}
-				});
-			}
-		}, {group});
-	}
+			});
+		}
+	}, {group});
 
 	return iter.readEls;
 
-	function setVNodeCompiler(c: AnyFunction) {
-		toVNode = c;
+	function isChildOf(vnode: VNode, id: number): boolean {
+		if (vnode.children?.[ASYNC_RENDER_ID] === id) {
+			return true;
+		}
+
+		if (Object.isArray(vnode.children)) {
+			return vnode.children.some((c) => isChildOf(Object.cast(c), id));
+		}
+
+		return false;
 	}
 
-	function setTarget(t: VNode) {
-		target = t;
+	function setVNodeCompiler(e: {wrappedCb: AnyFunction; handled?: boolean}) {
+		if (e.handled) {
+			return;
+		}
+
+		e.handled = true;
+		toVNode = e.wrappedCb;
+
+		ctx.$off('[[V_FOR_CB]]', setVNodeCompiler);
 	}
 
-	function resolveTask(iterVal: unknown, filter?: boolean) {
+	function setTarget(vnode: VNode) {
+		if (isChildOf(vnode, iterateId)) {
+			target = vnode;
+			ctx.$off('[[V_ASYNC_TARGET]]', setTarget);
+		}
+	}
+
+	function createRenderTask(value: CanPromise<unknown>, filter?: boolean) {
 		if (filter === false) {
 			return;
 		}
 
 		total++;
 		chunkTotal++;
-		valsToRender.push(iterVal);
+		valuesToRender.push(value);
 
 		lastTask = () => {
 			lastTask = null;
 			awaiting++;
-
 			return addRenderTask.call(that, task, {group, weight});
 		};
 
-		if (!Object.isPromise(iterVal) && chunkTotal < perChunk) {
+		const isNotLastLast =
+			chunkTotal < perChunk &&
+			!Object.isPromise(value) &&
+			!Object.isPromise(nextIter) && nextIter?.done !== true;
+
+		if (isNotLastLast) {
 			return;
 		}
 
 		return lastTask();
 
 		function task() {
-			const
-				renderedVNodes: Node[] = [];
+			const renderedVNodes: Node[] = [];
 
 			ctx.vdom.withRenderContext(() => {
-				valsToRender.forEach((el) => {
-					const vnodes = Array.concat([], toVNode(el, iterI)).flatMap((vnode) => {
+				const vnodes = valuesToRender.flatMap((el) => {
+					const rawVNodes = Array.toArray(toVNode(el, iterI));
+
+					return rawVNodes.flatMap((vnode) => {
 						if (Object.isSymbol(vnode.type) && Object.isArray(vnode.children)) {
 							return <VNode[]>vnode.children;
 						}
 
 						return vnode;
 					});
-
-					vnodes.forEach(renderVNode);
 				});
 
-				valsToRender = [];
+				vnodes.forEach(renderVNode);
+				valuesToRender = [];
 
 				chunkI++;
 				chunkTotal = 0;
 				awaiting--;
 
-				lastEvent = {...opts, renderGroup: group};
-				localEmitter.emit('asyncRenderChunkComplete', lastEvent);
-
-				$a.worker(destructor, {group});
+				lastTaskParams = {...opts, renderGroup: group};
+				localEmitter.emit('asyncRenderChunkComplete', lastTaskParams);
 			});
 
 			function renderVNode(vnode: VNode) {
@@ -310,7 +367,7 @@ export function iterate(
 					renderedVnode = Object.cast(vnode.el);
 
 				} else {
-					renderedVnode = render.call(that, Object.cast(vnode));
+					renderedVnode = render.call(that, Object.cast(vnode), group);
 				}
 
 				const
@@ -319,35 +376,37 @@ export function iterate(
 				if (nodeToMount != null) {
 					if (Object.isArray(renderedVnode)) {
 						renderedVNodes.push(...renderedVnode);
-						renderedVnode.forEach((renderedVnode) => nodeToMount.appendChild(renderedVnode));
+
+						renderedVnode.forEach((renderedVnode) => {
+							nodeToMount.appendChild(renderedVnode);
+							$a.worker(destroyNode(renderedVnode), {group});
+						});
 
 					} else if (renderedVnode != null) {
 						renderedVNodes.push(renderedVnode);
 						nodeToMount.appendChild(renderedVnode);
+						$a.worker(destroyNode(renderedVnode), {group});
 					}
 				}
-			}
 
-			function destructor() {
-				renderedVNodes.forEach(destroyNode);
-
-				function destroyNode(el: CanUndef<ComponentElement | Node>) {
-					if (el == null) {
-						return;
-					}
-
-					if (el[isCached] != null) {
-						delete el[isCached];
-						$a.worker(() => destroyNode(el), {group});
-
-					} else {
-						const
-							els = el instanceof Element ? Array.from(el.querySelectorAll('.i-block-helper')) : [];
-
-						if (opts.destructor?.(el, els) !== true) {
-							nodeDestructor.call(that, el, els);
+				function destroyNode(el: Nullable<ComponentElement | Node>) {
+					return () => {
+						if (el == null) {
+							return;
 						}
-					}
+
+						const getChildComponents = () => el instanceof Element ?
+							Array.from(el.querySelectorAll('.i-block-helper')) :
+							[];
+
+						if (el[isCached] != null) {
+							delete el[isCached];
+							$a.worker(destroyNode(el), {group});
+
+						} else if (opts.destructor?.(el, getChildComponents()) === true) {
+							vnode.skipDestruction = true;
+						}
+					};
 				}
 			}
 		}

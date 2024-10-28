@@ -26,7 +26,7 @@
 					< component.&__option.&__item &
 						:is = getItemComponentName(el, i) |
 						:key = getItemKey(el, i) |
-						:v-attrs = getItemAttrs(el, i)
+						v-attrs = getItemAttrs(el, i)
 					.
 
 				+= self.slot('afterItems')
@@ -51,7 +51,7 @@
 				< .&__view-content ref = content
 					+= content
 
-		< .&__window v-else
+		< .&__window v-else-if = !useScrollSnap
 			< .&__view ref = view
 				< .&__fake-view-content v-if = dynamicHeight
 					+= content
@@ -59,5 +59,9 @@
 				< .&__outer-view-wrapper ref = contentWrapper
 					< .&__view-content ref = content
 						+= content
+
+		< .&__window v-else
+			< .g-slider
+				+= content
 
 		+= self.slot('after')

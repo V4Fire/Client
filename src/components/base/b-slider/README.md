@@ -188,6 +188,14 @@ The delay (in milliseconds) between the last user gesture and the first automati
 It will be capped at the maximum value between `autoSlideInterval` and `autoSlidePostGestureDelay`,
 and will be used as a timeout for the first automatic slide movement after a user gesture.
 
+#### [useScrollSnap = `false`]
+
+The flag enables CSS scroll snap mechanism. When set to `true` the [CSS scroll snap](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll_snap) will be enabled.
+The default value is `false`.
+
+CSS Scroll Snap is a feature that allows for smooth scrolling by defining specific snap points.
+Regular scrolling is the default behavior of unrestricted scrolling through content.
+
 ## Fields
 
 #### current
@@ -220,8 +228,7 @@ Switches to the specified slide by an index.
 
 ```typescript
 class Test extends iData {
-  /** @override */
-  protected $refs!: {
+  declare protected readonly $refs: iData['$refs'] & {
     slider: bSlider
   };
 
@@ -237,8 +244,7 @@ Moves to the next or previous slide.
 
 ```typescript
 class Test extends iData {
-  /** @override */
-  protected $refs!: {
+  declare protected readonly $refs: iData['$refs'] & {
     slider: bSlider
   };
 

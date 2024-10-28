@@ -38,12 +38,15 @@ import type {
 
 } from 'components/super/i-data/interface';
 
-const
-	$$ = symbolGenerator();
+const $$ = symbolGenerator();
 
 interface iDataData extends Trait<typeof iDataProvider> {}
 
-@component({functional: null})
+@component({
+	partial: 'iData',
+	functional: null
+})
+
 @derive(iDataProvider)
 abstract class iDataData extends iBlock implements iDataProvider {
 	/**
@@ -60,11 +63,11 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	dataProvider?: DataProvider;
 
 	/** {@link iDataProvider.dataProviderOptions} */
-	@prop({type: Object, required: false})
+	@prop({type: Object, required: false, forceUpdate: false})
 	readonly dataProviderOptions?: DataProviderOptions;
 
 	/** {@link iDataProvider.request} */
-	@prop({type: [Object, Array], required: false})
+	@prop({type: [Object, Array], required: false, forceUpdate: false})
 	readonly request?: RequestParams;
 
 	/**
@@ -85,7 +88,14 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	 * These functions step by step transform the original provider data before storing it in `db`.
 	 * {@link iDataProvider.dbConverter}
 	 */
-	@system((o) => o.sync.link('dbConverter', (val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
+	@system((o) => o.sync.link('dbConverter', (val) => {
+		if (val == null) {
+			return [];
+		}
+
+		return Object.isIterable(val) ? [...val] : [val];
+	}))
+
 	dbConverters!: ComponentConverter[];
 
 	/**
@@ -104,7 +114,14 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	 * A list of converters from the raw `db` to the component field
 	 * {@link iDataProvider.componentConverter}
 	 */
-	@system((o) => o.sync.link('componentConverter', (val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
+	@system((o) => o.sync.link('componentConverter', (val) => {
+		if (val == null) {
+			return [];
+		}
+
+		return Object.isIterable(val) ? [...val] : [val];
+	}))
+
 	componentConverters!: ComponentConverter[];
 
 	/**
@@ -145,7 +162,7 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	 * The raw component data from the data provider
 	 */
 	get db(): CanUndef<this['DB']> {
-		return this.field.get('dbStore');
+		return this.field.getFieldsStore<this>().dbStore;
 	}
 
 	/**
@@ -162,14 +179,13 @@ abstract class iDataData extends iBlock implements iDataProvider {
 			return;
 		}
 
-		const
-			{async: $a} = this;
+		const {async: $a} = this;
 
 		$a.terminateWorker({
 			label: $$.db
 		});
 
-		this.field.set('dbStore', value);
+		this.field.getFieldsStore<this>().dbStore = value;
 
 		if (this.initRemoteData() !== undefined) {
 			this.watch('dbStore', this.initRemoteData.bind(this), {
@@ -255,7 +271,11 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	 * This method is used to map `db` to bean properties.
 	 * If the method is used, it must return some value other than undefined.
 	 */
-	@watch('componentConverter')
+	@watch<iData>({
+		path: 'componentConverter',
+		shouldInit: (ctx) => ctx.componentConverter != null
+	})
+
 	protected initRemoteData(): CanUndef<unknown> {
 		return undefined;
 	}

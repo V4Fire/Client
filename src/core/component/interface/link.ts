@@ -23,7 +23,7 @@ export interface SyncLink<T = unknown> {
 }
 
 /**
- * A map that contains all registered links
+ * A map containing all registered links
  */
 export type SyncLinkCache<T = unknown> = Map<
 	string | object,

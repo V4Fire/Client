@@ -15,10 +15,14 @@ package('p-v4-components-demo')
 		'b-dynamic-page',
 		'b-remote-provider',
 
+		'b-cache-ssr',
+		'b-prevent-ssr',
+
 		'b-list',
 		'b-tree',
-		'b-virtual-scroll',
 		'b-window',
+		'b-virtual-scroll',
+		'b-virtual-scroll-new',
 		'b-bottom-slide',
 		'b-slider',
 		'b-sidebar',
@@ -44,6 +48,7 @@ package('p-v4-components-demo')
 		'components/directives/image',
 		'components/directives/icon',
 		'components/directives/in-view',
+		'components/directives/safe-html',
 
 		'core/router/engines/browser-history',
 		'core/router/engines/in-memory',
@@ -52,5 +57,9 @@ package('p-v4-components-demo')
 
 		'core/browser',
 		'core/cookies',
-		'core/html'
+		'core/html',
+		'core/html/xss',
+		'core/page-meta-data',
+
+		'models/modules/session'
 	);

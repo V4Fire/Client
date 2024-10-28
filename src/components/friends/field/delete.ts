@@ -7,16 +7,17 @@
  */
 
 import { unwrap } from 'core/object/watch';
+import { getPropertyInfo, V4_COMPONENT, PropertyInfo } from 'core/component';
 
 import type Friend from 'components/friends/friend';
-import iBlock, { getPropertyInfo } from 'components/super/i-block/i-block';
+import type iBlock from 'components/super/i-block/i-block';
 
 import type { KeyGetter } from 'components/friends/field/interface';
 
 /**
- * Deletes a component property by the specified path
+ * Deletes a component property at the specified path
  *
- * @param path - the property path, for instance `foo.bla.bar`
+ * @param path - the property path, for instance `foo.bla.bar`, or a property descriptor
  * @param keyGetter - a function that returns the key to delete
  *
  * @example
@@ -41,12 +42,12 @@ import type { KeyGetter } from 'components/friends/field/interface';
  * }
  * ```
  */
-export function deleteField(this: Friend, path: string, keyGetter?: KeyGetter): boolean;
+export function deleteField(this: Friend, path: string | PropertyInfo, keyGetter?: KeyGetter): boolean;
 
 /**
- * Deletes a property from the passed object by the specified path
+ * Deletes a property from the passed object at the specified path
  *
- * @param path - the property path, for instance `foo.bla.bar`
+ * @param path - the property path, for instance `foo.bla.bar`, or a property descriptor
  * @param [obj] - the object to delete the property
  * @param [keyGetter] - a function that returns the key to delete
  *
@@ -66,14 +67,14 @@ export function deleteField(this: Friend, path: string, keyGetter?: KeyGetter): 
  */
 export function deleteField(
 	this: Friend,
-	path: string,
+	path: string | PropertyInfo,
 	obj?: Nullable<object>,
 	keyGetter?: KeyGetter
 ): boolean;
 
 export function deleteField(
 	this: Friend,
-	path: string,
+	path: string | PropertyInfo,
 	obj: Nullable<object> = this.ctx,
 	keyGetter?: KeyGetter
 ): boolean {
@@ -86,28 +87,25 @@ export function deleteField(
 		return false;
 	}
 
-	let
-		{ctx} = this;
+	let {ctx} = this;
 
-	let
-		isComponent = false;
+	let isComponent = false;
 
-	if ((<Dictionary>obj).instance instanceof iBlock) {
+	if (typeof obj === 'object' && V4_COMPONENT in obj) {
 		ctx = (<iBlock>obj).unsafe;
 		isComponent = true;
 	}
 
 	let
-		sync,
+		sync: CanNull<() => boolean> = null,
 		needDeleteToWatch = isComponent;
 
 	let
 		ref = obj,
-		chunks;
+		chunks: string[];
 
 	if (isComponent) {
-		const
-			info = getPropertyInfo(path, ctx);
+		const info = Object.isString(path) ? getPropertyInfo(path, Object.cast(ctx)) : path;
 
 		const
 			isReady = !ctx.lfc.isBeforeCreate(),
@@ -116,14 +114,14 @@ export function deleteField(
 
 		ctx = Object.cast(info.ctx);
 
-		chunks = info.path.split('.');
+		chunks = info.path.includes('.') ? info.path.split('.') : [info.path];
 		chunks[0] = info.name;
 
 		if (isSystem || isField) {
 			// If the property has not yet been watched, do not force proxy creation
 			needDeleteToWatch = isReady && (
 				// eslint-disable-next-line @v4fire/unbound-method
-				!ctx.isFunctional || Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get)
+				!ctx.isFunctionalWatchers || Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get)
 			);
 
 			if (isSystem) {
@@ -135,17 +133,17 @@ export function deleteField(
 				// Otherwise, we must synchronize these properties between the proxy object and the component instance
 				} else {
 					const name = chunks[0];
-					sync = () => Object.delete(ctx.$systemFields, [name]);
+					sync = () => delete ctx.$systemFields[name];
 				}
 
-			} else if (ctx.isFunctional) {
+			} else if (ctx.isFunctionalWatchers) {
 				ref = ctx.$fields;
 
 				// If the component has not yet initialized field watchers,
 				// we must synchronize these properties between the proxy object and the component instance
 				if (unwrap(ref) === ref) {
 					const name = chunks[0];
-					sync = () => Object.delete(ctx, [name]);
+					sync = () => delete ctx[name];
 				}
 
 			} else {
@@ -154,37 +152,47 @@ export function deleteField(
 		}
 
 	} else {
-		chunks = path.split('.');
+		if (!Object.isString(path)) {
+			path = path.originalPath;
+		}
+
+		chunks = path.includes('.') ? path.split('.') : [path];
 	}
 
 	let
 		needDelete = true,
-		prop;
+		prop = keyGetter ? <PropertyKey>keyGetter(chunks[0], ref) : chunks[0];
 
-	for (let i = 0; i < chunks.length; i++) {
-		prop = keyGetter ? keyGetter(chunks[i], ref) : chunks[i];
+	if (chunks.length > 1) {
+		chunks.some((chunk, i) => {
+			prop = keyGetter ? <PropertyKey>keyGetter(chunk, ref) : chunk;
 
-		if (i + 1 === chunks.length) {
-			break;
-		}
+			if (i + 1 === chunks.length) {
+				return true;
+			}
 
-		const
-			newRef = Object.get(ref, [prop]);
+			const newRef = Object.isMap(ref) ? ref.get(prop) : ref[prop];
 
-		if (newRef == null || typeof newRef !== 'object') {
-			needDelete = false;
-			break;
-		}
+			if (newRef == null || typeof newRef !== 'object') {
+				needDelete = false;
+				return true;
+			}
 
-		ref = newRef;
+			ref = newRef;
+			return false;
+		});
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (needDelete) {
 		if (needDeleteToWatch) {
 			ctx.$delete(ref, prop);
 
+		} else if (Object.isMap(ref)) {
+			ref.delete(prop);
+
 		} else {
-			Object.delete(ref, [prop]);
+			delete ref[prop];
 		}
 
 		if (sync != null) {

@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 const
 	{webpack, csp, i18n} = require('@config/config'),
 	{getScriptDecl} = include('src/components/super/i-static-page/modules/ss-helpers/tags');
@@ -13,11 +15,11 @@ const
 exports.getVarsDecl = getVarsDecl;
 
 /**
- * Returns declaration of global variables to initialize the application.
- * You need to put this declaration within a script tag or use the `wrap` option.
+ * Returns the declaration of global variables to initialize the application.
+ * You need to put this declaration within a `<script>` tag or use the `wrap` option.
  *
- * @param {object} [opts]
- * @param {boolean} [opts.wrap] - if true, the declaration is wrapped by a script tag
+ * @param {object} [opts] - additional options
+ * @param {boolean} [opts.wrap] - if set to true, the declaration will be wrapped by a `<script>` tag
  * @returns {string}
  */
 function getVarsDecl({wrap} = {}) {
@@ -50,7 +52,7 @@ try {
 				return typeof v === 'string' ? v : v.publicPath || v.path;
 			}
 
-			throw new ReferenceError('A resource by the path "' + prop + '" is not defined');
+			throw new ReferenceError('The resource at the path "' + prop + '" is not defined');
 		}
 	});
 } catch (_) {}`;

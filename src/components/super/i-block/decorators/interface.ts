@@ -69,7 +69,7 @@ export type WaitStatuses =
 
 export interface WaitDecoratorOptions extends AsyncOptions {
 	/**
-	 * If true, then the wrapped function will always be executed deferred
+	 * If set to true, the wrapped function will always be executed deferred
 	 * @default `false`
 	 */
 	defer?: boolean;

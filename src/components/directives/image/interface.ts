@@ -12,6 +12,12 @@ import type { createVNode, VNode, DirectiveBinding } from 'core/component/engine
 
 export interface DirectiveParams extends DirectiveBinding<ImageOptions> {}
 
+export interface SSRDirectiveParams extends DirectiveParams {
+	bindings?: Dictionary & {
+		style: Dictionary<string>;
+	};
+}
+
 export type OptionsResolver = (opts: ImageOptions) => ImageOptions;
 
 export type ImagePlaceholderOptions = Omit<ImageOptions, 'lazy' | 'preview' | 'broken'>;
@@ -138,6 +144,79 @@ export interface ImageOptions {
 	 * ```
 	 */
 	optionsResolver?: OptionsResolver;
+
+	/**
+	 * Indicates whether the image can be dragged,
+	 * either with native browser behavior or the HTML Drag and Drop API
+	 */
+	draggable?: boolean;
+
+	/**
+	 * A boolean value which indicates that the image is to be used by a server-side image map.
+	 * This may only be used on images located within an `<a>` element.
+	 */
+	isMap?: boolean;
+
+	/**
+	 * The partial URL (starting with `#`) of an image map associated with the element
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#usemap
+	 */
+	useMap?: string;
+
+	/**
+	 * A string indicating which referrer to use when fetching the resource
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#referrerpolicy
+	 */
+	referrerPolicy?: ReferrerPolicy;
+
+	/**
+	 * Indicates if the fetching of the image must be done using a CORS request.
+	 * Image data from a CORS-enabled image returned from a CORS request can be reused in the `<canvas>` element
+	 * without being marked `tainted`.
+	 *
+	 * Allowed values are:
+	 * - `anonymous` - a CORS request is sent with credentials omitted;
+	 * - `use-credentials` - the CORS request is sent with any credentials included.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#crossorigin
+	 */
+	crossOrigin?: 'anonymous' | 'use-credentials';
+
+	/**
+	 * Indicates whether the browser should decode images synchronously with other DOM content
+	 * for a more accurate presentation, or asynchronously to render other content first and display the image later.
+	 *
+	 * Allowed values are:
+	 * - `sync` - decode the image synchronously along with rendering
+	 *    the other DOM content, and present everything together;
+	 * - `async` - decode the image asynchronously, after rendering and
+	 *    presenting the other DOM content;
+	 * - `auto` - no preference for the decoding mode (the browser decides what is best for the user).
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#decoding
+	 */
+	decoding?: 'sync' | 'async' | 'auto';
+
+	/**
+	 * Indicates that an element is flagged for tracking by PerformanceObserver
+	 * objects using the "element" type
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/elementtiming
+	 */
+	elementTiming?: string;
+
+	/**
+	 * A hint of the relative priority to use when fetching the image.
+	 *
+	 * Allowed values are:
+	 * - `high` - fetch the image at a high priority relative to other images;
+	 * - `low` - fetch the image at a low priority relative to other images;
+	 * - `auto` - default mode, which indicates no preference for the fetch priority
+	 *   (the browser decides what is best for the user).
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/fetchPriority
+	 */
+	fetchPriority?: 'high' | 'low' | 'auto';
 }
 
 export interface ImageSource {
@@ -194,5 +273,5 @@ export interface ImageSource {
 
 export interface VirtualElement<E, V = VNode> {
 	toVNode(create: typeof createVNode): V extends [] ? VNode[] : VNode;
-	toElement(): E;
+	toElement(document?: Document): E;
 }

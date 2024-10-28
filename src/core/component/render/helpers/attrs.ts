@@ -8,10 +8,10 @@
 
 import { evalWith } from 'core/json';
 
+import { beforeMountHooks } from 'core/component/const';
 import type { VNode } from 'core/component/engines';
 
 import { isHandler, mergeProps } from 'core/component/render/helpers/props';
-import { setVNodePatchFlags } from 'core/component/render/helpers/flags';
 
 import type { ComponentInterface } from 'core/component/interface';
 
@@ -48,11 +48,13 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	} = vnode;
 
 	const {
-		meta: {params},
+		meta,
+		meta: {params: {functional}},
 		$renderEngine: {r}
 	} = this;
 
-	if (ref != null) {
+	// Setting the ref instance for the case of async rendering (does not work with SSR)
+	if (!SSR && ref != null) {
 		ref.i ??= r.getCurrentInstance();
 	}
 
@@ -69,12 +71,10 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	}
 
 	{
-		const
-			key = 'v-attrs';
+		const key = 'v-attrs';
 
 		if (props[key] != null) {
-			const
-				dir = r.resolveDirective.call(this, 'attrs');
+			const dir = r.resolveDirective.call(this, 'attrs');
 
 			dir.beforeCreate({
 				dir,
@@ -94,31 +94,72 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	}
 
 	{
-		const
-			key = 'data-has-v-on-directives';
+		const key = 'v-ref';
 
 		if (props[key] != null) {
-			setVNodePatchFlags(vnode, 'props');
+			const
+				value = props[key],
+				dir = r.resolveDirective.call(this, 'ref');
 
-			const dynamicProps = vnode.dynamicProps ?? [];
-			vnode.dynamicProps = dynamicProps;
+			const descriptor = {
+				once: true,
+				fn: () => {
+					dir.mounted(vnode.el, {
+						dir,
 
-			Object.keys(props).forEach((prop) => {
-				if (isHandler.test(prop)) {
-					dynamicProps.push(prop);
+						modifiers: {},
+						arg: undefined,
+
+						value,
+						oldValue: undefined,
+
+						instance: this
+					}, vnode);
 				}
-			});
+			};
+
+			const beforeMount = beforeMountHooks[this.hook] != null;
+
+			if (beforeMount || functional === true) {
+				meta.hooks['before:mounted'].push(descriptor);
+
+			} else {
+				this.$nextTick(descriptor.fn);
+			}
+		}
+
+		delete props[key];
+	}
+
+	{
+		const key = 'data-has-v-on-directives';
+
+		if (props[key] != null) {
+			if (SSR || this.meta.params.functional === true) {
+				const dynamicProps = vnode.dynamicProps ?? [];
+				vnode.dynamicProps = dynamicProps;
+
+				Object.keys(props).forEach((prop) => {
+					if (isHandler.test(prop)) {
+						if (SSR) {
+							delete props![prop];
+
+						} else {
+							dynamicProps.push(prop);
+						}
+					}
+				});
+			}
 
 			delete props[key];
 		}
 	}
 
 	{
-		const
-			key = 'data-cached-class-component-id';
+		const key = 'data-cached-class-component-id';
 
 		if (props[key] != null) {
-			if (props[key] === 'true' && params.functional !== true) {
+			if (props[key] === 'true' && functional !== true) {
 				Object.assign(props, mergeProps({class: props.class}, {class: this.componentId}));
 			}
 

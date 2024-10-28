@@ -6,11 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 const
 	{src, webpack, favicons} = require('@config/config');
 
 const
-	glob = require('glob'),
+	glob = require('fast-glob'),
 	fs = require('fs-extra'),
 	path = require('upath');
 
@@ -22,7 +24,7 @@ const
 exports.getFaviconsDecl = getFaviconsDecl;
 
 /**
- * Returns declaration of the project favicons
+ * Returns the declaration of project favicons
  *
  * @param {boolean} canInlineSourceCode
  * @returns {string}

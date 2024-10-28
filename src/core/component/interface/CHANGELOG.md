@@ -9,6 +9,62 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.139.dsl-speedup-2 (2024-10-03)
+
+#### :rocket: New Feature
+
+* Added a new default prop `getPassedProps`, which allows identifying which props were passed through the template
+
+## v4.0.0-beta.121.the-phantom-menace (2024-08-05)
+
+#### :boom: Breaking Change
+
+* Removed the `renderedOnce` field
+* The `$renderCounter` field is now public and updates after each call to the render function
+
+#### :rocket: New Feature
+
+* Added the `createPropAccessors` method for creating accessors for props marked as `forceUpdate: false`
+
+## v4.0.0-beta.105 (2024-06-24)
+
+#### :bug: Bug Fix
+
+* Fixed unwanted execution of unmount handlers in the directives used
+  within the functional component during its re-creation.
+  The `$destroy` method now accepts an object with options, which enables control over
+  both the recursion of the destructor and the unmounting of vnodes
+  within the component
+
+## v4.0.0-beta.104 (2024-06-19)
+
+#### :rocket: New Feature
+
+* The `$destroy` method now accepts a recursive parameter for targeted removal
+  of the component without deleting its children and vice versa
+
+#### :house: Internal
+
+* The getter `r` has been moved from `iBlock` to `ComponentInterface`
+
+## v4.0.0-beta.91 (2024-04-19)
+
+#### :rocket: New Feature
+
+* Added `$getRoot` and `$getParent` methods to the `ComponentInterface`
+
+## v4.0.0-beta.62 (2024-02-19)
+
+#### :rocket: New Feature
+
+* Added an app property to get a reference to the application object
+
+## v4.0.0-beta.32 (2023-10-17)
+
+#### :rocket: New Feature
+
+* Added support for setting a global application ID
+
 ## v4.0.0-beta.22 (2023-09-15)
 
 #### :rocket: New Feature

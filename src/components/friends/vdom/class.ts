@@ -14,6 +14,10 @@ import type { RenderFactory, RenderFn, ComponentInterface } from 'components/sup
 
 import type { VNodeDescriptor, VNodeOptions } from 'components/friends/vdom/interface';
 
+//#if runtime has dummyComponents
+import('components/friends/vdom/test/b-friends-vdom-dummy');
+//#endif
+
 interface VDOM {
 	closest<T extends iBlock = iBlock>(component: string | ClassConstructor<any[], T> | Function): CanNull<T>;
 	findElement(name: string, where: VNode, ctx?: iBlock): CanNull<VNode>;
@@ -22,8 +26,8 @@ interface VDOM {
 	create(...descriptors: VNodeDescriptor[]): VNode[];
 	create(descriptors: VNodeDescriptor[]): VNode[];
 
-	render(vnode: VNode): Node;
-	render(vnodes: VNode[]): Node[];
+	render(vnode: VNode, group?: string): Node;
+	render(vnodes: VNode[], group?: string): Node[];
 
 	getRenderFactory(path: string): CanUndef<RenderFactory>;
 	getRenderFn(factoryOrPath: CanUndef<RenderFactory> | string, ctx?: ComponentInterface): RenderFn;
@@ -83,11 +87,9 @@ class VDOM extends Friend {
 	 * Saves the component active rendering context
 	 */
 	saveRenderContext(): void {
-		const
-			{ctx} = this;
+		const {ctx} = this;
 
-		const
-			withCtx = ctx.$renderEngine.r.withCtx((cb) => cb());
+		const withCtx = ctx.$renderEngine.r.withCtx((cb) => cb());
 
 		ctx.$withCtx = (cb) => {
 			if (ctx.hook === 'mounted' || ctx.hook === 'updated') {

@@ -6,28 +6,22 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Provider, {
-
-	providers,
-
-	requestCache,
-	instanceCache,
-
-	ModelMethod,
-	RequestQuery,
-	RequestBody
-
-} from 'core/data';
+import type Provider from 'core/data';
+import type { ModelMethod, RequestQuery, RequestBody } from 'core/data';
 
 import type { ReadonlyEventEmitterWrapper } from 'core/async';
 
 import Friend, { fakeMethods } from 'components/friends/friend';
 import type { CreateRequestOptions } from 'components/traits/i-data-provider/i-data-provider';
 
-import type iBlock from 'components/super/i-block';
+import type iBlock from 'components/super/i-block/i-block';
 import type iDataProvider from 'components/traits/i-data-provider/i-data-provider';
 
 import type { DataProviderProp, DataProviderOptions, DefaultRequest } from 'components/friends/data-provider/interface';
+
+//#if runtime has dummyComponents
+import('components/friends/data-provider/test/provider');
+//#endif
 
 interface DataProvider {
 	url(): CanUndef<string>;
@@ -59,15 +53,20 @@ interface DataProvider {
 )
 
 class DataProvider extends Friend {
-	override readonly C!: iBlock & iDataProvider;
+	/** @inheritDoc */
+	declare readonly C: iBlock & iDataProvider;
+
+	/** @inheritDoc */
+	declare readonly CTX: this['C']['unsafe'] & iDataProvider;
 
 	/**
 	 * The component data provider event emitter.
 	 * To avoid memory leaks, only this emitter is used to listen for provider events.
 	 *
-	 * Note that to detach a listener, you can specify not only a link to the listener, but also the name of
-	 * the group/label to which the listener is attached. By default, all listeners have a group name equal to
-	 * the event name being listened to. If nothing is specified, then all component event listeners will be detached.
+	 * Note that to detach a listener, you can specify not only a reference to the listener,
+	 * but also the name of the group or label to which the listener is attached.
+	 * By default, all listeners are assigned a group name that corresponds to the event name they are listening to.
+	 * If no specific group is mentioned when detaching, then all listeners associated with the component will be removed.
 	 */
 	readonly emitter!: ReadonlyEventEmitterWrapper<this['component']>;
 
@@ -80,40 +79,10 @@ class DataProvider extends Friend {
 		super(component);
 
 		const
-			{ctx} = this;
+			dp = <Nullable<Provider>>component.createDataProviderInstance(provider, opts);
 
-		opts = {
-			id: ctx.r.componentId,
-			remoteState: ctx.remoteState,
-			...opts
-		};
-
-		let
-			dp: Provider;
-
-		if (Object.isString(provider)) {
-			const
-				ProviderConstructor = <CanUndef<typeof Provider>>providers[provider];
-
-			if (ProviderConstructor == null) {
-				if (provider === 'Provider') {
-					return;
-				}
-
-				throw new ReferenceError(`The provider "${provider}" is not defined`);
-			}
-
-			dp = new ProviderConstructor(opts);
-			registerDestructor();
-
-		} else if (Object.isFunction(provider)) {
-			const ProviderConstructor = Object.cast<typeof Provider>(provider);
-
-			dp = new ProviderConstructor(opts);
-			registerDestructor();
-
-		} else {
-			dp = <Provider>provider;
+		if (dp == null) {
+			return;
 		}
 
 		this.provider = dp;
@@ -131,21 +100,16 @@ class DataProvider extends Friend {
 				return dp.emitter.off.bind(dp.emitter) ?? (() => Object.throw());
 			}
 		});
-
-		function registerDestructor() {
-			ctx.r.unsafe.async.worker(() => {
-				const key = dp.getCacheKey();
-				delete instanceCache[key];
-				delete requestCache[key];
-			});
-		}
 	}
 
 	/**
-	 * Drops the data provider cache
+	 * Drops the data provider's cache
+	 *
+	 * @param [recursive] - if true, then the `dropCache` operation will be propagated recursively,
+	 * for example, if an engine based on a data provider is used
 	 */
-	dropCache(): void {
-		this.provider.dropCache();
+	dropCache(recursive?: boolean): void {
+		this.provider.dropCache(recursive);
 	}
 }
 

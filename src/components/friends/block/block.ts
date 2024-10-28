@@ -90,7 +90,7 @@ export function getMod(this: Block, name: string, fromNode?: boolean): CanUndef<
  * @param value - the modifier value to set
  * @param [reason] - a reason to set the modifier
  *
- * @emits `localEmitter` `block.mod.set.$name.$value(event: SetModEvent)`
+ * @emits `localEmitter.block.mod.set.$name.$value(event: SetModEvent)`
  * @emits `mod:set:$name(event: SetModEvent)`
  * @emits `mod:set:$name:$value(event: SetModEvent)`
  *
@@ -151,10 +151,9 @@ export function setMod(this: Block, name: string, value: unknown, reason: ModEve
 	ctx.mods[name] = normalizedValue;
 
 	if (!ctx.isFunctional) {
-		const
-			reactiveModsStore = ctx.field.get<ModsDict>('reactiveModsStore');
+		const {reactiveModsStore} = ctx.field.getFieldsStore<typeof this.ctx>();
 
-		if (reactiveModsStore != null && name in reactiveModsStore && reactiveModsStore[name] !== normalizedValue) {
+		if (name in reactiveModsStore && reactiveModsStore[name] !== normalizedValue) {
 			delete Object.getPrototypeOf(reactiveModsStore)[name];
 			ctx.field.set(`reactiveModsStore.${name}`, normalizedValue);
 		}
@@ -187,7 +186,7 @@ export function setMod(this: Block, name: string, value: unknown, reason: ModEve
  * @param [value] - the modifier value to remove
  * @param [reason] - a reason to remove the modifier
  *
- * @emits `localEmitter` `block.mod.remove.$name.$value(event: ModEvent)`
+ * @emits `localEmitter.block.mod.remove.$name.$value(event: ModEvent)`
  * @emits `mod:remove:$name(event: ModEvent)`
  *
  * @example
@@ -215,7 +214,7 @@ export function removeMod(this: Block, name: string, value?: unknown, reason: Mo
 		return false;
 	}
 
-	if (node != null) {
+	if (node instanceof Element) {
 		node.classList.remove(this.getFullBlockName(name, currentValue));
 	}
 

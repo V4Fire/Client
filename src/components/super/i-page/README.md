@@ -47,16 +47,20 @@ Additionally, you can view the implemented traits or the parent component.
 #### [pageTitleProp]
 
 The current page title.
-Basically this title is set via `document.title`.
+Basically, this title is set via `document.title`.
 
-#### [pageTitleProp]
+If the prop value is defined as a function, it will be called (the result will be used as the title).
 
-The current page title.
-Basically this description is set via `<meta name="description" content="..."/>`.
+#### [pageDescriptionProp]
+
+The current page description.
+Basically, this description is set via `<meta name="description" content="..."/>`.
+
+If the prop value is defined as a function, it will be called (the result will be used as the description content).
 
 #### [stagePageTitles]
 
-A dictionary of page titles (basically these titles are set via `document.title`).
+A dictionary of page titles (basically, these titles are set via `document.title`).
 The dictionary values are bound to the `stage` values.
 
 The key named `[[DEFAULT]]` is used by default. If the key value is defined as a function,
@@ -64,11 +68,10 @@ it will be called (the result will be used as the title).
 
 ```typescript
 class bMyPage extends iPage {
-  /** @override */
-  stagePageTitles: StageTitles<this> = {
+  override readonly stagePageTitles: StageTitles<this> = {
     '[[DEFAULT]]': 'Default title',
     profile: 'Profile page'
-  }
+  };
 
   toProfile(): void {
     this.stage = 'profile';
@@ -84,11 +87,10 @@ The current page title.
 
 ```typescript
 class bMyPage extends iPage {
-  /** @override */
-  stagePageTitles: StageTitles<this> = {
+  override readonly stagePageTitles: StageTitles<this> = {
     '[[DEFAULT]]': 'Default title',
     profile: 'Profile page'
-  }
+  };
 
   toProfile(): void {
     console.log(this.title === 'Default title');
@@ -102,11 +104,12 @@ class bMyPage extends iPage {
 #### scrollTo
 
 Scrolls the page to the specified coordinates.
+The scrolling can be done by specified coordinates (x, y) or by specified options.
 
 ```typescript
 class bMyPage extends iPage {
-  toTop() {
-    this.scrollTo({y: 0, behaviour: 'smooth'});
+  toTop(): void {
+    this.scrollTo({y: 0, behavior: 'smooth'});
   }
 }
 ```

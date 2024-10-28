@@ -11,6 +11,7 @@
 - include 'components/super/i-input-text'|b as placeholder
 
 - template index() extends ['i-input-text'].index
+	- rootTag = 'span'
 	- rootWrapper = true
 	- nativeInputTag = 'textarea'
 
@@ -20,7 +21,7 @@
 		- block wrapper
 			+= self.nativeInput({attrs: {'@input': 'onEdit'}})
 
-	- block helpers
+	- block bodyFooter
 		- super
 
 		- block limit

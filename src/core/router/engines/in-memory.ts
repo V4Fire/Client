@@ -48,9 +48,9 @@ export function getCurrentHistoryEntryPointer(): CanUndef<number> {
 
 /**
  * Creates an in-memory engine for the `bRouter` component
- * @param ctx
+ * @param routerCtx
  */
-export default function createRouter(ctx: bRouter): Router {
+export default function createRouter(routerCtx: bRouter): Router {
 	const emitter = new EventEmitter({
 		maxListeners: 1e3,
 		newListener: false
@@ -79,7 +79,7 @@ export default function createRouter(ctx: bRouter): Router {
 
 		push(route: string, params?: TransitionParams): Promise<void> {
 			let
-				newRoute = getRoute(route, ctx.routes, {defaultRoute: ctx.defaultRoute});
+				newRoute = getRoute(route, routerCtx.routes, {defaultRoute: routerCtx.defaultRoute});
 
 			if (newRoute == null) {
 				return Promise.reject();
@@ -106,7 +106,7 @@ export default function createRouter(ctx: bRouter): Router {
 
 		replace(route: string, params?: TransitionParams): Promise<void> {
 			let
-				newRoute = getRoute(route, ctx.routes, {defaultRoute: ctx.defaultRoute});
+				newRoute = getRoute(route, routerCtx.routes, {defaultRoute: routerCtx.defaultRoute});
 
 			if (newRoute == null) {
 				return Promise.reject();
@@ -171,8 +171,8 @@ export default function createRouter(ctx: bRouter): Router {
 		}
 
 		if (historyLogPointer == null) {
-			ctx.field.set('routeStore', undefined);
-			ctx.r.route = undefined;
+			routerCtx.field.set('routeStore', undefined);
+			routerCtx.r.route = undefined;
 		}
 
 		return Promise.resolve();
@@ -192,11 +192,11 @@ export default function createRouter(ctx: bRouter): Router {
 			const
 				route = historyLog[historyLogPointer];
 
-			ctx.emitTransition(route.name, route, 'event').catch(stderr);
+			routerCtx.emitTransition(route.name, route, 'event').catch(stderr);
 
 		} else {
-			ctx.field.set('routeStore', undefined);
-			ctx.r.route = undefined;
+			routerCtx.field.set('routeStore', undefined);
+			routerCtx.r.route = undefined;
 		}
 	}
 
@@ -213,6 +213,6 @@ export default function createRouter(ctx: bRouter): Router {
 			return Promise.resolve();
 		}
 
-		return Promise.resolve(load()).then(() => undefined).catch(stderr);
+		return Promise.resolve(load(routerCtx)).then(() => undefined).catch(stderr);
 	}
 }

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { app, ComponentInterface } from 'core/component';
+import { app, ComponentInterface, normalizeComponentForceUpdateProps } from 'core/component';
 import { render, create } from 'components/friends/vdom';
 
 import type iBlock from 'components/super/i-block/i-block';
@@ -43,14 +43,13 @@ globalThis.renderComponents = (
 		throw new TypeError('The root context does not implement the iBlock interface');
 	}
 
-	const
-		ids = scheme.map(() => Math.random().toString(16).slice(2));
+	const ids = scheme.map(() => Math.random().toString(16).slice(2));
 
 	const vnodes = create.call(ctx.vdom, scheme.map(({attrs, children}, i) => ({
 		type: componentName,
 
 		attrs: {
-			...attrs,
+			...(attrs != null ? normalizeComponentForceUpdateProps(app.component!, componentName, attrs) : {}),
 			[ID_ATTR]: ids[i]
 		},
 

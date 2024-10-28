@@ -6,8 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { callMethodFromComponent } from 'core/component/method';
 import { runHook } from 'core/component/hook';
+
+import { callMethodFromComponent } from 'core/component/method';
 
 import type { ComponentInterface } from 'core/component/interface';
 
@@ -16,6 +17,10 @@ import type { ComponentInterface } from 'core/component/interface';
  * @param component
  */
 export function destroyedState(component: ComponentInterface): void {
+	if (component.hook === 'destroyed') {
+		return;
+	}
+
 	runHook('destroyed', component).then(() => {
 		callMethodFromComponent(component, 'destroyed');
 	}).catch(stderr);

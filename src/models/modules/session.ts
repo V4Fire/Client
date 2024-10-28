@@ -15,11 +15,16 @@ import Provider, {
 
 	RequestFunctionResponse,
 	Response,
-	RequestPromise
+	RequestPromise,
+	RequestError
 
 } from 'core/data';
 
 import * as s from 'core/session';
+
+//#if runtime has dummyComponents
+import('models/modules/test/test-session');
+//#endif
 
 export * from 'core/data';
 
@@ -53,15 +58,28 @@ export default class Session extends Provider {
 	static override readonly middlewares: Middlewares = {
 		...Provider.middlewares,
 
-		async addSession(this: Session, {opts}: MiddlewareParams): Promise<void> {
-			if (opts.api) {
-				const h = await this.getAuthParams();
-				Object.mixin({propsToCopy: 'new'}, opts.headers, h);
+		...SSR ?
+			{} :
+
+			{
+				async addSession(this: Session, params: MiddlewareParams): Promise<void> {
+					const
+						{opts} = params;
+
+					if (opts.api) {
+						const h = await this.getAuthParams(params);
+						Object.mixin({propsToCopy: 'new'}, opts.headers, h);
+					}
+				}
 			}
-		}
 	};
 
-	override async getAuthParams(): Promise<Dictionary> {
+	override async getAuthParams(_params: MiddlewareParams): Promise<Dictionary> {
+		// FIXME: skip until the session module is revamped https://github.com/V4Fire/Client/issues/1329
+		if (SSR) {
+			return {};
+		}
+
 		const
 			session = await s.get();
 
@@ -88,7 +106,13 @@ export default class Session extends Provider {
 		factory?: RequestFunctionResponse
 	): RequestPromise {
 		const
-			req = super.updateRequest(url, Object.cast(event), Object.cast<RequestFunctionResponse>(factory)),
+			req = super.updateRequest(url, Object.cast(event), Object.cast<RequestFunctionResponse>(factory));
+
+		if (SSR) {
+			return req;
+		}
+
+		const
 			session = s.get();
 
 		const update = async (res) => {
@@ -110,14 +134,15 @@ export default class Session extends Provider {
 
 		return Provider.borrowRequestPromiseAPI(req, req.catch(async (err) => {
 			const
-				response = Object.get<Response>(err, 'details.response'),
+				response = err instanceof RequestError ? err.details.deref()?.response : null,
 				{auth, params} = await session;
 
-			if (response) {
+			if (response != null) {
 				const
 					r = () => this.updateRequest(url, Object.cast(event), <RequestFunctionResponse>factory);
 
 				if (response.status === 401) {
+					// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 					if (!await s.match(auth, params)) {
 						return r();
 					}
