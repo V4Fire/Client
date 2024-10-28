@@ -141,8 +141,8 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 				vnode.dynamicProps = dynamicProps;
 
 				Object.keys(props).forEach((prop) => {
-					if (isHandler.test(prop) && !isPropGetter.test(prop)) {
-						if (SSR) {
+					if (isHandler.test(prop)) {
+						if (SSR && !isPropGetter.test(prop)) {
 							delete props![prop];
 
 						} else {
