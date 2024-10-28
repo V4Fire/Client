@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-10-??)
+
+#### :house: Internal
+
+* Create a `normalizeComponentForceUpdateProps` for normalizing the props with `forceUpdate = false`
+
 ## v4.0.0-beta.140 (2024-10-03)
 
 #### :bug: Bug Fix
