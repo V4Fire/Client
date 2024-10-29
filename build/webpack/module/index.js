@@ -34,6 +34,7 @@ module.exports = async function module(args) {
 	loaders.rules.set('js', await rules.js(args));
 	loaders.rules.set('styl', await rules.styl(args));
 	loaders.rules.set('ess', await rules.ess(args));
+	loaders.rules.set('wss', await rules.wss(args));
 	loaders.rules.set('ss', await rules.ss(args));
 
 	loaders.rules.set('assets', await rules.assets(args));

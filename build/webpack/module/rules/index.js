@@ -18,6 +18,8 @@ exports.ss = include('build/webpack/module/rules/ss');
 
 exports.ess = include('build/webpack/module/rules/ess');
 
+exports.wss = include('build/webpack/module/rules/wss');
+
 exports.assets = include('build/webpack/module/rules/assets');
 
 exports.images = include('build/webpack/module/rules/images');
