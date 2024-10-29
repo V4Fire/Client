@@ -66,7 +66,10 @@ export function sortFields(fields: Dictionary<ComponentField>): ComponentFieldIn
 		list.push([name, field]);
 	}
 
-	return list.sort(([aName], [bName]) => {
+	// The for-in loop first iterates over the object's own properties, and then over those from the prototypes,
+	// which means the initialization order will be reversed.
+	// To fix this, we need to reverse the list of fields before sorting.
+	return list.reverse().sort(([aName], [bName]) => {
 		const
 			aWeight = getFieldWeight(fields[aName], fields),
 			bWeight = getFieldWeight(fields[bName], fields);
