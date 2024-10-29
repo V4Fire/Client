@@ -261,7 +261,7 @@ export function component(opts?: ComponentOptions): Function {
 				}
 
 				if (isFunctional) {
-					logger.info('loadTemplate', `Template missing for ${meta.componentName}-functional`);
+					logger.info('loadTemplate', `Template missing for functional component: ${meta.componentName}`);
 				}
 
 				return {
