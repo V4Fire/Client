@@ -96,7 +96,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		delete tiedFields[name];
 
 		const canSkip =
-			component[name] != null ||
+			name in component ||
 			!SSR && isFunctional && accessor.functional === false;
 
 		if (canSkip) {
@@ -121,7 +121,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 				const deps = watchDependencies.get(name);
 
-				if (name !== 'hook' && (deps != null && deps.length > 0 || tiedWith != null)) {
+				if (deps != null && deps.length > 0 || tiedWith != null) {
 					onCreated(this.hook, () => {
 						// If a computed property has a field or system field as a dependency
 						// and the host component does not have any watchers to this field,
@@ -191,7 +191,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		delete tiedFields[name];
 
 		const canSkip =
-			component[name] != null ||
+			name in component ||
 			computed.cache === 'auto' ||
 			!SSR && isFunctional && computed.functional === false;
 
@@ -221,7 +221,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 				const deps = watchDependencies.get(name);
 
-				if (name !== 'hook' && (deps != null && deps.length > 0 || tiedWith != null)) {
+				if (deps != null && deps.length > 0 || tiedWith != null) {
 					onCreated(this.hook, () => {
 						// If a computed property has a field or system field as a dependency
 						// and the host component does not have any watchers to this field,
@@ -362,8 +362,8 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		// Loopback
 	}
 
-	function onCreated(hook: Hook, cb: Function) {
-		if (beforeHooks[hook] != null) {
+	function onCreated(hook: Nullable<Hook>, cb: Function) {
+		if (hook == null || beforeHooks[hook] != null) {
 			hooks['before:created'].push({fn: cb});
 
 		} else {
