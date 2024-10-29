@@ -97,9 +97,15 @@ function getPageAsyncScripts() {
 			fileContent = fs.readFileSync(filePath, 'utf-8'),
 			asyncChunks = JSON.parse(fileContent);
 
-		return asyncChunks.reduce((result, chunk) => `${result}<template id="${chunk.id}"><script>${
-			chunk.files.map((fileName) => `include('${src.clientOutput(fileName)}');\n`).join()
-		}</script></template>`, '');
+		if (webpack.mode() === 'production') {
+			return asyncChunks.reduce((result, chunk) => `${result}<template id="${chunk.id}"><script>${
+				chunk.files.map((fileName) => `include('${src.clientOutput(fileName)}');\n`).join()
+			}</script></template>`, '');
+		}
+
+		return `<div id="scripts-shadow-store">${asyncChunks.reduce((result, chunk) => `${result}<template id="${chunk.id}"><script id="${chunk.id}">${
+				chunk.files.map((fileName) => `include('${src.clientOutput(fileName)}');\n`).join()
+			}</script></template>`, '')}</div>`;
 
 	} catch (e) {
 		return '';
