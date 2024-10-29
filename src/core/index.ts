@@ -9,7 +9,7 @@
 import '@v4fire/core/core';
 import { resolveAfterDOMLoaded } from 'core/event';
 
-import initApp from 'core/init';
+import { initApp, initState } from 'core/init';
 
 import * as cookies from 'core/cookies';
 import CookieStorage from 'core/kv-storage/engines/cookie';
@@ -31,7 +31,7 @@ export * as themeManager from 'core/theme-manager';
 export * as kvStorage from 'core/kv-storage';
 export * as CookieEngine from 'core/kv-storage/engines/cookie';
 
-export { initApp };
+export { initApp, initState };
 
 //#unless runtime has storybook
 

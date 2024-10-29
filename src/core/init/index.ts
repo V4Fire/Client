@@ -31,15 +31,25 @@ export * from 'core/init/interface';
  * @param rootComponent - the name of the created root component
  * @param opts - additional options
  */
-export default async function initApp(
+export async function initApp(
 	rootComponent: Nullable<string>,
 	opts: InitAppOptions
-): Promise<App> {
+): Promise<App | State> {
+	const {createAppOpts, state} = await initState(opts);
+
+	return createApp(rootComponent, createAppOpts, state);
+}
+
+/**
+ * Initializes state of the application
+ * @param opts
+ */
+export async function initState(opts: InitAppOptions): Promise<ReturnType<typeof getAppParams>> {
 	const {state, createAppOpts} = getAppParams(opts);
 
 	await initDependencies(dependencies, state);
 
-	return createApp(rootComponent, createAppOpts, state);
+	return {state, createAppOpts};
 }
 
 /**

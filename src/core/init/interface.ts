@@ -13,6 +13,8 @@ import type { CookieStore } from 'core/cookies';
 
 import type { State } from 'core/component/state';
 import type { ComponentOptions } from 'core/component/engines';
+import type { DataProviderProp } from 'components/super/i-block/providers/interface';
+import type Provider from 'core/data';
 
 export interface AppSSR {
 	content: string;
@@ -76,4 +78,6 @@ export type InitAppOptions = CreateAppOptions & Overwrite<State, {
 
 	/** {@link Async} */
 	async?: State['async'];
+
+	createDataProviderInstance?(provider: DataProviderProp): Provider;
 }>;

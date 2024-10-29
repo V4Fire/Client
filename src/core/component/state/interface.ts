@@ -18,6 +18,9 @@ import type { InitialRoute, AppliedRoute } from 'core/router';
 import type ThemeManager from 'core/theme-manager';
 import type PageMetaData from 'core/page-meta-data';
 import type HydrationStore from 'core/hydration-store';
+import type { i18nFactory } from 'core/i18n';
+import type { DataProviderProp } from 'components/super/i-block/providers/interface';
+import type Provider from 'core/data';
 
 export interface State {
 	/**
@@ -99,4 +102,10 @@ export interface State {
 
 	/** {@link Async} */
 	async: Async;
+
+	i18n?: typeof i18nFactory;
+
+	createDataProviderInstance(provider: DataProviderProp): Provider;
+
+	destroy?(): void;
 }
