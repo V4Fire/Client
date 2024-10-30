@@ -11,6 +11,7 @@
  * @packageDocumentation
  */
 
+import type bBottomSlide from 'components/base/b-bottom-slide/b-bottom-slide';
 import iStaticPage, { component, prop, field, system, hook } from 'components/super/i-static-page/i-static-page';
 import VDOM, * as VDOMAPI from 'components/friends/vdom';
 
@@ -42,6 +43,23 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	 */
 	@field()
 	someField: unknown = 'foo';
+
+	// forceUpdate=true causes it to close the bottom slider. when opened again manually, it doesn't react to future changes
+	@field({forceUpdate: false})
+	heightMode: string = 'content';
+
+	protected async triggerHeightMode(): Promise<void> {
+		if (this.heightMode === 'content') {
+			this.heightMode = 'full';
+		} else {
+			this.heightMode = 'content';
+		}
+	}
+
+	protected async openBottomSlide(): Promise<void> {
+		const slide = await this.waitRef<bBottomSlide[]>('bottomSlide');
+		await slide[0].open();
+	}
 
 	@hook('beforeCreate')
 	setStageFromLocation(): void {

@@ -12,5 +12,17 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
-		< template v-if = stage === 'teleports'
-			< b-bottom-slide
+		< b-button @onClick = openBottomSlide
+			Open bottom slide
+
+		< . v-async-target
+			+= self.loadModules('components/dummies/b-dummy')
+				< b-dummy
+					< . v-async-target
+						+= self.loadModules('components/base/b-bottom-slide')
+							< b-bottom-slide.&__bottom-slide ref = bottomSlide | :heightMode = heightMode
+								< p
+									Height mode: {{ heightMode }}
+
+								< b-button @onClick = triggerHeightMode
+									Trigger height mode
