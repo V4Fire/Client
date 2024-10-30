@@ -12,10 +12,8 @@
 
 const ts = require('typescript');
 const {validators} = require('@pzlr/build-core');
-const {
-	getLayerName,
-	getOriginLayerFromPath
-} = include('build/helpers');
+
+const {getLayerName, getOriginLayerFromPath} = include('build/helpers');
 
 /**
  * @typedef {import('typescript').TransformationContext} Context
@@ -81,10 +79,10 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 			expr = node?.expression;
 
 		if (
-				ts.isCallExpression(node) &&
-				isInitAppFile &&
-				expr.escapedText === 'createApp'
-			) {
+			ts.isCallExpression(node) &&
+			isInitAppFile &&
+			expr.escapedText === 'createApp'
+		) {
 
 			const updatedCallExpression = factory.createCallExpression(
 				factory.createIdentifier(expr.escapedText),

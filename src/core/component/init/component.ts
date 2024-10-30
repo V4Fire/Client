@@ -23,12 +23,12 @@ import { initEmitter } from 'core/component/event';
  * @param component - the component information object
  */
 export function registerParentComponents(component: ComponentConstructorInfo): boolean {
-	const { name } = component;
+	const {name} = component;
 
 	let
 		parentName = component.parentParams?.name,
 		parentComponent = component.parent;
-	
+
 	if (!Object.isTruly(parentName) || !componentRegInitializers[<string>parentName]) {
 		return false;
 	}
@@ -50,7 +50,6 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
 		if (regParentComponent != null) {
 			regParentComponent.forEach((reg) => reg());
 			delete componentRegInitializers[parentName];
-
 			return true;
 		}
 	}
@@ -77,18 +76,16 @@ export function registerComponent(name: CanUndef<string>): CanNull<ComponentMeta
 		component = components.get(name),
 		componentName = component?.componentName || name,
 		componentNormolizedName = componentName.match(/(?<name>.*)-functional$/)?.groups?.name || componentName,
-		layer = config.components[componentNormolizedName]?.layer;
-	
-	const event = `registerComponent.${layer}.${componentNormolizedName}`;
+		layer = config.components[componentNormolizedName]?.layer,
+		event = `registerComponent.${layer}.${componentNormolizedName}`;
+
 	initEmitter.emit(event);
 
 	const regComponent = componentRegInitializers[name];
 
 	if (regComponent != null) {
 		regComponent.forEach((reg) => reg());
-
 		delete componentRegInitializers[name];
-
 	}
 
 	return component ?? null;

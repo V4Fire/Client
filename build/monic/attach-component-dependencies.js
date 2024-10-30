@@ -15,8 +15,7 @@ const
 const
 	path = require('upath'),
 	graph = include('build/graph'),
-	{ invokeByRegisterEvent, getLayerName } = include('build/helpers');
-
+	{invokeByRegisterEvent, getLayerName} = include('build/helpers');
 
 const
 	decls = Object.create(null);
@@ -42,7 +41,6 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 		ext = path.extname(filePath),
 		component = components.get(path.basename(filePath, ext));
 
-
 	if (component == null) {
 		return str;
 	}
@@ -61,7 +59,6 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 	});
 
 	await $C([...deps].reverse()).async.forEach(forEach);
-	
 	return imports + str;
 
 	async function forEach(dep) {
@@ -133,10 +130,10 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 						expr;
 
 					if (chunk === 'tpl') {
-						expr = `TPLS['${dep}'] = require('${src}')['${dep}'];`
+						expr = `TPLS['${dep}'] = require('${src}')['${dep}'];`;
 
 					} else {
-						expr = `require('${src}');`
+						expr = `require('${src}');`;
 					}
 
 					decl += `try { ${invokeByRegisterEvent(expr, getLayerName(filePath), dep)} } catch (err) { stderr(err); }`;

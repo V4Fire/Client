@@ -38,8 +38,8 @@ const
  * });
  * ```
  */
-module.exports = async function dynamicComponentImportReplacer(str, filePath) {
-	const { entryDeps } = await graph;
+module.exports = async function dynamicComponentImportReplacer(str) {
+	const {entryDeps} = await graph;
 
 	return str.replace(importRgxp, (str, magicComments, q, resourcePath, resourceName) => {
 		const
@@ -65,7 +65,7 @@ module.exports = async function dynamicComponentImportReplacer(str, filePath) {
 					decl = `import(${magicComments} '${fullPath}')`;
 
 				} else {
-					decl = `new Promise(function (r) { r(require('${fullPath}')); })`;
+					decl = `new Promise(function (r) { return r(require('${fullPath}')); })`;
 				}
 
 				decl += '.catch(function (err) { stderr(err) })';

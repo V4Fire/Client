@@ -223,7 +223,7 @@ async function buildProjectGraph() {
 					$C(component.libs).forEach((el) => {
 						if (!usedLibs.has(el)) {
 							usedLibs.add(el);
-							
+
 							str += `require('${el}');\n`;
 						}
 					});
@@ -254,7 +254,6 @@ async function buildProjectGraph() {
 						componentName = component?.name ?? name,
 						isComponent = /^[bpg]-[\\w-]+/.test(componentName);
 
-					
 					if (webpack.ssr) {
 						importScript = `Object.assign(module.exports, require('${entryPath}'));\n`;
 
@@ -262,7 +261,7 @@ async function buildProjectGraph() {
 						importScript = `require('${entryPath}');\n`;
 					}
 
-					str += isComponent ? 
+					str += isComponent ?
 						invokeByRegisterEvent(importScript, getLayerName(entry), componentName) :
 						importScript;
 				}
