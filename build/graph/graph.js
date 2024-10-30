@@ -206,7 +206,7 @@ async function buildProjectGraph() {
 		});
 
 		if (tplContent) {
-			const tplsStore = 'globalThis.TPLS = globalThis.TPLS || Object.create(null);';
+			const tplsStore = 'globalThis.TPLS = globalThis.TPLS || Object.create(null)';
 			tplContent = [webpackRuntime, tplsStore, tplContent, ''].join('\n');
 		}
 
