@@ -13,6 +13,7 @@ import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 
 import { isSmartComponent } from 'core/component/reflect';
 import { createVirtualContext, VHookLifeCycle } from 'core/component/functional';
+import { createVNode as superCreateVNode } from 'vue';
 
 import type {
 
@@ -472,23 +473,23 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 	if (path === 'vue/server-renderer') {
 		api = {...api};
 
-		if (Object.isFunction(api.ssrRenderComponent)) {
-			const {ssrRenderComponent} = api;
+		if (Object.isFunction(api.ssrRenderComponent) && Object.isFunction(api.renderComponentVNode)) {
+			const {renderComponentVNode} = api;
+			const wrappedCreateVNode = wrapCreateBlock(superCreateVNode);
 
 			// @ts-ignore (unsafe)
 			api['ssrRenderComponent'] = (
 				component: {name: string},
 				props: Nullable<Dictionary>,
+				children: VNodeChildren | null = null,
 				...args: unknown[]
 			) => {
-				const
-					meta = registerComponent(component.name);
+				const vnode = wrappedCreateVNode.call(this, component, props, children);
 
-				if (meta != null) {
-					props = normalizeComponentAttrs(props, [], meta);
-				}
-
-				return ssrRenderComponent(component, props, ...args);
+				return renderComponentVNode(
+					vnode,
+					...args
+				);
 			};
 		}
 

@@ -123,7 +123,7 @@ export function patchProps(props: Dictionary, attrName: string, attrVal: unknown
 		}
 	}
 
-	if (props[attrName] != null) {
+	if (props[attrName] != null && !isPropGetter.test(attrName)) {
 		Object.assign(props, mergeProps({[attrName]: props[attrName]}, {[attrName]: attrVal}));
 
 	} else {
