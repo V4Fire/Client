@@ -18,7 +18,7 @@ const
 
 const
 	{src, build, webpack} = config,
-	{resolve, block, entries, validators} = require('@pzlr/build-core');
+	{resolve, block, entries} = require('@pzlr/build-core');
 
 const
 	componentParams = include('build/graph/component-params');

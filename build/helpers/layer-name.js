@@ -1,3 +1,13 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+'use strict';
+
 /**
  * The function determines the package in which the module is defined and
  * returns the name of this package from the `package.json` file
@@ -5,7 +15,7 @@
  * @param {string} filePath
  * @returns {string}
  */
-exports.getLayerName = function(filePath) {
+function getLayerName(filePath) {
 	const
 		pathToRootRgxp = /(?<path>.+)[/\\]src[/\\]/,
 		pathToRootDir = filePath.match(pathToRootRgxp)?.groups?.path;
@@ -14,3 +24,5 @@ exports.getLayerName = function(filePath) {
 
 	return res;
 }
+
+exports.getLayerName = getLayerName;

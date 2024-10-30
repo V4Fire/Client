@@ -94,7 +94,9 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 			);
 
 			return updatedCallExpression;
-		} else if (ts.isDecorator(node) && isComponentCallExpression(node)) {
+		}
+
+		if (ts.isDecorator(node) && isComponentCallExpression(node)) {
 			if (!ts.isCallExpression(expr)) {
 				return node;
 			}

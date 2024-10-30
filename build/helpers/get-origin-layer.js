@@ -1,3 +1,13 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+'use strict';
+
 const {getLayerName} = require('./layer-name');
 
 /**
@@ -6,7 +16,7 @@ const {getLayerName} = require('./layer-name');
  * @param {string} filePath
  * @returns {string}
  */
-exports.getOriginLayerFromPath = function(filePath) {
+function getOriginLayerFromPath(filePath) {
 	const
 		pathToOriginPackage = filePath.match(/(?<path>.+)[/\\]node_modules[/\\]/)?.groups?.path;
 
@@ -16,3 +26,5 @@ exports.getOriginLayerFromPath = function(filePath) {
 
 	return require(`${pathToOriginPackage}/package.json`).name;
 }
+
+exports.getOriginLayerFromPath = getOriginLayerFromPath;

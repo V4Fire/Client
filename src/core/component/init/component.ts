@@ -72,10 +72,10 @@ export function registerComponent(name: CanUndef<string>): CanNull<ComponentMeta
 		return null;
 	}
 
-	const 
+	const
 		component = components.get(name),
-		componentName = component?.componentName || name,
-		componentNormolizedName = componentName.match(/(?<name>.*)-functional$/)?.groups?.name || componentName,
+		componentName = component?.componentName ?? name,
+		componentNormolizedName = componentName.match(/(?<name>.*)-functional$/)?.groups?.name ?? componentName,
 		layer = config.components[componentNormolizedName]?.layer,
 		event = `registerComponent.${layer}.${componentNormolizedName}`;
 

@@ -1,14 +1,24 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+'use strict';
+
 /**
  * Function incapsulates script to event handler that is being triggered when component with
  * name `componentName` from `layerName` renders on the page.
  *
- * @param {String} script 
- * @param {String} layerName 
- * @param {String} componentName 
- * @returns {String}
+ * @param {string} script
+ * @param {string} layerName
+ * @param {string} componentName
+ * @returns {string}
  */
-exports.invokeByRegisterEvent = function(script, layerName, componentName) {
-	if (script?.trim()?.length == 0) {
+function invokeByRegisterEvent(script, layerName, componentName) {
+	if (script?.trim()?.length === 0) {
 		return script;
 	}
 
@@ -24,3 +34,5 @@ exports.invokeByRegisterEvent = function(script, layerName, componentName) {
 		\n
 	`;
 }
+
+exports.invokeByRegisterEvent = invokeByRegisterEvent;

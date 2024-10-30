@@ -61,7 +61,7 @@ module.exports = {
 				if (el.logic != null) {
 					layer = JSON.stringify(getLayerName(el.logic));
 				} else {
-					layer = JSON.stringify(getLayerName(el.index))
+					layer = JSON.stringify(getLayerName(el.index));
 				}
 
 				res[key] = {
