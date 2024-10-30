@@ -347,17 +347,21 @@ ComponentEngine.directive('attrs', {
 		}
 	},
 
-	getSSRProps(params: DirectiveParams) {
+	getSSRProps(params: DirectiveParams, vnode?: VNode) {
 		const
 			ctx = getDirectiveContext(params, null),
 			r = ctx?.$renderEngine.r;
 
 		const
-			props: Dictionary = {},
+			props: Dictionary = vnode?.props ?? {},
 			componentMeta = ctx?.meta;
 
 		let
 			attrs = {...params.value};
+
+		if (vnode) {
+			vnode.props ??= props;
+		}
 
 		if (componentMeta != null) {
 			attrs = normalizeComponentAttrs(attrs, null, componentMeta)!;
