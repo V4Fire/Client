@@ -6,7 +6,6 @@
  * @returns {string}
  */
 exports.getLayerName = function(filePath) {
-
 	const
 		pathToRootRgxp = /(?<path>.+)[/\\]src[/\\]/,
 		pathToRootDir = filePath.match(pathToRootRgxp)?.groups?.path;

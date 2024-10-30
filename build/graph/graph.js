@@ -223,7 +223,6 @@ async function buildProjectGraph() {
 					$C(component.libs).forEach((el) => {
 						if (!usedLibs.has(el)) {
 							usedLibs.add(el);
-
 							str += `require('${el}');\n`;
 						}
 					});
