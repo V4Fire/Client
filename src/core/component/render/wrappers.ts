@@ -473,23 +473,24 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 	if (path === 'vue/server-renderer') {
 		api = {...api};
 
-		if (Object.isFunction(api.ssrRenderComponent) && Object.isFunction(api.renderComponentVNode)) {
-			const {renderComponentVNode} = api;
-			const wrappedCreateVNode = wrapCreateBlock(superCreateVNode);
+		if (Object.isFunction(api.ssrRenderComponent)) {
+			const {ssrRenderComponent} = api;
 
 			// @ts-ignore (unsafe)
 			api['ssrRenderComponent'] = (
 				component: {name: string},
 				props: Nullable<Dictionary>,
-				children: VNodeChildren | null = null,
 				...args: unknown[]
 			) => {
-				const vnode = wrappedCreateVNode.call(this, component, props, children);
+				const
+					meta = registerComponent(component.name);
 
-				return renderComponentVNode(
-					vnode,
-					...args
-				);
+				if (meta != null) {
+					props = normalizeComponentAttrs(props, [], meta);
+					props = resolveAttrs.call(this, {props}).props;
+				}
+
+				return ssrRenderComponent(component, props, ...args);
 			};
 		}
 
