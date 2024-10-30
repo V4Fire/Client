@@ -13,7 +13,6 @@ import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 
 import { isSmartComponent } from 'core/component/reflect';
 import { createVirtualContext, VHookLifeCycle } from 'core/component/functional';
-import { createVNode as superCreateVNode } from 'vue';
 
 import type {
 
