@@ -18,7 +18,6 @@
  * @returns {string}
  */
 function invokeByRegisterEvent(script, layerName, componentName) {
-	return script;
 	if (script?.trim()?.length === 0) {
 		return script;
 	}
