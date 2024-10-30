@@ -86,6 +86,23 @@ class Index {
 				callback();
 			});
 		});
+
+		compiler.hooks.done.tapAsync('AsyncChunksPlugin', (stat, callback) => {
+			if (stat.compilation.name === 'html') {
+				const
+					filePath = path.join(compiler.options.output.path, webpack.asyncAssetsJSON()),
+					fileContent = fs.readFileSync(filePath, 'utf-8'),
+					asyncChunks = JSON.parse(fileContent);
+
+				asyncChunks.forEach((chunk) => {
+					chunk.files.forEach((file) => {
+						fs.rmSync(path.join(compiler.options.output.path, file));
+					});
+				});
+			}
+
+			callback();
+		});
 	}
 }
 
