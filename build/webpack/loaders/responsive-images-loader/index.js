@@ -85,8 +85,8 @@ module.exports = async function responsiveImagesLoader(imageBuffer) {
 
 	const
 		loaderResponses = await collectLoaderResponses.call(this, imageBuffer, options, formats),
-		imageNames = getImageNames(loaderResponses, `${publicPath}${options.outputPath}/`),
-		sources = getSources(imageNames);
+		imagePaths = getImagePaths(loaderResponses),
+		sources = getSources(imagePaths);
 
 	const
 		[resolution, ext] = (options.defaultSrcPath ?? '').split('.'),
@@ -140,16 +140,15 @@ function getSources(imageNames) {
 }
 
 /**
- * Extracts only image names without the rest of the path
+ * Extracts image paths from assets
  *
  * @param {string[]} loaderResponses - original response returned by the responsiveLoader
- * @param {string} outputPath - output path for assets
  * @returns {string[]}
  */
-function getImageNames(loaderResponses, outputPath) {
+function getImagePaths(loaderResponses) {
 	return loaderResponses.map((code) => {
 		const {images} = compileCodeToModule(code);
-		return images.map(({path}) => path.replace(outputPath, ''));
+		return images.map(({path}) => path);
 	});
 }
 
