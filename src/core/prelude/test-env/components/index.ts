@@ -6,8 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { app, ComponentInterface } from 'core/component';
-import { registerComponent } from 'core/component/init';
+import { app, ComponentInterface, normalizeComponentForceUpdateProps } from 'core/component';
 import { render, create } from 'components/friends/vdom';
 
 import type iBlock from 'components/super/i-block/i-block';
@@ -46,13 +45,11 @@ globalThis.renderComponents = (
 
 	const ids = scheme.map(() => Math.random().toString(16).slice(2));
 
-	const componentMeta = registerComponent(componentName);
-
 	const vnodes = create.call(ctx.vdom, scheme.map(({attrs, children}, i) => ({
 		type: componentName,
 
 		attrs: {
-			...normalizeAttrs(attrs),
+			...(attrs != null ? normalizeComponentForceUpdateProps(app.component!, componentName, attrs) : {}),
 			[ID_ATTR]: ids[i]
 		},
 
@@ -68,26 +65,6 @@ globalThis.renderComponents = (
 	ids.forEach((id) => {
 		components.add(document.querySelector(`[${ID_ATTR}="${id}"]`));
 	});
-
-	function normalizeAttrs(attrs?: Dictionary): Nullable<Dictionary> {
-		if (attrs == null || componentMeta == null) {
-			return attrs;
-		}
-
-		const normalized = {};
-
-		Object.keys(attrs).forEach((key) => {
-			if (componentMeta.props[key]?.forceUpdate === false || componentMeta.props[`${key}Prop`]?.forceUpdate === false) {
-				const value = attrs[key];
-				normalized[`@:${key}`] = ctx!.createPropAccessors(() => <object>value);
-
-			} else {
-				normalized[key] = attrs[key];
-			}
-		});
-
-		return normalized;
-	}
 };
 
 globalThis.removeCreatedComponents = () => {
