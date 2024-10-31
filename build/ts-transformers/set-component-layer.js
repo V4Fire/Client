@@ -78,6 +78,8 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 		const
 			expr = node?.expression;
 
+		// Passing the value of the original layer as an argument to
+		// the createApp function for initializing the root component.
 		if (
 			ts.isCallExpression(node) &&
 			isInitAppFile &&
@@ -96,6 +98,8 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 			return updatedCallExpression;
 		}
 
+		// Passing the value of the package layer in which the component
+		// is defined to the @component decorator.
 		if (ts.isDecorator(node) && isComponentCallExpression(node)) {
 			if (!ts.isCallExpression(expr)) {
 				return node;
