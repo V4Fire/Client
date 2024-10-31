@@ -22,10 +22,10 @@ test.describe('functional component', () => {
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 
-		await Promise.all([
-			Component.waitForComponentTemplate(page, 'b-functional-dummy'),
-			Component.waitForComponentTemplate(page, 'b-functional-button-dummy')
-		]);
+		// await Promise.all([
+		// 	Component.waitForComponentTemplate(page, 'b-functional-dummy'),
+		// 	Component.waitForComponentTemplate(page, 'b-functional-button-dummy')
+		// ]);
 
 		target = await Component.createComponent<bFunctionalDummy>(page, 'b-functional-dummy', {stage: 'main'});
 		text = page.getByText(/Counter/);
