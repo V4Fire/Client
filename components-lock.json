@@ -1,5 +1,5 @@
 {
-  "hash": "966323eda4c97824a2822f416bb588904fa51331397d912dc37a8ee531c2a3d6",
+  "hash": "7b16e904c8d6785034161f61a4a4b42111ccf767585d6f643478eec974899aa8",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1494,25 +1494,29 @@
             "parent": "i-data",
             "dependencies": [],
             "libs": [
-              "components/directives/on-resize"
+              "components/directives/on-resize",
+              "components/directives/safe-on"
             ]
           },
           "name": "b-slider",
           "parent": "i-data",
           "dependencies": [],
           "libs": [
-            "components/directives/on-resize"
+            "components/directives/on-resize",
+            "components/directives/safe-on"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
             "%data:Set": [
-              "components/directives/on-resize"
+              "components/directives/on-resize",
+              "components/directives/safe-on"
             ]
           },
           "resolvedOwnLibs": {
             "%data": "%data:Set",
             "%data:Set": [
-              "components/directives/on-resize"
+              "components/directives/on-resize",
+              "components/directives/safe-on"
             ]
           },
           "type": "block",
