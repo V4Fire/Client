@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-10-??)
+
+#### :rocket: New Feature
+
+* Added the `v-safe-on` directive, which allows event handlers to execute only when the vnode is not unmounted
+  `components/directives/safe-on`
+* Added a wrapper for `withModifiers` with support for the `safe` modifier `core/component/render`
+
+#### :house: Internal
+
+* Moved the `parseEventListener` function to common directive helpers `core/component/directives/attrs`
+
 ## v4.0.0-beta.148 (2024-10-28)
 
 #### :house: Internal
