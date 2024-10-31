@@ -22,12 +22,6 @@ test.describe('functional component getters', () => {
 		await demoPage.goto();
 
 		target = await Component.createComponent<bFunctionalDummy>(page, 'b-functional-dummy', {stage: 'getters'});
-		
-		// await Promise.all([
-		// 	Component.waitForComponentTemplate(page, 'b-functional-dummy'),
-		// 	Component.waitForComponentTemplate(page, 'b-functional-button-dummy')
-		// ]);
-
 		text = page.getByText(/Value/);
 	});
 
