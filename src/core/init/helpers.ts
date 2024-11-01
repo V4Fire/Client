@@ -23,6 +23,7 @@ import Provider, { providers, instanceCache } from 'core/data';
 import type { DataProviderProp } from 'components/super/i-block/providers/interface';
 import type { State } from 'core/component';
 import type { InitAppOptions, CreateAppOptions } from 'core/init/interface';
+import { dropCache } from 'core/request';
 
 /**
  * Returns the application state object and parameters for creating an application instance based on
@@ -116,6 +117,8 @@ function destroy(remoteState: State) {
 			delete instanceCache[key];
 		}
 	});
+
+	dropCache();
 
 	remoteState.async.clearAll();
 }
