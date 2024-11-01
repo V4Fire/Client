@@ -90,7 +90,7 @@ export function computed(params?: DecoratorComputed): PartDecorator {
 			}, meta);
 		}
 
-		delete meta[cluster === 'computedFields' ? 'accessors' : 'computedFields'][accessorName];
+		meta[cluster === 'computedFields' ? 'accessors' : 'computedFields'][accessorName] = undefined;
 
 		store[accessorName] = accessor;
 
