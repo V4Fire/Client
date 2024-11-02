@@ -12,7 +12,7 @@
  */
 
 import SyncPromise from 'core/promise/sync';
-import { derive } from 'core/functools/trait';
+import { derive } from 'components/traits';
 
 import DOM, { delegateElement } from 'components/friends/dom';
 import Block, { element, elements, setElementMod } from 'components/friends/block';

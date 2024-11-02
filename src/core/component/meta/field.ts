@@ -6,10 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { sortedFields } from 'core/component/field/const';
-
-import type { ComponentField } from 'core/component/interface';
-import type { SortedFields } from 'core/component/field/interface';
+import type { ComponentField, ComponentFieldInitializers } from 'core/component/meta';
 
 /**
  * Returns the weight of a specified field from a given scope.
@@ -26,14 +23,14 @@ export function getFieldWeight(field: CanUndef<ComponentField>, scope: Dictionar
 		return 0;
 	}
 
-	const {after} = field;
-
 	let weight = 0;
+
+	const {after} = field;
 
 	if (after != null) {
 		weight += after.size;
 
-		after.forEach((name) => {
+		for (const name of after) {
 			const dep = scope[name];
 
 			if (dep == null) {
@@ -41,7 +38,7 @@ export function getFieldWeight(field: CanUndef<ComponentField>, scope: Dictionar
 			}
 
 			weight += getFieldWeight(dep, scope);
-		});
+		}
 	}
 
 	if (!field.atom) {
@@ -55,20 +52,28 @@ export function getFieldWeight(field: CanUndef<ComponentField>, scope: Dictionar
  * Sorts the specified fields and returns an array that is ordered and ready for initialization
  * @param fields
  */
-export function sortFields(fields: Dictionary<ComponentField>): SortedFields {
-	let val = sortedFields.get(fields);
+export function sortFields(fields: Dictionary<ComponentField>): ComponentFieldInitializers {
+	const list: Array<[string, ComponentField]> = [];
 
-	if (val == null) {
-		val = Object.entries(Object.cast<StrictDictionary<ComponentField>>(fields)).sort(([_1, a], [_2, b]) => {
-			const
-				aWeight = getFieldWeight(a, fields),
-				bWeight = getFieldWeight(b, fields);
+	// eslint-disable-next-line guard-for-in
+	for (const name in fields) {
+		const field = fields[name];
 
-			return aWeight - bWeight;
-		});
+		if (field == null) {
+			continue;
+		}
 
-		sortedFields.set(fields, val);
+		list.push([name, field]);
 	}
 
-	return val;
+	// The for-in loop first iterates over the object's own properties, and then over those from the prototypes,
+	// which means the initialization order will be reversed.
+	// To fix this, we need to reverse the list of fields before sorting.
+	return list.reverse().sort(([aName], [bName]) => {
+		const
+			aWeight = getFieldWeight(fields[aName], fields),
+			bWeight = getFieldWeight(fields[bName], fields);
+
+		return aWeight - bWeight;
+	});
 }

@@ -12,7 +12,6 @@
  */
 
 export * from 'core/component/decorators/component';
-export * from 'core/component/decorators/factory';
 
 export * from 'core/component/decorators/prop';
 export * from 'core/component/decorators/field';

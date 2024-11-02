@@ -14,7 +14,7 @@
 import symbolGenerator from 'core/symbol';
 
 import SyncPromise from 'core/promise/sync';
-import { derive } from 'core/functools/trait';
+import { derive } from 'components/traits';
 
 import AsyncRender, { iterate, TaskOptions } from 'components/friends/async-render';
 import Block, { getElementMod, setElementMod, getElementSelector, getFullElementName } from 'components/friends/block';
@@ -136,7 +136,7 @@ class bTree extends iTreeProps implements iActiveItems, iFoldable {
 		return normalizeItems.call(o, val);
 	}))
 
-	protected itemsStore: this['Items'] = [];
+	protected itemsStore!: this['Items'];
 
 	/** @inheritDoc */
 	declare protected readonly $refs: iData['$refs'] & {

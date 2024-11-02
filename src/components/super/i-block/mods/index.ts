@@ -23,7 +23,7 @@ export * from 'components/super/i-block/mods/interface';
 
 @component({partial: 'iBlock'})
 export default abstract class iBlockMods extends iBlockEvent {
-	@system({merge: mergeMods, init: initMods})
+	@system({atom: true, merge: mergeMods, init: initMods})
 	override readonly mods!: ModsDict;
 
 	override get sharedMods(): CanNull<ModsDict> {

@@ -13,7 +13,7 @@ This module provides a trait with helpers for a component that renders a list of
 * The trait can be automatically derived.
 
   ```typescript
-  import { derive } from 'core/functools/trait';
+  import { derive } from 'components/traits';
 
   import iControlList, { Control } from 'components/traits/i-control-list/i-control-list';
   import iBlock, { component } from 'components/super/i-block/i-block';

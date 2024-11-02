@@ -55,8 +55,7 @@ However, to use some methods before the `created` hook, the [[iBlock]] class has
 ```
 @hook('beforeRuntime')
 protected initBaseAPI() {
-  const
-    i = this.instance;
+  const i = this.constructor.prototype;
 
   this.syncStorageState = i.syncStorageState.bind(this);
   this.syncRouterState = i.syncRouterState.bind(this);
@@ -243,7 +242,7 @@ then the rest will wait for its resolving to preserve the initialization order.
 
 ### [after]
 
-A method name or a list of names after which this handler should be invoked on a registered hook event.
+A method name or a list of method names after which this handler should be invoked during a registered hook event.
 
 ```typescript
 import iBlock, { component, hook } from 'components/super/i-block/i-block';
