@@ -20,7 +20,11 @@ Vue.config.errorHandler = (err, vm, info) => {
 };
 
 Vue.config.warnHandler = (msg, vm, trace) => {
-	logger.warn('warnHandler', msg, trace, getComponentInfo(vm));
+	// It prevents event loop freeze (check CHANGELOG for details)
+	const omitDetails = Object.isString(msg) &&
+		msg.endsWith('was accessed during render but is not defined on instance.');
+
+	logger.warn('warnHandler', msg, trace, getComponentInfo(vm, omitDetails));
 };
 
 const
@@ -29,16 +33,21 @@ const
 
 /**
  * Returns a dictionary with information for debugging or logging the component
+ *
  * @param component
+ * @param omitDetails
  */
-function getComponentInfo(component: Nullable<ComponentPublicInstance | ComponentInterface>): Dictionary {
+function getComponentInfo(
+	component: Nullable<ComponentPublicInstance | ComponentInterface>,
+	omitDetails: boolean = false
+): Dictionary {
 	if (component == null) {
 		return {
 			name: UNRECOGNIZED_COMPONENT_NAME
 		};
 	}
 
-	if ('componentName' in component) {
+	if ('componentName' in component && !omitDetails) {
 		return {
 			name: getComponentName(component),
 			...component.getComponentInfo?.()
