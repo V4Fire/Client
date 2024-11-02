@@ -49,7 +49,7 @@ export function canSkipWatching(
 					prop = meta.props[propInfo.name],
 					propName = prop?.forceUpdate !== false ? propInfo.name : `on:${propInfo.name}`;
 
-				skipWatching = ctx.getPassedProps?.().has(propName) === false;
+				skipWatching = ctx.getPassedProps?.().hasOwnProperty(propName) === false;
 			}
 
 		} else {
