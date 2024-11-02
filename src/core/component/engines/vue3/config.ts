@@ -19,13 +19,15 @@ Vue.config.errorHandler = (err, vm, info) => {
 	logger.error('errorHandler', err, info, getComponentInfo(vm));
 };
 
-Vue.config.warnHandler = (msg, vm, trace) => {
-	// It prevents event loop freeze (check CHANGELOG for details)
-	const omitDetails = Object.isString(msg) &&
-		msg.endsWith('was accessed during render but is not defined on instance.');
+if (!IS_PROD) {
+	Vue.config.warnHandler = (msg, vm, trace) => {
+		// It prevents event loop freeze (check CHANGELOG for details)
+		const omitDetails = Object.isString(msg) &&
+			msg.endsWith('was accessed during render but is not defined on instance.');
 
-	logger.warn('warnHandler', msg, trace, getComponentInfo(vm, omitDetails));
-};
+		logger.warn('warnHandler', msg, trace, getComponentInfo(vm, omitDetails));
+	};
+}
 
 const
 	UNRECOGNIZED_COMPONENT_NAME = 'unrecognized-component',
@@ -35,7 +37,7 @@ const
  * Returns a dictionary with information for debugging or logging the component
  *
  * @param component
- * @param omitDetails
+ * @param omitDetails - when set to `true` the getComponentInfo method won't be called
  */
 function getComponentInfo(
 	component: Nullable<ComponentPublicInstance | ComponentInterface>,
@@ -47,7 +49,7 @@ function getComponentInfo(
 		};
 	}
 
-	if ('componentName' in component && !omitDetails) {
+	if (!omitDetails && 'componentName' in component) {
 		return {
 			name: getComponentName(component),
 			...component.getComponentInfo?.()
