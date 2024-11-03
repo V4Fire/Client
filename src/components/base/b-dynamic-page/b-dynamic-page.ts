@@ -67,11 +67,7 @@ AsyncRender.addToPrototype({iterate});
 const
 	$$ = symbolGenerator();
 
-@component({
-	inheritMods: false,
-	defaultProps: false
-})
-
+@component({inheritMods: false})
 export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * The initial name of the page to load
@@ -116,8 +112,7 @@ export default class bDynamicPage extends iDynamicPage {
 	 */
 	@prop({
 		type: Function,
-		default: (route: bDynamicPage['route']) => route != null ? (route.meta.component ?? route.name) : undefined,
-		forceDefault: true
+		default: (route: bDynamicPage['route']) => route != null ? (route.meta.component ?? route.name) : undefined
 	})
 
 	readonly pageGetter!: PageGetter;
@@ -196,12 +191,7 @@ export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * The page switching event name
 	 */
-	@prop({
-		type: String,
-		required: false,
-		forceDefault: true
-	})
-
+	@prop({type: String, required: false})
 	readonly event?: string = 'setRoute';
 
 	/**

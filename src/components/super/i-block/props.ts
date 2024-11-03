@@ -112,7 +112,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 	/**
 	 * If set to false, the component will not render its content during SSR
 	 */
-	@prop({type: Boolean, forceDefault: true})
+	@prop(Boolean)
 	readonly ssrRenderingProp: boolean = true;
 
 	/**
@@ -309,7 +309,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 	@prop({type: Object, required: false})
 	override readonly styles?: Dictionary<CanArray<string> | Dictionary<string>>;
 
-	@prop({type: Boolean, forceDefault: true})
+	@prop(Boolean)
 	override readonly canFunctional: boolean = false;
 
 	@prop({type: Function, required: false})

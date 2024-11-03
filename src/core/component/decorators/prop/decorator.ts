@@ -173,10 +173,9 @@ export function regProp(propName: string, typeOrParams: Nullable<PropType | Deco
 
 	const
 		isRoot = meta.params.root === true,
-		isFunctional = meta.params.functional === true,
-		defaultProps = meta.params.defaultProps !== false;
+		isFunctional = meta.params.functional === true;
 
-	if (prop.default !== undefined && (defaultProps || prop.forceDefault)) {
+	if (prop.default !== undefined) {
 		defaultValue = prop.default;
 	}
 
@@ -185,7 +184,7 @@ export function regProp(propName: string, typeOrParams: Nullable<PropType | Deco
 
 		(prop.forceUpdate ? component.props : component.attrs)[propName] = {
 			type: prop.type,
-			required: prop.required !== false && defaultProps && defaultValue === undefined,
+			required: prop.required !== false && defaultValue === undefined,
 
 			default: defaultValue,
 			functional: prop.functional,

@@ -21,6 +21,5 @@ export * from 'core/component/decorators/computed';
 export * from 'core/component/decorators/hook';
 export * from 'core/component/decorators/watch';
 
-export { registeredComponent } from 'core/component/decorators/const';
-
+export * from 'core/component/decorators/const';
 export * from 'core/component/decorators/interface';
