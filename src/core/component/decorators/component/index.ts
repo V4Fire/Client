@@ -42,6 +42,8 @@ import { getComponent, ComponentEngine } from 'core/component/engines';
 import { getComponentMods, getInfoFromConstructor } from 'core/component/reflect';
 import { registerComponent, registerParentComponents } from 'core/component/init';
 
+import { registeredComponent } from 'core/component/decorators/const';
+
 import type { ComponentConstructor, ComponentOptions } from 'core/component/interface';
 
 const OVERRIDDEN = Symbol('This class is overridden in the child layer');
@@ -87,11 +89,7 @@ export function component(opts?: ComponentOptions): Function {
 			Object.defineProperty(componentInfo.parent, OVERRIDDEN, {value: true});
 		}
 
-		// Add information about the layer in which the component is described
-		// to correctly handle situations where the component is overridden in child layers of the application
-		const regEvent = `constructor.${componentNormalizedName}.${componentInfo.layer}`;
-
-		initEmitter.emit('bindConstructor', componentNormalizedName, regEvent);
+		const regEvent = registeredComponent.event!;
 
 		if (isPartial) {
 			pushToInitList(() => {

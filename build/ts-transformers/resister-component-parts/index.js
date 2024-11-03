@@ -76,18 +76,68 @@ function resisterComponentDefaultValues(context) {
 	const {factory} = context;
 
 	let
+		componentName,
 		needImportDefaultValueDecorator = false,
 		needImportMethodDecorator = false;
 
 	return (node) => {
 		node = ts.visitNode(node, visitor);
 
+		if (componentName) {
+			const activeComponentAssignment1 = ts.factory.createExpressionStatement(
+				ts.factory.createBinaryExpression(
+					ts.factory.createPropertyAccessExpression(
+						ts.factory.createIdentifier('registeredComponent'),
+						ts.factory.createIdentifier('name')
+					),
+
+					ts.factory.createToken(ts.SyntaxKind.EqualsToken),
+					ts.factory.createStringLiteral(componentName)
+				)
+			);
+
+			const activeComponentAssignment2 = ts.factory.createExpressionStatement(
+				ts.factory.createBinaryExpression(
+					ts.factory.createPropertyAccessExpression(
+						ts.factory.createIdentifier('registeredComponent'),
+						ts.factory.createIdentifier('layer')
+					),
+
+					ts.factory.createToken(ts.SyntaxKind.EqualsToken),
+					ts.factory.createStringLiteral(getLayerName(node.path))
+				)
+			);
+
+			const activeComponentAssignment3 = ts.factory.createExpressionStatement(
+				ts.factory.createBinaryExpression(
+					ts.factory.createPropertyAccessExpression(
+						ts.factory.createIdentifier('registeredComponent'),
+						ts.factory.createIdentifier('event')
+					),
+
+					ts.factory.createToken(ts.SyntaxKind.EqualsToken),
+					ts.factory.createStringLiteral(`constructor.${componentName.dasherize()}.${getLayerName(node.path)}`)
+				)
+			);
+
+			const updatedStatements = factory.createNodeArray([
+				activeComponentAssignment1,
+				activeComponentAssignment2,
+				activeComponentAssignment3,
+				...node.statements
+			]);
+
+			node = factory.updateSourceFile(node, updatedStatements);
+
+			node = addNamedImport('registeredComponent', 'core/component/decorators/const', context, node);
+		}
+
 		if (needImportDefaultValueDecorator) {
-			node = addDecoratorImport('defaultValue', 'core/component/decorators/default-value', context, node);
+			node = addNamedImport('defaultValue', 'core/component/decorators/default-value', context, node);
 		}
 
 		if (needImportMethodDecorator) {
-			node = addDecoratorImport('method', 'core/component/decorators/method', context, node);
+			node = addNamedImport('method', 'core/component/decorators/method', context, node);
 		}
 
 		return node;
@@ -100,60 +150,89 @@ function resisterComponentDefaultValues(context) {
 	 * @returns {Node|ClassDeclaration}
 	 */
 	function visitor(node) {
-		if (isComponentClass(node, 'component') && node.members != null) {
-			const newMembers = node.members.flatMap((node) => {
+		if (isComponentClass(node, 'component')) {
+			componentName = node.name.text;
+
+			node.decorators.forEach((decorator) => {
 				if (
-					ts.isPropertyDeclaration(node) &&
-					ts.hasInitializer(node) &&
-					!node.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.StaticKeyword)
+					ts.isCallExpression(decorator.expression) &&
+					ts.isIdentifier(decorator.expression.expression) &&
+					decorator.expression.expression.text === 'component'
 				) {
-					needImportDefaultValueDecorator = true;
-					return addDefaultValueDecorator(context, node);
+					if (decorator.expression.arguments.length > 0) {
+						const argument = decorator.expression.arguments[0];
+
+						if (ts.isObjectLiteralExpression(argument)) {
+							argument.properties.forEach((property) => {
+								if (
+									ts.isPropertyAssignment(property) &&
+									ts.isIdentifier(property.name) &&
+									property.name.text === 'partial' &&
+									ts.isStringLiteral(property.initializer)
+								) {
+									componentName = property.initializer.text;
+								}
+							});
+						}
+					}
 				}
-
-				const name = node.name.getText();
-
-				const
-					isGetter = ts.isGetAccessorDeclaration(node),
-					isSetter = !isGetter && ts.isSetAccessorDeclaration(node);
-
-				if (isGetter || isSetter || ts.isMethodDeclaration(node)) {
-					needImportMethodDecorator = true;
-					node = addMethodDecorator(context, node);
-				}
-
-				if (isGetter || isSetter) {
-					const
-						postfix = isGetter ? 'Getter' : 'Setter',
-						methodName = context.factory.createStringLiteral(name + postfix);
-
-					const method = factory.createMethodDeclaration(
-						undefined,
-						undefined,
-						undefined,
-						methodName,
-						undefined,
-						undefined,
-						node.parameters,
-						undefined,
-						node.body
-					);
-
-					return [node, method];
-				}
-
-				return node;
 			});
 
-			return factory.updateClassDeclaration(
-				node,
-				node.decorators,
-				node.modifiers,
-				node.name,
-				node.typeParameters,
-				node.heritageClauses,
-				newMembers
-			);
+			if (node.members != null) {
+				const newMembers = node.members.flatMap((node) => {
+					if (
+						ts.isPropertyDeclaration(node) &&
+						ts.hasInitializer(node) &&
+						!node.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.StaticKeyword)
+					) {
+						needImportDefaultValueDecorator = true;
+						return addDefaultValueDecorator(context, node);
+					}
+
+					const name = node.name.getText();
+
+					const
+						isGetter = ts.isGetAccessorDeclaration(node),
+						isSetter = !isGetter && ts.isSetAccessorDeclaration(node);
+
+					if (isGetter || isSetter || ts.isMethodDeclaration(node)) {
+						needImportMethodDecorator = true;
+						node = addMethodDecorator(context, node);
+					}
+
+					if (isGetter || isSetter) {
+						const
+							postfix = isGetter ? 'Getter' : 'Setter',
+							methodName = context.factory.createStringLiteral(name + postfix);
+
+						const method = factory.createMethodDeclaration(
+							undefined,
+							undefined,
+							undefined,
+							methodName,
+							undefined,
+							undefined,
+							node.parameters,
+							undefined,
+							node.body
+						);
+
+						return [node, method];
+					}
+
+					return node;
+				});
+
+				return factory.updateClassDeclaration(
+					node,
+					node.decorators,
+					node.modifiers,
+					node.name,
+					node.typeParameters,
+					node.heritageClauses,
+					newMembers
+				);
+			}
 		}
 
 		return ts.visitEachChild(node, visitor, context);
@@ -290,7 +369,7 @@ function addMethodDecorator(context, node) {
 }
 
 /**
- * Adds the import for the decorator with the specified name to the specified file
+ * Adds an import statement with the specified name to the specified file
  *
  * @param {string} name - the name of the decorator to be imported and applied (e.g., `defaultValue`)
  * @param {string} path - the path from which the decorator should be imported (e.g., `core/component/decorators`)
@@ -298,7 +377,7 @@ function addMethodDecorator(context, node) {
  * @param {Node} node - the source file node in the AST
  * @returns {Node}
  */
-function addDecoratorImport(name, path, context, node) {
+function addNamedImport(name, path, context, node) {
 	const {factory} = context;
 
 	const decoratorSrc = factory.createStringLiteral(path);
@@ -354,4 +433,18 @@ function isComponentClass(node) {
 	}
 
 	return false;
+}
+
+const pathToRootRgxp = /(?<path>.+)[/\\]src[/\\]/;
+
+/**
+ * The function determines the package in which the module is defined and
+ * returns the name of that package from the `package.json` file
+ *
+ * @param {string} filePath
+ * @returns {string}
+ */
+function getLayerName(filePath) {
+	const pathToRootDir = filePath.match(pathToRootRgxp).groups.path;
+	return require(`${pathToRootDir}/package.json`).name;
 }

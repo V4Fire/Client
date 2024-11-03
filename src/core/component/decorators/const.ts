@@ -16,3 +16,9 @@ export const tiedFieldMap = Object.createDict({
 	fields: true,
 	systemFields: true
 });
+
+export const registeredComponent: {name?: string; layer?: string; event?: string} = {
+	name: undefined,
+	layer: undefined,
+	event: undefined
+};
