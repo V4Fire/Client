@@ -12,6 +12,8 @@
  */
 
 import { initEmitter, ComponentDescriptor } from 'core/component';
+
+import { registeredComponent } from 'core/component/decorators';
 import { regMethod, MethodType } from 'core/component/decorators/method';
 
 /**
@@ -67,89 +69,91 @@ import { regMethod, MethodType } from 'core/component/decorators/method';
  */
 export function derive(...traits: Function[]) {
 	return (target: Function): void => {
-		initEmitter.once('bindConstructor', (_: string, regEvent: string) => {
-			initEmitter.once(regEvent, ({meta}: ComponentDescriptor) => {
-				const proto = target.prototype;
+		if (registeredComponent.name == null) {
+			return;
+		}
 
-				for (let i = 0; i < traits.length; i++) {
-					const
-						originalTrait = traits[i],
-						chain = getTraitChain(originalTrait);
+		initEmitter.once(registeredComponent.name, ({meta}: ComponentDescriptor) => {
+			const proto = target.prototype;
 
-					for (let i = 0; i < chain.length; i++) {
-						const [trait, keys] = chain[i];
+			for (let i = 0; i < traits.length; i++) {
+				const
+					originalTrait = traits[i],
+					chain = getTraitChain(originalTrait);
 
-						for (let i = 0; i < keys.length; i++) {
-							const
-								key = keys[i],
-								defMethod = Object.getOwnPropertyDescriptor(trait, key),
-								traitMethod = Object.getOwnPropertyDescriptor(trait.prototype, key);
+				for (let i = 0; i < chain.length; i++) {
+					const [trait, keys] = chain[i];
 
-							const canDerive =
-								defMethod != null &&
-								traitMethod != null &&
-								!(key in proto) &&
+					for (let i = 0; i < keys.length; i++) {
+						const
+							key = keys[i],
+							defMethod = Object.getOwnPropertyDescriptor(trait, key),
+							traitMethod = Object.getOwnPropertyDescriptor(trait.prototype, key);
 
-								Object.isFunction(defMethod.value) && (
-									Object.isFunction(traitMethod.value) ||
+						const canDerive =
+							defMethod != null &&
+							traitMethod != null &&
+							!(key in proto) &&
 
-									// eslint-disable-next-line @v4fire/unbound-method
-									Object.isFunction(traitMethod.get) || Object.isFunction(traitMethod.set)
-								);
+							Object.isFunction(defMethod.value) && (
+								Object.isFunction(traitMethod.value) ||
 
-							if (canDerive) {
-								let type: MethodType;
+								// eslint-disable-next-line @v4fire/unbound-method
+								Object.isFunction(traitMethod.get) || Object.isFunction(traitMethod.set)
+							);
 
-								const newDescriptor: PropertyDescriptor = {
-									enumerable: false,
-									configurable: true
-								};
+						if (canDerive) {
+							let type: MethodType;
 
-								if (Object.isFunction(traitMethod.value)) {
-									Object.assign(newDescriptor, {
-										writable: true,
+							const newDescriptor: PropertyDescriptor = {
+								enumerable: false,
+								configurable: true
+							};
 
-										// eslint-disable-next-line func-name-matching
-										value: function defaultMethod(...args: unknown[]) {
-											return originalTrait[key](this, ...args);
-										}
-									});
+							if (Object.isFunction(traitMethod.value)) {
+								Object.assign(newDescriptor, {
+									writable: true,
 
-									type = 'method';
+									// eslint-disable-next-line func-name-matching
+									value: function defaultMethod(...args: unknown[]) {
+										return originalTrait[key](this, ...args);
+									}
+								});
 
-								} else {
-									Object.assign(newDescriptor, {
-										get() {
-											return originalTrait[key](this);
-										},
+								type = 'method';
 
-										set(value: unknown) {
-											originalTrait[key](this, value);
-										}
-									});
+							} else {
+								Object.assign(newDescriptor, {
+									get() {
+										return originalTrait[key](this);
+									},
 
-									type = 'accessor';
-								}
+									set(value: unknown) {
+										originalTrait[key](this, value);
+									}
+								});
 
-								Object.defineProperty(proto, key, newDescriptor);
-								regMethod(key, type, meta, proto);
+								type = 'accessor';
 							}
+
+							Object.defineProperty(proto, key, newDescriptor);
+							regMethod(key, type, meta, proto);
 						}
 					}
 				}
+			}
 
-				function getTraitChain<T extends Array<[Function, string[]]>>(
-					trait: Nullable<object>,
-					methods: T = Object.cast([])
-				): T {
-					if (!Object.isFunction(trait) || trait === Function.prototype) {
-						return methods;
-					}
-
-					methods.push([trait, Object.getOwnPropertyNames(trait)]);
-					return getTraitChain(Object.getPrototypeOf(trait), methods);
+			function getTraitChain<T extends Array<[Function, string[]]>>(
+				trait: Nullable<object>,
+				methods: T = Object.cast([])
+			): T {
+				if (!Object.isFunction(trait) || trait === Function.prototype) {
+					return methods;
 				}
-			});
+
+				methods.push([trait, Object.getOwnPropertyNames(trait)]);
+				return getTraitChain(Object.getPrototypeOf(trait), methods);
+			}
 		});
 	};
 }
