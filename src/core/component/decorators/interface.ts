@@ -32,3 +32,9 @@ export interface ComponentPartDecorator4 {
 export interface PartDecorator {
 	(target: object, partKey: string, partDesc?: PropertyDescriptor): void;
 }
+
+export interface RegisteredComponent {
+	name?: string;
+	layer?: string;
+	event?: string;
+}

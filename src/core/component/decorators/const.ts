@@ -6,18 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export const invertedFieldMap = Object.createDict({
-	props: ['fields', 'systemFields'],
-	fields: ['props', 'systemFields'],
-	systemFields: ['props', 'fields']
-});
+import type { RegisteredComponent } from 'core/component/decorators/interface';
 
-export const tiedFieldMap = Object.createDict({
-	fields: true,
-	systemFields: true
-});
-
-export const registeredComponent: {name?: string; layer?: string; event?: string} = {
+export const registeredComponent: RegisteredComponent = {
 	name: undefined,
 	layer: undefined,
 	event: undefined
