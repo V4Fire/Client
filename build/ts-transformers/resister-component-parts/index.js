@@ -77,6 +77,7 @@ function resisterComponentDefaultValues(context) {
 
 	let
 		componentName,
+		originalComponentName,
 		needImportDefaultValueDecorator = false,
 		needImportMethodDecorator = false;
 
@@ -123,7 +124,7 @@ function resisterComponentDefaultValues(context) {
 			const statements = [];
 
 			node.statements.forEach((node) => {
-				if (isComponentClass(node, 'component') && node.name.text === componentName) {
+				if (isComponentClass(node, 'component') && node.name.text === originalComponentName) {
 					statements.push(
 						activeComponentAssignment1,
 						activeComponentAssignment2,
@@ -160,6 +161,7 @@ function resisterComponentDefaultValues(context) {
 	function visitor(node) {
 		if (isComponentClass(node, 'component')) {
 			componentName = node.name.text;
+			originalComponentName = componentName;
 
 			node.decorators.forEach((decorator) => {
 				if (
