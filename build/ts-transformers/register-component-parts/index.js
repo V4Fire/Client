@@ -10,6 +10,14 @@
 
 const ts = require('typescript');
 
+const {
+	addNamedImport,
+	isComponentClass,
+
+	getPartialName,
+	getLayerName
+} = include('build/ts-transformers/register-component-parts/helpers');
+
 /**
  * @typedef {import('typescript').Transformer} Transformer
  * @typedef {import('typescript').TransformationContext} TransformationContext
@@ -51,8 +59,13 @@ module.exports = resisterComponentDefaultValues;
  * ```typescript
  * import { defaultValue } from 'core/component/decorators/default-value';
  * import { method } from 'core/component/decorators/method';
+ * import { registeredComponent } from 'core/component/decorators/const';
  *
  * import iBlock, { component, prop } from 'components/super/i-block/i-block';
+ *
+ * registeredComponent.name = 'bExample';
+ * registeredComponent.layer = '@v4fire/client';
+ * registeredComponent.event = 'constructor.b-example.@v4fire/client';
  *
  * @component()
  * class bExample extends iBlock {
@@ -77,7 +90,9 @@ function resisterComponentDefaultValues(context) {
 
 	let
 		componentName,
-		originalComponentName,
+		originalComponentName;
+
+	let
 		needImportDefaultValueDecorator = false,
 		needImportMethodDecorator = false;
 
@@ -85,58 +100,13 @@ function resisterComponentDefaultValues(context) {
 		node = ts.visitNode(node, visitor);
 
 		if (componentName) {
-			const activeComponentAssignment1 = ts.factory.createExpressionStatement(
-				ts.factory.createBinaryExpression(
-					ts.factory.createPropertyAccessExpression(
-						ts.factory.createIdentifier('registeredComponent'),
-						ts.factory.createIdentifier('name')
-					),
-
-					ts.factory.createToken(ts.SyntaxKind.EqualsToken),
-					ts.factory.createStringLiteral(componentName)
-				)
+			node = registeredComponentParams(
+				context,
+				node,
+				componentName,
+				originalComponentName,
+				getLayerName(node.path)
 			);
-
-			const activeComponentAssignment2 = ts.factory.createExpressionStatement(
-				ts.factory.createBinaryExpression(
-					ts.factory.createPropertyAccessExpression(
-						ts.factory.createIdentifier('registeredComponent'),
-						ts.factory.createIdentifier('layer')
-					),
-
-					ts.factory.createToken(ts.SyntaxKind.EqualsToken),
-					ts.factory.createStringLiteral(getLayerName(node.path))
-				)
-			);
-
-			const activeComponentAssignment3 = ts.factory.createExpressionStatement(
-				ts.factory.createBinaryExpression(
-					ts.factory.createPropertyAccessExpression(
-						ts.factory.createIdentifier('registeredComponent'),
-						ts.factory.createIdentifier('event')
-					),
-
-					ts.factory.createToken(ts.SyntaxKind.EqualsToken),
-					ts.factory.createStringLiteral(`constructor.${componentName.dasherize()}.${getLayerName(node.path)}`)
-				)
-			);
-
-			const statements = [];
-
-			node.statements.forEach((node) => {
-				if (isComponentClass(node, 'component') && node.name.text === originalComponentName) {
-					statements.push(
-						activeComponentAssignment1,
-						activeComponentAssignment2,
-						activeComponentAssignment3,
-						node
-					);
-				} else {
-					statements.push(node);
-				}
-			});
-
-			node = factory.updateSourceFile(node, factory.createNodeArray(statements));
 
 			node = addNamedImport('registeredComponent', 'core/component/decorators/const', context, node);
 		}
@@ -160,33 +130,8 @@ function resisterComponentDefaultValues(context) {
 	 */
 	function visitor(node) {
 		if (isComponentClass(node, 'component')) {
-			componentName = node.name.text;
-			originalComponentName = componentName;
-
-			node.decorators.forEach((decorator) => {
-				if (
-					ts.isCallExpression(decorator.expression) &&
-					ts.isIdentifier(decorator.expression.expression) &&
-					decorator.expression.expression.text === 'component'
-				) {
-					if (decorator.expression.arguments.length > 0) {
-						const argument = decorator.expression.arguments[0];
-
-						if (ts.isObjectLiteralExpression(argument)) {
-							argument.properties.forEach((property) => {
-								if (
-									ts.isPropertyAssignment(property) &&
-									ts.isIdentifier(property.name) &&
-									property.name.text === 'partial' &&
-									ts.isStringLiteral(property.initializer)
-								) {
-									componentName = property.initializer.text;
-								}
-							});
-						}
-					}
-				}
-			});
+			originalComponentName = node.name.text;
+			componentName = getPartialName(node) ?? originalComponentName;
 
 			if (node.members != null) {
 				const newMembers = node.members.flatMap((node) => {
@@ -198,8 +143,6 @@ function resisterComponentDefaultValues(context) {
 						needImportDefaultValueDecorator = true;
 						return addDefaultValueDecorator(context, node);
 					}
-
-					const name = node.name.getText();
 
 					const
 						isGetter = ts.isGetAccessorDeclaration(node),
@@ -213,7 +156,7 @@ function resisterComponentDefaultValues(context) {
 					if (isGetter || isSetter) {
 						const
 							postfix = isGetter ? 'Getter' : 'Setter',
-							methodName = context.factory.createStringLiteral(name + postfix);
+							methodName = context.factory.createStringLiteral(node.name.text + postfix);
 
 						const method = factory.createMethodDeclaration(
 							undefined,
@@ -246,6 +189,58 @@ function resisterComponentDefaultValues(context) {
 		}
 
 		return ts.visitEachChild(node, visitor, context);
+	}
+}
+
+/**
+ * Registers the component parameters for initializing the DSL
+ *
+ * @param {TransformationContext} context - the transformation context
+ * @param {Node} node - the node representing the component class
+ * @param {string} componentName - the name of the component being targeted for registration
+ * @param {string} originalComponentName - the original name of the component for registration
+ * @param {string} layerName - the name of the layer in which the component is registered
+ * @returns {Node}
+ */
+function registeredComponentParams(
+	context,
+	node,
+	componentName,
+	originalComponentName,
+	layerName
+) {
+	const statements = [];
+
+	const {factory} = ts;
+
+	node.statements.forEach((node) => {
+		if (isComponentClass(node, 'component') && node.name.text === originalComponentName) {
+			statements.push(
+				register('name', componentName),
+				register('layer', layerName),
+				register('event', `constructor.${componentName.dasherize()}.${layerName}`),
+				node
+			);
+
+		} else {
+			statements.push(node);
+		}
+	});
+
+	return factory.updateSourceFile(node, factory.createNodeArray(statements));
+
+	function register(name, value) {
+		return factory.createExpressionStatement(
+			factory.createBinaryExpression(
+				factory.createPropertyAccessExpression(
+					factory.createIdentifier('registeredComponent'),
+					factory.createIdentifier(name)
+				),
+
+				factory.createToken(ts.SyntaxKind.EqualsToken),
+				factory.createStringLiteral(value)
+			)
+		);
 	}
 }
 
@@ -313,7 +308,7 @@ function addDefaultValueDecorator(context, node) {
 }
 
 /**
- * Adds the @method decorator for the specified class method or accessor
+ * Adds the `@method` decorator for the specified class method or accessor
  *
  * @param {TransformationContext} context - the transformation context
  * @param {Node} node - the method/accessor node in the AST
@@ -376,85 +371,4 @@ function addMethodDecorator(context, node) {
 		node.parameters,
 		node.body
 	);
-}
-
-/**
- * Adds an import statement with the specified name to the specified file
- *
- * @param {string} name - the name of the decorator to be imported and applied (e.g., `defaultValue`)
- * @param {string} path - the path from which the decorator should be imported (e.g., `core/component/decorators`)
- * @param {TransformationContext} context - the transformation context
- * @param {Node} node - the source file node in the AST
- * @returns {Node}
- */
-function addNamedImport(name, path, context, node) {
-	const {factory} = context;
-
-	const decoratorSrc = factory.createStringLiteral(path);
-
-	const importSpecifier = factory.createImportSpecifier(
-		undefined,
-		undefined,
-		factory.createIdentifier(name)
-	);
-
-	const importClause = factory.createImportClause(
-		undefined,
-		undefined,
-		factory.createNamedImports([importSpecifier])
-	);
-
-	const importDeclaration = factory.createImportDeclaration(
-		undefined,
-		undefined,
-		importClause,
-		decoratorSrc
-	);
-
-	const updatedStatements = factory.createNodeArray([
-		importDeclaration,
-		...node.statements
-	]);
-
-	return factory.updateSourceFile(node, updatedStatements);
-}
-
-/**
- * Returns true if the specified class is a component
- *
- * @param {Node} node - the class node in the AST
- * @returns {boolean}
- */
-function isComponentClass(node) {
-	const {decorators} = node;
-
-	if (!ts.isClassDeclaration(node)) {
-		return false;
-	}
-
-	const getDecoratorName = (decorator) => (
-		decorator.expression &&
-		decorator.expression.expression &&
-		ts.getEscapedTextOfIdentifierOrLiteral(decorator.expression.expression)
-	);
-
-	if (decorators != null && decorators.length > 0) {
-		return decorators.some((item) => getDecoratorName(item) === 'component');
-	}
-
-	return false;
-}
-
-const pathToRootRgxp = /(?<path>.+)[/\\]src[/\\]/;
-
-/**
- * The function determines the package in which the module is defined and
- * returns the name of that package from the `package.json` file
- *
- * @param {string} filePath
- * @returns {string}
- */
-function getLayerName(filePath) {
-	const pathToRootDir = filePath.match(pathToRootRgxp).groups.path;
-	return require(`${pathToRootDir}/package.json`).name;
 }
