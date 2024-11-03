@@ -11,11 +11,32 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2023-??-??)
+## v4.0.0-beta.?? (2024-11-??)
 
 #### :rocket: New Feature
 
 * Added a new webpack loader for responsive images `build/webpack/loaders/responsive-images-loader`
+
+## v4.0.0-beta.?? (2024-11-??)
+
+#### :bug: Bug Fix
+
+* Omit detailed component information to prevent event loop freezing associated
+with certain warnings. Vue uses a `get` trap within the proxy to verify the presence
+of a property in the instance. Accessing undefined properties via the `getComponentInfo` method
+during a warn or error handler will trigger infinite recursion. `core/component/engines/vue3`
+
+## v4.0.0-beta.149 (2024-10-31)
+
+#### :rocket: New Feature
+
+* Added the `v-safe-on` directive, which allows event handlers to execute only when the vnode is not unmounted
+  `components/directives/safe-on`
+* Added a wrapper for `withModifiers` with support for the `safe` modifier `core/component/render`
+
+#### :house: Internal
+
+* Moved the `parseEventListener` function to common directive helpers `core/component/directives/attrs`
 
 ## v4.0.0-beta.148 (2024-10-28)
 

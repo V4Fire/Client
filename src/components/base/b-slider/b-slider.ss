@@ -14,7 +14,7 @@
 	- windowEvents = { &
 		'@touchstart': 'onStart',
 		'@touchmove': 'onMove',
-		'@touchend': 'onRelease'
+		'v-safe-on:touchend': 'onRelease'
 	} .
 
 	- block body
