@@ -120,14 +120,22 @@ function resisterComponentDefaultValues(context) {
 				)
 			);
 
-			const updatedStatements = factory.createNodeArray([
-				activeComponentAssignment1,
-				activeComponentAssignment2,
-				activeComponentAssignment3,
-				...node.statements
-			]);
+			const statements = [];
 
-			node = factory.updateSourceFile(node, updatedStatements);
+			node.statements.forEach((node) => {
+				if (isComponentClass(node, 'component') && node.name.text === componentName) {
+					statements.push(
+						activeComponentAssignment1,
+						activeComponentAssignment2,
+						activeComponentAssignment3,
+						node
+					);
+				} else {
+					statements.push(node);
+				}
+			});
+
+			node = factory.updateSourceFile(node, factory.createNodeArray(statements));
 
 			node = addNamedImport('registeredComponent', 'core/component/decorators/const', context, node);
 		}
