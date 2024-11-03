@@ -69,11 +69,11 @@ import { regMethod, MethodType } from 'core/component/decorators/method';
  */
 export function derive(...traits: Function[]) {
 	return (target: Function): void => {
-		if (registeredComponent.name == null) {
+		if (registeredComponent.event == null) {
 			return;
 		}
 
-		initEmitter.once(registeredComponent.name, ({meta}: ComponentDescriptor) => {
+		initEmitter.once(registeredComponent.event, ({meta}: ComponentDescriptor) => {
 			const proto = target.prototype;
 
 			for (let i = 0; i < traits.length; i++) {
