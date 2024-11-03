@@ -75,6 +75,12 @@ const OVERRIDDEN = Symbol('This class is overridden in the child layer');
  */
 export function component(opts?: ComponentOptions): Function {
 	return (target: ComponentConstructor) => {
+		if (registeredComponent.event == null) {
+			return;
+		}
+
+		const regComponentEvent = registeredComponent.event;
+
 		const
 			componentInfo = getInfoFromConstructor(target, opts),
 			componentParams = componentInfo.params,
@@ -88,8 +94,6 @@ export function component(opts?: ComponentOptions): Function {
 		if (isParentLayerOverride) {
 			Object.defineProperty(componentInfo.parent, OVERRIDDEN, {value: true});
 		}
-
-		const regEvent = registeredComponent.event!;
 
 		if (isPartial) {
 			pushToInitList(() => {
@@ -205,7 +209,7 @@ export function component(opts?: ComponentOptions): Function {
 				components.set(target, meta);
 			}
 
-			initEmitter.emit(regEvent, {
+			initEmitter.emit(regComponentEvent, {
 				meta,
 				parentMeta: componentInfo.parentMeta
 			});
