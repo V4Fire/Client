@@ -8,25 +8,15 @@
 
 import { defProp } from 'core/const/props';
 
-import { initEmitter } from 'core/component/event';
-
-import { registeredComponent } from 'core/component/decorators/const';
+import { createComponentDecorator3 } from 'core/component/decorators/helpers';
 
 import { getComponentContext } from 'core/component/context';
 
 import type { ComponentMeta } from 'core/component/meta';
 import type { ComponentAccessor, ComponentMethod } from 'core/component/interface';
 
+import type { PartDecorator } from 'core/component/decorators/interface';
 import type { MethodType } from 'core/component/decorators/method/interface';
-import type { PartDecorator, ComponentDescriptor } from 'core/component/decorators/interface';
-
-interface MethodDescriptor {
-	name: string;
-	type: MethodType;
-	proto: object;
-}
-
-const componentMethods: Dictionary<MethodDescriptor[]> = Object.createDict();
 
 /**
  * Marks a class method or accessor as a component part.
@@ -57,34 +47,9 @@ const componentMethods: Dictionary<MethodDescriptor[]> = Object.createDict();
  * ```
  */
 export function method(type: MethodType): PartDecorator {
-	const {event} = registeredComponent;
-
-	return (proto: object, name: string) => {
-		if (event == null) {
-			return;
-		}
-
-		let methods = componentMethods[event];
-
-		const desc = {name, type, proto};
-
-		if (methods == null) {
-			methods = [desc];
-			componentMethods[event] = methods;
-
-			initEmitter.once(event, ({meta}: ComponentDescriptor) => {
-				for (let i = 0; i < methods!.length; i++) {
-					const {name, type, proto} = methods![i];
-					regMethod(name, type, meta, proto);
-				}
-
-				componentMethods[event] = undefined;
-			});
-
-		} else {
-			methods.push(desc);
-		}
-	};
+	return createComponentDecorator3((desc, name, proto) => {
+		regMethod(name, type, desc.meta, proto);
+	});
 }
 
 /**

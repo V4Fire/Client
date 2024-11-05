@@ -23,16 +23,6 @@ import type {
 	DecoratorFunctionalOptions
 
 } from 'core/component/decorators/interface';
-import {regMethod} from "core/component/decorators/method";
-
-interface DecoratorStackValue {
-	partKey: string;
-	partDesc?: PropertyDescriptor;
-	decorator: ComponentPartDecorator3 | ComponentPartDecorator4;
-	proto: object;
-}
-
-const decoratorStackCache: Dictionary<DecoratorStackValue[]> = Object.createDict();
 
 /**
  * Creates a decorator for a component's property or method based on the provided decorator function.
@@ -64,43 +54,18 @@ function createComponentDecorator(
 	partDesc: CanUndef<PropertyDescriptor>,
 	proto: object
 ): void {
-	const {event} = registeredComponent;
-
-	if (event == null) {
+	if (registeredComponent.event == null) {
 		return;
 	}
 
-	let stack = decoratorStackCache[event];
+	initEmitter.once(registeredComponent.event, (componentDesc: ComponentDescriptor) => {
+		if (decorator.length <= 3) {
+			(<ComponentPartDecorator3>decorator)(componentDesc, partKey, proto);
 
-	const stackValue = {
-		partKey,
-		partDesc,
-		decorator,
-		proto
-	};
-
-	if (stack == null) {
-		stack = [stackValue];
-		decoratorStackCache[event] = stack;
-
-		initEmitter.once(event, (componentDesc: ComponentDescriptor) => {
-			for (let i = 0; i < stack!.length; i++) {
-				const {partKey, partDesc, decorator, proto} = stack![i];
-
-				if (decorator.length <= 3) {
-					(<ComponentPartDecorator3>decorator)(componentDesc, partKey, proto);
-
-				} else {
-					(<ComponentPartDecorator4>decorator)(componentDesc, partKey, partDesc, proto);
-				}
-			}
-
-			decoratorStackCache[event] = undefined;
-		});
-
-	} else {
-		stack.push(stackValue);
-	}
+		} else {
+			(<ComponentPartDecorator4>decorator)(componentDesc, partKey, partDesc, proto);
+		}
+	});
 }
 
 /**
