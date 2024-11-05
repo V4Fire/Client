@@ -88,11 +88,11 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 				method = {...parent, src, fn};
 
 				if (parent.hooks != null) {
-					fn.hooks = Object.create(parent.hooks);
+					method.hooks = Object.create(parent.hooks);
 				}
 
 				if (parent.watchers != null) {
-					fn.watchers = Object.create(parent.watchers);
+					method.watchers = Object.create(parent.watchers);
 				}
 
 			} else {
