@@ -8,7 +8,14 @@
 
 'use strict';
 
-const {config} = require('@pzlr/build-core')
+const {
+	config,
+	resolve: {rootDependencies}
+} = require('@pzlr/build-core');
+
+const
+	isPathInside = require('is-path-inside'),
+	fs = require('fs');
 
 /**
  * The function determines the package in which the module is defined and
@@ -18,13 +25,16 @@ const {config} = require('@pzlr/build-core')
  * @returns {string}
  */
 function getLayerName(filePath) {
-	const
-		pathToRootRgxp = new RegExp(`(?<path>.+)[/\\\\]${config.sourceDir}[/\\\\]`),
-		pathToRootDir = filePath.match(pathToRootRgxp)?.groups?.path;
+	let layer = config.projectName;
 
-	const res = require(`${pathToRootDir}/package.json`).name;
+	for (let i = 0; i < rootDependencies.length; i++) {
+		if (isPathInside(fs.realpathSync(filePath), fs.realpathSync(rootDependencies[i]))) {
+			layer = rootDependencies[i];
+			break;
+		}
+	}
 
-	return res;
+	return layer;
 }
 
 exports.getLayerName = getLayerName;
