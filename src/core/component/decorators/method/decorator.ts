@@ -77,6 +77,10 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 
 		const fn = proto[name];
 
+		if (!Object.isFunction(fn)) {
+			throw new TypeError(`The property ${name} is not a method`);
+		}
+
 		if (methods.hasOwnProperty(name)) {
 			method = methods[name]!;
 			method.fn = fn;
