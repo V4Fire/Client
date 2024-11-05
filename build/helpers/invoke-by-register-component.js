@@ -23,14 +23,13 @@ function invokeByRegisterEvent(script, layerName, componentName) {
 	}
 
 	return `\n
-		if (globalThis.initEmitter == null) {
+		(function () {
 			const {initEmitter} = require('core/component/event');
-			globalThis.initEmitter = initEmitter;
-		}
 		
-		globalThis.initEmitter.once('registerComponent.${layerName}.${componentName}', () => {
-			${script}
-		});
+			initEmitter.once('registerComponent.${layerName}.${componentName}', () => {
+				${script}
+			});
+		})();
 		\n
 	`;
 }

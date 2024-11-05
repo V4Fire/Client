@@ -56,18 +56,10 @@ module.exports = {
 	COMPONENTS: projectGraph.then(({components}) => {
 		if (Object.isMap(components)) {
 			return $C(components).to({}).reduce((res, el, key) => {
-				let layer;
-
-				if (el.logic != null) {
-					layer = JSON.stringify(getLayerName(el.logic));
-				} else {
-					layer = JSON.stringify(getLayerName(el.index));
-				}
-
 				res[key] = {
 					parent: JSON.stringify(el.parent),
 					dependencies: JSON.stringify(el.dependencies),
-					layer
+					layer: JSON.stringify(getLayerName(el.logic ?? el.index))
 				};
 
 				return res;

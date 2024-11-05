@@ -9,7 +9,7 @@ import config from 'config';
 import { isComponent, componentRegInitializers, componentParams, components } from 'core/component/const';
 
 import type { ComponentMeta } from 'core/component/interface';
-import type { ComponentConstructorInfo } from 'core/component/reflect';
+import { ComponentConstructorInfo, isSmartComponent } from 'core/component/reflect';
 
 import { initEmitter } from 'core/component/event';
 
@@ -75,7 +75,7 @@ export function registerComponent(name: CanUndef<string>): CanNull<ComponentMeta
 	const
 		component = components.get(name),
 		componentName = component?.componentName ?? name,
-		componentNormalizedName = componentName.match(/(?<name>.*)-functional$/)?.groups?.name ?? componentName,
+		componentNormalizedName = isSmartComponent.test(componentName) ? isSmartComponent.replace(componentName) : componentName,
 		layer = config.components[componentNormalizedName]?.layer,
 		event = `registerComponent.${layer}.${componentNormalizedName}`;
 

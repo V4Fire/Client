@@ -8,6 +8,8 @@
 
 'use strict';
 
+const {config} = require('@pzlr/build-core')
+
 /**
  * The function determines the package in which the module is defined and
  * returns the name of this package from the `package.json` file
@@ -16,13 +18,14 @@
  * @returns {string}
  */
 function getLayerName(filePath) {
-	const
-		pathToRootRgxp = /(?<path>.+)[/\\]src[/\\]/,
-		pathToRootDir = filePath.match(pathToRootRgxp)?.groups?.path;
+	// const
+	// 	pathToRootRgxp = new RegExp(`(?<path>.+)[/\\\\]${config.sourceDir}[/\\\\]`),
+	// 	pathToRootDir = filePath.match(pathToRootRgxp)?.groups?.path;
 
-	const res = require(`${pathToRootDir}/package.json`).name;
+	// const res = require(`${pathToRootDir}/package.json`).name;
 
-	return res;
+	// return res;
+	return config.projectName;
 }
 
 exports.getLayerName = getLayerName;
