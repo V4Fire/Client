@@ -11,9 +11,9 @@
 'use strict';
 
 const ts = require('typescript');
-const {validators} = require('@pzlr/build-core');
+const {validators, config} = require('@pzlr/build-core');
 
-const {getLayerName, getOriginLayerFromPath} = include('build/helpers');
+const {getLayerName} = include('build/helpers');
 
 /**
  * @typedef {import('typescript').TransformationContext} Context
@@ -65,7 +65,7 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 	let layer = getLayerName(sourceFile.path);
 
 	if (isInitAppFile) {
-		layer = getOriginLayerFromPath(sourceFile.path);
+		layer = config.projectName;
 	}
 
 	/**

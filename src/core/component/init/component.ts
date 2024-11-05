@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 import config from 'config';
+
 import { isComponent, componentRegInitializers, componentParams, components } from 'core/component/const';
 
 import type { ComponentMeta } from 'core/component/interface';

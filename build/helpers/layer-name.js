@@ -18,14 +18,13 @@ const {config} = require('@pzlr/build-core')
  * @returns {string}
  */
 function getLayerName(filePath) {
-	// const
-	// 	pathToRootRgxp = new RegExp(`(?<path>.+)[/\\\\]${config.sourceDir}[/\\\\]`),
-	// 	pathToRootDir = filePath.match(pathToRootRgxp)?.groups?.path;
+	const
+		pathToRootRgxp = new RegExp(`(?<path>.+)[/\\\\]${config.sourceDir}[/\\\\]`),
+		pathToRootDir = filePath.match(pathToRootRgxp)?.groups?.path;
 
-	// const res = require(`${pathToRootDir}/package.json`).name;
+	const res = require(`${pathToRootDir}/package.json`).name;
 
-	// return res;
-	return config.projectName;
+	return res;
 }
 
 exports.getLayerName = getLayerName;
