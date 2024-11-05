@@ -176,7 +176,9 @@ export function onActivated(component: iBlock, force: boolean = false): void {
 		unsafe.componentStatus = 'beforeReady';
 	}
 
-	if (unsafe.reloadOnActivation) {
+	const needInitLoadOrReload = unsafe.reloadOnActivation || unsafe.componentStatus === 'unloaded';
+
+	if (needInitLoadOrReload) {
 		const group = {group: 'requestSync:get'};
 		async.forEach(($a) => $a.clearAll(group).setImmediate(load, group));
 	}

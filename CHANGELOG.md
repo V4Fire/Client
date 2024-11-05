@@ -22,7 +22,8 @@ during a warn or error handler will trigger infinite recursion. `core/component/
 
 #### :house: Internal
 
-* Reloading now occurs only if the `reloadOnActivation` option is set to `true` `components/super/i-block/modules/activation`
+* Reloading now occurs for unloaded components or when explicitly specified with `reloadOnActivation: true`
+  `components/super/i-block/modules/activation`
 
 ## v4.0.0-beta.149 (2024-10-31)
 

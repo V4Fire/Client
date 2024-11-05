@@ -13,7 +13,7 @@ Changelog
 
 #### :house: Internal
 
-* Reloading now occurs only if the `reloadOnActivation` option is set to `true`
+* Reloading now occurs for unloaded components or when explicitly specified with `reloadOnActivation: true`
 
 ## v4.0.0-alpha.1 (2022-12-14)
 
