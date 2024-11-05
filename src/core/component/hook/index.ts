@@ -80,10 +80,8 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 			if (hooks.some((hook) => hook.after != null && hook.after.size > 0)) {
 				const emitter = new QueueEmitter();
 
-				for (let i = 0; i < hooks.length; i++) {
-					const
-						hook = hooks[i],
-						hookName = hook.name;
+				hooks.forEach((hook, i) => {
+					const nm = hook.name;
 
 					if (hook.once) {
 						toDelete ??= [];
@@ -94,16 +92,16 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 						const res = args.length > 0 ? hook.fn.apply(component, args) : hook.fn.call(component);
 
 						if (Object.isPromise(res)) {
-							return res.then(() => hookName != null ? emitter.emit(hookName) : undefined);
+							return res.then(() => nm != null ? emitter.emit(nm) : undefined);
 						}
 
-						const tasks = hookName != null ? emitter.emit(hookName) : null;
+						const tasks = nm != null ? emitter.emit(nm) : null;
 
 						if (tasks != null) {
 							return tasks;
 						}
 					});
-				}
+				});
 
 				removeFromHooks(toDelete);
 
@@ -116,9 +114,7 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 			} else {
 				let tasks: CanNull<Array<Promise<unknown>>> = null;
 
-				for (let i = 0; i < hooks.length; i++) {
-					const hook = hooks[i];
-
+				hooks.forEach((hook, i) => {
 					let res: unknown;
 
 					switch (args.length) {
@@ -143,10 +139,11 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 						tasks ??= [];
 						tasks.push(res);
 					}
-				}
+				});
 
 				removeFromHooks(toDelete);
 
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (tasks != null) {
 					return Promise.all(tasks).then(() => undefined);
 				}
@@ -158,9 +155,9 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 
 	function removeFromHooks(toDelete: CanNull<number[]>) {
 		if (toDelete != null) {
-			for (const i of toDelete.reverse()) {
+			toDelete.reverse().forEach((i) => {
 				hooks.splice(i, 1);
-			}
+			});
 		}
 	}
 }

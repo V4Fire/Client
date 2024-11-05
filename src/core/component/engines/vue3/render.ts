@@ -26,10 +26,10 @@ import {
 	renderSlot as superRenderSlot,
 
 	withCtx as superWithCtx,
-	withModifiers as superWithModifiers,
 	withDirectives as superWithDirectives,
-
 	resolveDirective as superResolveDirective,
+
+	withModifiers as superWithModifiers,
 
 	VNodeChild,
 	VNodeArrayChildren,
@@ -56,12 +56,12 @@ import {
 	wrapRenderList,
 	wrapRenderSlot,
 
-	wrapWithCtx,
-	wrapWithModifiers,
 	wrapWithDirectives,
-
 	wrapResolveDirective,
-	wrapMergeProps
+	wrapMergeProps,
+	wrapWithCtx,
+
+	wrapWithModifiers
 
 } from 'core/component/render';
 
@@ -195,7 +195,7 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 			return [];
 		}
 
-	// If only a comment needs to be rendered, consider such renderings as empty
+		// If only a comment needs to be rendered, consider such renderings as empty
 	} else if (isEmptyVNode(vnode)) {
 		return document.createDocumentFragment();
 	}
@@ -249,8 +249,8 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 						gc.add(function* destructor() {
 							const vnodes = Array.toArray(vnode);
 
-							for (let i = 0; i < vnodes.length; i++) {
-								destroy(vnodes[i]);
+							for (const vnode of vnodes) {
+								destroy(vnode);
 								yield;
 							}
 
@@ -328,10 +328,7 @@ export function destroy(node: VNode | Node): void {
 		}
 
 		if (Object.isArray(vnode)) {
-			for (let i = 0; i < vnode.length; i++) {
-				removeVNode(vnode[i]);
-			}
-
+			vnode.forEach(removeVNode);
 			return;
 		}
 
@@ -342,15 +339,11 @@ export function destroy(node: VNode | Node): void {
 		destroyedVNodes.add(vnode);
 
 		if (Object.isArray(vnode.children)) {
-			for (let i = 0; i < vnode.children.length; i++) {
-				removeVNode(vnode.children[i]);
-			}
+			vnode.children.forEach(removeVNode);
 		}
 
-		if ('dynamicChildren' in vnode && Object.isArray(vnode.dynamicChildren)) {
-			for (let i = 0; i < vnode.dynamicChildren.length; i++) {
-				removeVNode(vnode.dynamicChildren[i]);
-			}
+		if (Object.isArray(vnode['dynamicChildren'])) {
+			vnode['dynamicChildren'].forEach((vnode) => removeVNode(Object.cast(vnode)));
 		}
 
 		gc.add(function* destructor() {
@@ -363,13 +356,13 @@ export function destroy(node: VNode | Node): void {
 
 			yield;
 
-			for (const key of ['dirs', 'children', 'dynamicChildren', 'dynamicProps']) {
+			['dirs', 'children', 'dynamicChildren', 'dynamicProps'].forEach((key) => {
 				vnode[key] = [];
-			}
+			});
 
-			for (const key of ['el', 'ctx', 'ref', 'virtualComponent', 'virtualContext']) {
+			['el', 'ctx', 'ref', 'virtualComponent', 'virtualContext'].forEach((key) => {
 				vnode[key] = null;
-			}
+			});
 		}());
 	}
 }

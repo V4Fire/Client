@@ -302,7 +302,8 @@ class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
-		const i = this.instance;
+		const
+			i = this.instance;
 
 		this.isActive = i.isActive.bind(this);
 		this.setActive = i.setActive.bind(this);

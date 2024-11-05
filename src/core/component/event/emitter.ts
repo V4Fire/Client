@@ -23,7 +23,7 @@ const originalEmit = globalEmitter.emit.bind(globalEmitter);
 
 globalEmitter.emit = (event: string, ...args) => {
 	const res = originalEmit(event, ...args);
-	log(`global:event:${event.replaceAll('.', ':')}`, ...args);
+	log(`global:event:${event.replace(/\./g, ':')}`, ...args);
 	return res;
 };
 

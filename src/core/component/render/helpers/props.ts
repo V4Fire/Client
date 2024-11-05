@@ -28,9 +28,7 @@ export const isHandler = {
 export function mergeProps(...args: Dictionary[]): Dictionary {
 	const props: Dictionary = {};
 
-	for (let i = 0; i < args.length; i += 1) {
-		const toMerge = args[i];
-
+	args.forEach((toMerge) => {
 		for (const key in toMerge) {
 			if (key === 'class') {
 				if (props.class !== toMerge.class) {
@@ -49,14 +47,14 @@ export function mergeProps(...args: Dictionary[]): Dictionary {
 					existing !== incoming &&
 					!(Object.isArray(existing) && existing.includes(incoming))
 				) {
-					props[key] = Object.isTruly(existing) ? Array.toArray(existing, incoming) : incoming;
+					props[key] = Object.isTruly(existing) ? (<unknown[]>[]).concat(existing, incoming) : incoming;
 				}
 
 			} else if (key !== '') {
 				props[key] = toMerge[key];
 			}
 		}
-	}
+	});
 
 	return props;
 }

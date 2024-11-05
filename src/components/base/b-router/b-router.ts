@@ -424,7 +424,8 @@ export default class bRouter extends iRouterProps {
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
-		const i = this.instance;
+		const
+			i = this.instance;
 
 		this.compileStaticRoutes = i.compileStaticRoutes.bind(this);
 		this.emitTransition = i.emitTransition.bind(this);

@@ -38,7 +38,8 @@ the [[iBlock]] class incorporates the following code.
 ```
 @hook('beforeRuntime')
 protected initBaseAPI() {
-  const i = this.instance;
+  const
+    i = this.instance;
 
   this.syncStorageState = i.syncStorageState.bind(this);
   this.syncRouterState = i.syncRouterState.bind(this);
