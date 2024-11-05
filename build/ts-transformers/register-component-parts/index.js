@@ -115,9 +115,9 @@ function resisterComponentDefaultValues(context) {
 			node = addNamedImport('defaultValue', 'core/component/decorators/default-value', context, node);
 		}
 
-		// if (needImportMethodDecorator) {
-		// 	node = addNamedImport('method', 'core/component/decorators/method', context, node);
-		// }
+		if (needImportMethodDecorator) {
+			node = addNamedImport('method', 'core/component/decorators/method', context, node);
+		}
 
 		return node;
 	};
@@ -148,10 +148,10 @@ function resisterComponentDefaultValues(context) {
 						isGetter = ts.isGetAccessorDeclaration(node),
 						isSetter = !isGetter && ts.isSetAccessorDeclaration(node);
 
-					// if (isGetter || isSetter || ts.isMethodDeclaration(node)) {
-					// 	needImportMethodDecorator = true;
-					// 	node = addMethodDecorator(context, node);
-					// }
+					if (isGetter || isSetter || ts.isMethodDeclaration(node)) {
+						needImportMethodDecorator = true;
+						node = addMethodDecorator(context, node);
+					}
 
 					if (isGetter || isSetter) {
 						const
