@@ -251,7 +251,7 @@ async function buildProjectGraph() {
 
 					const
 						componentName = component?.name ?? name,
-						isComponent = /^[bpg]-[\\w-]+/.test(componentName);
+						isComponent = /^[bpg]-[\w-]+/.test(componentName);
 
 					if (webpack.ssr) {
 						importScript = `Object.assign(module.exports, require('${entryPath}'));\n`;

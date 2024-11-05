@@ -15,7 +15,8 @@ const {
 
 const
 	isPathInside = require('is-path-inside'),
-	fs = require('fs');
+	fs = require('fs'),
+	path = require('path');
 
 /**
  * The function determines the package in which the module is defined and
@@ -29,7 +30,8 @@ function getLayerName(filePath) {
 
 	for (let i = 0; i < rootDependencies.length; i++) {
 		if (isPathInside(fs.realpathSync(filePath), fs.realpathSync(rootDependencies[i]))) {
-			layer = rootDependencies[i];
+			const pathPackageJson = path.resolve(fs.realpathSync(rootDependencies[i]), '..', 'package.json');
+			layer = require(pathPackageJson).name;
 			break;
 		}
 	}
