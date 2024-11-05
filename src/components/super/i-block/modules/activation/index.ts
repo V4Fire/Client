@@ -217,7 +217,7 @@ export function onDeactivated(component: iBlock): void {
 	async.forEach(($a) => {
 		Object.entries(Namespaces).forEach(([key, namespace]) => {
 			if (unsafe.reloadOnActivation && namespace === Namespaces.request) {
-				$a.muteRequest({group: 'i-data:initLoad'});
+				$a.muteAll({group: 'i-data:initLoad'});
 				return;
 			}
 

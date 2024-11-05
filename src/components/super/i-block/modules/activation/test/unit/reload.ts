@@ -37,7 +37,7 @@ test.describe('<i-block> modules - reload', () => {
 		});
 
 		test('should cancel the pending request when the component is deactivated', async () => {
-			const mockClearRequest = await createSpy(target, (ctx) => jestMock.spy(ctx.unsafe.async, 'muteRequest'));
+			const mockClearRequest = await createSpy(target, (ctx) => jestMock.spy(ctx.unsafe.async, 'muteAll'));
 
 			await target.evaluate((ctx) => ctx.deactivate());
 
