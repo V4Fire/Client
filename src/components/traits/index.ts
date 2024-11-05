@@ -69,91 +69,80 @@ import { regMethod, MethodType } from 'core/component/decorators/method';
  */
 export function derive(...traits: Function[]) {
 	return (target: Function): void => {
-		if (registeredComponent.event == null) {
-			return;
-		}
+		const
+			proto = target.prototype;
 
-		initEmitter.once(registeredComponent.event, ({meta}: ComponentDescriptor) => {
-			const proto = target.prototype;
+		for (let i = 0; i < traits.length; i++) {
+			const
+				originalTrait = traits[i],
+				chain = getTraitChain(originalTrait);
 
-			for (let i = 0; i < traits.length; i++) {
+			for (let i = 0; i < chain.length; i++) {
 				const
-					originalTrait = traits[i],
-					chain = getTraitChain(originalTrait);
+					[trait, keys] = chain[i];
 
-				for (let i = 0; i < chain.length; i++) {
-					const [trait, keys] = chain[i];
+				for (let i = 0; i < keys.length; i++) {
+					const
+						key = keys[i],
+						defMethod = Object.getOwnPropertyDescriptor(trait, key),
+						traitMethod = Object.getOwnPropertyDescriptor(trait.prototype, key);
 
-					for (let i = 0; i < keys.length; i++) {
-						const
-							key = keys[i],
-							defMethod = Object.getOwnPropertyDescriptor(trait, key),
-							traitMethod = Object.getOwnPropertyDescriptor(trait.prototype, key);
+					const canDerive =
+						defMethod != null &&
+						traitMethod != null &&
+						!(key in proto) &&
 
-						const canDerive =
-							defMethod != null &&
-							traitMethod != null &&
-							!(key in proto) &&
+						Object.isFunction(defMethod.value) && (
+							Object.isFunction(traitMethod.value) ||
 
-							Object.isFunction(defMethod.value) && (
-								Object.isFunction(traitMethod.value) ||
+							// eslint-disable-next-line @typescript-eslint/unbound-method
+							Object.isFunction(traitMethod.get) || Object.isFunction(traitMethod.set)
+						);
 
-								// eslint-disable-next-line @v4fire/unbound-method
-								Object.isFunction(traitMethod.get) || Object.isFunction(traitMethod.set)
-							);
+					if (canDerive) {
+						const newDescriptor: PropertyDescriptor = {
+							enumerable: false,
+							configurable: true
+						};
 
-						if (canDerive) {
-							let type: MethodType;
+						if (Object.isFunction(traitMethod.value)) {
+							Object.assign(newDescriptor, {
+								writable: true,
 
-							const newDescriptor: PropertyDescriptor = {
-								enumerable: false,
-								configurable: true
-							};
+								// eslint-disable-next-line func-name-matching
+								value: function defaultMethod(...args: unknown[]) {
+									return originalTrait[key](this, ...args);
+								}
+							});
 
-							if (Object.isFunction(traitMethod.value)) {
-								Object.assign(newDescriptor, {
-									writable: true,
+						} else {
+							Object.assign(newDescriptor, {
+								get() {
+									return originalTrait[key](this);
+								},
 
-									// eslint-disable-next-line func-name-matching
-									value: function defaultMethod(...args: unknown[]) {
-										return originalTrait[key](this, ...args);
-									}
-								});
-
-								type = 'method';
-
-							} else {
-								Object.assign(newDescriptor, {
-									get() {
-										return originalTrait[key](this);
-									},
-
-									set(value: unknown) {
-										originalTrait[key](this, value);
-									}
-								});
-
-								type = 'accessor';
-							}
-
-							Object.defineProperty(proto, key, newDescriptor);
-							regMethod(key, type, meta, proto);
+								set(value: unknown) {
+									originalTrait[key](this, value);
+								}
+							});
 						}
+
+						Object.defineProperty(proto, key, newDescriptor);
 					}
 				}
 			}
+		}
 
-			function getTraitChain<T extends Array<[Function, string[]]>>(
-				trait: Nullable<object>,
-				methods: T = Object.cast([])
-			): T {
-				if (!Object.isFunction(trait) || trait === Function.prototype) {
-					return methods;
-				}
-
-				methods.push([trait, Object.getOwnPropertyNames(trait)]);
-				return getTraitChain(Object.getPrototypeOf(trait), methods);
+		function getTraitChain<T extends Array<[Function, string[]]>>(
+			trait: Nullable<object>,
+			methods: T = Object.cast([])
+		): T {
+			if (!Object.isFunction(trait) || trait === Function.prototype) {
+				return methods;
 			}
-		});
+
+			methods.push([trait, Object.getOwnPropertyNames(trait)]);
+			return getTraitChain(Object.getPrototypeOf(trait), methods);
+		}
 	};
 }

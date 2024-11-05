@@ -32,6 +32,7 @@ import {
 	inheritMods,
 	inheritParams,
 
+	addMethodsToMeta,
 	attachTemplatesToMeta
 
 } from 'core/component/meta';
@@ -104,6 +105,10 @@ export function component(opts?: ComponentOptions): Function {
 					meta = createMeta(componentInfo);
 					components.set(componentFullName, meta);
 				}
+
+				initEmitter.once(regComponentEvent, () => {
+					addMethodsToMeta(components.get(componentFullName)!, target);
+				});
 			});
 
 			return;
