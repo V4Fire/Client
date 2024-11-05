@@ -7,6 +7,4 @@
  */
 
 import 'core/shims/set-immediate';
-//#if runtime has ssr
 import 'core/shims/ssr';
-//#endif

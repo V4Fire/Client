@@ -11,7 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2024-11-??)
+## v4.0.0-beta.??? (2024-11-??)
+
+#### :house: Internal
+
+* Reloading now occurs for unloaded components or when explicitly specified with `reloadOnActivation: true`
+  `components/super/i-block/modules/activation`
+
+## v4.0.0-beta.150 (2024-11-05)
 
 #### :bug: Bug Fix
 
@@ -22,8 +29,7 @@ during a warn or error handler will trigger infinite recursion. `core/component/
 
 #### :house: Internal
 
-* Reloading now occurs for unloaded components or when explicitly specified with `reloadOnActivation: true`
-  `components/super/i-block/modules/activation`
+* Revert: exclude SSR shims for non-SSR environments `core/shims`
 
 ## v4.0.0-beta.149 (2024-10-31)
 
