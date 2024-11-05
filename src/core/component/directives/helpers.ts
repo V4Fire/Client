@@ -145,7 +145,7 @@ export function patchVnodeEventListener(
 	// For the transmission of accessors, `forceUpdate: false` props use events.
 	// For example, `@:value = createPropAccessors(() => someValue)`.
 	// A distinctive feature of such events is the prefix `@:` or `on:`.
-	// Such events are processed in a special way.
+	// Such events are processed specially.
 	const isSystemGetter = isPropGetter.test(event);
 	props[event] = attrVal;
 

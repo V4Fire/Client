@@ -21,8 +21,7 @@ export * from 'core/component/directives/render/interface';
 
 ComponentEngine.directive('render', {
 	beforeCreate(params: DirectiveParams, vnode: VNode): CanUndef<VNode> {
-		const
-			ctx = getDirectiveContext(params, vnode);
+		const ctx = getDirectiveContext(params, vnode);
 
 		const
 			newVNode = params.value,
@@ -74,8 +73,7 @@ ComponentEngine.directive('render', {
 				if (Object.isArray(newVNode)) {
 					if (isSlot(newVNode[0])) {
 						newVNode.forEach((vnode) => {
-							const
-								slot = vnode.props?.slot;
+							const slot = vnode.props?.slot;
 
 							if (slot != null) {
 								slots[slot] = () => vnode.children ?? getDefaultSlotFromChildren(slot);
@@ -110,8 +108,7 @@ ComponentEngine.directive('render', {
 				return;
 			}
 
-			const
-				{r} = ctx.$renderEngine;
+			const {r} = ctx.$renderEngine;
 
 			return r.createVNode.call(ctx, 'ssr-fragment', {
 				innerHTML: getSSRInnerHTML(content)
@@ -124,8 +121,7 @@ ComponentEngine.directive('render', {
 
 		function getDefaultSlotFromChildren(slotName: string): unknown {
 			if (Object.isPlainObject(originalChildren)) {
-				const
-					slot = originalChildren[slotName];
+				const slot = originalChildren[slotName];
 
 				if (Object.isFunction(slot)) {
 					return slot();

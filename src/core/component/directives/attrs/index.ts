@@ -64,8 +64,7 @@ ComponentEngine.directive('attrs', {
 			r = ctx.$renderEngine.r;
 		}
 
-		let
-			attrs = {...params.value};
+		let attrs = {...params.value};
 
 		if (componentMeta != null) {
 			attrs = normalizeComponentAttrs(attrs, vnode.dynamicProps, componentMeta)!;
@@ -112,21 +111,17 @@ ComponentEngine.directive('attrs', {
 		}
 
 		function parseDirective(attrName: string, attrVal: unknown) {
-			const
-				decl = directiveRgxp.exec(attrName);
+			const decl = directiveRgxp.exec(attrName);
 
-			let
-				value = attrVal;
+			let value = attrVal;
 
 			if (decl == null) {
 				throw new SyntaxError('Invalid directive declaration');
 			}
 
-			const
-				[, name, arg = '', rawModifiers = ''] = decl;
+			const [, name, arg = '', rawModifiers = ''] = decl;
 
-			let
-				dir: CanUndef<object>;
+			let dir: CanUndef<object>;
 
 			switch (name) {
 				case 'show': {
@@ -164,8 +159,7 @@ ComponentEngine.directive('attrs', {
 						handlerCache = getHandlerStore(),
 						handlerKey = `onUpdate:${modelProp}:${modelValLink}`;
 
-					let
-						handler = handlerCache.get(handlerKey);
+					let handler = handlerCache.get(handlerKey);
 
 					if (handler == null) {
 						handler = (newVal: unknown) => {
