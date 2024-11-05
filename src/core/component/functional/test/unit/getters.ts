@@ -20,6 +20,11 @@ test.describe('functional component getters', () => {
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
+		
+		await Promise.all([
+			Component.waitForComponentTemplate(page, 'b-functional-dummy'),
+			Component.waitForComponentTemplate(page, 'b-functional-button-dummy')
+		]);
 
 		target = await Component.createComponent<bFunctionalDummy>(page, 'b-functional-dummy', {stage: 'getters'});
 		text = page.getByText(/Value/);

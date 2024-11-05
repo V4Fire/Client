@@ -133,10 +133,10 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 						expr = `TPLS['${dep}'] = require('${src}')['${dep}'];`;
 
 					} else {
-						expr = `require('${src}');`;
+						expr = invokeByRegisterEvent(`require('${src}');`, getLayerName(filePath), dep);
 					}
 
-					decl += `try { ${invokeByRegisterEvent(expr, getLayerName(filePath), dep)} } catch (err) { stderr(err); }`;
+					decl += `try { ${expr} } catch (err) { stderr(err); }`;
 				}
 
 			} catch {}
