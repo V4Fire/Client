@@ -359,7 +359,7 @@ ComponentEngine.directive('attrs', {
 		let
 			attrs = {...params.value};
 
-		if (vnode) {
+		if (vnode != null) {
 			vnode.props ??= props;
 		}
 

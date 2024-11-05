@@ -15,9 +15,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* The syntax of the `v-attrs` directive now normalizes from `:v-attrs` to `v-attrs` for SSR `build/snakeskin/filters/tag`
 * Fixed the handling of property getters in SSR: property getters are now included in props instead of being ignored as handlers `core/component/directives/attrs`
-* Fixed the `resolveAttrs` function: property getters are no longer removed from props `core/component/render/helpers/attrs`
+* Fixed the `resolveAttrs` function: property getters are no longer removed from props, the `v-attrs` directive now resolves with the correct method in SSR `core/component/render/helpers/attrs`
+* Calls `resolveAttrs` to resolve directives for components rendered with `ssrRenderComponent` `core/component/render/wrappers`
+
+#### :rocket: New Feature
+
+* The `getSSRProps` method now accepts a `vnode` parameter for direct modification of vnode props, similar to the `beforeCreate` method `core/component/directives/attrs`
 
 ## v4.0.0-beta.147 (2024-10-25)
 

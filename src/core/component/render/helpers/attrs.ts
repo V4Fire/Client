@@ -75,21 +75,25 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 		const key = 'v-attrs';
 
 		if (props[key] != null) {
-			const
-				dir = r.resolveDirective.call(this, 'attrs'),
-				dirParams = {
-					dir,
-	
-					modifiers: {},
-					arg: undefined,
-	
-					value: props[key],
-					oldValue: undefined,
-	
-					instance: this
-				};
+			const dir = r.resolveDirective.call(this, 'attrs');
+			const dirParams = {
+				dir,
 
-			dir[SSR ? 'getSSRProps' : 'beforeCreate'](dirParams, vnode);
+				modifiers: {},
+				arg: undefined,
+
+				value: props[key],
+				oldValue: undefined,
+
+				instance: this
+			};
+
+			if (SSR) {
+				dir.getSSRProps(dirParams, vnode);
+
+			} else {
+				dir.beforeCreate(dirParams, vnode);
+			}
 
 			props = vnode.props!;
 			delete props[key];

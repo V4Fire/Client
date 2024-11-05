@@ -153,9 +153,7 @@ export function normalizeComponentAttrs(
 
 		const
 			isGetter = isPropGetter.test(attrName) && Object.isFunction(value),
-			needSetAdditionalProp =
-				functional === true && dynamicProps != null &&
-				isGetter;
+			needSetAdditionalProp = functional === true && dynamicProps != null && isGetter;
 
 		// For correct operation in functional components, we need to additionally duplicate such props
 		if (needSetAdditionalProp) {

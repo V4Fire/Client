@@ -13,7 +13,8 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed the `resolveAttrs` function: property getters are no longer removed from props
+* Fixed the `resolveAttrs` function: property getters are no longer removed from props, the `v-attrs` directive now resolves with the correct method in SSR
+* Calls `resolveAttrs` to resolve directives for components rendered with `ssrRenderComponent`
 
 ## v4.0.0-beta.140 (2024-10-03)
 
