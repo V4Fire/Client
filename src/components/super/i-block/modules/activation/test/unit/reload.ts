@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { JSHandle } from 'playwright';
+import type { JSHandle } from 'playwright';
 import test from 'tests/config/unit/test';
 
 import { BOM, Component, RequestInterceptor } from 'tests/helpers';
