@@ -77,6 +77,7 @@ export default abstract class iData extends iDataHandlers {
 
 		const label = <AsyncOptions>{
 			label: $$.initLoad,
+			group: 'i-data:initLoad',
 			join: 'replace'
 		};
 

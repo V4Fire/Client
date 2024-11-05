@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.??? (2024-11-??)
+
+#### :house: Internal
+
+* Reloading now occurs only if the `reloadOnActivation` option is set to `true`
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :memo: Documentation
