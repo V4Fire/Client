@@ -19,6 +19,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 with certain warnings. Vue uses a `get` trap within the proxy to verify the presence
 of a property in the instance. Accessing undefined properties via the `getComponentInfo` method
 during a warn or error handler will trigger infinite recursion. `core/component/engines/vue3`
+* The `create` method now handles quotation marks in meta tag values when building query selectors `core/page-meta-data/elements/abstract/engines/dom`
 
 ## v4.0.0-beta.149 (2024-10-31)
 
