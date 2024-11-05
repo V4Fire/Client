@@ -40,7 +40,7 @@ test.describe('<i-block> modules - reload', () => {
 			});
 		});
 
-		test('should cancel the pending request when the component is deactivated', async () => {
+		test('should mute the pending request when the component is deactivated', async () => {
 			const mockClearRequest = await createSpy(target, (ctx) => jestMock.spy(ctx.unsafe.async, 'muteAll'));
 
 			await target.evaluate((ctx) => ctx.deactivate());
@@ -93,7 +93,7 @@ test.describe('<i-block> modules - reload', () => {
 			await test.expect(mockReload.callsCount).resolves.toBe(0);
 		});
 
-		test('should continue the pending request when the component is deactivated', async () => {
+		test('should continue the pending request after activation', async () => {
 			const mockClearRequest = await createSpy(target, (ctx) => jestMock.spy(ctx.unsafe.async, 'muteAll'));
 
 			const isReadyOnceAfterDeactivate = await target.evaluate(async (ctx, requestWait) => {
