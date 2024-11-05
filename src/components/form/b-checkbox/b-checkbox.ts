@@ -241,8 +241,7 @@ export default class bCheckbox extends iInput implements iSize {
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
-		const
-			i = this.instance;
+		const i = this.instance;
 
 		this.convertValueToChecked = i.convertValueToChecked.bind(this);
 		this.onCheckedChange = i.onCheckedChange.bind(this);
