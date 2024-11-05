@@ -26,7 +26,9 @@ import {
 	renderSlot as superRenderSlot,
 
 	withCtx as superWithCtx,
+	withModifiers as superWithModifiers,
 	withDirectives as superWithDirectives,
+
 	resolveDirective as superResolveDirective,
 
 	VNodeChild,
@@ -54,10 +56,12 @@ import {
 	wrapRenderList,
 	wrapRenderSlot,
 
+	wrapWithCtx,
+	wrapWithModifiers,
 	wrapWithDirectives,
+
 	wrapResolveDirective,
-	wrapMergeProps,
-	wrapWithCtx
+	wrapMergeProps
 
 } from 'core/component/render';
 
@@ -103,7 +107,6 @@ export {
 	withAsyncContext,
 
 	withKeys,
-	withModifiers,
 	withMemo,
 
 	vShow,
@@ -137,6 +140,8 @@ export const
 	withCtx = wrapWithCtx(superWithCtx),
 	withDirectives = wrapWithDirectives(superWithDirectives),
 	resolveDirective = wrapResolveDirective(superResolveDirective);
+
+export const withModifiers = wrapWithModifiers(superWithModifiers);
 
 export const renderList = wrapRenderList(
 	superRenderList,
