@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-11-??)
+
+#### :bug: Bug Fix
+
+* Fixed the handling of property getters in SSR: property getters are now included in props instead of being ignored as handlers
+
+#### :rocket: New Feature
+
+* The `getSSRProps` method now accepts a `vnode` parameter for direct modification of vnode props, similar to the `beforeCreate` method
+
 ## v4.0.0-beta.149 (2024-10-31)
 
 #### :house: Internal

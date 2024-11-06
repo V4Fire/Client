@@ -488,6 +488,7 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 
 				if (meta != null) {
 					props = normalizeComponentAttrs(props, [], meta);
+					props = resolveAttrs.call(this, {props}).props;
 				}
 
 				return ssrRenderComponent(component, props, ...args);

@@ -13,14 +13,18 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2024-11-??)
 
-#### :rocket: New Feature
-
-* Add `SSRBuffer` and `SSRBufferItem` types `core/component/engines`
-
 #### :bug: Bug Fix
 
 * Updated the input parameter type to clarify that the function can handle not only VNodes but also buffers `core/component/directives/render`
 * Fixed the buffer rendering on server-side: it now correctly processes not only strings and promises but also nested buffers, as [dictated by Vue](https://github.com/vuejs/core/blob/main/packages/server-renderer/src/render.ts#L61-L65) `core/component/directives/render`
+* Fixed the handling of property getters in SSR: property getters are now included in props instead of being ignored as handlers `core/component/directives/attrs`
+* Fixed the `resolveAttrs` function: property getters are no longer removed from props, the `v-attrs` directive now resolves with the correct method in SSR `core/component/render/helpers/attrs`
+* Calls `resolveAttrs` to resolve directives for components rendered with `ssrRenderComponent` `core/component/render/wrappers`
+
+#### :rocket: New Feature
+
+* Add `SSRBuffer` and `SSRBufferItem` types `core/component/engines`
+* The `getSSRProps` method now accepts a `vnode` parameter for direct modification of vnode props, similar to the `beforeCreate` method `core/component/directives/attrs`
 
 ## v4.0.0-beta.150 (2024-11-05)
 
