@@ -16,6 +16,8 @@ const ts = require('typescript');
  * @typedef {import('typescript').Decorator} Decorator
  */
 
+exports.addNamedImport = addNamedImport;
+
 /**
  * Adds an import statement with the specified name to the specified file
  *
@@ -25,7 +27,7 @@ const ts = require('typescript');
  * @param {Node} node - the source file node in the AST
  * @returns {Node}
  */
-exports.addNamedImport = function addNamedImport(name, path, context, node) {
+function addNamedImport(name, path, context, node) {
 	const {factory} = context;
 
 	const decoratorSrc = factory.createStringLiteral(path);
@@ -55,7 +57,9 @@ exports.addNamedImport = function addNamedImport(name, path, context, node) {
 	]);
 
 	return factory.updateSourceFile(node, updatedStatements);
-};
+}
+
+exports.isComponentClass = isComponentClass;
 
 /**
  * Returns true if the specified class is a component
@@ -63,7 +67,7 @@ exports.addNamedImport = function addNamedImport(name, path, context, node) {
  * @param {Node} node - the class node in the AST
  * @returns {boolean}
  */
-exports.isComponentClass = function isComponentClass(node) {
+function isComponentClass(node) {
 	const {decorators} = node;
 
 	if (!ts.isClassDeclaration(node)) {
@@ -71,11 +75,13 @@ exports.isComponentClass = function isComponentClass(node) {
 	}
 
 	if (decorators != null && decorators.length > 0) {
-		return decorators.some(isComponentDecorator);
+		return decorators.some((node) => isDecorator(node, 'component'));
 	}
 
 	return false;
-};
+}
+
+exports.getPartialName = getPartialName;
 
 /**
  * Returns the value of the `partial` parameter from the parameters of the @component decorator
@@ -83,7 +89,7 @@ exports.isComponentClass = function isComponentClass(node) {
  * @param {Node} node - the class node in the AST
  * @returns {boolean}
  */
-exports.getPartialName = function getPartialName(node) {
+function getPartialName(node) {
 	const {decorators} = node;
 
 	if (!ts.isClassDeclaration(node)) {
@@ -92,7 +98,7 @@ exports.getPartialName = function getPartialName(node) {
 
 	if (decorators != null && decorators.length > 0) {
 		for (const decorator of node.decorators) {
-			if (isComponentDecorator(decorator)) {
+			if (isDecorator(decorator, 'component')) {
 				const args = decorator.expression.arguments;
 
 				if (args.length > 0) {
@@ -118,9 +124,11 @@ exports.getPartialName = function getPartialName(node) {
 	}
 
 	return undefined;
-};
+}
 
 const pathToRootRgxp = /(?<path>.+)[/\\]src[/\\]/;
+
+exports.getLayerName = getLayerName;
 
 /**
  * Takes a file path and returns the package name from the package.json file of the package the provided file belongs to
@@ -128,21 +136,24 @@ const pathToRootRgxp = /(?<path>.+)[/\\]src[/\\]/;
  * @param {string} path
  * @returns {string}
  */
-exports.getLayerName = function getLayerName(path) {
+function getLayerName(path) {
 	const pathToRootDir = path.match(pathToRootRgxp).groups.path;
 	return require(`${pathToRootDir}/package.json`).name;
-};
+}
+
+exports.isDecorator = isDecorator;
 
 /**
- * Returns true if the specified decorator is a component decorator
+ * Returns true if the given decorator has the specified name
  *
  * @param {Decorator} decorator
+ * @param {string|string[]} name - a name or a list of possible names to match against the decorator.
  * @returns {boolean}
  */
-function isComponentDecorator(decorator) {
+function isDecorator(decorator, name) {
 	return (
 		ts.isCallExpression(decorator.expression) &&
 		ts.isIdentifier(decorator.expression.expression) &&
-		decorator.expression.expression.text === 'component'
+		Array.toArray(name).includes(decorator.expression.expression.text)
 	);
 }

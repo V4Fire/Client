@@ -12,6 +12,8 @@ const ts = require('typescript');
 
 const {
 	addNamedImport,
+
+	isDecorator,
 	isComponentClass,
 
 	getPartialName,
@@ -286,19 +288,53 @@ function addDefaultValueDecorator(context, node) {
 		);
 	}
 
-	const decoratorExpr = factory.createCallExpression(
-		factory.createIdentifier('defaultValue'),
-		undefined,
-		[getter]
-	);
+	let hasOwnDecorator = false;
 
-	const decorator = factory.createDecorator(decoratorExpr);
+	if (node.decorators != null) {
+		node.decorators = node.decorators.map((node) => {
+			if (isDecorator(node, ['prop', 'field', 'system'])) {
+				hasOwnDecorator = true;
 
-	const decorators = factory.createNodeArray([decorator, ...(node.decorators || [])]);
+				const expr = node.expression;
+
+				const decoratorExpr = factory.createCallExpression(
+					expr.expression,
+					undefined,
+					[expr.arguments[0] ?? factory.createIdentifier('undefined'), getter]
+				);
+
+				return factory.updateDecorator(node, decoratorExpr);
+			}
+
+			return node;
+		});
+	}
+
+	if (!hasOwnDecorator) {
+		const decoratorExpr = factory.createCallExpression(
+			factory.createIdentifier('defaultValue'),
+			undefined,
+			[getter]
+		);
+
+		const decorator = factory.createDecorator(decoratorExpr);
+
+		const decorators = factory.createNodeArray([decorator, ...(node.decorators || [])]);
+
+		return factory.updatePropertyDeclaration(
+			node,
+			decorators,
+			node.modifiers,
+			node.name,
+			node.questionToken,
+			node.type,
+			node.initializer
+		);
+	}
 
 	return factory.updatePropertyDeclaration(
 		node,
-		decorators,
+		factory.createNodeArray(node.decorators),
 		node.modifiers,
 		node.name,
 		node.questionToken,

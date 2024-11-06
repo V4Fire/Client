@@ -17,6 +17,7 @@ import type { InitFieldFn, DecoratorField } from 'core/component/decorators/fiel
  *
  * @decorator
  * @param [initOrParams] - a function to initialize the field value or an object with field parameters
+ * @param [initOrDefault] - a function to initialize the field value or the field default value
  *
  * @example
  * ```typescript
@@ -32,6 +33,9 @@ import type { InitFieldFn, DecoratorField } from 'core/component/decorators/fiel
  * }
  * ```
  */
-export function field(initOrParams?: InitFieldFn | DecoratorField): PartDecorator {
-	return system(initOrParams, 'fields');
+export function field(
+	initOrParams?: InitFieldFn | DecoratorField,
+	initOrDefault?: InitFieldFn | DecoratorField['default']
+): PartDecorator {
+	return system(initOrParams, initOrDefault, 'fields');
 }

@@ -35,6 +35,7 @@ const INIT = Symbol('The field initializer');
  * @decorator
  *
  * @param [initOrParams] - a function to initialize the field value or an object with field parameters
+ * @param [initOrDefault] - a function to initialize the field value or the field default value
  * @param [cluster] - the cluster for the registered field: `systemFields` or `fields`
  *
  * @example
@@ -51,22 +52,55 @@ const INIT = Symbol('The field initializer');
  * }
  * ```
  */
-export function system(initOrParams?: InitFieldFn | DecoratorSystem, cluster?: 'systemFields'): PartDecorator;
+export function system(
+	initOrParams?: InitFieldFn | DecoratorSystem,
+	initOrDefault?: InitFieldFn | DecoratorSystem['default'],
+	cluster?: 'systemFields'
+): PartDecorator;
 
 /**
  * Marks a class property as a field.
  *
  * @param [initOrParams] - a function to initialize the field value or an object with field parameters
+ * @param [initOrDefault] - a function to initialize the field value or the field default value
  * @param [cluster] - the cluster for the registered field: `systemFields` or `fields`
  */
-export function system(initOrParams: CanUndef<InitFieldFn | DecoratorField>, cluster: 'fields'): PartDecorator;
+export function system(
+	initOrParams: CanUndef<InitFieldFn | DecoratorField>,
+	initOrDefault: InitFieldFn | DecoratorSystem['default'],
+	cluster: 'fields'
+): PartDecorator;
 
 export function system(
 	initOrParams?: InitFieldFn | DecoratorSystem | DecoratorField,
+	initOrDefault?: InitFieldFn | DecoratorSystem['default'],
 	cluster: FieldCluster = 'systemFields'
 ): PartDecorator {
 	return createComponentDecorator3((desc, fieldName) => {
-		regField(fieldName, cluster, initOrParams, desc.meta);
+		const hasInitOrDefault =
+			Object.isFunction(initOrParams) ||
+			Object.isDictionary(initOrParams) && ('init' in initOrParams || 'default' in initOrParams);
+
+		let params = initOrParams;
+
+		if (initOrDefault !== undefined && !hasInitOrDefault) {
+			if (Object.isFunction(initOrDefault)) {
+				if (Object.isDictionary(params)) {
+					params.init = initOrDefault;
+
+				} else {
+					params = initOrDefault;
+				}
+
+			} else if (Object.isDictionary(params)) {
+				params.default = initOrDefault;
+
+			} else {
+				params = {default: initOrDefault};
+			}
+		}
+
+		regField(fieldName, cluster, params, desc.meta);
 	});
 }
 

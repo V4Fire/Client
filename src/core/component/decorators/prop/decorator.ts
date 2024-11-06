@@ -22,6 +22,7 @@ import type { DecoratorProp, PropType } from 'core/component/decorators/prop/int
  *
  * @decorator
  * @param [typeOrParams] - a constructor of the prop type or an object with prop parameters
+ * @param [defaultValue] - default prop value
  *
  * @example
  * ```typescript
@@ -40,9 +41,29 @@ import type { DecoratorProp, PropType } from 'core/component/decorators/prop/int
  * }
  * ```
  */
-export function prop(typeOrParams?: PropType | DecoratorProp): PartDecorator {
+export function prop(
+	typeOrParams?: PropType | DecoratorProp,
+	defaultValue?: DecoratorProp['default']
+): PartDecorator {
 	return createComponentDecorator3((desc, propName) => {
-		regProp(propName, typeOrParams, desc.meta);
+		const hasDefault = Object.isDictionary(typeOrParams) && 'default' in typeOrParams;
+
+		let params = typeOrParams;
+
+		if (defaultValue !== undefined && !hasDefault) {
+			if (Object.isDictionary(params)) {
+				params.default = defaultValue;
+
+			} else {
+				params = {default: defaultValue};
+
+				if (typeOrParams !== undefined) {
+					params.type = <PropType>typeOrParams;
+				}
+			}
+		}
+
+		regProp(propName, params, desc.meta);
 	});
 }
 
