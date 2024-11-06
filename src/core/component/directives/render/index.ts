@@ -12,7 +12,7 @@
  */
 
 import { setVNodePatchFlags } from 'core/component/render';
-import { ComponentEngine, VNode } from 'core/component/engines';
+import { ComponentEngine, SSRBufferItem, VNode } from 'core/component/engines';
 
 import { getDirectiveContext } from 'core/component/directives/helpers';
 import type { DirectiveParams } from 'core/component/directives/render/interface';
@@ -25,10 +25,11 @@ ComponentEngine.directive('render', {
 			ctx = getDirectiveContext(params, vnode);
 
 		const
-			newVNode = params.value,
+			newVNode = Object.cast<CanUndef<CanArray<VNode>>>(params.value),
+			newBuffer = Object.cast<CanUndef<SSRBufferItem>>(params.value),
 			originalChildren = vnode.children;
 
-		if (newVNode == null) {
+		if (newVNode == null || newBuffer == null) {
 			return;
 		}
 
@@ -37,14 +38,13 @@ ComponentEngine.directive('render', {
 			canReplaceOriginalVNode = isTemplate && !Object.isArray(newVNode);
 
 		if (canReplaceOriginalVNode) {
-			return SSR ? renderSSRFragment(newVNode) : newVNode;
+			return SSR ? renderSSRFragment(newBuffer) : newVNode;
 		}
 
 		if (Object.isString(vnode.type)) {
-			const
-				children = Array.concat([], newVNode);
-
 			if (SSR) {
+				const children = Array.concat([], newBuffer);
+
 				if (isTemplate) {
 					vnode.type = 'ssr-fragment';
 				}
@@ -55,6 +55,8 @@ ComponentEngine.directive('render', {
 				};
 
 			} else {
+				const children = Array.concat([], newVNode);
+
 				vnode.children = children;
 				vnode.dynamicChildren = Object.cast(children.slice());
 				setVNodePatchFlags(vnode, 'children');
@@ -69,7 +71,7 @@ ComponentEngine.directive('render', {
 			setVNodePatchFlags(vnode, 'slots');
 
 			if (SSR) {
-				slots.default = () => renderSSRFragment(newVNode);
+				slots.default = () => renderSSRFragment(newBuffer);
 
 			} else {
 				if (Object.isArray(newVNode)) {
@@ -96,17 +98,21 @@ ComponentEngine.directive('render', {
 			}
 		}
 
-		async function getSSRInnerHTML(content: CanArray<CanPromise<VNode>>) {
+		function isRecursiveBufferItem(bufferItem: SSRBufferItem): bufferItem is Exclude<SSRBufferItem, string> {
+			return Object.isPromise(bufferItem) || Object.isArray(bufferItem);
+		}
+
+		async function getSSRInnerHTML(content: CanArray<SSRBufferItem>) {
 			let normalizedContent = Array.concat([], content);
 
-			while (normalizedContent.some(Object.isPromise)) {
+			while (normalizedContent.some(isRecursiveBufferItem)) {
 				normalizedContent = (await Promise.all(normalizedContent)).flat();
 			}
 
 			return normalizedContent.join('');
 		}
 
-		function renderSSRFragment(content: CanArray<CanPromise<VNode>>) {
+		function renderSSRFragment(content: SSRBufferItem) {
 			if (ctx == null) {
 				return;
 			}
