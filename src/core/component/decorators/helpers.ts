@@ -10,6 +10,8 @@ import { initEmitter } from 'core/component/event';
 
 import type { ComponentMeta } from 'core/component/meta';
 
+import { registeredComponent } from 'core/component/decorators/const';
+
 import type {
 
 	PartDecorator,
@@ -52,15 +54,17 @@ function createComponentDecorator(
 	partDesc: CanUndef<PropertyDescriptor>,
 	proto: object
 ): void {
-	initEmitter.once('bindConstructor', (_componentName: string, regEvent: string) => {
-		initEmitter.once(regEvent, (componentDesc: ComponentDescriptor) => {
-			if (decorator.length <= 3) {
-				(<ComponentPartDecorator3>decorator)(componentDesc, partKey, proto);
+	if (registeredComponent.event == null) {
+		return;
+	}
 
-			} else {
-				(<ComponentPartDecorator4>decorator)(componentDesc, partKey, partDesc, proto);
-			}
-		});
+	initEmitter.once(registeredComponent.event, (componentDesc: ComponentDescriptor) => {
+		if (decorator.length <= 3) {
+			(<ComponentPartDecorator3>decorator)(componentDesc, partKey, proto);
+
+		} else {
+			(<ComponentPartDecorator4>decorator)(componentDesc, partKey, partDesc, proto);
+		}
 	});
 }
 

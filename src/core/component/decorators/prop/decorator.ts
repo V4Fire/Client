@@ -22,6 +22,7 @@ import type { DecoratorProp, PropType } from 'core/component/decorators/prop/int
  *
  * @decorator
  * @param [typeOrParams] - a constructor of the prop type or an object with prop parameters
+ * @param [defaultValue] - default prop value
  *
  * @example
  * ```typescript
@@ -40,9 +41,29 @@ import type { DecoratorProp, PropType } from 'core/component/decorators/prop/int
  * }
  * ```
  */
-export function prop(typeOrParams?: PropType | DecoratorProp): PartDecorator {
+export function prop(
+	typeOrParams?: PropType | DecoratorProp,
+	defaultValue?: DecoratorProp['default']
+): PartDecorator {
 	return createComponentDecorator3((desc, propName) => {
-		regProp(propName, typeOrParams, desc.meta);
+		const hasDefault = Object.isDictionary(typeOrParams) && 'default' in typeOrParams;
+
+		let params = typeOrParams;
+
+		if (defaultValue !== undefined && !hasDefault) {
+			if (Object.isDictionary(params)) {
+				params.default = defaultValue;
+
+			} else {
+				params = {default: defaultValue};
+
+				if (typeOrParams !== undefined) {
+					params.type = <PropType>typeOrParams;
+				}
+			}
+		}
+
+		regProp(propName, params, desc.meta);
 	});
 }
 
@@ -173,10 +194,9 @@ export function regProp(propName: string, typeOrParams: Nullable<PropType | Deco
 
 	const
 		isRoot = meta.params.root === true,
-		isFunctional = meta.params.functional === true,
-		defaultProps = meta.params.defaultProps !== false;
+		isFunctional = meta.params.functional === true;
 
-	if (prop.default !== undefined && (defaultProps || prop.forceDefault)) {
+	if (prop.default !== undefined) {
 		defaultValue = prop.default;
 	}
 
@@ -185,7 +205,7 @@ export function regProp(propName: string, typeOrParams: Nullable<PropType | Deco
 
 		(prop.forceUpdate ? component.props : component.attrs)[propName] = {
 			type: prop.type,
-			required: prop.required !== false && defaultProps && defaultValue === undefined,
+			required: prop.required !== false && defaultValue === undefined,
 
 			default: defaultValue,
 			functional: prop.functional,

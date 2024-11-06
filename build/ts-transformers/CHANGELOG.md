@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added a new transformer `resister-component-default-values`
+* Added a new transformer `register-component-default-values`
 
 ## v3.23.5 (2022-07-12)
 
