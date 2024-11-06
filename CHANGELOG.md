@@ -15,13 +15,48 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
+* Updated the input parameter type to clarify that the function can handle not only VNodes but also buffers `core/component/directives/render`
+* Fixed the buffer rendering on server-side: it now correctly processes not only strings and promises but also nested buffers, as [dictated by Vue](https://github.com/vuejs/core/blob/main/packages/server-renderer/src/render.ts#L61-L65) `core/component/directives/render`
 * Fixed the handling of property getters in SSR: property getters are now included in props instead of being ignored as handlers `core/component/directives/attrs`
 * Fixed the `resolveAttrs` function: property getters are no longer removed from props, the `v-attrs` directive now resolves with the correct method in SSR `core/component/render/helpers/attrs`
 * Calls `resolveAttrs` to resolve directives for components rendered with `ssrRenderComponent` `core/component/render/wrappers`
 
 #### :rocket: New Feature
 
+* Add `SSRBuffer` and `SSRBufferItem` types `core/component/engines`
 * The `getSSRProps` method now accepts a `vnode` parameter for direct modification of vnode props, similar to the `beforeCreate` method `core/component/directives/attrs`
+
+## v4.0.0-beta.150 (2024-11-05)
+
+#### :bug: Bug Fix
+
+* Omit detailed component information to prevent event loop freezing associated
+with certain warnings. Vue uses a `get` trap within the proxy to verify the presence
+of a property in the instance. Accessing undefined properties via the `getComponentInfo` method
+during a warn or error handler will trigger infinite recursion. `core/component/engines/vue3`
+
+#### :house: Internal
+
+* Revert: exclude SSR shims for non-SSR environments `core/shims`
+
+## v4.0.0-beta.149 (2024-10-31)
+
+#### :rocket: New Feature
+
+* Added the `v-safe-on` directive, which allows event handlers to execute only when the vnode is not unmounted
+  `components/directives/safe-on`
+* Added a wrapper for `withModifiers` with support for the `safe` modifier `core/component/render`
+
+#### :house: Internal
+
+* Moved the `parseEventListener` function to common directive helpers `core/component/directives/attrs`
+
+## v4.0.0-beta.148 (2024-10-28)
+
+#### :house: Internal
+
+* Create a `normalizeComponentForceUpdateProps` for normalizing the props with `forceUpdate = false` `core/component/render`
+* Exclude SSR shims for non-SSR environments `core/shims`
 
 ## v4.0.0-beta.147 (2024-10-25)
 

@@ -19,6 +19,12 @@ Changelog
 
 * The `getSSRProps` method now accepts a `vnode` parameter for direct modification of vnode props, similar to the `beforeCreate` method
 
+## v4.0.0-beta.149 (2024-10-31)
+
+#### :house: Internal
+
+* Moved the `parseEventListener` function to common directive helpers
+
 ## v4.0.0-beta.111 (2024-07-18)
 
 #### :bug: Bug Fix

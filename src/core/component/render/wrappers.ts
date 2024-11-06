@@ -33,6 +33,8 @@ import type {
 	withDirectives,
 	resolveDirective,
 
+	withModifiers,
+
 	VNode,
 	DirectiveArguments,
 	DirectiveBinding
@@ -553,4 +555,21 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 
 		return res;
 	}
+}
+
+/**
+ * A wrapper for the component library `withModifiers` function
+ * @param original
+ */
+export function wrapWithModifiers<T extends typeof withModifiers>(original: T): T {
+	return Object.cast(function withModifiers(fn: Function, modifiers: string[]) {
+		return (event: Event, ...args: unknown[]) => {
+			if (modifiers.includes('safe') && event.target instanceof Element && !event.target.isConnected) {
+				event.stopImmediatePropagation();
+				return;
+			}
+
+			return original(fn, modifiers)(event, ...args);
+		};
+	});
 }

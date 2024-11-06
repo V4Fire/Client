@@ -6,8 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { isPropGetter } from 'core/component/reflect';
 import type { ComponentMeta } from 'core/component/meta';
+import type { ComponentInterface } from 'core/component/interface';
+
+import { isPropGetter } from 'core/component/reflect';
+import { registerComponent } from 'core/component/init';
 
 /**
  * Normalizes the provided CSS classes and returns the resulting output
@@ -222,4 +225,40 @@ export function normalizeComponentAttrs(
 			}
 		}
 	}
+}
+
+/**
+ * Normalizes the props with `forceUpdate` set to `false` for a child component
+ * using the parent context. The function returns a new object of normalized props
+ * for the child component.
+ *
+ * @param parentCtx - the context of the parent component
+ * @param componentName - the name of the child component
+ * @param props - the initial props of the child component
+ */
+export function normalizeComponentForceUpdateProps(
+	parentCtx: ComponentInterface,
+	componentName: string,
+	props: Dictionary
+): Dictionary {
+	const meta = registerComponent(componentName);
+
+	if (meta == null) {
+		return props;
+	}
+
+	const normalizedProps = {};
+
+	Object.entries(props).forEach(([key, value]) => {
+		const propInfo = meta.props[key] ?? meta.props[`${key}Prop`];
+
+		if (propInfo?.forceUpdate === false) {
+			normalizedProps[`@:${key}`] = parentCtx.unsafe.createPropAccessors(() => <object>value);
+
+		} else {
+			normalizedProps[key] = value;
+		}
+	});
+
+	return normalizedProps;
 }
