@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.149 (2024-10-31)
+
+#### :rocket: New Feature
+
+* Added a wrapper for `withModifiers` with support for the `safe` modifier
+
+## v4.0.0-beta.148 (2024-10-28)
+
+#### :house: Internal
+
+* Create a `normalizeComponentForceUpdateProps` for normalizing the props with `forceUpdate = false`
+
 ## v4.0.0-beta.140 (2024-10-03)
 
 #### :bug: Bug Fix

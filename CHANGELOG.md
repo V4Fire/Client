@@ -20,8 +20,45 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Updated the input parameter type to clarify that the function can handle not only VNodes but also buffers `core/component/directives/render`
-
 * Fixed the buffer rendering on server-side: it now correctly processes not only strings and promises but also nested buffers, as [dictated by Vue](https://github.com/vuejs/core/blob/main/packages/server-renderer/src/render.ts#L61-L65) `core/component/directives/render`
+
+## v4.0.0-beta.150 (2024-11-05)
+
+#### :bug: Bug Fix
+
+* Omit detailed component information to prevent event loop freezing associated
+with certain warnings. Vue uses a `get` trap within the proxy to verify the presence
+of a property in the instance. Accessing undefined properties via the `getComponentInfo` method
+during a warn or error handler will trigger infinite recursion. `core/component/engines/vue3`
+
+#### :house: Internal
+
+* Revert: exclude SSR shims for non-SSR environments `core/shims`
+
+## v4.0.0-beta.149 (2024-10-31)
+
+#### :rocket: New Feature
+
+* Added the `v-safe-on` directive, which allows event handlers to execute only when the vnode is not unmounted
+  `components/directives/safe-on`
+* Added a wrapper for `withModifiers` with support for the `safe` modifier `core/component/render`
+
+#### :house: Internal
+
+* Moved the `parseEventListener` function to common directive helpers `core/component/directives/attrs`
+
+## v4.0.0-beta.148 (2024-10-28)
+
+#### :house: Internal
+
+* Create a `normalizeComponentForceUpdateProps` for normalizing the props with `forceUpdate = false` `core/component/render`
+* Exclude SSR shims for non-SSR environments `core/shims`
+
+## v4.0.0-beta.147 (2024-10-25)
+
+#### :bug: Bug Fix
+
+* Fixed the bug with previous active element not loosing its focus state `bList`
 
 ## v4.0.0-beta.146 (2024-10-18)
 
