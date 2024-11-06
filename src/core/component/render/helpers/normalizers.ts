@@ -6,8 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { isPropGetter } from 'core/component/reflect';
 import type { ComponentMeta } from 'core/component/meta';
+import type { ComponentInterface } from 'core/component/interface';
+
+import { isPropGetter } from 'core/component/reflect';
+import { registerComponent } from 'core/component/init';
 
 /**
  * Normalizes the provided CSS classes and returns the resulting output
@@ -172,9 +175,9 @@ export function normalizeComponentAttrs(
 			}
 		}
 
-		const needSetAdditionalProp =
-			functional === true && dynamicProps != null &&
-			isPropGetter.test(attrName) && Object.isFunction(value);
+		const
+			isGetter = isPropGetter.test(attrName) && Object.isFunction(value),
+			needSetAdditionalProp = functional === true && dynamicProps != null && isGetter;
 
 		// For correct operation in functional components, we need to additionally duplicate such props
 		if (needSetAdditionalProp) {
@@ -185,6 +188,10 @@ export function normalizeComponentAttrs(
 			normalizedAttrs[tiedPropName] = tiedPropValue;
 			normalizeAttr(tiedPropName, tiedPropValue);
 			dynamicProps.push(tiedPropName);
+
+		} else if (isGetter) {
+			// For non-functional components (especially in SSR), remove a paired prop, because getter prop is sufficient
+			delete normalizedAttrs[isPropGetter.replace(attrName)];
 		}
 
 		if (propName in props || isPropGetter.replace(propName) in props) {
@@ -238,4 +245,44 @@ export function normalizeComponentAttrs(
 			}
 		}
 	}
+}
+
+/**
+ * Normalizes the props with forceUpdate set to false for a child component using the parent context.
+ * The function returns a new object containing the normalized props for the child component.
+ *
+ * @param parentCtx - the context of the parent component
+ * @param componentName - the name of the child component
+ * @param props - the initial props of the child component
+ */
+export function normalizeComponentForceUpdateProps(
+	parentCtx: ComponentInterface,
+	componentName: string,
+	props: Dictionary
+): Dictionary {
+	const meta = registerComponent(componentName);
+
+	if (meta == null) {
+		return props;
+	}
+
+	const
+		normalizedProps = {},
+		propNames = Object.keys(props);
+
+	for (let i = 0; i < propNames.length; i++) {
+		const
+			propName = propNames[i],
+			propVal = props[propName],
+			propInfo = meta.props[propName] ?? meta.props[`${propName}Prop`];
+
+		if (propInfo?.forceUpdate === false) {
+			normalizedProps[`@:${propName}`] = parentCtx.unsafe.createPropAccessors(() => <object>propVal);
+
+		} else {
+			normalizedProps[propName] = propVal;
+		}
+	}
+
+	return normalizedProps;
 }

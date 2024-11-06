@@ -12,6 +12,7 @@ import { beforeMountHooks } from 'core/component/const';
 import type { VNode } from 'core/component/engines';
 
 import { isHandler, mergeProps } from 'core/component/render/helpers/props';
+import { isPropGetter } from 'core/component/reflect';
 
 import type { ComponentInterface } from 'core/component/interface';
 
@@ -77,8 +78,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 
 		if (props[key] != null) {
 			const dir = r.resolveDirective.call(this, 'attrs');
-
-			dir.beforeCreate({
+			const dirParams = {
 				dir,
 
 				modifiers: {},
@@ -88,7 +88,14 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 				oldValue: undefined,
 
 				instance: this
-			}, vnode);
+			};
+
+			if (SSR) {
+				dir.getSSRProps(dirParams, vnode);
+
+			} else {
+				dir.beforeCreate(dirParams, vnode);
+			}
 
 			props = vnode.props!;
 			delete props[key];
@@ -147,7 +154,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 					const propName = propNames[i];
 
 					if (isHandler.test(propName)) {
-						if (SSR) {
+						if (SSR && !isPropGetter.test(propName)) {
 							delete props[propName];
 
 						} else {
