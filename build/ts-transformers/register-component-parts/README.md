@@ -25,6 +25,7 @@ class bExample extends iBlock {
 Will transform to
 
 ```typescript
+import { method } from 'core/component/decorators/method';
 import { defaultValue } from 'core/component/decorators/default-value';
 import { registeredComponent } from 'core/component/decorators/const';
 
@@ -39,10 +40,12 @@ class bExample extends iBlock {
   @prop(Array, () => { return []; })
   prop: string[] = [];
 
+  @method('accessor')
   get answer() {
     return 42;
   }
 
+  @method('method')
   just() {
     return 'do it';
   }

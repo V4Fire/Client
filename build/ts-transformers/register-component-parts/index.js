@@ -59,6 +59,7 @@ module.exports = resisterComponentDefaultValues;
  * Will transform to
  *
  * ```typescript
+ * import { method } from 'core/component/decorators/method';
  * import { defaultValue } from 'core/component/decorators/default-value';
  * import { registeredComponent } from 'core/component/decorators/const';
  *
@@ -73,10 +74,12 @@ module.exports = resisterComponentDefaultValues;
  *   @prop(Array, () => { return []; })
  *   prop: string[] = [];
  *
+ *   @method('accessor')
  *   get answer() {
  *     return 42;
  *   }
  *
+ *   @method('method')
  *   just() {
  *     return 'do it';
  *   }
