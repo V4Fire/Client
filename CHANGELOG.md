@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-11-??)
+
+#### :rocket: New Feature
+
+* Add `SSRBuffer` and `SSRBufferItem` types `core/component/engines`
+
+#### :bug: Bug Fix
+
+* Updated the input parameter type to clarify that the function can handle not only VNodes but also buffers `core/component/directives/render`
+* Fixed the buffer rendering on server-side: it now correctly processes not only strings and promises but also nested buffers, as [dictated by Vue](https://github.com/vuejs/core/blob/main/packages/server-renderer/src/render.ts#L61-L65) `core/component/directives/render`
+
 ## v4.0.0-beta.150 (2024-11-05)
 
 #### :bug: Bug Fix
