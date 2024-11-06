@@ -20,9 +20,9 @@ const
 	ALREADY_FILLED = Symbol('This constructor has already been used to populate the metaobject');
 
 /**
- * Populates the passed metaobject with methods and properties from the specified component class constructor
+ * Populates the passed metaobject with methods and properties from the specified component descriptor and constructor
  *
- * @param meta
+ * @param meta - the metaobject of the registered component
  * @param registeredComponent - the descriptor of the registered component
  * @param [constructor] - the component constructor
  */

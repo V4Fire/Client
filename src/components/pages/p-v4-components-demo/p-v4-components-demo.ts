@@ -11,10 +11,12 @@
  * @packageDocumentation
  */
 
-import iStaticPage, { component, prop, field, system, hook } from 'components/super/i-static-page/i-static-page';
+import iStaticPage, { component, prop, field, system, hook, watch } from 'components/super/i-static-page/i-static-page';
 import VDOM, * as VDOMAPI from 'components/friends/vdom';
 
 export * from 'components/super/i-static-page/i-static-page';
+
+console.time('init');
 
 VDOM.addToPrototype(VDOMAPI);
 

@@ -15,12 +15,12 @@ import type { ComponentAccessor, ComponentMeta, ComponentMethod } from 'core/com
 const ALREADY_PASSED = Symbol('This target is passed');
 
 /**
- * Loops through the prototype of the passed component constructor and
+ * Loops through the prototype of the passed component descriptor and
  * adds methods and accessors to the specified metaobject
  *
- * @param meta
+ * @param meta - the metaobject of the registered component
  * @param registeredComponent - the descriptor of the registered component
- * @param [constructor]
+ * @param [constructor] - the component constructor
  */
 export function addMethodsToMeta(
 	meta: ComponentMeta,
@@ -50,10 +50,6 @@ export function addMethodsToMeta(
 		const
 			methodName = registeredComponent.methods[i],
 			fn = proto[methodName];
-
-		if (!Object.isFunction(fn)) {
-			continue;
-		}
 
 		let method: ComponentMethod;
 

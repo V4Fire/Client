@@ -202,6 +202,11 @@ This function modifies the original object.
 
 Populates the passed metaobject with methods and properties from the specified component class constructor.
 
+### addMethodsToMeta
+
+Loops through the prototype of the passed component descriptor and
+adds methods and accessors to the specified metaobject.
+
 ### attachTemplatesToMeta
 
 Attaches templates to the specified metaobject.

@@ -34,19 +34,18 @@ import iBlock, { component, prop } from 'components/super/i-block/i-block';
 registeredComponent.name = 'bExample';
 registeredComponent.layer = '@v4fire/client';
 registeredComponent.event = 'constructor.b-example.@v4fire/client';
+registeredComponent.methods = ['just'];
+registeredComponent.accessors = ['answer'];
 
 @component()
 class bExample extends iBlock {
-  @defaultValue(() => { return []; })
-  @prop(Array)
+  @prop(Array, () => { return []; })
   prop: string[] = [];
 
-  @method('accessor')
   get answer() {
     return 42;
   }
 
-  @method('method')
   just() {
     return 'do it';
   }

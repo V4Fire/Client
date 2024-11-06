@@ -22,6 +22,7 @@ export default class bUser extends iBlock {
 * `@prop` to declare a component's input property (aka "prop");
 * `@field` to declare a component's field;
 * `@system` to declare a component's system field (system field mutations never cause components to re-render);
+* `@defaultValue` to declare the default value of a component's field or prop;
 * `@computed` to attach meta-information to a component's computed field or accessor;
 * `@hook` to attach a hook listener;
 * `@watch` to attach a watcher.

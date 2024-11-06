@@ -109,7 +109,11 @@ export function component(opts?: ComponentOptions): Function {
 				}
 
 				initEmitter.once(regComponentEvent, () => {
-					addMethodsToMeta(components.get(componentFullName)!, regComponentDesc, target);
+					const meta = components.get(componentFullName);
+
+					if (meta != null) {
+						addMethodsToMeta(meta, regComponentDesc, target);
+					}
 				});
 			});
 

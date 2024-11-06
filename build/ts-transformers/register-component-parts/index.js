@@ -227,6 +227,7 @@ function registeredComponentParams(
 		if (isComponentClass(node, 'component') && node.name.text === originalComponentName) {
 			statements.push(
 				register('name', componentName),
+				register('name', componentName),
 				register('layer', layerName),
 				register('event', `constructor.${componentName.dasherize()}.${layerName}`),
 				register('methods', methods),
