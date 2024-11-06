@@ -12,6 +12,7 @@
  */
 
 import { components } from 'core/component/const';
+import { isPropGetter } from 'core/component/reflect';
 import { ComponentEngine, DirectiveBinding, VNode } from 'core/component/engines';
 
 import { normalizeComponentAttrs } from 'core/component/render';
