@@ -8,4 +8,7 @@
 
 package('b-bottom-slide')
 	.extends('i-block')
-	.libs('components/directives/on-resize');
+	.libs(
+		'components/directives/on-resize',
+		'components/directives/safe-on'
+	);

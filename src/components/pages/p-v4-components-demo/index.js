@@ -49,6 +49,7 @@ package('p-v4-components-demo')
 		'components/directives/icon',
 		'components/directives/in-view',
 		'components/directives/safe-html',
+		'components/directives/safe-on',
 
 		'core/router/engines/browser-history',
 		'core/router/engines/in-memory',

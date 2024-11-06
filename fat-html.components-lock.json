@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "hash": "848188ca4409395693c58ff85ada48b70cb4709ad07a56f9cbc9f191c8586a10",
+=======
+  "hash": "63486c753ebbba9087e1f56ad93e610addf0677a5298daf4109b9ab9a703a942",
+>>>>>>> fdd5344add3f10679f37d4bd0f50907fc8747a5c
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -12,25 +16,29 @@
             "parent": "i-block",
             "dependencies": [],
             "libs": [
-              "components/directives/on-resize"
+              "components/directives/on-resize",
+              "components/directives/safe-on"
             ]
           },
           "name": "b-bottom-slide",
           "parent": "i-block",
           "dependencies": [],
           "libs": [
-            "components/directives/on-resize"
+            "components/directives/on-resize",
+            "components/directives/safe-on"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
             "%data:Set": [
-              "components/directives/on-resize"
+              "components/directives/on-resize",
+              "components/directives/safe-on"
             ]
           },
           "resolvedOwnLibs": {
             "%data": "%data:Set",
             "%data:Set": [
-              "components/directives/on-resize"
+              "components/directives/on-resize",
+              "components/directives/safe-on"
             ]
           },
           "type": "block",
@@ -1274,6 +1282,38 @@
         }
       ],
       [
+        "b-safe-on-dummy",
+        {
+          "index": "src/components/directives/safe-on/test/b-safe-on-dummy/index.js",
+          "declaration": {
+            "name": "b-safe-on-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-safe-on-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/directives/safe-on/test/b-safe-on-dummy/b-safe-on-dummy.ts",
+          "styles": [
+            "src/components/directives/safe-on/test/b-safe-on-dummy/b-safe-on-dummy.styl"
+          ],
+          "tpl": "src/components/directives/safe-on/test/b-safe-on-dummy/b-safe-on-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-scroll-element-dummy",
         {
           "index": "src/components/base/b-dynamic-page/test/b-scroll-element-dummy/index.js",
@@ -1458,25 +1498,29 @@
             "parent": "i-data",
             "dependencies": [],
             "libs": [
-              "components/directives/on-resize"
+              "components/directives/on-resize",
+              "components/directives/safe-on"
             ]
           },
           "name": "b-slider",
           "parent": "i-data",
           "dependencies": [],
           "libs": [
-            "components/directives/on-resize"
+            "components/directives/on-resize",
+            "components/directives/safe-on"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
             "%data:Set": [
-              "components/directives/on-resize"
+              "components/directives/on-resize",
+              "components/directives/safe-on"
             ]
           },
           "resolvedOwnLibs": {
             "%data": "%data:Set",
             "%data:Set": [
-              "components/directives/on-resize"
+              "components/directives/on-resize",
+              "components/directives/safe-on"
             ]
           },
           "type": "block",
@@ -2859,6 +2903,7 @@
               "components/directives/icon",
               "components/directives/in-view",
               "components/directives/safe-html",
+              "components/directives/safe-on",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
               "components/traits/i-control-list/i-control-list",
@@ -2907,6 +2952,7 @@
             "components/directives/icon",
             "components/directives/in-view",
             "components/directives/safe-html",
+            "components/directives/safe-on",
             "core/router/engines/browser-history",
             "core/router/engines/in-memory",
             "components/traits/i-control-list/i-control-list",
@@ -2925,6 +2971,7 @@
               "components/directives/image",
               "components/directives/in-view",
               "components/directives/safe-html",
+              "components/directives/safe-on",
               "components/traits/i-control-list/i-control-list",
               "core/browser",
               "core/cookies",
@@ -2944,6 +2991,7 @@
               "components/directives/image",
               "components/directives/in-view",
               "components/directives/safe-html",
+              "components/directives/safe-on",
               "components/traits/i-control-list/i-control-list",
               "core/browser",
               "core/cookies",
