@@ -7,8 +7,10 @@
  */
 
 import { isAbstractComponent } from 'core/component/reflect';
+import type { RegisteredComponent } from 'core/component/decorators';
 
 import { sortFields } from 'core/component/meta/field';
+import { addMethodsToMeta } from 'core/component/meta/method';
 
 import type { ComponentConstructor, ModVal } from 'core/component/interface';
 import type { ComponentMeta } from 'core/component/meta/interface';
@@ -21,9 +23,16 @@ const
  * Populates the passed metaobject with methods and properties from the specified component class constructor
  *
  * @param meta
+ * @param registeredComponent - the descriptor of the registered component
  * @param [constructor] - the component constructor
  */
-export function fillMeta(meta: ComponentMeta, constructor: ComponentConstructor = meta.constructor): ComponentMeta {
+export function fillMeta(
+	meta: ComponentMeta,
+	registeredComponent: Required<RegisteredComponent>,
+	constructor: ComponentConstructor = meta.constructor
+): ComponentMeta {
+	addMethodsToMeta(meta, registeredComponent, constructor);
+
 	if (isAbstractComponent.test(meta.componentName)) {
 		return meta;
 	}

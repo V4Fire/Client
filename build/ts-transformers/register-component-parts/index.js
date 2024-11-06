@@ -94,9 +94,11 @@ function resisterComponentDefaultValues(context) {
 		componentName,
 		originalComponentName;
 
-	let
-		needImportDefaultValueDecorator = false,
-		needImportMethodDecorator = false;
+	const
+		methods = new Set(),
+		accessors = new Set();
+
+	let needImportDefaultValueDecorator = false;
 
 	return (node) => {
 		node = ts.visitNode(node, visitor);
@@ -107,7 +109,9 @@ function resisterComponentDefaultValues(context) {
 				node,
 				componentName,
 				originalComponentName,
-				getLayerName(node.path)
+				getLayerName(node.path),
+				methods,
+				accessors
 			);
 
 			node = addNamedImport('registeredComponent', 'core/component/decorators/const', context, node);
@@ -115,10 +119,6 @@ function resisterComponentDefaultValues(context) {
 
 		if (needImportDefaultValueDecorator) {
 			node = addNamedImport('defaultValue', 'core/component/decorators/default-value', context, node);
-		}
-
-		if (needImportMethodDecorator) {
-			node = addNamedImport('method', 'core/component/decorators/method', context, node);
 		}
 
 		return node;
@@ -150,27 +150,31 @@ function resisterComponentDefaultValues(context) {
 						isGetter = ts.isGetAccessorDeclaration(node),
 						isSetter = !isGetter && ts.isSetAccessorDeclaration(node);
 
-					if (isGetter || isSetter || ts.isMethodDeclaration(node)) {
-						needImportMethodDecorator = true;
-						node = addMethodDecorator(context, node);
+					if (isGetter || isSetter) {
+						accessors.add(node.name.text);
+
+					} else if (ts.isMethodDeclaration(node)) {
+						methods.add(node.name.text);
 					}
 
 					if (isGetter || isSetter) {
 						const
 							postfix = isGetter ? 'Getter' : 'Setter',
-							methodName = context.factory.createStringLiteral(node.name.text + postfix);
+							methodName = node.name.text + postfix;
 
 						const method = factory.createMethodDeclaration(
 							undefined,
 							undefined,
 							undefined,
-							methodName,
+							context.factory.createStringLiteral(methodName),
 							undefined,
 							undefined,
 							node.parameters,
 							undefined,
 							node.body
 						);
+
+						methods.add(methodName);
 
 						return [node, method];
 					}
@@ -202,6 +206,8 @@ function resisterComponentDefaultValues(context) {
  * @param {string} componentName - the name of the component being targeted for registration
  * @param {string} originalComponentName - the original name of the component for registration
  * @param {string} layerName - the name of the layer in which the component is registered
+ * @param {Set<string>} methods - a set of component methods
+ * @param {Set<string>} accessors - a set of component accessors
  * @returns {Node}
  */
 function registeredComponentParams(
@@ -209,7 +215,9 @@ function registeredComponentParams(
 	node,
 	componentName,
 	originalComponentName,
-	layerName
+	layerName,
+	methods,
+	accessors
 ) {
 	const statements = [];
 
@@ -221,6 +229,8 @@ function registeredComponentParams(
 				register('name', componentName),
 				register('layer', layerName),
 				register('event', `constructor.${componentName.dasherize()}.${layerName}`),
+				register('methods', methods),
+				register('accessors', accessors),
 				node
 			);
 
@@ -232,6 +242,10 @@ function registeredComponentParams(
 	return factory.updateSourceFile(node, factory.createNodeArray(statements));
 
 	function register(name, value) {
+		const exprValue = Object.isString(value) ?
+			factory.createStringLiteral(value) :
+			factory.createArrayLiteralExpression([...value].map((value) => factory.createStringLiteral(value)));
+
 		return factory.createExpressionStatement(
 			factory.createBinaryExpression(
 				factory.createPropertyAccessExpression(
@@ -240,7 +254,7 @@ function registeredComponentParams(
 				),
 
 				factory.createToken(ts.SyntaxKind.EqualsToken),
-				factory.createStringLiteral(value)
+				exprValue
 			)
 		);
 	}
@@ -340,71 +354,5 @@ function addDefaultValueDecorator(context, node) {
 		node.questionToken,
 		node.type,
 		node.initializer
-	);
-}
-
-/**
- * Adds the `@method` decorator for the specified class method or accessor
- *
- * @param {TransformationContext} context - the transformation context
- * @param {Node} node - the method/accessor node in the AST
- * @returns {Node}
- */
-function addMethodDecorator(context, node) {
-	const {factory} = context;
-
-	let type;
-
-	if (ts.isMethodDeclaration(node)) {
-		type = 'method';
-
-	} else {
-		type = 'accessor';
-	}
-
-	const decoratorExpr = factory.createCallExpression(
-		factory.createIdentifier('method'),
-		undefined,
-		[factory.createStringLiteral(type)]
-	);
-
-	const decorator = factory.createDecorator(decoratorExpr);
-
-	const decorators = factory.createNodeArray([decorator, ...(node.decorators || [])]);
-
-	if (ts.isMethodDeclaration(node)) {
-		return factory.updateMethodDeclaration(
-			node,
-			decorators,
-			node.modifiers,
-			node.asteriskToken,
-			node.name,
-			node.questionToken,
-			node.typeParameters,
-			node.parameters,
-			node.type,
-			node.body
-		);
-	}
-
-	if (ts.isGetAccessorDeclaration(node)) {
-		return factory.updateGetAccessorDeclaration(
-			node,
-			decorators,
-			node.modifiers,
-			node.name,
-			node.parameters,
-			node.type,
-			node.body
-		);
-	}
-
-	return factory.updateSetAccessorDeclaration(
-		node,
-		decorators,
-		node.modifiers,
-		node.name,
-		node.parameters,
-		node.body
 	);
 }

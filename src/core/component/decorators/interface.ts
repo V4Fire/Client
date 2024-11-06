@@ -37,4 +37,6 @@ export interface RegisteredComponent {
 	name?: string;
 	layer?: string;
 	event?: string;
+	methods?: string[];
+	accessors?: string[];
 }

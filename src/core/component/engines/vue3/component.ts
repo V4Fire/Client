@@ -15,6 +15,8 @@ import { fillMeta } from 'core/component/meta';
 import { getComponentContext, dropRawComponentContext } from 'core/component/context';
 import { wrapAPI } from 'core/component/render';
 
+import type { RegisteredComponent } from 'core/component/decorators';
+
 import type { ComponentEngine, ComponentOptions, SetupContext } from 'core/component/engines';
 import type { ComponentInterface, ComponentMeta } from 'core/component/interface';
 
@@ -45,10 +47,15 @@ import * as r from 'core/component/engines/vue3/render';
 
 /**
  * Returns a component declaration object from the specified metaobject
+ *
  * @param meta
+ * @param registeredComponent - the descriptor of the registered component
  */
-export function getComponent(meta: ComponentMeta): ComponentOptions<typeof ComponentEngine> {
-	const {component} = fillMeta(meta);
+export function getComponent(
+	meta: ComponentMeta,
+	registeredComponent: Required<RegisteredComponent>
+): ComponentOptions<typeof ComponentEngine> {
+	const {component} = fillMeta(meta, registeredComponent);
 
 	const p = meta.params;
 

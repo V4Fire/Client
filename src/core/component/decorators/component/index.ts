@@ -32,6 +32,7 @@ import {
 	inheritMods,
 	inheritParams,
 
+	addMethodsToMeta,
 	attachTemplatesToMeta
 
 } from 'core/component/meta';
@@ -79,7 +80,9 @@ export function component(opts?: ComponentOptions): Function {
 			return;
 		}
 
-		const regComponentEvent = registeredComponent.event;
+		const
+			regComponentDesc = <Required<typeof registeredComponent>>{...registeredComponent},
+			regComponentEvent = registeredComponent.event;
 
 		const
 			componentInfo = getInfoFromConstructor(target, opts),
@@ -104,6 +107,10 @@ export function component(opts?: ComponentOptions): Function {
 					meta = createMeta(componentInfo);
 					components.set(componentFullName, meta);
 				}
+
+				initEmitter.once(regComponentEvent, () => {
+					addMethodsToMeta(components.get(componentFullName)!, regComponentDesc, target);
+				});
 			});
 
 			return;
@@ -220,17 +227,17 @@ export function component(opts?: ComponentOptions): Function {
 				!SSR && meta.params.functional === true;
 
 			if (noNeedToRegisterAsComponent) {
-				fillMeta(meta, target);
+				fillMeta(meta, regComponentDesc, target);
 
 				if (!componentInfo.isAbstract) {
 					Promise.resolve(loadTemplate(meta.component)).catch(stderr);
 				}
 
 			} else if (meta.params.root) {
-				rootComponents[componentFullName] = loadTemplate(getComponent(meta));
+				rootComponents[componentFullName] = loadTemplate(getComponent(meta, regComponentDesc));
 
 			} else {
-				const componentDeclArgs = <const>[componentFullName, loadTemplate(getComponent(meta))];
+				const componentDeclArgs = <const>[componentFullName, loadTemplate(getComponent(meta, regComponentDesc))];
 				ComponentEngine.component(...componentDeclArgs);
 
 				if (app.context != null && app.context.component(componentFullName) == null) {
