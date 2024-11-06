@@ -13,7 +13,8 @@ Changelog
 
 #### :house: Internal
 
-* Reloading now occurs for unloaded components or when explicitly specified with `reloadOnActivation: true`
+* Fixed an issue with reloading after a component is destroyed.
+Reloading now occurs for unloaded components or when explicitly specified with `reloadOnActivation: true`.
 
 ## v4.0.0-alpha.1 (2022-12-14)
 

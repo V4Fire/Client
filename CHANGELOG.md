@@ -15,8 +15,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Reloading now occurs for unloaded components or when explicitly specified with `reloadOnActivation: true`
-  `components/super/i-block/modules/activation`
+* Fixed an issue with reloading after a component is destroyed.
+Reloading now occurs for unloaded components or when explicitly specified with `reloadOnActivation: true`.
+`components/super/i-block/modules/activation`
 
 ## v4.0.0-beta.150 (2024-11-05)
 
