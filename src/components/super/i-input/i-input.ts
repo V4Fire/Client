@@ -334,8 +334,7 @@ export default abstract class iInput extends iInputHandlers implements iVisible,
 	 * @param [value]
 	 */
 	protected resolveValue(value?: this['Value']): this['Value'] {
-		const
-			i = this.instance;
+		const i = this.instance;
 
 		if (value === undefined && this.lfc.isBeforeCreate()) {
 			return i['defaultGetter'].call(this);
