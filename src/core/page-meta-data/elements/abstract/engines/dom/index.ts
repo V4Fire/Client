@@ -12,7 +12,7 @@ export class DOMEngine<T extends HTMLElement> implements Engine {
 	/** {@link Engine.create} */
 	create(tag: string, attrs: Dictionary<string>): T {
 		const selector = Object.entries(attrs).reduce((acc, [key, val]) => {
-			const normalizedVal = val == null ? val : val.replaceAll('"', '\\"');
+			const normalizedVal = val == null ? '' : val.replaceAll('"', '\\"');
 
 			acc += `[${key}="${normalizedVal}"]`;
 			return acc;
