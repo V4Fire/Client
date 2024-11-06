@@ -35,11 +35,11 @@ export default class QueueEmitter {
 	 */
 	on(event: Nullable<Set<string>>, handler: Function): void {
 		if (event != null && event.size > 0) {
-			event.forEach((name) => {
+			for (const name of event) {
 				const listeners = this.listeners[name] ?? [];
 				listeners.push({event, handler});
 				this.listeners[name] = listeners;
-			});
+			}
 
 			return;
 		}
@@ -63,10 +63,12 @@ export default class QueueEmitter {
 
 		const tasks: Array<CanPromise<unknown>> = [];
 
-		queue.forEach((el) => {
+		for (let i = 0; i < queue.length; i++) {
+			const el = queue[i];
+
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (el == null) {
-				return;
+				continue;
 			}
 
 			const ev = el.event;
@@ -79,7 +81,7 @@ export default class QueueEmitter {
 					tasks.push(task);
 				}
 			}
-		});
+		}
 
 		if (tasks.length > 0) {
 			return Promise.all(tasks).then(() => undefined);
@@ -96,13 +98,13 @@ export default class QueueEmitter {
 
 		const tasks: Array<Promise<unknown>> = [];
 
-		queue.forEach((el) => {
-			const task = el();
+		for (let i = 0; i < queue.length; i++) {
+			const task = queue[i]();
 
 			if (Object.isPromise(task)) {
 				tasks.push(task);
 			}
-		});
+		}
 
 		if (tasks.length > 0) {
 			return Promise.all(tasks).then(() => undefined);
