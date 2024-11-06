@@ -18,7 +18,7 @@ import {
 
 } from 'core/component/render';
 
-import { propGetterRgxp } from 'core/component/reflect';
+import { isPropGetter } from 'core/component/reflect';
 import { modRgxp, styleAttrs, classAttrs } from 'core/component/directives/attrs/const';
 
 /**
@@ -55,8 +55,8 @@ export function normalizePropertyAttribute(name: string): string {
 		}
 	}
 
-	if (propGetterRgxp.test(attrName)) {
-		attrName = `on${attrName.slice(1).capitalize()}`;
+	if (isPropGetter.test(attrName)) {
+		attrName = `on:${isPropGetter.replace(attrName)}`;
 	}
 
 	return attrName;
@@ -123,7 +123,7 @@ export function patchProps(props: Dictionary, attrName: string, attrVal: unknown
 		}
 	}
 
-	if (props[attrName] != null && !propGetterRgxp.test(attrName)) {
+	if (props[attrName] != null && !isPropGetter.test(attrName)) {
 		Object.assign(props, mergeProps({[attrName]: props[attrName]}, {[attrName]: attrVal}));
 
 	} else {

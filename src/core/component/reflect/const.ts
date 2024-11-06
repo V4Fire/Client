@@ -23,3 +23,17 @@ export const dsComponentsMods = (() => {
 		return {};
 	}
 })();
+
+export const isPropGetter = {
+	test(name: string): boolean {
+		return name.startsWith('@:') || name.startsWith('on:');
+	},
+
+	replace(name: string): string {
+		if (isPropGetter.test(name)) {
+			return name.startsWith('@') ? name.slice('@:'.length) : name.slice('on:'.length);
+		}
+
+		return name;
+	}
+};

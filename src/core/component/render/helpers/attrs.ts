@@ -12,7 +12,7 @@ import { beforeMountHooks } from 'core/component/const';
 import type { VNode } from 'core/component/engines';
 
 import { isHandler, mergeProps } from 'core/component/render/helpers/props';
-import { propGetterRgxp } from 'core/component/reflect';
+import { isPropGetter } from 'core/component/reflect';
 
 import type { ComponentInterface } from 'core/component/interface';
 
@@ -75,21 +75,25 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 		const key = 'v-attrs';
 
 		if (props[key] != null) {
-			const
-				dir = r.resolveDirective.call(this, 'attrs'),
-				dirParams = {
-					dir,
+			const dir = r.resolveDirective.call(this, 'attrs');
+			const dirParams = {
+				dir,
 
-					modifiers: {},
-					arg: undefined,
+				modifiers: {},
+				arg: undefined,
 
-					value: props[key],
-					oldValue: undefined,
+				value: props[key],
+				oldValue: undefined,
 
-					instance: this
-				};
+				instance: this
+			};
 
-			dir[SSR ? 'getSSRProps' : 'beforeCreate'](dirParams, vnode);
+			if (SSR) {
+				dir.getSSRProps(dirParams, vnode);
+
+			} else {
+				dir.beforeCreate(dirParams, vnode);
+			}
 
 			props = vnode.props!;
 			delete props[key];
@@ -143,8 +147,8 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 				vnode.dynamicProps = dynamicProps;
 
 				Object.keys(props).forEach((prop) => {
-					if (isHandler.test(prop) && !propGetterRgxp.test(prop)) {
-						if (SSR) {
+					if (isHandler.test(prop)) {
+						if (SSR && !isPropGetter.test(prop)) {
 							delete props![prop];
 
 						} else {

@@ -43,8 +43,7 @@ ComponentEngine.directive('render', {
 
 		if (Object.isString(vnode.type)) {
 			if (SSR) {
-				const
-					children = Array.concat([], newBuffer);
+				const children = Array.concat([], newBuffer);
 
 				if (isTemplate) {
 					vnode.type = 'ssr-fragment';
@@ -56,8 +55,7 @@ ComponentEngine.directive('render', {
 				};
 
 			} else {
-				const
-					children = Array.concat([], newVNode);
+				const children = Array.concat([], newVNode);
 
 				vnode.children = children;
 				vnode.dynamicChildren = Object.cast(children.slice());

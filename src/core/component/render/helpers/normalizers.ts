@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { propGetterRgxp } from 'core/component/reflect';
+import { propGetterRgxp, isPropGetter } from 'core/component/reflect';
 import type { ComponentMeta } from 'core/component/meta';
 
 /**
@@ -154,10 +154,8 @@ export function normalizeComponentAttrs(
 		}
 
 		const
-			isGetterProp = propGetterRgxp.test(attrName) && Object.isFunction(value),
-			needSetAdditionalProp =
-				functional === true && dynamicProps != null &&
-				isGetterProp;
+			isGetter = isPropGetter.test(attrName) && Object.isFunction(value),
+			needSetAdditionalProp = functional === true && dynamicProps != null && isGetter;
 
 		// For correct operation in functional components, we need to additionally duplicate such props
 		if (needSetAdditionalProp) {
@@ -169,9 +167,9 @@ export function normalizeComponentAttrs(
 			normalizeAttr([tiedPropName, tiedPropValue]);
 			dynamicProps.push(tiedPropName);
 
-		} else if (isGetterProp) {
-			// For non-functional components (especially for SSR) remove pair which can be provide by root attrs
-			delete normalizedAttrs[attrName.replace(propGetterRgxp, '')];
+		} else if (isGetter) {
+			// For non-functional components (especially in SSR), remove a paired prop, because getter prop is sufficient
+			delete normalizedAttrs[isPropGetter.replace(attrName)];
 		}
 
 		if (propName in props || propName.replace(propGetterRgxp, '') in props) {

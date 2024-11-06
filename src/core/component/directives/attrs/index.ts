@@ -12,7 +12,7 @@
  */
 
 import { components } from 'core/component/const';
-import { propGetterRgxp } from 'core/component/reflect';
+import { isPropGetter, propGetterRgxp } from 'core/component/reflect';
 import { ComponentEngine, DirectiveBinding, VNode } from 'core/component/engines';
 
 import { setVNodePatchFlags, normalizeComponentAttrs } from 'core/component/render';
@@ -359,7 +359,7 @@ ComponentEngine.directive('attrs', {
 		let
 			attrs = {...params.value};
 
-		if (vnode) {
+		if (vnode != null) {
 			vnode.props ??= props;
 		}
 
@@ -371,7 +371,7 @@ ComponentEngine.directive('attrs', {
 			if (name.startsWith('v-')) {
 				parseDirective(name, value);
 
-			} else if (!name.startsWith('@') || propGetterRgxp.test(name)) {
+			} else if (!name.startsWith('@') || isPropGetter.test(name)) {
 				patchProps(props, normalizePropertyAttribute(name), value);
 			}
 		});
