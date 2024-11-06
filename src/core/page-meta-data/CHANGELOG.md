@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-11-??)
+
+#### :bug: Bug Fix
+
+* The `create` method now handles quotation marks in meta tag values when building query selectors
+
 ## v4.0.0-beta.110 (2024-07-17)
 
 #### :bug: Bug Fix
