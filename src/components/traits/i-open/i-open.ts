@@ -140,7 +140,7 @@ export default abstract class iOpen {
 				return;
 			}
 
-			component.strictEmit(e.value === 'false' || e.type === 'remove' ? 'close' : 'open');
+			component.emit(e.value === 'false' || e.type === 'remove' ? 'close' : 'open');
 		});
 	}
 

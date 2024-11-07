@@ -51,11 +51,11 @@ export default abstract class iVisible {
 
 			if (e.value === 'false' || e.type === 'remove') {
 				$el?.setAttribute('aria-hidden', 'true');
-				component.strictEmit('show');
+				component.emit('show');
 
 			} else {
 				$el?.setAttribute('aria-hidden', 'false');
-				component.strictEmit('hide');
+				component.emit('hide');
 			}
 		});
 	}

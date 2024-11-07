@@ -40,7 +40,7 @@ import iBlockMods from 'components/super/i-block/mods';
 export default abstract class iBlockState extends iBlockMods {
 	/** @inheritDoc */
 	// @ts-ignore (override)
-	declare readonly SelfEmitter: InferComponentEvents<this, [
+	declare readonly SelfEmitter!: InferComponentEvents<this, [
 		[`hook:${Hook}`, Hook, Hook],
 		['hookChange', Hook, Hook],
 

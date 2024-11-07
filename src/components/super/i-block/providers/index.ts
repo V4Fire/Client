@@ -38,14 +38,13 @@ import type { DataProviderProp } from 'components/super/i-block/providers/interf
 
 export * from 'components/super/i-block/providers/interface';
 
-const
-	$$ = symbolGenerator();
+const $$ = symbolGenerator();
 
 @component({partial: 'iBlock'})
 export default abstract class iBlockProviders extends iBlockState {
 	/** @inheritDoc */
 	// @ts-ignore (override)
-	declare readonly SelfEmitter: InferComponentEvents<this, [
+	declare readonly SelfEmitter!: InferComponentEvents<this, [
 		['initLoadStart', InitLoadOptions],
 		[event: 'initLoad', data: unknown, opts: InitLoadOptions]
 	], iBlockState['SelfEmitter']>;
@@ -188,7 +187,7 @@ export default abstract class iBlockProviders extends iBlockState {
 									route: this.route,
 									globalName: component.globalName,
 									component: component.componentName,
-									dataProvider: (<iData>component).dataProvider?.provider.constructor.name
+									dataProvider: Object.cast<iData>(component).dataProvider?.provider.constructor.name
 								}
 							}
 						);

@@ -24,7 +24,8 @@ import iBlock, {
 	system,
 	watch,
 
-	ModsDecl
+	ModsDecl,
+	InferComponentEvents
 
 } from 'components/super/i-block/i-block';
 
@@ -40,6 +41,7 @@ import type {
 
 const $$ = symbolGenerator();
 
+// @ts-ignore (override)
 interface iDataData extends Trait<typeof iDataProvider> {}
 
 @component({
@@ -49,6 +51,13 @@ interface iDataData extends Trait<typeof iDataProvider> {}
 
 @derive(iDataProvider)
 abstract class iDataData extends iBlock implements iDataProvider {
+	/** @inheritDoc */
+	// @ts-ignore (override)
+	declare readonly SelfEmitter!: InferComponentEvents<this, [
+		['dbCanChange', CanUndef<this['DB']>],
+		['dbChange', CanUndef<this['DB']>],
+	]>;
+
 	/**
 	 * Type: the raw provider data
 	 */
@@ -282,7 +291,7 @@ abstract class iDataData extends iBlock implements iDataProvider {
 
 	protected override initModEvents(): void {
 		super.initModEvents();
-		iDataProvider.initModEvents(this);
+		iDataProvider.initModEvents(<any>this);
 	}
 }
 
