@@ -51,7 +51,7 @@ interface iDataData extends Trait<typeof iDataProvider> {}
 @derive(iDataProvider)
 abstract class iDataData extends iBlock implements iDataProvider {
 	/** @inheritDoc */
-	declare readonly SelfEmitter: InferComponentEvents<this, [
+	declare readonly SelfEmitter: InferComponentEvents<[
 		['dbCanChange', CanUndef<this['DB']>],
 		['dbChange', CanUndef<this['DB']>],
 	], iBlock['SelfEmitter']>;

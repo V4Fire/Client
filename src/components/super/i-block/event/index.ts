@@ -44,7 +44,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * An associative type for typing events emitted by the component.
 	 * Events are described using tuples, where the first element is the event name, and the rest are arguments.
 	 */
-	readonly SelfEmitter!: InferComponentEvents<this, [
+	readonly SelfEmitter!: InferComponentEvents<[
 		['error', ...unknown[]],
 		[`mod:set:${string}`, SetModEvent],
 		[`mod:set:${string}:${string}`, SetModEvent],

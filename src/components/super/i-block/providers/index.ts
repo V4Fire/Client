@@ -43,7 +43,7 @@ const $$ = symbolGenerator();
 @component({partial: 'iBlock'})
 export default abstract class iBlockProviders extends iBlockState {
 	/** @inheritDoc */
-	declare readonly SelfEmitter: InferComponentEvents<this, [
+	declare readonly SelfEmitter: InferComponentEvents<[
 		['initLoadStart', InitLoadOptions],
 		[event: 'initLoad', data: unknown, opts: InitLoadOptions]
 	], iBlockState['SelfEmitter']>;

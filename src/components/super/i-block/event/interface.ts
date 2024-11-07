@@ -39,20 +39,16 @@ export interface ComponentEvent<E extends string = string> {
 }
 
 export type InferComponentEvents<
-	Ctx,
 	Scheme extends Array<[string, ...any[]]>,
 	Parent extends Dictionary = {}
-> = _InferComponentEvents<Ctx, FlatEvents<Scheme>, Parent>;
+> = _InferComponentEvents<FlatEvents<Scheme>, Parent>;
 
 export type _InferComponentEvents<
-	Ctx,
 	Scheme extends any[],
 	Parent extends Dictionary = {},
 	Result extends Dictionary = {}
 > = {
 	0: _InferComponentEvents<
-		Ctx,
-
 		TB.Tail<Scheme>,
 
 		Parent,
