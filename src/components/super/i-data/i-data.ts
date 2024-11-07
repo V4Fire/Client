@@ -27,8 +27,7 @@ import {
 	InitLoadCb,
 	InitLoadOptions,
 
-	UnsafeGetter,
-	InferComponentEvents
+	UnsafeGetter
 
 } from 'components/super/i-block/i-block';
 
@@ -61,12 +60,6 @@ const $$ = symbolGenerator();
 
 @component({functional: null})
 export default abstract class iData extends iDataHandlers {
-	/** @inheritDoc */
-	// @ts-ignore (override)
-	declare readonly SelfEmitter!: InferComponentEvents<this, [
-		['initLoadStart', InitLoadOptions],
-	]>;
-
 	@computed({functional: true})
 	override get unsafe(): UnsafeGetter<UnsafeIData<this>> {
 		return Object.cast(this);

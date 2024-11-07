@@ -41,7 +41,6 @@ import type {
 
 const $$ = symbolGenerator();
 
-// @ts-ignore (override)
 interface iDataData extends Trait<typeof iDataProvider> {}
 
 @component({
@@ -52,11 +51,10 @@ interface iDataData extends Trait<typeof iDataProvider> {}
 @derive(iDataProvider)
 abstract class iDataData extends iBlock implements iDataProvider {
 	/** @inheritDoc */
-	// @ts-ignore (override)
-	declare readonly SelfEmitter!: InferComponentEvents<this, [
+	declare readonly SelfEmitter: InferComponentEvents<this, [
 		['dbCanChange', CanUndef<this['DB']>],
 		['dbChange', CanUndef<this['DB']>],
-	]>;
+	], iBlock['SelfEmitter']>;
 
 	/**
 	 * Type: the raw provider data

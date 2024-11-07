@@ -43,8 +43,7 @@ const $$ = symbolGenerator();
 @component({partial: 'iBlock'})
 export default abstract class iBlockProviders extends iBlockState {
 	/** @inheritDoc */
-	// @ts-ignore (override)
-	declare readonly SelfEmitter!: InferComponentEvents<this, [
+	declare readonly SelfEmitter: InferComponentEvents<this, [
 		['initLoadStart', InitLoadOptions],
 		[event: 'initLoad', data: unknown, opts: InitLoadOptions]
 	], iBlockState['SelfEmitter']>;
