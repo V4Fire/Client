@@ -118,9 +118,6 @@ export function component(opts?: ComponentOptions): Function {
 
 		if (needRegisterImmediate) {
 			registerComponent(componentFullName);
-
-		} else {
-			requestIdleCallback(registerComponent.bind(null, componentFullName));
 		}
 
 		// If we have a smart component,
