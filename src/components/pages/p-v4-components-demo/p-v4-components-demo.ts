@@ -16,8 +16,6 @@ import VDOM, * as VDOMAPI from 'components/friends/vdom';
 
 export * from 'components/super/i-static-page/i-static-page';
 
-console.time('init');
-
 VDOM.addToPrototype(VDOMAPI);
 
 /**

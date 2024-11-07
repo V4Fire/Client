@@ -39,7 +39,6 @@ export interface WatchOptions extends RawWatchOptions {
 }
 
 export interface FieldWatcher<
-	Ctx extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
 > extends WatchOptions {

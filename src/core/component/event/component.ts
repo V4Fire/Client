@@ -59,7 +59,6 @@ export function resetComponents(type?: ComponentResetType): void {
  */
 export function implementEventEmitterAPI(component: object): void {
 	const
-		ctx = Object.cast<ComponentInterface>(component),
 		unsafe = Object.cast<UnsafeComponentInterface>(component),
 		nativeEmit = Object.cast<CanUndef<typeof unsafe.$emit>>(unsafe.$emit);
 
