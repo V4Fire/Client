@@ -10,7 +10,7 @@ import type { EventId } from 'core/async';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import * as gc from 'core/component/gc';
-import type { ComponentInterface, UnsafeComponentInterface, ComponentEmitterOptions } from 'core/component/interface';
+import type { UnsafeComponentInterface, ComponentEmitterOptions } from 'core/component/interface';
 
 import { globalEmitter } from 'core/component/event/emitter';
 import type { ComponentResetType } from 'core/component/event/interface';
