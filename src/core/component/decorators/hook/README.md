@@ -55,7 +55,7 @@ However, to use some methods before the `created` hook, the [[iBlock]] class has
 ```
 @hook('beforeRuntime')
 protected initBaseAPI() {
-  const i = this.constructor.prototype;
+  const i = this.instance;
 
   this.syncStorageState = i.syncStorageState.bind(this);
   this.syncRouterState = i.syncRouterState.bind(this);

@@ -334,10 +334,8 @@ export default abstract class iInput extends iInputHandlers implements iVisible,
 	 * @param [value]
 	 */
 	protected resolveValue(value?: this['Value']): this['Value'] {
-		const i = (<typeof iInput>this.constructor).prototype;
-
 		if (value === undefined && this.lfc.isBeforeCreate()) {
-			return i['defaultGetter'].call(this);
+			return this.instance['defaultGetter'].call(this);
 		}
 
 		return value;
@@ -364,9 +362,6 @@ export default abstract class iInput extends iInputHandlers implements iVisible,
 
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
-
-		const i = (<typeof iInput>this.constructor).prototype;
-
-		this.resolveValue = i.resolveValue.bind(this);
+		this.resolveValue = this.instance.resolveValue.bind(this);
 	}
 }

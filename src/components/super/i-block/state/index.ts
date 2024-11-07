@@ -602,7 +602,7 @@ export default abstract class iBlockState extends iBlockMods {
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
-		const i = (<typeof iBlockState>this.constructor).prototype;
+		const i = this.instance;
 
 		this.i18n = i.i18n.bind(this);
 		this.syncStorageState = i.syncStorageState.bind(this);

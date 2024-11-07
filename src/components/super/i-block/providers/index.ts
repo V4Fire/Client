@@ -368,9 +368,6 @@ export default abstract class iBlockProviders extends iBlockState {
 
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
-
-		const i = (<typeof iBlockProviders>this.constructor).prototype;
-
-		this.createDataProviderInstance = i.createDataProviderInstance.bind(this);
+		this.createDataProviderInstance = this.instance.createDataProviderInstance.bind(this);
 	}
 }
