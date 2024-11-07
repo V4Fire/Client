@@ -46,7 +46,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns browserslist env
+	 *
 	 * @param {string} env - custom environment
+	 * @returns {string}
 	 */
 	browserslistEnv(env) {
 		if (env == null) {
@@ -1219,7 +1221,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @returns {object}
 		 */
 		compilerSFC() {
-			const {ssr} = this.config.webpack;
+			const {webpack} = this.config;
 
 			const
 				NOT_CONSTANT = 0,
@@ -1232,7 +1234,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				(node) => {
 					const {props} = node;
 
-					if (!ssr || props == null) {
+					if (!webpack.ssr || props == null) {
 						return;
 					}
 
@@ -1317,9 +1319,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			];
 
 			return {
-				ssr: this.config.webpack.ssr,
-				ssrCssVars: {},
-				compilerOptions: {nodeTransforms}
+				isProd: webpack.mode() === 'production',
+				compilerOptions: {nodeTransforms},
+				ssr: webpack.ssr,
+				ssrCssVars: {}
 			};
 		}
 	},
