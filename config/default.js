@@ -11,14 +11,12 @@
 /* eslint-disable max-lines */
 
 const
-	config = require('@v4fire/core/config/default');
+	config = require('@v4fire/core/config/default'),
+	o = require('@v4fire/config/options').option;
 
 const
 	fs = require('node:fs'),
 	path = require('upath');
-
-const
-	o = require('@v4fire/config/options').option;
 
 const
 	browserslist = require('browserslist'),
@@ -45,9 +43,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns browserslist env
+	 * Returns the environment for Browserslist
 	 *
-	 * @param {string} env - custom environment
+	 * @param {string} [env] - custom environment
 	 * @returns {string}
 	 */
 	browserslistEnv(env) {
@@ -70,7 +68,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	src: {
 		/**
-		 * Returns a path to the application dist directory for client scripts
+		 * Returns the path to the application distribution directory for client-side scripts of the application
 		 *
 		 * @cli client-output
 		 * @env CLIENT_OUTPUT
@@ -98,7 +96,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Test server port
+		 * The port number for the test server
 		 * @env TEST_PORT
 		 */
 		testPort: o('test-port', {
@@ -107,7 +105,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
-		 * Option for configuring target environment for build, for example list of polyfills
+		 * Option for specifying the target environment in the build process
 		 *
 		 * @cli build-edition
 		 * @env BUILD_EDITION
@@ -183,7 +181,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			env: true,
 			short: 'p',
 			type: 'number',
-			default: require('os').cpus().length - 1
+			default: require('node:os').cpus().length - 1
 		}),
 
 		/**
@@ -210,7 +208,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * This information is used by WebPack for code block deduplication and build optimization,
 		 * but the graph calculation process may take some time.
 		 *
-		 * This option allows to take the project graph from a previous build if it exists.
+		 * This option allows taking the project graph from a previous build if it exists.
 		 * Keep in mind, an incorrect graph can break the application build.
 		 *
 		 * @cli build-graph-from-cache
@@ -261,9 +259,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns `true` if the application build times should be traced.
-		 * Trace file will be created in the project's root.
-		 * It's highly recommended to use this option with `module-parallelism=1`.
+		 * Determines whether the application build times should be traced.
+		 * If enabled, a trace file will be created in the project's root directory.
+		 *
+		 * Note: It is highly recommended to use this option with `module-parallelism=1`
+		 * to ensure more accurate tracing results.
 		 *
 		 * @cli trace-build-times
 		 * @env TRACE_BUILD_TIMES
@@ -334,7 +334,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli target
 		 * @env TARGET
 		 *
-		 * @param {string} [def] - default value
 		 * @returns {?string}
 		 */
 		target() {
@@ -581,7 +580,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			const aliases = {
 				dompurify: this.config.es().toLowerCase() === 'es5' ? 'dompurify-v2' : 'dompurify-v3',
 				'vue/server-renderer': 'assets/lib/server-renderer.js',
-				// Disable setImmedate polyfill from core-js in favor of our realisation `core/shims/set-immediate`
+				// Disable setImmedate polyfill from core-js in favor of our realization `core/shims/set-immediate`
 				'core-js/modules/web.immediate.js': false
 			};
 
@@ -725,8 +724,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * ```
 		 */
 		output(vars) {
-			const
-				res = this.mode() !== 'production' || this.fatHTML() ? '[name]' : '[hash]_[name]';
+			const res = this.mode() !== 'production' || this.fatHTML() ? '[name]' : '[hash]_[name]';
 
 			if (vars) {
 				return res.replace(/_?\[(.*?)]/g, (str, key) => {
@@ -772,8 +770,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * ```
 		 */
 		assetsOutput(params) {
-			const
-				root = 'assets';
+			const root = 'assets';
 
 			if (this.mode() !== 'production' || this.fatHTML()) {
 				return this.output({
@@ -876,7 +873,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * SWC webpack loader configuration
+		 * Returns parameters for `swc-loader`
+		 *
+		 * @param {string} env - custom environment
+		 * @returns {{ts: object, js: object, ss: object}}
 		 */
 		swc(env) {
 			const
@@ -888,6 +888,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				jsc: {
 					externalHelpers: true
 				},
+
 				env: {
 					mode: 'entry',
 					targets,
@@ -904,13 +905,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				}
 			});
 
-			const
-				js = this.config.extend({}, base),
-				ss = this.config.extend({}, base, {
-					jsc: {
-						externalHelpers: false
-					}
-				});
+			const js = this.config.extend({}, base);
+
+			const ss = this.config.extend({}, base, {
+				jsc: {
+					externalHelpers: false
+				}
+			});
 
 			return {js, ts, ss};
 		}
@@ -956,7 +957,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for a TypeScript compiler:
+	 * Returns parameters for the TypeScript compiler:
 	 *
 	 * 1. server - options for compiling the application as a node.js library;
 	 * 2. client - options for compiling the application as a client app.
@@ -969,12 +970,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'client.tsconfig.json' :
 			'tsconfig.json';
 
-		const
-			server = super.typescript();
+		const server = super.typescript();
 
-		const {
-			compilerOptions: {module}
-		} = require(path.join(this.src.cwd(), configFile));
+		const {compilerOptions: {module}} = require(path.join(this.src.cwd(), configFile));
 
 		const client = this.extend({}, server, {
 			configFile,
@@ -992,10 +990,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			}
 		});
 
-		return {
-			client,
-			server
-		};
+		return {client, server};
 	},
 
 	/**
@@ -1007,7 +1002,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns a component dependency map.
+	 * Returns the component dependency map.
 	 * This map can be used to provide dynamic component dependencies in `index.js` files.
 	 *
 	 * @returns {object}
