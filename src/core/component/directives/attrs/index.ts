@@ -12,6 +12,7 @@
  */
 
 import { components } from 'core/component/const';
+import { isPropGetter } from 'core/component/reflect';
 import { ComponentEngine, DirectiveBinding, VNode } from 'core/component/engines';
 
 import { normalizeComponentAttrs } from 'core/component/render';
@@ -277,17 +278,21 @@ ComponentEngine.directive('attrs', {
 		}
 	},
 
-	getSSRProps(params: DirectiveParams) {
+	getSSRProps(params: DirectiveParams, vnode?: VNode) {
 		const
 			ctx = getDirectiveContext(params, null),
 			r = ctx?.$renderEngine.r;
 
 		const
-			props: Dictionary = {},
+			props: Dictionary = vnode?.props ?? {},
 			componentMeta = ctx?.meta;
 
 		let
 			attrs = {...params.value};
+
+		if (vnode != null) {
+			vnode.props ??= props;
+		}
 
 		if (componentMeta != null) {
 			attrs = normalizeComponentAttrs(attrs, null, componentMeta)!;
@@ -297,7 +302,7 @@ ComponentEngine.directive('attrs', {
 			if (name.startsWith('v-')) {
 				parseDirective(name, value);
 
-			} else if (!name.startsWith('@')) {
+			} else if (!name.startsWith('@') || isPropGetter.test(name)) {
 				patchProps(props, normalizePropertyAttribute(name), value);
 			}
 		});
