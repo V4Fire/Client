@@ -36,17 +36,21 @@ export function inheritContext(
 		linkedFields = {};
 
 	if (parentProps != null) {
-		for (const prop of parentProps) {
-			const linked = parentCtx.$syncLinkCache.get(prop);
+		const propNames = Object.keys(parentProps);
+
+		for (let i = 0; i < propNames.length; i++) {
+			const
+				propName = propNames[i],
+				linked = parentCtx.$syncLinkCache.get(propName);
 
 			if (linked != null) {
 				const links = Object.values(linked);
 
-				for (let i = 0; i < links.length; i++) {
-					const link = links[i];
+				for (let j = 0; j < links.length; j++) {
+					const link = links[j];
 
 					if (link != null) {
-						linkedFields[link.path] = prop;
+						linkedFields[link.path] = propName;
 					}
 				}
 			}

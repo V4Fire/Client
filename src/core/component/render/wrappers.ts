@@ -140,31 +140,8 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			vnode.virtualParent.value :
 			this;
 
-		let passedProps: CanNull<Set<string>> = null;
-		props.getPassedProps ??= () => passedProps ??= new Set(attrs != null ? Object.keys(attrs) : []);
-
-		let passedHandlers: CanNull<Set<string>> = null;
-		props.getPassedHandlers ??= () => {
-			if (passedHandlers != null) {
-				return passedHandlers;
-			}
-
-			if (attrs == null) {
-				passedHandlers = new Set();
-
-			} else {
-				passedHandlers = new Set(
-					Object.keys(attrs)
-						.filter((prop) => prop.startsWith('on'))
-						.map((prop) => {
-							prop = prop.slice('on'.length);
-							return prop[0].toLowerCase() + prop.slice(1);
-						})
-				);
-			}
-
-			return passedHandlers;
-		};
+		let passedProps: Nullable<Dictionary> = null;
+		props.getPassedProps ??= () => passedProps ??= attrs;
 
 		// For refs within functional components,
 		// it is necessary to explicitly set a reference to the instance of the component

@@ -36,11 +36,15 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 			el = unsafe.$el,
 			propValuesToUpdate: string[][] = [];
 
-		unsafe.getPassedProps?.()?.forEach((attrName) => {
-			const prop = meta.props[attrName];
+		const attrNames = Object.keys(unsafe.$attrs);
+
+		for (let i = 0; i < attrNames.length; i++) {
+			const
+				attrName = attrNames[i],
+				prop = meta.props[attrName];
 
 			if ((prop == null || prop.forceUpdate) && !isPropGetter.test(attrName)) {
-				return;
+				continue;
 			}
 
 			const propPrefix = 'on:';
@@ -63,7 +67,7 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 					}
 				}
 			}
-		});
+		}
 
 		if (propValuesToUpdate.length > 0) {
 			nonFunctionalParent.$on('hook:beforeUpdate', updatePropsValues);

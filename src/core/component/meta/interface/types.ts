@@ -16,7 +16,6 @@ import type { ComponentInterface, FieldWatcher, MethodWatcher, Hook } from 'core
 
 export interface ComponentProp extends PropOptions {
 	forceUpdate: boolean;
-	forceDefault?: boolean;
 
 	watchers?: Map<string | Function, FieldWatcher>;
 	default?: unknown;

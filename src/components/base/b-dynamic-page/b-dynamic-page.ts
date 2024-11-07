@@ -64,18 +64,10 @@ export * from 'components/base/b-dynamic-page/interface';
 Block.addToPrototype({element});
 AsyncRender.addToPrototype({iterate});
 
-const
-	$$ = symbolGenerator();
+const $$ = symbolGenerator();
 
-@component({
-	inheritMods: false,
-	defaultProps: false
-})
-
+@component({inheritMods: false})
 export default class bDynamicPage extends iDynamicPage {
-	@prop({forceDefault: true})
-	override readonly selfDispatching: boolean = true;
-
 	/**
 	 * The initial name of the page to load
 	 */
@@ -103,23 +95,23 @@ export default class bDynamicPage extends iDynamicPage {
 	page?: string;
 
 	/**
-	 * Active page unique key.
-	 * It is used to determine whether to reuse current page component or create a new one when switching between routes
-	 * with the same page component.
+	 * The active page unique key.
+	 * It is used to determine whether to reuse the current page component
+	 * or create a new one when switching between routes with the same page component.
 	 */
 	@system()
 	pageKey?: CanUndef<string>;
 
 	/**
-	 * A function that takes a route object and returns the name of the page component to load.
-	 * Also, this function can return a tuple consisting of component name and unique key for the passed route. The key
-	 * will be used to determine whether to reuse current page component or create a new one
-	 * when switching between routes with the same page component.
+	 * A function that takes a route object and returns the name of the page component to be loaded.
+	 * Additionally, this function can return a tuple consisting of the component name and a unique key
+	 * for the given route.
+	 * The key will be used to determine whether to reuse the current page component
+	 * or create a new one when switching between routes that use the same page component.
 	 */
 	@prop({
 		type: Function,
-		default: (route: bDynamicPage['route']) => route != null ? (route.meta.component ?? route.name) : undefined,
-		forceDefault: true
+		default: (route: bDynamicPage['route']) => route != null ? (route.meta.component ?? route.name) : undefined
 	})
 
 	readonly pageGetter!: PageGetter;
@@ -198,12 +190,7 @@ export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * The page switching event name
 	 */
-	@prop({
-		type: String,
-		required: false,
-		forceDefault: true
-	})
-
+	@prop({type: String, required: false})
 	readonly event?: string = 'setRoute';
 
 	/**
@@ -326,8 +313,40 @@ export default class bDynamicPage extends iDynamicPage {
 		return component.reload(params);
 	}
 
-	override canSelfDispatchEvent(event: string): boolean {
-		return !/^hook(?::\w+(-\w+)*|-change)$/.test(event.dasherize());
+	/**
+	 * Returns a dictionary of props for the page being created.
+	 * The component interprets most of its input props as parameters for the page being created.
+	 */
+	protected getPageProps(): Dictionary {
+		const
+			props = {'@hook:destroyed': this.createPageDestructor()},
+			passedProps = this.getPassedProps?.();
+
+		if (passedProps != null) {
+			const rejectedProps = {
+				is: true,
+				keepAlive: true,
+				dispatching: true,
+				componentIdProp: true,
+				getRoot: true,
+				getParent: true,
+				getPassedProps: true
+			};
+
+			Object.entries(passedProps).forEach(([propName, prop]) => {
+				if (rejectedProps.hasOwnProperty(propName)) {
+					return;
+				}
+
+				if (propName.startsWith('on')) {
+					propName = `@${propName[2].toLowerCase()}${propName.slice(3)}`;
+				}
+
+				props[propName] = prop;
+			});
+		}
+
+		return props;
 	}
 
 	/**
@@ -535,14 +554,6 @@ export default class bDynamicPage extends iDynamicPage {
 		return globalStrategy;
 	}
 
-	protected override initBaseAPI(): void {
-		super.initBaseAPI();
-
-		const i = (<typeof bDynamicPage>this.constructor).prototype;
-
-		this.addClearListenersToCache = i.addClearListenersToCache.bind(this);
-	}
-
 	/**
 	 * Wraps the specified cache object and returns a wrapper.
 	 * The method adds listeners to destroy unused pages from the cache.
@@ -662,6 +673,11 @@ export default class bDynamicPage extends iDynamicPage {
 		} else {
 			this.onPageChange(page, oldPage);
 		}
+	}
+
+	protected override initBaseAPI(): void {
+		super.initBaseAPI();
+		this.addClearListenersToCache = this.instance.addClearListenersToCache.bind(this);
 	}
 
 	protected override initModEvents(): void {

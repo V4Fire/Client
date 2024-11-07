@@ -85,9 +85,7 @@ export function implementEventEmitterAPI(component: object): void {
 		writable: false,
 
 		value(event: string, ...args: unknown[]) {
-			const needNativeEvent = nativeEmit != null && !event.startsWith('[[') && ctx.getPassedHandlers?.().has(event);
-
-			if (needNativeEvent) {
+			if (nativeEmit != null && !event.startsWith('[[')) {
 				nativeEmit(event, ...args);
 			}
 

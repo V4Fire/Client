@@ -163,14 +163,9 @@ export abstract class ComponentInterface {
 	abstract readonly getParent?: () => this['$parent'];
 
 	/**
-	 * The getter is used to get a set of props that were passed to the component directly through the template
+	 * The getter is used to get a dictionary of props that were passed to the component directly through the template
 	 */
-	abstract readonly getPassedProps?: () => Set<string>;
-
-	/**
-	 * The getter is used to get a set of event handlers that were passed to the component directly through the template
-	 */
-	abstract readonly getPassedHandlers?: () => Set<string>;
+	abstract readonly getPassedProps?: () => Dictionary;
 
 	/**
 	 * A string value indicating the lifecycle hook that the component is currently in.

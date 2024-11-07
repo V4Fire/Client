@@ -61,12 +61,10 @@ export function initProps(
 
 		let propValue = (from ?? component)[propName];
 
-		if (propValue === undefined && unsafe.getPassedHandlers?.().has(`:${propName}`)) {
-			const getAccessors = unsafe.$attrs[`on:${propName}`];
+		const getAccessors = unsafe.$attrs[`on:${propName}`];
 
-			if (Object.isFunction(getAccessors)) {
-				propValue = getAccessors()[0];
-			}
+		if (propValue === undefined && Object.isFunction(getAccessors)) {
+			propValue = getAccessors()[0];
 		}
 
 		let needSaveToStore = opts.saveToStore;

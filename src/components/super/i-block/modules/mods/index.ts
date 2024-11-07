@@ -199,15 +199,19 @@ export function mergeMods(
 			declaredMods = component.meta.component.mods,
 			expandedModsProp = <ModsDict>{...modsProp};
 
-		component.getPassedProps?.().forEach((name) => {
-			if (name in declaredMods) {
-				const attr = component.$attrs[name];
+		const attrNames = Object.keys(component.$attrs);
+
+		for (let i = 0; i < attrNames.length; i++) {
+			const attrName = attrNames[i];
+
+			if (attrName in declaredMods) {
+				const attr = component.$attrs[attrName];
 
 				if (attr != null) {
-					expandedModsProp[name] = attr;
+					expandedModsProp[attrName] = attr;
 				}
 			}
-		});
+		}
 
 		return expandedModsProp;
 	}
