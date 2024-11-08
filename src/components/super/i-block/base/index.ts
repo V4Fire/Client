@@ -28,12 +28,9 @@ import {
 
 } from 'core/async';
 
-import config from 'config';
-
 import {
 
 	component,
-	getComponentName,
 	getPropertyInfo,
 
 	canSkipWatching,
@@ -239,19 +236,19 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 */
 	@computed({cache: 'forever'})
 	protected get componentI18nKeysets(): string[] {
-		const {constructor} = this.meta;
+		const {meta} = this;
 
-		let keysets: CanUndef<string[]> = i18nKeysets.get(constructor);
+		let keysets: CanUndef<string[]> = i18nKeysets.get(meta.constructor);
 
 		if (keysets == null) {
 			keysets = [];
-			i18nKeysets.set(constructor, keysets);
+			i18nKeysets.set(meta.constructor, keysets);
 
-			let keyset: CanUndef<string> = getComponentName(constructor);
+			let {parentMeta} = meta;
 
-			while (keyset != null) {
-				keysets.push(keyset);
-				keyset = config.components[keyset]?.parent;
+			while (parentMeta != null) {
+				keysets.push(parentMeta.componentName);
+				parentMeta = parentMeta.parentMeta;
 			}
 		}
 
