@@ -22,6 +22,7 @@ import iBlock, {
 	prop,
 	field,
 	system,
+	computed,
 	watch,
 
 	ModsDecl,
@@ -95,15 +96,16 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	 * These functions step by step transform the original provider data before storing it in `db`.
 	 * {@link iDataProvider.dbConverter}
 	 */
-	@system((o) => o.sync.link('dbConverter', (val) => {
-		if (val == null) {
+	@computed({dependencies: ['dbConverter']})
+	get dbConverters(): ComponentConverter[] {
+		const propVal = this.dbConverter;
+
+		if (propVal == null) {
 			return [];
 		}
 
-		return Object.isIterable(val) ? [...val] : [val];
-	}))
-
-	dbConverters!: ComponentConverter[];
+		return Object.isIterable(propVal) ? [...propVal] : [propVal];
+	}
 
 	/**
 	 * Converter(s) from the raw `db` to the component field.
@@ -121,15 +123,16 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	 * A list of converters from the raw `db` to the component field
 	 * {@link iDataProvider.componentConverter}
 	 */
-	@system((o) => o.sync.link('componentConverter', (val) => {
-		if (val == null) {
+	@computed({dependencies: ['componentConverter']})
+	get componentConverters(): ComponentConverter[] {
+		const propVal = this.componentConverter;
+
+		if (propVal == null) {
 			return [];
 		}
 
-		return Object.isIterable(val) ? [...val] : [val];
-	}))
-
-	componentConverters!: ComponentConverter[];
+		return Object.isIterable(propVal) ? [...propVal] : [propVal];
+	}
 
 	/**
 	 * A function to filter all "default" requests: all requests that were created implicitly, as the initial
@@ -223,11 +226,9 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	protected convertDataToDB<O>(data: unknown): O;
 	protected convertDataToDB(data: unknown): this['DB'];
 	protected convertDataToDB<O>(data: unknown): O | this['DB'] {
-		const
-			{dbConverters} = this;
+		const {dbConverters} = this;
 
-		let
-			convertedData = data;
+		let convertedData = data;
 
 		if (dbConverters.length > 0) {
 			const rawData = Object.isArray(convertedData) || Object.isDictionary(convertedData) ?
@@ -237,8 +238,7 @@ abstract class iDataData extends iBlock implements iDataProvider {
 			convertedData = dbConverters.reduce((val, converter) => converter(val, Object.cast(this)), rawData);
 		}
 
-		const
-			{db, checkDBEquality} = this;
+		const {db, checkDBEquality} = this;
 
 		const canKeepOldData = Object.isFunction(checkDBEquality) ?
 			Object.isTruly(checkDBEquality.call(this, convertedData, db)) :
@@ -256,11 +256,9 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	 * @param data
 	 */
 	protected convertDBToComponent<O = unknown>(data: unknown): O | this['DB'] {
-		const
-			{componentConverters} = this;
+		const {componentConverters} = this;
 
-		let
-			convertedData = data;
+		let convertedData = data;
 
 		if (componentConverters.length > 0) {
 			const rawData = Object.isArray(convertedData) || Object.isDictionary(convertedData) ?

@@ -27,7 +27,7 @@ import type iData from 'components/super/i-data/i-data';
 import type iBlock from 'components/super/i-block/i-block';
 
 import { statuses } from 'components/super/i-block/const';
-import { system, hook } from 'components/super/i-block/decorators';
+import { hook } from 'components/super/i-block/decorators';
 
 import type { InitLoadCb, InitLoadOptions } from 'components/super/i-block/interface';
 
@@ -49,20 +49,16 @@ export default abstract class iBlockProviders extends iBlockState {
 	], iBlockState['SelfEmitter']>;
 
 	/** {@link iBlock.dontWaitRemoteProvidersProp} */
-	@system((o) => o.sync.link((val) => {
-		if (val == null) {
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (o.dontWaitRemoteProviders != null) {
-				return o.dontWaitRemoteProviders;
-			}
+	get dontWaitRemoteProviders(): boolean {
+		const propVal = this.dontWaitRemoteProvidersProp;
 
-			return !config.components[o.componentName]?.dependencies.some((dep) => dep.includes('remote-provider'));
+		if (propVal == null) {
+			this[$$.dontWaitRemoteProviders] ??= !config.components[this.componentName]?.dependencies.some((dep) => dep.includes('remote-provider'));
+			return this[$$.dontWaitRemoteProviders];
 		}
 
-		return val;
-	}))
-
-	dontWaitRemoteProviders!: boolean;
+		return propVal;
+	}
 
 	/**
 	 * Loads component initialization data.
