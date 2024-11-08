@@ -11,7 +11,6 @@
  * @packageDocumentation
  */
 
-import config from 'config';
 import symbolGenerator from 'core/symbol';
 
 import SyncPromise from 'core/promise/sync';
@@ -50,14 +49,7 @@ export default abstract class iBlockProviders extends iBlockState {
 
 	/** {@link iBlock.dontWaitRemoteProvidersProp} */
 	get dontWaitRemoteProviders(): boolean {
-		const propVal = this.dontWaitRemoteProvidersProp;
-
-		if (propVal == null) {
-			this[$$.dontWaitRemoteProviders] ??= !config.components[this.componentName]?.dependencies.some((dep) => dep.includes('remote-provider'));
-			return this[$$.dontWaitRemoteProviders];
-		}
-
-		return propVal;
+		return this.dontWaitRemoteProvidersProp ?? this.dontWaitRemoteProvidersHint();
 	}
 
 	/**
@@ -363,5 +355,13 @@ export default abstract class iBlockProviders extends iBlockState {
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 		this.createDataProviderInstance = this.instance.createDataProviderInstance.bind(this);
+	}
+
+	/**
+	 * Returns a hint on whether the component initialization mode can be used without waiting for remote providers.
+	 * This method is overridden by a transformer at build time.
+	 */
+	protected dontWaitRemoteProvidersHint(): boolean {
+		return false;
 	}
 }

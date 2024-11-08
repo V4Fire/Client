@@ -10,6 +10,8 @@
 
 const ts = require('typescript');
 
+const build = include('build/graph');
+
 const {
 	addNamedImport,
 
@@ -133,6 +135,18 @@ function resisterComponentDefaultValues(context) {
 		if (isComponentClass(node, 'component')) {
 			originalComponentName = node.name.text;
 			componentName = getPartialName(node) ?? originalComponentName;
+
+			const
+				normalizedComponentName = originalComponentName.dasherize(),
+				componentInfo = build.graph.components.get(componentName.dasherize());
+
+			if (normalizedComponentName !== 'i-block' && componentInfo != null) {
+				const hasRemoteProviders = componentInfo.dependencies.find((dep) => dep.includes('remote-provider'));
+
+				if (hasRemoteProviders) {
+					node = addDontWaitRemoteProvidersHint(context, node);
+				}
+			}
 
 			if (node.members != null) {
 				const newMembers = node.members.flatMap((node) => {
@@ -410,5 +424,41 @@ function addMethodDecorator(context, node) {
 		node.name,
 		node.parameters,
 		node.body
+	);
+}
+
+/**
+ * Adds the `dontWaitRemoteProvidersHint` method to the specified component class
+ *
+ * @param {TransformationContext} context - the transformation context
+ * @param {Node} node - the class node in the AST
+ * @returns {Node}
+ */
+function addDontWaitRemoteProvidersHint(context, node) {
+	const {factory} = context;
+
+	const method = factory.createMethodDeclaration(
+		undefined,
+		[
+			ts.factory.createModifier(ts.SyntaxKind.ProtectedKeyword),
+			ts.factory.createModifier(ts.SyntaxKind.OverrideKeyword)
+		],
+		undefined,
+		'dontWaitRemoteProvidersHint',
+		undefined,
+		undefined,
+		[],
+		factory.createKeywordTypeNode(ts.SyntaxKind.BooleanKeyword),
+		factory.createBlock([factory.createReturnStatement(factory.createTrue())])
+	);
+
+	return factory.updateClassDeclaration(
+		node,
+		node.decorators,
+		node.modifiers,
+		node.name,
+		node.typeParameters,
+		node.heritageClauses,
+		factory.createNodeArray([...node.members, method])
 	);
 }
