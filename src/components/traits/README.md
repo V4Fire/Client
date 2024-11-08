@@ -1,7 +1,7 @@
 # components/traits
 
 The module provides a set of traits for components.
-A trait in TypeScript is an interface-like abstract class that serves as an interface.
+A trait in TypeScript is an abstract class that serves as an interface.
 But why do we need it?
 Unlike Java or Kotlin, TypeScript interfaces cannot have default method implementations.
 Consequently, in TypeScript, we have to implement every method in our classes,
