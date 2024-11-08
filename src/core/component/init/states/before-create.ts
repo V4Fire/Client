@@ -119,7 +119,9 @@ export function beforeCreateState(
 				return ctx[$getRoot];
 			}
 
-			const fn = () => ('getRoot' in ctx ? ctx.getRoot?.() : null) ?? ctx.$root;
+			let fn = () => ('getRoot' in ctx ? ctx.getRoot?.() : null) ?? ctx.$root;
+
+			fn = fn.once();
 
 			Object.defineProperty(ctx, $getRoot, {
 				configurable: true,
@@ -132,14 +134,18 @@ export function beforeCreateState(
 		})
 	});
 
+	let r: CanNull<ComponentInterface['Root']> = null;
+
 	Object.defineProperty(unsafe, 'r', {
 		configurable: true,
 		enumerable: true,
 		get: () => {
-			const r = ('getRoot' in unsafe ? unsafe.getRoot?.() : null) ?? unsafe.$root;
+			if (r == null) {
+				r = ('getRoot' in unsafe ? unsafe.getRoot?.() : null) ?? unsafe.$root;
 
-			if ('$remoteParent' in r.unsafe) {
-				return r.unsafe.$remoteParent!.$root;
+				if ('$remoteParent' in r.unsafe) {
+					r = r.unsafe.$remoteParent!.$root;
+				}
 			}
 
 			return r;
@@ -172,6 +178,8 @@ export function beforeCreateState(
 			if (fn == null) {
 				fn = () => ctx;
 			}
+
+			fn = fn.once();
 
 			Object.defineProperty(targetCtx, $getParent, {
 				configurable: true,
