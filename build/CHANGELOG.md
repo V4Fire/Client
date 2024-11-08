@@ -11,6 +11,10 @@ Changelog
 
 ## v4.0.0-beta.?? (2024-??-??)
 
+#### :boom: Breaking Change
+
+* Removed the constants `COMPONENTS` and `BLOCK_NAMES` `globals.webpack`
+
 #### :bug: Bug Fix
 
 * Fixed an error in normalizing attribute and prop values in Snakeskin

@@ -25,6 +25,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * To automatically implement traits or characteristics for components,
   the `derive` decorator from the `components/traits` module should now be used.
 
+* Removed the constants `COMPONENTS` and `BLOCK_NAMES` `build/globals.webpack`
+* Removed the `components` property `config`
+
 #### :bug: Bug Fix
 
 * Fixed an error in normalizing attribute and prop values in Snakeskin `build`
