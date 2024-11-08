@@ -449,7 +449,7 @@ function addDontWaitRemoteProvidersHint(context, node) {
 		undefined,
 		[],
 		factory.createKeywordTypeNode(ts.SyntaxKind.BooleanKeyword),
-		factory.createBlock([factory.createReturnStatement(factory.createTrue())])
+		factory.createBlock([factory.createReturnStatement(factory.createFalse())])
 	);
 
 	return factory.updateClassDeclaration(

@@ -362,6 +362,6 @@ export default abstract class iBlockProviders extends iBlockState {
 	 * This method is overridden by a transformer at build time.
 	 */
 	protected dontWaitRemoteProvidersHint(): boolean {
-		return false;
+		return true;
 	}
 }
