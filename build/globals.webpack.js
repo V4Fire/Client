@@ -8,9 +8,7 @@
 
 'use strict';
 
-const
-	$C = require('collection.js'),
-	config = require('@config/config');
+const config = require('@config/config');
 
 const
 	{csp, build, webpack, i18n} = config,
@@ -18,9 +16,7 @@ const
 	{collectI18NKeysets} = include('build/helpers'),
 	{getDSComponentMods, getThemes, getDS} = include('build/ds');
 
-const
-	projectGraph = include('build/graph'),
-	s = JSON.stringify;
+const s = JSON.stringify;
 
 const
 	locales = i18n.supportedLocales(),
