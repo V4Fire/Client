@@ -344,7 +344,7 @@ function addDefaultValueDecorator(context, node) {
 			decorators,
 			node.modifiers,
 			node.name,
-			node.questionToken,
+			ts.SyntaxKind.ExclamationToken,
 			node.type,
 			undefined
 		);
@@ -355,7 +355,7 @@ function addDefaultValueDecorator(context, node) {
 		factory.createNodeArray(node.decorators),
 		node.modifiers,
 		node.name,
-		node.questionToken,
+		ts.SyntaxKind.ExclamationToken,
 		node.type,
 		undefined
 	);
