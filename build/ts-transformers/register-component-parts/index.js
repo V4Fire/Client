@@ -346,7 +346,7 @@ function addDefaultValueDecorator(context, node) {
 			node.name,
 			node.questionToken,
 			node.type,
-			node.initializer
+			undefined
 		);
 	}
 
@@ -357,7 +357,7 @@ function addDefaultValueDecorator(context, node) {
 		node.name,
 		node.questionToken,
 		node.type,
-		node.initializer
+		undefined
 	);
 }
 
