@@ -53,16 +53,6 @@ module.exports = {
 	LANG_KEYSETS: s(collectI18NKeysets(locales)),
 	LANG_PACKS: s(config.i18n.langPacksStore),
 
-	BLOCK_NAMES: runtime.blockNames ?
-		projectGraph.then(({components}) => {
-			if (Object.isMap(components)) {
-				const blockNames = Array.from(components.keys()).filter((el) => /^b-/.test(el));
-				return s(blockNames);
-			}
-		}) :
-
-		null,
-
 	THEME: s(config.theme.default()),
 	THEME_ATTRIBUTE: s(config.theme.attribute),
 	AVAILABLE_THEMES: pzlr.designSystem ?
