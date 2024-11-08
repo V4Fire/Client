@@ -38,6 +38,8 @@ package('p-v4-components-demo')
 		'b-select',
 		'b-select-date',
 
+		'b-traits-i-observe-dom-dummy',
+
 		'p-v4-dynamic-page1',
 		'p-v4-dynamic-page2',
 		'p-v4-dynamic-page3'

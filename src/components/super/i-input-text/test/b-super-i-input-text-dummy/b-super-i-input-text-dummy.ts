@@ -8,7 +8,11 @@
 
 import iInputText, { component } from 'components/super/i-input-text/i-input-text';
 
+import Mask, * as MaskAPI from 'components/super/i-input-text/mask';
+
 export * from 'components/super/i-input-text/i-input-text';
+
+Mask.addToPrototype(MaskAPI);
 
 @component({
 	functional: {

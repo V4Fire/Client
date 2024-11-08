@@ -13,10 +13,12 @@
 
 import iStaticPage, { component, prop, field, system, hook } from 'components/super/i-static-page/i-static-page';
 import VDOM, * as VDOMAPI from 'components/friends/vdom';
+import DataProvider, * as DataProviderAPI from 'components/friends/data-provider';
 
 export * from 'components/super/i-static-page/i-static-page';
 
 VDOM.addToPrototype(VDOMAPI);
+DataProvider.addToPrototype(DataProviderAPI);
 
 /**
  * Page with component demos.
