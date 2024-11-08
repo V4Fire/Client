@@ -9,6 +9,20 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added new decorators, defaultValue and method, for the class-based DSL.
+  These decorators are used during code generation by the TS transformer DSL.
+
+* The prop, field, and system decorators can now accept a default value for the field as a second argument.
+  This argument is used during code generation by the TS transformer DSL.
+
+#### :house: Internal
+
+* The decorators from `core/component/decorators` no longer use a single factory module. Now, each decorator is implemented independently.
+
 ## v4.0.0-beta.144 (2024-10-09)
 
 #### :bug: Bug Fix

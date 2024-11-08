@@ -11,6 +11,55 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :boom: Breaking Change
+
+* The `getPassedProps` method now returns a dictionary instead of a set `core/component`
+
+* `iBlock`:
+  * The API for `InferComponentEvents` has been changed so that you no longer need to pass this as the first argument
+  * Component events without an `error` or `warning` status are logged only if the `verbose` prop is set
+  * The `strictEmit` method no longer performs normalization of the event name
+
+* To automatically implement traits or characteristics for components,
+  the `derive` decorator from the `components/traits` module should now be used.
+
+#### :bug: Bug Fix
+
+* Fixed an error in normalizing attribute and prop values in Snakeskin `build`
+
+#### :rocket: New Feature
+
+* `core/component/decorators`:
+  * Added new decorators, defaultValue and method, for the class-based DSL.
+    These decorators are used during code generation by the TS transformer DSL.
+
+  * The prop, field, and system decorators can now accept a default value for the field as a second argument.
+    This argument is used during code generation by the TS transformer DSL.
+
+#### :house: Internal
+
+* Various micro-optimizations
+
+* `build`:
+  * Added a new TypeScript transformer to automatically apply decorators to parts of a component:
+    methods, accessors, field overrides, etc.
+  * Now, only the value from the decorator is used to get the default field value.
+    Default values specified in the class property will automatically be passed to the decorator by the transformer.
+
+* The observation of accessor dependencies is now initialized only if the accessor has been used at least once `core/component/accessor`
+
+* The decorators from `core/component/decorators` no longer use a single factory module.
+  Now, each decorator is implemented independently.
+
+* `core/component/meta`:
+  * When inheriting metaobjects, prototype chains are now used instead of full copying.
+    This optimizes the process of creating metaobjects.
+  * Methods and accessors are now added to the metaobject via the `method` decorator instead of runtime reflection.
+    This decorator is automatically added during the build process.
+  * Optimized creation of metaobjects.
+
 ## v4.0.0-beta.151 (2024-11-06)
 
 #### :bug: Bug Fix
