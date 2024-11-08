@@ -53,21 +53,6 @@ module.exports = {
 	LANG_KEYSETS: s(collectI18NKeysets(locales)),
 	LANG_PACKS: s(config.i18n.langPacksStore),
 
-	COMPONENTS: projectGraph.then(({components}) => {
-		if (Object.isMap(components)) {
-			return $C(components).to({}).reduce((res, el, key) => {
-				res[key] = {
-					parent: JSON.stringify(el.parent),
-					dependencies: JSON.stringify(el.dependencies)
-				};
-
-				return res;
-			});
-		}
-
-		return {};
-	}),
-
 	BLOCK_NAMES: runtime.blockNames ?
 		projectGraph.then(({components}) => {
 			if (Object.isMap(components)) {
