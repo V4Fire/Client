@@ -29,7 +29,7 @@ const {
  * @typedef {import('typescript').ClassDeclaration} ClassDeclaration
  */
 
-module.exports = resisterComponentDefaultValues;
+module.exports = registerComponentParts;
 
 /**
  * Registers parts of a class as parts of the associated component.
@@ -88,7 +88,7 @@ module.exports = resisterComponentDefaultValues;
  * }
  * ```
  */
-function resisterComponentDefaultValues(context) {
+function registerComponentParts(context) {
 	const {factory} = context;
 
 	let
