@@ -48,6 +48,8 @@ import type { ComponentConstructor, ComponentOptions } from 'core/component/inte
 
 const OVERRIDDEN = Symbol('This class is overridden in the child layer');
 
+const HAS_NATIVE_IDLE = requestIdleCallback.toString().includes('[native code]');
+
 /**
  * Registers a new component based on the tied class
  *
@@ -118,6 +120,9 @@ export function component(opts?: ComponentOptions): Function {
 
 		if (needRegisterImmediate) {
 			registerComponent(componentFullName);
+
+		} else if (HAS_NATIVE_IDLE) {
+			requestIdleCallback(registerComponent.bind(null, componentFullName));
 		}
 
 		// If we have a smart component,
