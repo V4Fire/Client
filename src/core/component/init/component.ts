@@ -75,8 +75,13 @@ export function registerComponent(name: CanUndef<string>): CanNull<ComponentMeta
 
 	const
 		component = components.get(name),
-		componentName = component?.componentName ?? name,
-		componentNormalizedName = isSmartComponent.test(componentName) ? isSmartComponent.replace(componentName) : componentName,
+		componentName = component?.componentName ?? name;
+
+	const componentNormalizedName = isSmartComponent.test(componentName) ?
+		isSmartComponent.replace(componentName) :
+		componentName;
+
+	const
 		layer = config.components[componentNormalizedName]?.layer,
 		event = `registerComponent.${layer}.${componentNormalizedName}`;
 
