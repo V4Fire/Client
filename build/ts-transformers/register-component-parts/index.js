@@ -149,7 +149,7 @@ function registerComponentParts(context) {
 			}
 
 			if (node.members != null) {
-				const newMembers = node.members.flatMap((node) => {
+				const newMembers = node.members.map((node) => {
 					if (
 						ts.isPropertyDeclaration(node) &&
 						ts.hasInitializer(node) &&
@@ -159,33 +159,13 @@ function registerComponentParts(context) {
 						return addDefaultValueDecorator(context, node);
 					}
 
-					const
-						isGetter = ts.isGetAccessorDeclaration(node),
-						isSetter = !isGetter && ts.isSetAccessorDeclaration(node);
-
-					if (isGetter || isSetter || ts.isMethodDeclaration(node)) {
+					if (
+						ts.isGetAccessorDeclaration(node) ||
+						ts.isSetAccessorDeclaration(node) ||
+						ts.isMethodDeclaration(node)
+					) {
 						needImportMethodDecorator = true;
 						node = addMethodDecorator(context, node);
-					}
-
-					if (isGetter || ts.isSetAccessorDeclaration(node)) {
-						const
-							postfix = isGetter ? 'Getter' : 'Setter',
-							methodName = node.name.text + postfix;
-
-						const method = factory.createMethodDeclaration(
-							undefined,
-							undefined,
-							undefined,
-							context.factory.createStringLiteral(methodName),
-							undefined,
-							undefined,
-							node.parameters,
-							undefined,
-							node.body
-						);
-
-						return [node, method];
 					}
 
 					return node;
