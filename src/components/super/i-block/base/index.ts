@@ -241,7 +241,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 		let keysets: CanUndef<string[]> = i18nKeysets.get(meta.constructor);
 
 		if (keysets == null) {
-			keysets = [];
+			keysets = [meta.componentName];
 			i18nKeysets.set(meta.constructor, keysets);
 
 			let {parentMeta} = meta;
