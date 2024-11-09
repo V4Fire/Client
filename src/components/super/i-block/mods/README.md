@@ -201,7 +201,7 @@ Note that the key should be in kebab case, i.e., normalized.
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
 
-@component({inheritMods: false})
+@component()
 class bExample extends iBlock {
   static mods: ModsDecl = {
     theme: [
@@ -221,7 +221,7 @@ This property can be observed using the watch API.
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
 
-@component({inheritMods: false})
+@component()
 class bExample extends iBlock {
   static mods: ModsDecl = {
     theme: [
@@ -265,7 +265,7 @@ To set a new modifier value or remove an existing one, you can use the `setMod` 
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
 
-@component({inheritMods: false})
+@component()
 class bExample extends iBlock {
   static mods: ModsDecl = {
     theme: [
@@ -299,7 +299,7 @@ These events provide a way to react to changes in modifiers and perform any nece
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
 
-@component({inheritMods: false})
+@component()
 class bExample extends iBlock {
   static mods: ModsDecl = {
     theme: [
@@ -336,7 +336,7 @@ it can be more convenient than handling each event separately.
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
 
-@component({inheritMods: false})
+@component()
 class bExample extends iBlock {
   static mods: ModsDecl = {
     theme: [
@@ -410,7 +410,7 @@ Note that the method returns the normalized value of the modifier.
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
 
-@component({inheritMods: false})
+@component()
 class bExample extends iBlock {
   mounted() {
     this.setRootMod('foo', 'blaBar');
@@ -431,7 +431,7 @@ The method uses the component's `globalName` prop if provided, otherwise it uses
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
 
-@component({inheritMods: false})
+@component()
 class bExample extends iBlock {
   mounted() {
     // this.componentName === 'b-button' && this.globalName === undefined
@@ -453,7 +453,7 @@ The method uses the component `globalName` prop if it's provided. Otherwise, the
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
 
-@component({inheritMods: false})
+@component()
 class bExample extends iBlock {
   mounted() {
     this.setRootMod('foo', 'bla');

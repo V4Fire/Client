@@ -66,7 +66,7 @@ AsyncRender.addToPrototype({iterate});
 
 const $$ = symbolGenerator();
 
-@component({inheritMods: false})
+@component()
 export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * The initial name of the page to load
