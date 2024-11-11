@@ -154,7 +154,7 @@ function getImagePaths(loaderResponses, options) {
 }
 
 /**
- * Compiles the code returned by the `responsive-loader` info a NodeJS module
+ * Compiles the code returned by the `responsive-loader` into a NodeJS module
  * The code is a string containing the code of a NodeJS module, and this function
  * converts this string into a real module returning the object that it exports
  *

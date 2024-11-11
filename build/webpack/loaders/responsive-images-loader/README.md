@@ -57,7 +57,7 @@ In development mode, the image will be processed using `url-loader`, which will 
 
 ```js
 require('path/to/small-image.png?responsive'); // {src: 'data:image/png;base64,.....'}
-require('path/to/huge-image.png?responsive'); // {src: 'path/to/image.png'}
+require('path/to/huge-image.png?responsive'); // {src: 'path/to/huge-image.png'}
 ```
 
 ### Options
@@ -114,8 +114,8 @@ the image (1x, 2x, etc.), not the size in pixels.
 If this option is passed, it will be returned in the resulting object only in production.
 It's useful if you have your assets on a static server and you want to specify the base path to the image on it:
 
-```js
-require('path/to/image.png?{responsive:true,baseSrc:"path/on/static/server"}')
+```ss
+< . v-image = require('path/to/image.png?{responsive:true,baseSrc:"path/on/static/server"}')
 
 /*
 {
@@ -124,12 +124,6 @@ require('path/to/image.png?{responsive:true,baseSrc:"path/on/static/server"}')
   baseSrc: 'path/on/static/server'
 }
 */
-```
-
-This option is useless if you don't pass the object to the `v-image` directive:
-
-```ss
-< . v-image = require('path/to/image.png?{responsive:true,baseSrc:"path/on/static/server"}')
 ```
 
 ### Providing multiple custom options
