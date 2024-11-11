@@ -41,10 +41,7 @@
 			- block view
 				< .&__view &
 					ref = view |
-					v-on-resize = {handler: recalculateState} |
-					@touchstart = swipeControl.onPullStart |
-					@touchmove = swipeControl.onPull |
-					v-safe-on:touchend = swipeControl.onPullEnd.bind(swipeControl)
+					:v-attrs = viewBlockAttrs
 				.
 					- block content
 						< .&__content ref = content
