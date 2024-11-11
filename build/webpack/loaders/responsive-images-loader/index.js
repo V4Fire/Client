@@ -11,8 +11,7 @@
 const
 	json5 = require('json5'),
 	responsiveLoader = require('responsive-loader'),
-	path = require('node:path'),
-	vm = require('node:vm');
+	path = require('node:path');
 
 const
 	{webpack} = require('@config/config'),
@@ -27,7 +26,8 @@ const
  * It also adds support for the provided scaling of the original image size (1x, 2x, etc)
  *
  * @this {import('webpack').LoaderContext<{}>}
- * @param {string} imageBuffer - contents of the image
+ * @param {string} moduleSources - source code of a module containing either path to the image
+ * in development mode or image buffer in production
  * @returns {string}
  *
  * @example
@@ -68,24 +68,24 @@ const
  * }
  * ```
  */
-module.exports = async function responsiveImagesLoader(imageBuffer) {
+module.exports = async function responsiveImagesLoader(moduleSources) {
 	if (!isProd) {
 		const
 			// In dev mode the 'url-loader' will be applied first returning either inline image or path to the image
-			src = compileCodeToModule(imageBuffer);
+			src = extractFromSourceCode(moduleSources, /module.exports = (?<extract>".*");$/);
 
 		return `module.exports = {sources: [{srcset: '${src}'}]}`;
 	}
 
 	const
-		options = {...this.getOptions(), ...parseResourceQuery.call(this, this.resourceQuery)};
+		options = {...this.getOptions(), ...parseResourceQuery(this.resourceQuery)};
 
 	const
 		originalImageFormat = undefined,
 		formats = [originalImageFormat, ...(options.formats ?? [])];
 
 	const
-		loaderResponses = await collectLoaderResponses.call(this, imageBuffer, options, formats),
+		loaderResponses = await collectLoaderResponses.call(this, moduleSources, options, formats),
 		imagePaths = getImagePaths(loaderResponses, options),
 		sources = getSources(imagePaths);
 
@@ -104,8 +104,8 @@ module.exports = async function responsiveImagesLoader(imageBuffer) {
  * Parses the specified resourceQuery.
  * Supports only json5 notation.
  *
- * @this {import('webpack').LoaderContext<{}>}
  * @param {string} query - the loader query, like, '?{responsive:true,key1:value1}' or '?responsive'
+ * @throws {Error}
  * @returns {object}
  */
 function parseResourceQuery(query) {
@@ -123,8 +123,7 @@ function parseResourceQuery(query) {
 		return Object.reject(options, loaderResourceQuery);
 
 	} catch (err) {
-		this.emitError(`Failed to parse resourceQuery ${query}`, err);
-		return {};
+		throw prettyError('Failed to parse resourceQuery', {query, originalError: err});
 	}
 }
 
@@ -157,30 +156,54 @@ function getSources(imageNames) {
  */
 function getImagePaths(loaderResponses, options) {
 	return loaderResponses.map((code) => {
-		const {images} = compileCodeToModule(code);
+		const images = extractFromSourceCode(code, /images: (?<extract>\[.*]),$/m);
 		return images.map(({path}) => options.baseSrc == null ? path : path.replace(`${publicPath}${options.outputPath}/`, ''));
 	});
 }
 
 /**
- * Compiles the code returned by the `responsive-loader` into a NodeJS module
- * The code is a string containing the code of a NodeJS module, and this function
- * converts this string into a real module returning the object that it exports
+ * Extracts a part based on the passed regexp from the source code string
  *
- * @param {string} code
- * @returns {object}
- * @see https://github.com/dazuaz/responsive-loader/blob/master/src/index.ts#L178
+ * @param {string} moduleSources
+ * @param {RegExp} regexp
+ * @throws {Error}
+ * @returns {any}
  */
-function compileCodeToModule(code) {
-	const context = vm.createContext({
-		// eslint-disable-next-line camelcase
-		__webpack_public_path__: publicPath,
-		module
-	});
+function extractFromSourceCode(moduleSources, regexp) {
+	const
+		sources = compileSources(moduleSources),
+		result = regexp.exec(sources);
 
-	vm.runInContext(code, context);
+	const errorDetails = {
+		originalSources: moduleSources,
+		compiledSources: sources,
+		regexp
+	};
 
-	return context.module.exports;
+	if (result == null) {
+		throw prettyError('Failed to match the regexp', errorDetails);
+	}
+
+	const
+		extractedCode = result.groups.extract;
+
+	try {
+		return json5.parse(extractedCode);
+
+	} catch (err) {
+		const details = {...errorDetails, extractedCode, originalError: err};
+		throw prettyError('Failed to parse extracted part', details);
+	}
+}
+
+/**
+ * Compiles source code of a module: replaces all dynamic parts, variables, etc
+ *
+ * @param {string} sources
+ * @returns {object}
+ */
+function compileSources(sources) {
+	return sources.replaceAll('__webpack_public_path__ + "', `"${publicPath}`);
 }
 
 /**
@@ -216,4 +239,16 @@ function collectLoaderResponses(imageBuffer, options, formats) {
 	});
 
 	return Promise.all(formats.map(callLoader));
+}
+
+/**
+ * Creates an error with pretty printed message and details
+ *
+ * @param {string} msg
+ * @param {object} details
+ * @returns {Error}
+ */
+function prettyError(msg, details) {
+	const prettyDetails = JSON.stringify(details, null, 2);
+	return new Error(`${msg} ${prettyDetails}`);
 }
