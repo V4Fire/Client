@@ -105,13 +105,19 @@ module.exports = async function responsiveImagesLoader(imageBuffer) {
  * Supports only json5 notation.
  *
  * @this {import('webpack').LoaderContext<{}>}
- * @param {string} query - the loader query, like, '?{responsive:true,key1:value1,key2:value2}'
+ * @param {string} query - the loader query, like, '?{responsive:true,key1:value1}' or '?responsive'
  * @returns {object}
  */
 function parseResourceQuery(query) {
+	query = query.slice(1);
+
+	if (!query.startsWith('{')) {
+		return {};
+	}
+
 	try {
 		const
-			options = json5.parse(query.slice(1)),
+			options = json5.parse(query),
 			loaderResourceQuery = 'responsive';
 
 		return Object.reject(options, loaderResourceQuery);
