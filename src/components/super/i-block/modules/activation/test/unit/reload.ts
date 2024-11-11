@@ -60,7 +60,8 @@ test.describe('<i-block> modules - reload', () => {
 				await ctx.waitComponentStatus('ready');
 			});
 
-			// We expect the reload method to be called twice because we have both safe and unsafe async modules
+			// We expect that the reload method will be called twice,
+			// since we are going through two instances of `async` and `$async` in the array
 			await test.expect(mockReload.callsCount).resolves.toBe(2);
 		});
 	});
