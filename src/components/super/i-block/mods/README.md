@@ -188,11 +188,11 @@ To disable modifier inheritance, pass the `inheridMods: false` option when creat
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
 
-@component()
+@component({inheridMods: false})
 class bExample extends iBlock {}
 ```
 
-### Getting a Component's Modifier Value
+### Getting a Component Modifier Value
 
 All component's applied modifiers are stored in the `mods` read-only property.
 Therefore, to get the value of any modifier, simply access the desired key.
@@ -258,7 +258,7 @@ If you want to use modifiers within a component template, then use the `m` gette
   ...
 ```
 
-### Setting a New Component's Modifier Value
+### Setting a New Component Modifier Value
 
 To set a new modifier value or remove an existing one, you can use the `setMod` and `removeMod` methods.
 

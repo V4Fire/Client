@@ -212,6 +212,12 @@ export interface ComponentOptions {
 	inheritAttrs?: boolean;
 
 	/**
+	 * If set to true, the component will inherit modifiers from the parent `sharedMods` property
+	 * @default `true`
+	 */
+	inheritMods?: boolean;
+
+	/**
 	 * The name of the NPM package in which the component is defined or overridden
 	 */
 	layer?: string;

@@ -100,6 +100,10 @@ componentFiles.forEach((el) => {
 		obj.functional = p.functional;
 	}
 
+	if (p.inheritMods != null) {
+		obj.inheritMods = p.inheritMods;
+	}
+
 	let s;
 
 	const forceUpdateRgxp = /\bforceUpdate\s*:\s*(true|false)/;

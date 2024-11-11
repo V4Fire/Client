@@ -33,7 +33,10 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
 		parentMods: RemoteMods = [],
 		attrMods: RemoteMods = [];
 
-	initSharedMods();
+	if (component.inheritMods) {
+		initSharedMods();
+	}
+
 	initModsFromAttrs();
 
 	return Object.cast(component.sync.link(link));

@@ -193,6 +193,11 @@ This function modifies the original object and returns it.
 Inherits the `params` property for a given metaobject based on the parent one.
 This function modifies the original object.
 
+### inheritMods
+
+Inherits the `mods` property for a given metaobject based on the parent one.
+This function modifies the original object.
+
 ### fillMeta
 
 Populates the passed metaobject with methods and properties from the specified component class constructor.
