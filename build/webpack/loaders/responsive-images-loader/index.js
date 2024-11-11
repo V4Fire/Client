@@ -77,7 +77,7 @@ module.exports = async function responsiveImagesLoader(imageBuffer) {
 	}
 
 	const
-		options = {...this.getOptions(), ...parseResourceQuery(this.resourceQuery)};
+		options = {...this.getOptions(), ...parseResourceQuery.call(this, this.resourceQuery)};
 
 	const
 		originalImageFormat = undefined,
@@ -114,7 +114,8 @@ function parseResourceQuery(query) {
 
 		return Object.reject(options, loaderResourceQuery);
 
-	} catch {
+	} catch (err) {
+		this.emitError(`Failed to parse resourceQuery ${query}`, err);
 		return {};
 	}
 }
