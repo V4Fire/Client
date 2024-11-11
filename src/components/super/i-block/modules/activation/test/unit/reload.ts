@@ -38,12 +38,12 @@ test.describe('<i-block> modules - reload', () => {
 		});
 
 		test('should mute the pending request when the component is deactivated', async () => {
-			const mockClearRequest = await createSpy(target, (ctx) => jestMock.spy(ctx.unsafe.async, 'muteAll'));
+			const mockMuteRequest = await createSpy(target, (ctx) => jestMock.spy(ctx.unsafe.async, 'muteRequest'));
 
 			await target.evaluate((ctx) => ctx.deactivate());
 			await interceptor.respond();
 
-			await test.expect(mockClearRequest.calls).resolves.toEqual([[{group: 'i-data:initLoad'}]]);
+			await test.expect(mockMuteRequest.callsCount).resolves.toBe(1);
 		});
 
 		test('should reload the data on activation even if the data is already loaded', async () => {
@@ -92,7 +92,7 @@ test.describe('<i-block> modules - reload', () => {
 		});
 
 		test('should continue the pending request after activation', async () => {
-			const mockClearRequest = await createSpy(target, (ctx) => jestMock.spy(ctx.unsafe.async, 'muteAll'));
+			const mockMuteRequest = await createSpy(target, (ctx) => jestMock.spy(ctx.unsafe.async, 'muteRequest'));
 
 			await target.evaluate((ctx) => ctx.deactivate());
 			await interceptor.respond();
@@ -105,7 +105,7 @@ test.describe('<i-block> modules - reload', () => {
 			const isReadyOnceAfterActivate = await target.evaluate((ctx) => ctx.isReadyOnce);
 			test.expect(isReadyOnceAfterActivate).toBe(true);
 
-			await test.expect(mockClearRequest.calls).resolves.toEqual([]);
+			await test.expect(mockMuteRequest.calls).resolves.toEqual([]);
 		});
 	});
 
