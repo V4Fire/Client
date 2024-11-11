@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added `trackContentSwipes` - a flag to prevent unexpected closure of a component instance `bBottomSlide`
+
 ## v4.0.0-beta.151 (2024-11-06)
 
 #### :bug: Bug Fix
