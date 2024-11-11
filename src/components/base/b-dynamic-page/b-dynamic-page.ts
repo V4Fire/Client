@@ -325,7 +325,6 @@ export default class bDynamicPage extends iDynamicPage {
 		if (passedProps != null) {
 			const rejectedProps = {
 				is: true,
-				keepAlive: true,
 				dispatching: true,
 				componentIdProp: true,
 				getRoot: true,
@@ -334,7 +333,7 @@ export default class bDynamicPage extends iDynamicPage {
 			};
 
 			Object.entries(passedProps).forEach(([propName, prop]) => {
-				if (rejectedProps.hasOwnProperty(propName)) {
+				if (rejectedProps.hasOwnProperty(propName) || this.meta.props.hasOwnProperty(propName)) {
 					return;
 				}
 
