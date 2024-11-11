@@ -27,12 +27,6 @@ export default abstract class iBlockMods extends iBlockEvent {
 	override readonly mods!: ModsDict;
 
 	override get sharedMods(): CanNull<ModsDict> {
-		const m = this.mods;
-
-		if (m.theme != null) {
-			return {theme: m.theme};
-		}
-
 		return null;
 	}
 

@@ -25,45 +25,16 @@ export * from 'components/super/i-block/modules/mods/interface';
  * @param component
  */
 export function initMods(component: iBlock['unsafe']): ModsDict {
-	const
-		declMods = component.meta.component.mods,
-		resolveModVal = (val: unknown) => val != null ? String(val) : undefined;
+	const declMods = component.meta.component.mods;
+
+	type RemoteMods = Array<[string, () => CanUndef<string>]>;
 
 	const
-		attrMods: Array<[string, () => CanUndef<string>]> = [],
-		attrNames = Object.keys(component.$attrs);
+		parentMods: RemoteMods = [],
+		attrMods: RemoteMods = [];
 
-	for (let i = 0; i < attrNames.length; i++) {
-		const
-			attrName = attrNames[i],
-			modName = attrName.camelize(false);
-
-		if (modName in declMods) {
-			let el: Nullable<Node>;
-
-			component.watch(`$attrs.${attrName}`, (attrs: Dictionary = {}) => {
-				el ??= component.$el;
-
-				if (el instanceof Element) {
-					el.removeAttribute(attrName);
-				}
-
-				void component.setMod(modName, resolveModVal(attrs[attrName]));
-			});
-
-			component.meta.hooks['before:mounted'].push({
-				fn: () => {
-					el = component.$el;
-
-					if (el instanceof Element) {
-						el.removeAttribute(attrName);
-					}
-				}
-			});
-
-			attrMods.push([modName, () => resolveModVal(component.$attrs[attrName])]);
-		}
-	}
+	initSharedMods();
+	initModsFromAttrs();
 
 	return Object.cast(component.sync.link(link));
 
@@ -71,6 +42,16 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
 		const
 			isModsInitialized = Object.isDictionary(component.mods),
 			mods = isModsInitialized ? component.mods : {...declMods};
+
+		for (let i = 0; i < parentMods.length; i++) {
+			const [modName, getModValue] = parentMods[i];
+
+			const modVal = getModValue();
+
+			if (modVal != null) {
+				mods[modName] = modVal;
+			}
+		}
 
 		if (propMods != null) {
 			const propNames = Object.keys(propMods);
@@ -87,12 +68,12 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
 		}
 
 		for (let i = 0; i < attrMods.length; i++) {
-			const [attrName, getAttrValue] = attrMods[i];
+			const [modName, getModValue] = attrMods[i];
 
-			const attrVal = getAttrValue();
+			const modVal = getModValue();
 
-			if (isModsInitialized || attrVal != null) {
-				mods[attrName] = attrVal;
+			if (isModsInitialized || modVal != null) {
+				mods[modName] = modVal;
 			}
 		}
 
@@ -136,6 +117,74 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
 		}
 
 		return mods;
+	}
+
+	function initSharedMods() {
+		const parent = component.$parent;
+
+		if (parent == null) {
+			return;
+		}
+
+		const {sharedMods} = parent;
+
+		if (sharedMods == null) {
+			return;
+		}
+
+		const modNames = Object.keys(sharedMods);
+
+		for (let i = 0; i < modNames.length; i++) {
+			const modName = modNames[i];
+
+			component.watch(`$parent.mods.${modName}`, (mods: ModsDict) => {
+				void component.setMod(modName, mods[modName]);
+			});
+
+			parentMods.push([modName, () => sharedMods[modName]]);
+		}
+	}
+
+	function initModsFromAttrs() {
+		const attrNames = Object.keys(component.$attrs);
+
+		let el: Nullable<Node>;
+
+		for (let i = 0; i < attrNames.length; i++) {
+			const
+				attrName = attrNames[i],
+				modName = attrName.camelize(false);
+
+			if (modName in declMods) {
+				component.watch(`$attrs.${attrName}`, (attrs: Dictionary = {}) => {
+					el ??= component.$el;
+
+					if (el instanceof Element) {
+						el.removeAttribute(attrName);
+					}
+
+					void component.setMod(modName, resolveModVal(attrs[attrName]));
+				});
+
+				parentMods.push([modName, () => resolveModVal(component.$attrs[attrName])]);
+			}
+		}
+
+		component.meta.hooks['before:mounted'].push({
+			fn: () => {
+				el = component.$el;
+
+				if (el instanceof Element) {
+					for (let i = 0; i < parentMods.length; i++) {
+						el.removeAttribute(parentMods[i][0]);
+					}
+				}
+			}
+		});
+	}
+
+	function resolveModVal(val: unknown) {
+		return val != null ? String(val) : undefined;
 	}
 }
 
