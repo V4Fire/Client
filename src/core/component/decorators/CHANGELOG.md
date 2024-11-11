@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-11-??)
+
+#### :bug: Bug Fix
+
+* Default `forceUpdate` param of a property no longer overrides its value inherited from parent component
+* Fixed typo: `"prop"` -> `"props"` when inheriting parent properties
+
 ## v4.0.0-beta.121.the-phantom-menace (2024-08-05)
 
 #### :rocket: New Feature

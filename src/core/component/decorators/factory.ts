@@ -237,6 +237,10 @@ export function paramsFactory<T = object>(
 					}
 				});
 
+				if (metaKey === 'props') {
+					desc.forceUpdate ??= true;
+				}
+
 				metaCluster[key] = desc;
 
 				if (metaKey === 'props' && desc.forceUpdate === false) {

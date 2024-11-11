@@ -13,6 +13,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2024-11-??)
 
+#### :bug: Bug Fix
+
+* Default `forceUpdate` param of a property no longer overrides its value inherited from parent component `core/component/decorators/prop`
+* Fixed typo: `"prop"` -> `"props"` when inheriting parent properties `core/component/decorators/factory`
+
+## v4.0.0-beta.151 (2024-11-06)
+
 #### :rocket: New Feature
 
 * Add `SSRBuffer` and `SSRBufferItem` types `core/component/engines`
