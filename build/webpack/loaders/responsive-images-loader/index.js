@@ -26,6 +26,7 @@ const
  * The loader is essentially a wrapper for `responsive-loader` that it's called for each format conversion.
  * It also adds support for the provided scaling of the original image size (1x, 2x, etc)
  *
+ * @this {import('webpack').LoaderContext<{}>}
  * @param {string} imageBuffer - contents of the image
  * @returns {string}
  *
@@ -103,6 +104,7 @@ module.exports = async function responsiveImagesLoader(imageBuffer) {
  * Parses the specified resourceQuery.
  * Supports only json5 notation.
  *
+ * @this {import('webpack').LoaderContext<{}>}
  * @param {string} query - the loader query, like, '?{responsive:true,key1:value1,key2:value2}'
  * @returns {object}
  */
