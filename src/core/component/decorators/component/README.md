@@ -232,8 +232,3 @@ class bInput extends iData {
 ```
 < b-input :data-title = 'hello'
 ```
-
-### [inheritMods = `true`]
-
-If set to true, the component will automatically inherit base modifiers from its parent component.
-This parameter may be inherited from the parent component.

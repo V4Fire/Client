@@ -31,7 +31,7 @@ export * from 'components/super/i-page/interface';
 
 const $$ = symbolGenerator();
 
-@component({inheritMods: false})
+@component()
 export default abstract class iPage extends iData implements iVisible {
 	override readonly reloadOnActivation: boolean = true;
 	override readonly syncRouterStoreOnInit: boolean = true;

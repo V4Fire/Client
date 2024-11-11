@@ -12,8 +12,7 @@ const
 	$C = require('collection.js'),
 	escaper = require('escaper');
 
-const
-	fs = require('node:fs');
+const fs = require('node:fs');
 
 const {
 	componentRgxp,
@@ -67,8 +66,7 @@ Object.assign(componentParams, {
  * Load component runtime parameters to a map
  */
 componentFiles.forEach((el) => {
-	const
-		escapedFragments = [];
+	const escapedFragments = [];
 
 	const
 		file = escaper.replace(fs.readFileSync(el).toString(), escapedFragments),
@@ -94,17 +92,12 @@ componentFiles.forEach((el) => {
 		parent
 	};
 
-	const
-		obj = componentParams[component];
+	const obj = componentParams[component];
 
 	obj.deprecatedProps = p.deprecatedProps ?? {};
 
 	if (p.functional != null) {
 		obj.functional = p.functional;
-	}
-
-	if (p.inheritMods != null) {
-		obj.inheritMods = p.inheritMods;
 	}
 
 	let s;

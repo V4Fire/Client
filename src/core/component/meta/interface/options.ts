@@ -212,14 +212,6 @@ export interface ComponentOptions {
 	inheritAttrs?: boolean;
 
 	/**
-	 * If set to true, the component will automatically inherit base modifiers from its parent component.
-	 * This parameter may be inherited from the parent component.
-	 *
-	 * @default `true`
-	 */
-	inheritMods?: boolean;
-
-	/**
 	 * The name of the NPM package in which the component is defined or overridden
 	 */
 	layer?: string;
