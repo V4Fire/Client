@@ -91,7 +91,7 @@ export function createImgElement(
 		...optionalAttrs
 	};
 
-	if (Object.isTruly(imageParams.preview)) {
+	if (!SSR && Object.isTruly(imageParams.preview)) {
 		Object.assign(attrs, {style: {opacity: 0}});
 	}
 
