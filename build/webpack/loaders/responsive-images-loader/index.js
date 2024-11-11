@@ -73,7 +73,7 @@ module.exports = async function responsiveImagesLoader(imageBuffer) {
 			// In dev mode the 'url-loader' will be applied first returning either inline image or path to the image
 			src = compileCodeToModule(imageBuffer);
 
-		return `module.exports = {src: '${src}'}`;
+		return `module.exports = {sources: [{srcset: '${src}'}]}`;
 	}
 
 	const
