@@ -1,5 +1,5 @@
 {
-  "hash": "7b16e904c8d6785034161f61a4a4b42111ccf767585d6f643478eec974899aa8",
+  "hash": "9608b1e90d91053ae7e5f9db2002b150f358069aff02d61e172e1061eed9f959",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2889,6 +2889,7 @@
               "b-textarea",
               "b-select",
               "b-select-date",
+              "b-traits-i-observe-dom-dummy",
               "p-v4-dynamic-page1",
               "p-v4-dynamic-page2",
               "p-v4-dynamic-page3"
@@ -2938,6 +2939,7 @@
             "b-textarea",
             "b-select",
             "b-select-date",
+            "b-traits-i-observe-dom-dummy",
             "p-v4-dynamic-page1",
             "p-v4-dynamic-page2",
             "p-v4-dynamic-page3"

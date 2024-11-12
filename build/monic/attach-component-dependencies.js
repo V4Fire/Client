@@ -14,7 +14,8 @@ const
 
 const
 	path = require('upath'),
-	graph = include('build/graph');
+	graph = include('build/graph'),
+	{invokeByRegisterEvent, getLayerName} = include('build/helpers');
 
 const
 	decls = Object.create(null);
@@ -132,7 +133,7 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 						expr = `TPLS['${dep}'] = require('${src}')['${dep}'];`;
 
 					} else {
-						expr = `require('${src}');`;
+						expr = invokeByRegisterEvent(`require('${src}');`, getLayerName(filePath), dep);
 					}
 
 					decl += `try { ${expr} } catch (err) { stderr(err); }`;

@@ -5,11 +5,14 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+import config from 'config';
 
 import { isComponent, componentRegInitializers, componentParams, components } from 'core/component/const';
 
 import type { ComponentMeta } from 'core/component/interface';
-import type { ComponentConstructorInfo } from 'core/component/reflect';
+import { ComponentConstructorInfo, isSmartComponent } from 'core/component/reflect';
+
+import { initEmitter } from 'core/component/event';
 
 /**
  * Registers parent components for the given one.
@@ -70,6 +73,20 @@ export function registerComponent(name: CanUndef<string>): CanNull<ComponentMeta
 		return null;
 	}
 
+	const
+		component = components.get(name),
+		componentName = component?.componentName ?? name;
+
+	const componentNormalizedName = isSmartComponent.test(componentName) ?
+		isSmartComponent.replace(componentName) :
+		componentName;
+
+	const
+		layer = config.components[componentNormalizedName]?.layer,
+		event = `registerComponent.${layer}.${componentNormalizedName}`;
+
+	initEmitter.emit(event);
+
 	const regComponent = componentRegInitializers[name];
 
 	if (regComponent != null) {
@@ -77,5 +94,5 @@ export function registerComponent(name: CanUndef<string>): CanNull<ComponentMeta
 		delete componentRegInitializers[name];
 	}
 
-	return components.get(name) ?? null;
+	return component ?? null;
 }

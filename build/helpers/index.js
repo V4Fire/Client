@@ -14,5 +14,7 @@ Object.assign(
 	include('build/helpers/webpack'),
 	include('build/helpers/other'),
 	include('build/helpers/i18n'),
-	include('build/helpers/tracer')
+	include('build/helpers/tracer'),
+	include('build/helpers/invoke-by-register-component'),
+	include('build/helpers/layer-name')
 );

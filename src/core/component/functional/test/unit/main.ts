@@ -28,6 +28,7 @@ test.describe('functional component', () => {
 		]);
 
 		target = await Component.createComponent<bFunctionalDummy>(page, 'b-functional-dummy', {stage: 'main'});
+
 		text = page.getByText(/Counter/);
 		button = page.getByRole('button');
 	});

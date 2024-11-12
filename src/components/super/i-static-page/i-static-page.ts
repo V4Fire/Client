@@ -27,6 +27,7 @@ import type bRouter from 'components/base/b-router/b-router';
 import type iBlock from 'components/super/i-block/i-block';
 
 import iPage, { component, field, system, computed, hook, watch } from 'components/super/i-page/i-page';
+import AsyncRender, { iterate } from 'components/friends/async-render';
 
 import createProviderDataStore, { ProviderDataStore } from 'components/super/i-static-page/modules/provider-data-store';
 
@@ -38,6 +39,8 @@ export { createProviderDataStore };
 export * from 'components/super/i-static-page/modules/provider-data-store';
 
 export * from 'components/super/i-static-page/interface';
+
+AsyncRender.addToPrototype({iterate});
 
 const
 	$$ = symbolGenerator();

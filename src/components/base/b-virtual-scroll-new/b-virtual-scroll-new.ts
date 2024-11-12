@@ -18,7 +18,7 @@ import type { AsyncOptions } from 'core/async';
 import SyncPromise from 'core/promise/sync';
 
 import type iItems from 'components/traits/i-items/i-items';
-import DOM, { watchForIntersection } from 'components/friends/dom';
+import DOM, { watchForIntersection, appendChild } from 'components/friends/dom';
 import VDOM, { create, render } from 'components/friends/vdom';
 import iVirtualScrollProps from 'components/base/b-virtual-scroll-new/props';
 
@@ -75,7 +75,7 @@ export * from 'components/super/i-data/i-data';
 
 const $$ = symbolGenerator();
 
-DOM.addToPrototype({watchForIntersection});
+DOM.addToPrototype({watchForIntersection, appendChild});
 VDOM.addToPrototype({create, render});
 
 interface bVirtualScrollNew extends Trait<typeof iVirtualScrollHandlers> {}

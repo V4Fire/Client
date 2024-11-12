@@ -40,7 +40,9 @@ const {
 	output,
 	cacheDir,
 	isStandalone,
-	tracer
+	tracer,
+	invokeByRegisterEvent,
+	getLayerName
 } = include('build/helpers');
 
 /**
@@ -244,12 +246,23 @@ async function buildProjectGraph() {
 						entry = path.resolve(tmpEntries, '../', name);
 					}
 
+					const entryPath = getEntryPath(entry);
+					let importScript;
+
+					const
+						componentName = component?.name ?? name,
+						isComponent = /^[bpg]-[\w-]+/.test(componentName);
+
 					if (webpack.ssr) {
-						str += `Object.assign(module.exports, require('${getEntryPath(entry)}'));\n`;
+						importScript = `Object.assign(module.exports, require('${entryPath}'));\n`;
 
 					} else {
-						str += `require('${getEntryPath(entry)}');\n`;
+						importScript = `require('${entryPath}');\n`;
 					}
+
+					str += isComponent ?
+						invokeByRegisterEvent(importScript, getLayerName(entry), componentName) :
+						importScript;
 				}
 
 				return str;

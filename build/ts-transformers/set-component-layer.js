@@ -11,7 +11,9 @@
 'use strict';
 
 const ts = require('typescript');
-const {validators} = require('@pzlr/build-core');
+const {validators, config} = require('@pzlr/build-core');
+
+const {getLayerName} = include('build/helpers');
 
 /**
  * @typedef {import('typescript').TransformationContext} Context
@@ -21,7 +23,6 @@ const {validators} = require('@pzlr/build-core');
  */
 
 const
-	pathToRootRgxp = /(?<path>.+)[/\\]src[/\\]/,
 	isComponentPath = new RegExp(`\\/(${validators.blockTypeList.join('|')})-.+?\\/?`);
 
 /**
@@ -53,12 +54,19 @@ const
  * ```
  */
 const setComponentLayerTransformer = (context) => (sourceFile) => {
-	if (!isInsideComponent(sourceFile.path)) {
+	const
+		{factory} = context,
+		isInitAppFile = sourceFile.path.endsWith('core/init/index.ts');
+
+	if (!isInsideComponent(sourceFile.path) && !isInitAppFile) {
 		return sourceFile;
 	}
 
-	const layer = getLayerName(sourceFile.path);
-	const {factory} = context;
+	let layer = getLayerName(sourceFile.path);
+
+	if (isInitAppFile) {
+		layer = config.projectName;
+	}
 
 	/**
 	 * A visitor for the AST node
@@ -67,10 +75,32 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 	 * @returns {Node}
 	 */
 	const visitor = (node) => {
-		if (ts.isDecorator(node) && isComponentCallExpression(node)) {
-			const
-				expr = node.expression;
+		const
+			expr = node?.expression;
 
+		// Passing the value of the original layer as an argument to
+		// the createApp function for initializing the root component.
+		if (
+			ts.isCallExpression(node) &&
+			isInitAppFile &&
+			expr.escapedText === 'createApp'
+		) {
+
+			const updatedCallExpression = factory.createCallExpression(
+				factory.createIdentifier(expr.escapedText),
+				undefined,
+				[
+					...node.arguments,
+					factory.createStringLiteral(layer)
+				]
+			);
+
+			return updatedCallExpression;
+		}
+
+		// Passing the value of the package layer in which the component
+		// is defined to the @component decorator.
+		if (ts.isDecorator(node) && isComponentCallExpression(node)) {
 			if (!ts.isCallExpression(expr)) {
 				return node;
 			}
@@ -109,18 +139,6 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 
 // eslint-disable-next-line @v4fire/require-jsdoc
 module.exports = () => setComponentLayerTransformer;
-
-/**
- * The function determines the package in which the module is defined and
- * returns the name of this package from the `package.json` file
- *
- * @param {string} filePath
- * @returns {string}
- */
-function getLayerName(filePath) {
-	const pathToRootDir = filePath.match(pathToRootRgxp).groups.path;
-	return require(`${pathToRootDir}/package.json`).name;
-}
 
 /**
  * Returns true if the specified path is within the context of the component

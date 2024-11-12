@@ -15,7 +15,7 @@ const
 const
 	{csp, build, webpack, i18n} = config,
 	{config: pzlr} = require('@pzlr/build-core'),
-	{collectI18NKeysets} = include('build/helpers'),
+	{collectI18NKeysets, getLayerName} = include('build/helpers'),
 	{getDSComponentMods, getThemes, getDS} = include('build/ds');
 
 const
@@ -58,7 +58,8 @@ module.exports = {
 			return $C(components).to({}).reduce((res, el, key) => {
 				res[key] = {
 					parent: JSON.stringify(el.parent),
-					dependencies: JSON.stringify(el.dependencies)
+					dependencies: JSON.stringify(el.dependencies),
+					layer: JSON.stringify(getLayerName(el.logic ?? el.index))
 				};
 
 				return res;
