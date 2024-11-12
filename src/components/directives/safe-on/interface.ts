@@ -6,5 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import 'core/shims/set-immediate';
-import 'core/shims/ssr';
+import type { DirectiveBinding } from 'core/component/engines';
+
+export interface SafeOnDirectiveParams extends DirectiveBinding {
+	value: Function;
+}
