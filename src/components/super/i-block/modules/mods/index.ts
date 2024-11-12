@@ -17,6 +17,8 @@ import type iBlock from 'components/super/i-block/i-block';
 
 export * from 'components/super/i-block/modules/mods/interface';
 
+const sharedModsCache = Object.createDict<ModsDict>();
+
 /**
  * Initializes the component modifiers by extracting them from the `modsProps` property,
  * attributes of the component whose names match the names of the modifiers described in the static `mods` property
@@ -129,11 +131,13 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
 			return;
 		}
 
-		const {sharedMods} = parent;
+		const sharedMods = sharedModsCache[parent.componentName] ?? parent.sharedMods;
 
 		if (sharedMods == null) {
 			return;
 		}
+
+		sharedModsCache[parent.componentName] = sharedMods;
 
 		const modNames = Object.keys(sharedMods);
 

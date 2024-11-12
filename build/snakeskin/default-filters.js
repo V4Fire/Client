@@ -205,7 +205,7 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 	}
 
 	if (component.inheritMods !== false) {
-		attrs[':inheritMods'] = ['sharedMods != null'];
+		// attrs[':inheritMods'] = ['sharedMods != null'];
 	}
 
 	Object.entries(attrs).forEach(([name, val]) => {
