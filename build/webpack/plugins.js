@@ -33,6 +33,7 @@ module.exports = async function plugins({name}) {
 		IgnoreInvalidWarningsPlugin = include('build/webpack/plugins/ignore-invalid-warnings'),
 		I18NGeneratorPlugin = include('build/webpack/plugins/i18n-plugin'),
 		InvalidateExternalCachePlugin = include('build/webpack/plugins/invalidate-external-cache'),
+		AsyncChunksPlugin = include('build/webpack/plugins/async-chunks-plugin'),
 		StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default;
 
 	const plugins = new Map([
@@ -67,10 +68,16 @@ module.exports = async function plugins({name}) {
 		plugins.set('progress-plugin', createProgressPlugin(name));
 	}
 
-	if (config.webpack.fatHTML() || config.webpack.storybook() || config.webpack.ssr) {
+	const isThirdFatHTMLMode = config.webpack.fatHTML() === 3;
+
+	if ((config.webpack.fatHTML() && !isThirdFatHTMLMode) || config.webpack.storybook() || config.webpack.ssr) {
 		plugins.set('limit-chunk-count-plugin', new webpack.optimize.LimitChunkCountPlugin({
 			maxChunks: 1
 		}));
+	}
+
+	if (isThirdFatHTMLMode) {
+		plugins.set('async-chunk-plugin', new AsyncChunksPlugin());
 	}
 
 	return plugins;
