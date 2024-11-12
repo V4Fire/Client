@@ -14,8 +14,6 @@ import { isStore, isPrivateField } from 'core/component/reflect/const';
 import type { PropertyInfo, AccessorType } from 'core/component/reflect/interface';
 import type { ComponentInterface } from 'core/component/interface';
 
-const propertyCache = Object.createDict<PropertyInfo>();
-
 /**
  * Returns an object containing information of the component property by the specified path
  *
@@ -51,15 +49,7 @@ const propertyCache = Object.createDict<PropertyInfo>();
  * ```
  */
 export function getPropertyInfo(path: string, component: ComponentInterface): PropertyInfo {
-	const
-		cacheKey = `${component.componentName}:${path}`,
-		originalPath = path;
-
-	const cachedValue = propertyCache[cacheKey];
-
-	if (cachedValue != null) {
-		return cachedValue;
-	}
+	const originalPath = path;
 
 	let
 		name = path,
@@ -146,8 +136,6 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		originalTopPath
 	};
 
-	propertyCache[cacheKey] = info;
-
 	if (isPrivateField.test(name)) {
 		info.type = 'system';
 		return info;
@@ -228,7 +216,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 			type = 'system';
 		}
 
-		return propertyCache[cacheKey] = {
+		return {
 			...info,
 
 			name,
@@ -260,7 +248,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 				originalTopPath = '';
 			}
 
-			return propertyCache[cacheKey] = {
+			return {
 				...info,
 
 				type: 'mounted',
