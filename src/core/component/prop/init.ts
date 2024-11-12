@@ -42,7 +42,9 @@ export function initProps(
 		isFunctional = meta.params.functional === true,
 		source: typeof props = p.forceUpdate ? props : attrs;
 
-	const propNames = Object.keys(source);
+	const
+		propNames = Object.keys(source),
+		passedProps = unsafe.getPassedProps?.();
 
 	for (let i = 0; i < propNames.length; i++) {
 		const
@@ -61,7 +63,9 @@ export function initProps(
 
 		let propValue = (from ?? component)[propName];
 
-		const getAccessors = unsafe.$attrs[`on:${propName}`];
+		const
+			accessorName = `on:${propName}`,
+			getAccessors = unsafe.$attrs[accessorName];
 
 		if (propValue === undefined && Object.isFunction(getAccessors)) {
 			propValue = getAccessors()[0];
@@ -97,7 +101,7 @@ export function initProps(
 		if (needSaveToStore) {
 			const privateField = `[[${propName}]]`;
 
-			if (!opts.forceUpdate) {
+			if (!opts.forceUpdate && passedProps?.hasOwnProperty(accessorName)) {
 				// Set the property as enumerable so that it can be deleted in the destructor later
 				Object.defineProperty(store, privateField, {
 					configurable: true,
@@ -110,7 +114,7 @@ export function initProps(
 			Object.defineProperty(store, propName, {
 				configurable: true,
 				enumerable: true,
-				get: () => opts.forceUpdate ? propValue : store[privateField]
+				get: () => !opts.forceUpdate && privateField in store ? store[privateField] : propValue
 			});
 		}
 	}
