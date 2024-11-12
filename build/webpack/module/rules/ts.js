@@ -66,7 +66,7 @@ module.exports = function tsRules() {
 				options: inherit(monic.typescript, {
 					replacers: [].concat(
 						fatHTML && fatHTML !== 3 ?
-							[]  :
+							[] :
 							include('build/monic/attach-component-dependencies'),
 
 						[
