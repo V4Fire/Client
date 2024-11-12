@@ -10,6 +10,7 @@ package('p-v4-components-demo')
 	.extends('i-static-page')
 	.dependencies(
 		'b-dummy',
+		'b-directives-ref-dummy',
 
 		'b-router',
 		'b-dynamic-page',

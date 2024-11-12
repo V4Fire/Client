@@ -14,3 +14,9 @@
 	- block body
 		< template v-if = stage === 'teleports'
 			< b-bottom-slide
+
+		< template v-if = stage.startsWith('refs:')
+			< b-directives-ref-dummy :stage = stage.split(':')[1]
+
+		< template v-if = stage.startsWith('refs-async:')
+			< b-directives-ref-dummy :useAsyncRender = true | :stage = stage.split(':')[1]
