@@ -18,7 +18,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * The `getPassedProps` method now returns a dictionary instead of a set `core/component`
 
 * `iBlock`:
-  * The API for `InferComponentEvents` has been changed so that you no longer need to pass this as the first argument
+  * The API for `InferComponentEvents` has been changed so that you no longer need to pass `this` as the first argument
   * Component events without an `error` or `warning` status are logged only if the `verbose` prop is set
   * The `strictEmit` method no longer performs normalization of the event name
 
