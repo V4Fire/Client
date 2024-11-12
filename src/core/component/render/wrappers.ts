@@ -308,17 +308,11 @@ export function wrapRenderList<T extends typeof renderList, C extends typeof wit
 		cb: AnyFunction
 	) {
 		const
-			ctx = this.$renderEngine.r.getCurrentInstance(),
-
-			// Preserve rendering context for the async render
-			wrappedCb: AnyFunction = Object.cast(withCtx(cb, ctx));
-
-		const
-			vnodes = original(src, wrappedCb),
+			vnodes = original(src, cb),
 			asyncRenderId = src?.[ASYNC_RENDER_ID];
 
 		if (asyncRenderId != null) {
-			this.$emit('[[V_FOR_CB]]', {wrappedCb});
+			this.$emit('[[V_FOR_CB]]', {wrappedCb: cb});
 
 			Object.defineProperty(vnodes, ASYNC_RENDER_ID, {
 				writable: false,
