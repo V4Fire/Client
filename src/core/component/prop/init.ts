@@ -111,11 +111,21 @@ export function initProps(
 				});
 			}
 
-			Object.defineProperty(store, propName, {
-				configurable: true,
-				enumerable: true,
-				get: () => !opts.forceUpdate && privateField in store ? store[privateField] : propValue
-			});
+			if (opts.forceUpdate) {
+				Object.defineProperty(store, propName, {
+					configurable: true,
+					enumerable: true,
+					writable: false,
+					value: propValue
+				});
+
+			} else {
+				Object.defineProperty(store, propName, {
+					configurable: true,
+					enumerable: true,
+					get: () => Object.hasOwn(store, privateField) ? store[privateField] : propValue
+				});
+			}
 		}
 	}
 
