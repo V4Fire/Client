@@ -27,7 +27,7 @@ const
 module.exports = async function essRules() {
 	const
 		g = await projectGraph,
-		isThirdFatHTMLMode = config.webpack.fatHtml() === 3 ;
+		isThirdFatHTMLMode = config.webpack.fatHtml() === 3;
 
 	return {
 		test: /\.ess$/,
@@ -46,7 +46,7 @@ module.exports = async function essRules() {
 					{
 						loader: 'html-loader',
 						options: config.html()
-					},
+					}
 				] :
 				[]
 			),

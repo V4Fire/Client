@@ -837,7 +837,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 *  }
 		 * ]
 		 *
-		 * @return {string}
+		 * @returns {string}
 		 */
 		asyncAssetsJSON() {
 			return 'async-chunks-to-inline.json';

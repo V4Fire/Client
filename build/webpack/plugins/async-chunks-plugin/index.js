@@ -1,5 +1,3 @@
-use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@ use strict';
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const fs = require('fs');
 const path = require('path');
@@ -54,7 +54,7 @@ class Index {
 						const runtimeModule = new AsyncPlugRuntimeModule();
 						set.add(RuntimeGlobals.loadScript);
 						compilation.addRuntimeModule(chunk, runtimeModule);
-				});
+					});
 			}
 		);
 
