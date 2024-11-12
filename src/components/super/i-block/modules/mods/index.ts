@@ -148,7 +148,7 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
 				void component.setMod(modName, mods[modName]);
 			});
 
-			parentMods.push([modName, () => sharedMods[modName]]);
+			parentMods.push([modName, () => parent.mods[modName]]);
 		}
 	}
 
