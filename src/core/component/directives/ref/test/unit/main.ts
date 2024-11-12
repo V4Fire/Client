@@ -22,6 +22,7 @@ test.describe('core/component/directives/ref', () => {
 		'all components are functional',
 		'main component is functional and slot components are regular',
 		'only one slot component is functional',
+		'slot component has directive',
 		'main component is regular and slot components are functional'
 	];
 
