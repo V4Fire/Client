@@ -12,7 +12,6 @@ import { saveRawComponentContext } from 'core/component/context';
 import { forkMeta, ComponentMeta } from 'core/component/meta';
 
 import { initProps } from 'core/component/prop';
-import { attachMethodsFromMeta } from 'core/component/method';
 
 import type { ComponentInterface } from 'core/component/interface';
 import type { VirtualContextOptions } from 'core/component/functional/interface';
@@ -140,8 +139,6 @@ export function createVirtualContext(
 		store: virtualCtx,
 		saveToStore: true
 	});
-
-	attachMethodsFromMeta(virtualCtx);
 
 	init.beforeCreateState(virtualCtx, meta, {
 		implementEventAPI: true

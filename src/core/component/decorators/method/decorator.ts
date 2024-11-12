@@ -10,8 +10,6 @@ import { defProp } from 'core/const/props';
 
 import { createComponentDecorator3 } from 'core/component/decorators/helpers';
 
-import { getComponentContext } from 'core/component/context';
-
 import type { ComponentMeta } from 'core/component/meta';
 import type { ComponentAccessor, ComponentMethod } from 'core/component/interface';
 
@@ -101,19 +99,6 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 		}
 
 		methods[name] = method;
-		component.methods[name] = fn;
-
-		// eslint-disable-next-line func-style
-		const wrapper = function wrapper(this: object) {
-			// eslint-disable-next-line prefer-rest-params
-			return fn.apply(getComponentContext(this), arguments);
-		};
-
-		if (wrapper.length !== fn.length) {
-			Object.defineProperty(wrapper, 'length', {get: () => fn.length});
-		}
-
-		component.methods[name] = wrapper;
 
 		const {hooks, watchers} = method;
 

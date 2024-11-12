@@ -193,11 +193,6 @@ export interface ComponentMeta {
 		computed: Dictionary<Partial<WritableComputedOptions<unknown>>>;
 
 		/**
-		 * A dictionary containing the component methods
-		 */
-		methods: Dictionary<Function>;
-
-		/**
 		 * A dictionary containing the available component directives
 		 */
 		directives?: Dictionary<ComponentDirectiveOptions>;
