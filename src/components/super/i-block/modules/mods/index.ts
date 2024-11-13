@@ -51,7 +51,7 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
 
 			const modVal = getModValue();
 
-			if (modVal != null) {
+			if (isModsInitialized || modVal != null) {
 				mods[modName] = modVal;
 			}
 		}
