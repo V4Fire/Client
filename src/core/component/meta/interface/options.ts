@@ -212,9 +212,7 @@ export interface ComponentOptions {
 	inheritAttrs?: boolean;
 
 	/**
-	 * If set to true, the component will automatically inherit base modifiers from its parent component.
-	 * This parameter may be inherited from the parent component.
-	 *
+	 * If set to true, the component will inherit modifiers from the parent `sharedMods` property
 	 * @default `true`
 	 */
 	inheritMods?: boolean;

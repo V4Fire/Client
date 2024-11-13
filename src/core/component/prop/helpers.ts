@@ -47,16 +47,7 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 				continue;
 			}
 
-			const propPrefix = 'on:';
-
-			if (prop != null) {
-				const getterName = propPrefix + attrName;
-
-				if (unsafe.$attrs[attrName] !== undefined && !Object.isFunction(unsafe.$attrs[getterName])) {
-					throw new Error(`No accessors are defined for the prop "${attrName}". To set the accessors, pass them as ":${attrName} = propValue | @:${attrName} = createPropAccessors(() => propValue)()" or "v-attrs = {'@:${attrName}': createPropAccessors(() => propValue)}".`);
-				}
-
-			} else {
+			if (prop == null) {
 				const propName = isPropGetter.replace(attrName);
 
 				if (meta.props[propName]?.forceUpdate === false) {

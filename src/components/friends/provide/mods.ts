@@ -33,24 +33,20 @@ import type { Mods } from 'components/friends/provide/interface';
  * ```
  */
 export function mods(this: Friend, mods?: Mods): CanNull<ModsDict> {
-	const {sharedMods} = this.ctx;
-
-	if (sharedMods == null && mods == null) {
+	if (mods == null) {
 		return null;
 	}
 
-	const resolvedMods = {...sharedMods};
+	const
+		resolvedMods = {},
+		modNames = Object.keys(mods);
 
-	if (mods != null) {
-		const modNames = Object.keys(mods);
+	for (let i = 0; i < modNames.length; i++) {
+		const
+			modName = modNames[i],
+			modVal = mods[modName];
 
-		for (let i = 0; i < modNames.length; i++) {
-			const
-				modName = modNames[i],
-				modVal = mods[modName];
-
-			resolvedMods[modName.dasherize()] = modVal != null ? String(modVal) : undefined;
-		}
+		resolvedMods[modName.dasherize()] = modVal != null ? String(modVal) : undefined;
 	}
 
 	return resolvedMods;

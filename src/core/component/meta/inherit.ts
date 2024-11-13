@@ -42,7 +42,6 @@ export function inheritMeta(meta: ComponentMeta, parentMeta: ComponentMeta): Com
 	meta.component.props = {...parentMeta.component.props};
 	meta.component.attrs = {...parentMeta.component.attrs};
 	meta.component.computed = {...parentMeta.component.computed};
-	meta.component.methods = {...parentMeta.component.methods};
 
 	if (meta.params.partial == null) {
 		inheritMods(meta, parentMeta);

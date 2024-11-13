@@ -18,20 +18,17 @@ import type { ComponentInterface, UnsafeComponentInterface } from 'core/componen
  * @param component
  */
 export function attachMethodsFromMeta(component: ComponentInterface): void {
-	const {meta, meta: {component: {methods}}} = Object.cast<UnsafeComponentInterface>(component);
+	const {meta, meta: {methods}} = Object.cast<UnsafeComponentInterface>(component);
 
-	const methodNames = Object.keys(methods);
-
-	for (let i = 0; i < methodNames.length; i++) {
-		const
-			methodName = methodNames[i],
-			method = methods[methodName];
+	// eslint-disable-next-line guard-for-in
+	for (const methodName in methods) {
+		const method = methods[methodName];
 
 		if (method == null) {
 			continue;
 		}
 
-		component[methodName] = method.bind(component);
+		component[methodName] = method.fn.bind(component);
 	}
 
 	if (meta.params.functional === true) {

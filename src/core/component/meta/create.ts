@@ -88,9 +88,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			mods: {},
 			props: {},
 			attrs: {},
-
 			computed: {},
-			methods: {},
 
 			render() {
 				throw new ReferenceError(`The render function for the component "${component.componentName}" is not specified`);

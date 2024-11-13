@@ -26,13 +26,8 @@ export default abstract class iBlockMods extends iBlockEvent {
 	@system({atom: true, merge: mergeMods, init: initMods})
 	override readonly mods!: ModsDict;
 
+	@computed({cache: 'forever'})
 	override get sharedMods(): CanNull<ModsDict> {
-		const m = this.mods;
-
-		if (m.theme != null) {
-			return {theme: m.theme};
-		}
-
 		return null;
 	}
 

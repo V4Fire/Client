@@ -56,7 +56,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 		name: component.name,
 		props: component.props,
 
-		methods: component.methods,
 		computed: component.computed,
 		render: component.render,
 

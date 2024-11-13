@@ -79,6 +79,12 @@ export abstract class ComponentInterface {
 	abstract readonly globalName?: string;
 
 	/**
+	 * If set to true, the component will inherit modifiers from the parent `sharedMods` property.
+	 * This prop is set automatically during the build.
+	 */
+	abstract readonly inheritMods?: boolean;
+
+	/**
 	 * True if the component renders as a regular one, but can be rendered as a functional.
 	 * This parameter is used during SSR and when hydrating the page.
 	 */
@@ -251,7 +257,7 @@ export abstract class ComponentInterface {
 	/**
 	 * A dictionary containing component attributes that are not identified as input properties
 	 */
-	protected readonly $attrs!: Dictionary<string>;
+	protected readonly $attrs!: Dictionary<string | Function>;
 
 	/**
 	 * A dictionary containing the watchable component fields that can trigger a re-rendering of the component

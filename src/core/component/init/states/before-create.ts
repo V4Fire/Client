@@ -20,7 +20,7 @@ import { getNormalParent } from 'core/component/traverse';
 import { initProps, attachAttrPropsListeners } from 'core/component/prop';
 import { initFields } from 'core/component/field';
 import { attachAccessorsFromMeta } from 'core/component/accessor';
-import { callMethodFromComponent } from 'core/component/method';
+import { attachMethodsFromMeta, callMethodFromComponent } from 'core/component/method';
 
 import { runHook } from 'core/component/hook';
 import { implementEventEmitterAPI } from 'core/component/event';
@@ -262,6 +262,8 @@ export function beforeCreateState(
 			}
 		}());
 	});
+
+	attachMethodsFromMeta(component);
 
 	if (opts?.implementEventAPI) {
 		implementEventEmitterAPI(component);
