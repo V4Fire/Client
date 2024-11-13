@@ -57,8 +57,8 @@ export default abstract class iBlockProps extends ComponentInterface {
 	@prop({type: Object, required: false, forceUpdate: false})
 	override readonly modsProp?: ModsProp;
 
-	@prop(Boolean)
-	override readonly inheritMods: boolean = true;
+	@prop({type: Boolean, required: false})
+	override readonly inheritMods?: boolean;
 
 	/**
 	 * If set to true, the component will be activated by default.
