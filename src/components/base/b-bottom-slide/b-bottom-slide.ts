@@ -315,12 +315,20 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iOpen, 
 
 		if (this.visible === 0) {
 			iOpen.close(this).catch(stderr);
-			await this.setMod('hidden', true);
 		}
 
-		this.history.clear();
-		this.emit('close');
-		return true;
+		const updateVisibility = () => {
+			if (this.visible === 0) {
+				return this.setMod('hidden', true);
+			}
+		};
+
+		return SyncPromise.resolve(updateVisibility()).then(() => {
+			this.history.clear();
+			this.emit('close');
+
+			return true;
+		});
 	}
 
 	/**
