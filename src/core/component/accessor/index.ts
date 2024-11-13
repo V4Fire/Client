@@ -123,9 +123,6 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 				if (deps != null && deps.length > 0 || tiedWith != null) {
 					onCreated(this.hook, () => {
-						// If a computed property has a field or system field as a dependency
-						// and the host component does not have any watchers to this field,
-						// we need to register a "fake" watcher to enforce watching
 						if (deps != null) {
 							for (let i = 0; i < deps.length; i++) {
 								const
@@ -133,6 +130,9 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 									path = Object.isArray(dep) ? dep.join('.') : String(dep),
 									info = getPropertyInfo(path, component);
 
+								// If a computed property has a field or system field as a dependency
+								// and the host component does not have any watchers to this field,
+								// we need to register a "fake" watcher to enforce watching
 								const needForceWatch =
 									(info.type === 'system' || info.type === 'field') &&
 
@@ -147,11 +147,11 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 						}
 
 						if (tiedWith != null) {
-							const needForceWatch = watchers[tiedWith] == null && accessor.dependencies?.length !== 0;
-
 							// If a computed property is tied with a field or system field
 							// and the host component does not have any watchers to this field,
 							// we need to register a "fake" watcher to enforce watching
+							const needForceWatch = watchers[tiedWith] == null && accessor.dependencies?.length !== 0;
+
 							if (needForceWatch) {
 								this.$watch(tiedWith, {deep: true, immediate: true}, fakeHandler);
 							}
@@ -223,9 +223,6 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 				if (deps != null && deps.length > 0 || tiedWith != null) {
 					onCreated(this.hook, () => {
-						// If a computed property has a field or system field as a dependency
-						// and the host component does not have any watchers to this field,
-						// we need to register a "fake" watcher to enforce watching
 						if (deps != null) {
 							for (let i = 0; i < deps.length; i++) {
 								const
@@ -254,6 +251,9 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 									});
 								}
 
+								// If a computed property has a field or system field as a dependency
+								// and the host component does not have any watchers to this field,
+								// we need to register a "fake" watcher to enforce watching
 								const needToForceWatching =
 									(info.type === 'system' || info.type === 'field') &&
 
@@ -275,11 +275,11 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 								}
 							});
 
-							const needToForceWatching = watchers[tiedWith] == null && computed.dependencies?.length !== 0;
-
 							// If a computed property is tied with a field or system field
 							// and the host component does not have any watchers to this field,
 							// we need to register a "fake" watcher to enforce watching
+							const needToForceWatching = watchers[tiedWith] == null && computed.dependencies?.length !== 0;
+
 							if (needToForceWatching) {
 								this.$watch(tiedWith, {deep: true, immediate: true}, fakeHandler);
 							}
