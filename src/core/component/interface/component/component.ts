@@ -257,7 +257,7 @@ export abstract class ComponentInterface {
 	/**
 	 * A dictionary containing component attributes that are not identified as input properties
 	 */
-	protected readonly $attrs!: Dictionary<string>;
+	protected readonly $attrs!: Dictionary<string | Function>;
 
 	/**
 	 * A dictionary containing the watchable component fields that can trigger a re-rendering of the component
