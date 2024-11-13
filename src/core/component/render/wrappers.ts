@@ -303,19 +303,13 @@ export function wrapMergeProps<T extends typeof mergeProps>(original: T): T {
  * @param original
  * @param withCtx
  */
-export function wrapRenderList<T extends typeof renderList, C extends typeof withCtx>(original: T, withCtx: C): T {
+export function wrapRenderList<T extends typeof renderList>(original: T): T {
 	return Object.cast(function renderList(
 		this: ComponentInterface,
 		src: Nullable<Iterable<unknown> | Dictionary | number>,
 		cb: AnyFunction
 	) {
 		const wrappedCb: AnyFunction = Object.cast(cb);
-
-		// const
-		// 	ctx = this.$renderEngine.r.getCurrentInstance(),
-
-		// 	// Preserve rendering context for the async render
-		// 	wrappedCb: AnyFunction = Object.cast(withCtx(cb, ctx));
 
 		const
 			vnodes = original(src, wrappedCb),
@@ -397,15 +391,12 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 		const that = this;
 		patchVNode(vnode);
 
-		console.log(vnode.dirs);
 		const bindings = vnode.dirs ?? [];
 		vnode.dirs = bindings;
 
 		const instance = this?.unsafe.meta.params.functional === true ?
 			Object.cast(this.$normalParent) :
 			this;
-
-		console.log(vnode, instance.componentName, instance.componentId);
 
 		dirs.forEach((decl) => {
 			const [dir, value, arg, modifiers] = decl;
