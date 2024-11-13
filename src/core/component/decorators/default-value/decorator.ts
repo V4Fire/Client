@@ -46,27 +46,28 @@ export function defaultValue(getter: unknown): PartDecorator {
 		if (meta.props[key] != null) {
 			regProp(key, {default: isFunction ? getter() : getter}, meta);
 
-		} else if (meta.fields[key] != null) {
-			const params = isFunction ?
-				{init: getter, default: undefined} :
-				{init: undefined, default: getter};
+		} else {
+			const
+				isField = key in meta.fields,
+				isSystemField = !isField && key in meta.systemFields;
 
-			regField(key, 'fields', params, meta);
+			if (isField || isSystemField) {
+				const cluster = isField ? 'fields' : 'systemFields';
 
-		} else if (meta.systemFields[key] != null) {
-			const params = isFunction ?
-				{init: getter, default: undefined} :
-				{init: undefined, default: getter};
+				const params = isFunction ?
+					{init: getter, default: undefined} :
+					{init: undefined, default: getter};
 
-			regField(key, 'systemFields', params, meta);
+				regField(key, cluster, params, meta);
 
-		} else if (isFunction) {
-			Object.defineProperty(meta.constructor.prototype, key, {
-				configurable: true,
-				enumerable: false,
-				writable: true,
-				value: getter()
-			});
+			} else if (isFunction) {
+				Object.defineProperty(meta.constructor.prototype, key, {
+					configurable: true,
+					enumerable: false,
+					writable: true,
+					value: getter()
+				});
+			}
 		}
 	});
 }
