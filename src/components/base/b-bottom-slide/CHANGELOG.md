@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.152 (2024-11-11)
+
+#### :rocket: New Feature
+
+* Added `trackContentSwipes` - a flag to prevent unexpected closure of a component instance
+
 ## v4.0.0-beta.94 (2024-04-24)
 
 #### :bug: Bug Fix

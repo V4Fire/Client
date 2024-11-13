@@ -203,6 +203,28 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iOpen, 
 	}
 
 	/**
+	 * Attributes object for the component view block
+	 */
+	protected get viewBlockAttrs(): object {
+		const defaultAttrs = {
+			'v-on-resize': {handler: this.recalculateState.bind(this)}
+		};
+
+		const tracking = this.trackContentSwipes ?
+			{
+				'@touchstart': (e: TouchEvent) => this.swipeControl.onPullStart(e),
+				'@touchmove': (e: TouchEvent) => this.swipeControl.onPull(e),
+				'v-safe-on:touchend': () => this.swipeControl.onPullEnd()
+			} :
+			{};
+
+		return {
+			...defaultAttrs,
+			...tracking
+		};
+	}
+
+	/**
 	 * The minimum value of the height of the component visible part (in percent),
 	 * i.e., even if the component is closed, this part will still be visible
 	 * {@link bBottomSlide.visible}
