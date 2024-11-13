@@ -24,7 +24,9 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
 	for (const methodName in methods) {
 		const method = methods[methodName];
 
-		if (method == null) {
+		// Methods for accessors, such as fooGetter/fooSetter,
+		// are used only with super, so it's not necessary to initialize them as a method on the component
+		if (method == null || method.accessor) {
 			continue;
 		}
 

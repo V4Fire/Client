@@ -200,7 +200,7 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 			const nm = `${name}Setter`;
 
 			proto[nm] = set;
-			meta.methods[nm] = {src, fn: set};
+			meta.methods[nm] = {src, fn: set, accessor: true};
 		}
 
 		// To using `super` within the getter, we also create a new method with a name `${key}Getter`
@@ -208,7 +208,7 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 			const nm = `${name}Getter`;
 
 			proto[nm] = get;
-			meta.methods[nm] = {src, fn: get};
+			meta.methods[nm] = {src, fn: get, accessor: true};
 		}
 
 		let accessor: ComponentAccessor;

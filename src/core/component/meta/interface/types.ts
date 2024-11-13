@@ -69,6 +69,7 @@ export interface ComponentMethod {
 
 	src?: string;
 	wrapper?: boolean;
+	accessor?: boolean;
 
 	watchers?: Dictionary<MethodWatcher>;
 	hooks?: ComponentMethodHooks;
