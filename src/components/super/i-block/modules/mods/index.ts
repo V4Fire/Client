@@ -169,7 +169,7 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
 					void component.setMod(modName, resolveModVal(attrs[attrName]));
 				});
 
-				parentMods.push([modName, () => resolveModVal(component.$attrs[attrName])]);
+				attrMods.push([modName, () => resolveModVal(component.$attrs[attrName])]);
 			}
 		}
 
@@ -257,7 +257,7 @@ export function mergeMods(
 			const attrName = attrNames[i];
 
 			if (attrName in declaredMods) {
-				const attr = component.$attrs[attrName];
+				const attr = <CanUndef<string>>component.$attrs[attrName];
 
 				if (attr != null) {
 					expandedModsProp[attrName] = attr;
