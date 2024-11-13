@@ -12,7 +12,7 @@ import type { JSHandle, Page } from 'playwright';
 import test from 'tests/config/unit/test';
 import { BOM, Component } from 'tests/helpers';
 
-import bDirectivesRefDummy from 'core/component/directives/ref/test/b-directives-ref-dummy/b-directives-ref-dummy';
+import type bDirectivesRefDummy from 'core/component/directives/ref/test/b-directives-ref-dummy/b-directives-ref-dummy';
 
 type RefKey = keyof Pick<bDirectivesRefDummy['$refs'], 'component' | 'slotComponent' | 'nestedSlotComponent'>;
 
