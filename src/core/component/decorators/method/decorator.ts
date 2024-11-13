@@ -59,21 +59,21 @@ export function method(type: MethodType): PartDecorator {
  * @param proto - the prototype of the class where the method or accessor is defined
  */
 export function regMethod(name: string, type: MethodType, meta: ComponentMeta, proto: object): void {
-	const {
-		component,
-		componentName: src,
-
-		props,
-		fields,
-		systemFields,
-
-		methods
-	} = meta;
+	const {componentName: src} = meta;
 
 	if (type === 'method') {
-		let method: ComponentMethod;
+		regMethod();
+
+	} else {
+		regAccessor();
+	}
+
+	function regMethod() {
+		const {methods} = meta;
 
 		const fn = proto[name];
+
+		let method: ComponentMethod;
 
 		if (methods.hasOwnProperty(name)) {
 			method = methods[name]!;
@@ -141,13 +141,16 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 				}
 			});
 		}
+	}
 
-	} else {
+	function regAccessor() {
 		const desc = Object.getOwnPropertyDescriptor(proto, name);
 
 		if (desc == null) {
 			return;
 		}
+
+		const {props, fields, systemFields} = meta;
 
 		const
 			propKey = `${name}Prop`,
@@ -232,7 +235,7 @@ export function regMethod(name: string, type: MethodType, meta: ComponentMeta, p
 		store[name] = accessor;
 
 		if (accessor.cache === 'auto') {
-			component.computed[name] = {
+			meta.component.computed[name] = {
 				get: accessor.get,
 				set: accessor.set
 			};
