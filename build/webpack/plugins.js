@@ -70,7 +70,7 @@ module.exports = async function plugins({name}) {
 
 	const isThirdFatHTMLMode = config.webpack.fatHTML() === 3;
 
-	if ((config.webpack.fatHTML() && !isThirdFatHTMLMode) || config.webpack.storybook() || config.webpack.ssr) {
+	if ((config.webpack.fatHTML() || config.webpack.storybook() || config.webpack.ssr) && !isThirdFatHTMLMode) {
 		plugins.set('limit-chunk-count-plugin', new webpack.optimize.LimitChunkCountPlugin({
 			maxChunks: 1
 		}));
