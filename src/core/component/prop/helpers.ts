@@ -40,16 +40,17 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 
 		for (let i = 0; i < attrNames.length; i++) {
 			const
+				// The name of an attribute can be either the name of a component prop,
+				// the name of a regular DOM node attribute,
+				// or an event handler (in which case the attribute name will start with `on`)
 				attrName = attrNames[i],
 				prop = meta.props[attrName];
 
-			if ((prop == null || prop.forceUpdate) && !isPropGetter.test(attrName)) {
-				continue;
-			}
-
-			if (prop == null) {
+			if (prop == null && isPropGetter.test(attrName)) {
 				const propName = isPropGetter.replace(attrName);
 
+				// If an accessor is provided for a prop with `forceUpdate: false`,
+				// it is included in the list of synchronized props
 				if (meta.props[propName]?.forceUpdate === false) {
 					propValuesToUpdate.push([propName, attrName]);
 
