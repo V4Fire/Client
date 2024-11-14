@@ -61,6 +61,13 @@ export function defaultValue(getter: unknown): PartDecorator {
 				regField(key, cluster, params, meta);
 
 			} else if (isFunction) {
+				// Registration of methods that are described as properties, such as:
+				// ```
+				// on: typeof this['selfEmitter']['on'] =
+				//   function on(this: iBlockEvent, event: string, handler: Function, opts?: AsyncOptions): object {
+				//    return this.selfEmitter.on(event, <any>handler, opts);
+				//   };
+				// ```
 				Object.defineProperty(meta.constructor.prototype, key, {
 					configurable: true,
 					enumerable: false,

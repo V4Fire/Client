@@ -183,12 +183,12 @@ Or just pass modifiers as regular props.
 < b-example :visible = true
 ```
 
-To disable modifier inheritance, pass the `inheridMods: false` option when creating the component.
+To disable modifier inheritance, pass the `inheritMods: false` option when creating the component.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
 
-@component({inheridMods: false})
+@component({inheritMods: false})
 class bExample extends iBlock {}
 ```
 

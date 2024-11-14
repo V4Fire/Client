@@ -15,7 +15,7 @@ import type { PartDecorator } from 'core/component/decorators/interface';
 import type { DecoratorComputed } from 'core/component/decorators/computed/interface';
 
 /**
- * Assigns meta-information to a computed field or an accessor within a component
+ * Assigns metainformation to a computed field or an accessor within a component
  *
  * @decorator
  * @param [params] - an object with accessor parameters
