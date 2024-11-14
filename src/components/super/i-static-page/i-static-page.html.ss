@@ -140,7 +140,6 @@
 					<! :: STYLES
 
 					- block headScripts
-						+= h.getPageAsyncScripts()
 						+= await h.loadLibs(deps.headScripts, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
 						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
 						+= await h.loadLibs(deps.scripts, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
@@ -149,6 +148,8 @@
 						+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
 
 						+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
+
+						+= h.getPageAsyncScripts()
 
 			< body ${rootAttrs|!html}
 				<! :: SSR
