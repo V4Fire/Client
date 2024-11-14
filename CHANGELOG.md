@@ -63,6 +63,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
     This decorator is automatically added during the build process.
   * Optimized creation of metaobjects.
 
+## v4.0.0-beta.??? (2024-11-??)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with emitting the `close` after destroying the component.
+This happened because we used `await` and this task could be executed after the component was destroyed.
+So we replaced `await` with `SyncPromise`. `bBottomSlide`
+
 ## v4.0.0-beta.152 (2024-11-11)
 
 #### :rocket: New Feature
