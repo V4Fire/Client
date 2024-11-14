@@ -91,14 +91,14 @@ function getPageAsyncScripts() {
 			asyncChunks = JSON.parse(fileContent);
 
 		if (webpack.mode() === 'production') {
-			return asyncChunks.reduce((result, chunk) => `${result}<template id="${chunk.id}"><script>${
+			return asyncChunks.reduce((result, chunk) => `${result}<script type="text/template" id="${chunk.id}"><script>${
 				chunk.files.map((fileName) => `include('${src.clientOutput(fileName)}');\n`).join()
-			}</script></template>`, '');
+			}</script></script>`, '');
 		}
 
-		return `<div id="scripts-shadow-store">${asyncChunks.reduce((result, chunk) => `${result}<template id="${chunk.id}"><script id="${chunk.id}">${
+		return `<div id="scripts-shadow-store">${asyncChunks.reduce((result, chunk) => `${result}<script type="text/template" id="${chunk.id}"><script id="${chunk.id}">${
 			chunk.files.map((fileName) => `include('${src.clientOutput(fileName)}');\n`).join()
-		}</script></template>`, '')}</div>`;
+		}</script></script>`, '')}</div>`;
 
 	} catch (e) {
 		return '';
