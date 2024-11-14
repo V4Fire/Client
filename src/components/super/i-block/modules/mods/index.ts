@@ -30,74 +30,60 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
 	type RemoteMods = Array<[string, () => CanUndef<string>]>;
 
 	const
-		parentMods: RemoteMods = [],
-		attrMods: RemoteMods = [];
+		sharedMods = initSharedMods(),
+		attrMods = initAttrMods();
 
-	if (component.inheritMods) {
-		initSharedMods();
-	}
+	return component.sync.link(link)!;
 
-	initModsFromAttrs();
+	function link(modsProp: CanUndef<ModsProp>): ModsDict {
+		const isModsInitialized = Object.isDictionary(component.mods);
 
-	return Object.cast(component.sync.link(link));
+		const mods = isModsInitialized ? component.mods : {...declMods};
 
-	function link(propMods: CanUndef<ModsProp>): ModsDict {
-		const
-			isModsInitialized = Object.isDictionary(component.mods),
-			mods = isModsInitialized ? component.mods : {...declMods};
+		linkSharedMods();
+		linkModsProp();
+		linkAttrMods();
+		linExpMods();
 
-		for (let i = 0; i < parentMods.length; i++) {
-			const [modName, getModValue] = parentMods[i];
+		return initMods();
 
-			const modVal = getModValue();
+		function initMods() {
+			const modNames = Object.keys(mods);
 
-			if (isModsInitialized || modVal != null) {
+			for (let i = 0; i < modNames.length; i++) {
+				const modName = modNames[i];
+
+				const modVal = resolveModVal(mods[modName]);
 				mods[modName] = modVal;
+
+				if (component.hook !== 'beforeDataCreate') {
+					void component.setMod(modName, modVal);
+				}
 			}
+
+			return mods;
 		}
 
-		if (propMods != null) {
-			const propNames = Object.keys(propMods);
+		function linkSharedMods() {
+			for (let i = 0; i < sharedMods.length; i++) {
+				const [modName, getModValue] = sharedMods[i];
 
-			for (let i = 0; i < propNames.length; i++) {
-				const
-					propName = propNames[i],
-					propVal = propMods[propNames[i]];
+				const modVal = getModValue();
 
-				if (propVal != null || mods[propName] == null) {
-					mods[propName] = resolveModVal(propVal);
+				if (isModsInitialized || modVal != null) {
+					mods[modName] = modVal;
 				}
 			}
 		}
 
-		for (let i = 0; i < attrMods.length; i++) {
-			const [modName, getModValue] = attrMods[i];
+		function linkModsProp() {
+			if (modsProp != null) {
+				const modNames = Object.keys(modsProp);
 
-			const modVal = getModValue();
-
-			if (isModsInitialized || modVal != null) {
-				mods[modName] = modVal;
-			}
-		}
-
-		const {experiments} = component.r.remoteState;
-
-		if (Object.isArray(experiments)) {
-			for (let i = 0; i < experiments.length; i++) {
-				const
-					exp = experiments[i],
-					expMods = exp.meta?.mods;
-
-				if (!Object.isDictionary(expMods)) {
-					continue;
-				}
-
-				const expModNames = Object.keys(expMods);
-
-				for (let i = 0; i < expModNames.length; i++) {
+				for (let i = 0; i < modNames.length; i++) {
 					const
-						modName = expModNames[i],
-						modVal = expMods[modName];
+						modName = modNames[i],
+						modVal = modsProp[modNames[i]];
 
 					if (modVal != null || mods[modName] == null) {
 						mods[modName] = resolveModVal(modVal);
@@ -106,50 +92,79 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
 			}
 		}
 
-		const modNames = Object.keys(mods);
+		function linkAttrMods() {
+			for (let i = 0; i < attrMods.length; i++) {
+				const [modName, getModValue] = attrMods[i];
 
-		for (let i = 0; i < modNames.length; i++) {
-			const modName = modNames[i];
+				const modVal = getModValue();
 
-			const modVal = resolveModVal(mods[modName]);
-			mods[modName] = modVal;
-
-			if (component.hook !== 'beforeDataCreate') {
-				void component.setMod(modName, modVal);
+				if (isModsInitialized || modVal != null) {
+					mods[modName] = modVal;
+				}
 			}
 		}
 
-		return mods;
+		function linExpMods() {
+			const {experiments} = component.r.remoteState;
+
+			if (Object.isArray(experiments)) {
+				for (let i = 0; i < experiments.length; i++) {
+					const
+						exp = experiments[i],
+						expMods = exp.meta?.mods;
+
+					if (!Object.isDictionary(expMods)) {
+						continue;
+					}
+
+					const expModNames = Object.keys(expMods);
+
+					for (let i = 0; i < expModNames.length; i++) {
+						const
+							modName = expModNames[i],
+							modVal = expMods[modName];
+
+						if (modVal != null || mods[modName] == null) {
+							mods[modName] = resolveModVal(modVal);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	function initSharedMods() {
-		const parent = component.$parent;
+		const remoteMods: RemoteMods = [];
 
-		if (parent == null) {
-			return;
+		if (!component.inheritMods) {
+			return remoteMods;
 		}
 
-		const {sharedMods} = parent;
+		const
+			parent = component.$parent,
+			sharedMods = parent?.sharedMods;
 
-		if (sharedMods == null) {
-			return;
+		if (sharedMods != null) {
+			const modNames = Object.keys(sharedMods);
+
+			for (let i = 0; i < modNames.length; i++) {
+				const modName = modNames[i];
+
+				component.watch(`$parent.mods.${modName}`, (mods: ModsDict) => {
+					void component.setMod(modName, mods[modName]);
+				});
+
+				remoteMods.push([modName, () => parent!.mods[modName]]);
+			}
 		}
 
-		const modNames = Object.keys(sharedMods);
-
-		for (let i = 0; i < modNames.length; i++) {
-			const modName = modNames[i];
-
-			component.watch(`$parent.mods.${modName}`, (mods: ModsDict) => {
-				void component.setMod(modName, mods[modName]);
-			});
-
-			parentMods.push([modName, () => parent.mods[modName]]);
-		}
+		return remoteMods;
 	}
 
-	function initModsFromAttrs() {
-		const attrNames = Object.keys(component.$attrs);
+	function initAttrMods() {
+		const
+			remoteMods: RemoteMods = [],
+			attrNames = Object.keys(component.$attrs);
 
 		let el: Nullable<Node>;
 
@@ -169,7 +184,7 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
 					void component.setMod(modName, resolveModVal(attrs[attrName]));
 				});
 
-				attrMods.push([modName, () => resolveModVal(component.$attrs[attrName])]);
+				remoteMods.push([modName, () => resolveModVal(component.$attrs[attrName])]);
 			}
 		}
 
@@ -178,12 +193,14 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
 				el = component.$el;
 
 				if (el instanceof Element) {
-					for (let i = 0; i < parentMods.length; i++) {
-						el.removeAttribute(parentMods[i][0]);
+					for (let i = 0; i < sharedMods.length; i++) {
+						el.removeAttribute(sharedMods[i][0]);
 					}
 				}
 			}
 		});
+
+		return remoteMods;
 	}
 
 	function resolveModVal(val: unknown) {
@@ -198,74 +215,50 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
  *
  * @param component
  * @param oldComponent
- * @param name - the field name that is merged when the component is re-created (this will be `mods`)
- * @param [link] - the reference name which takes its value based on the current field
  */
-export function mergeMods(
-	component: iBlock['unsafe'],
-	oldComponent: iBlock['unsafe'],
-	name: string,
-	link?: string
-): void {
-	if (link == null) {
-		// @ts-ignore (readonly)
-		component.mods = {...oldComponent.mods};
-		return;
-	}
-
-	const cache = component.$syncLinkCache.get(link);
-
-	if (cache == null) {
-		return;
-	}
-
-	const l = cache[name];
-
-	if (l == null) {
-		return;
-	}
+export function mergeMods(component: iBlock['unsafe'], oldComponent: iBlock['unsafe']): void {
+	const declaredMods = component.meta.component.mods;
 
 	const
-		modsProp = getExpandedModsProp(component),
-		mods = {...oldComponent.mods};
+		oldMods = oldComponent.mods,
+		mergedMods = {...oldMods, ...component.mods};
 
-	if (Object.fastCompare(modsProp, getExpandedModsProp(oldComponent))) {
-		l.sync(mods);
+	initModsProp();
+	initAttrMods();
 
-	} else {
-		l.sync(Object.assign(mods, modsProp));
-	}
+	// @ts-ignore (readonly)
+	component.mods = mergedMods;
 
-	function getExpandedModsProp(component: iBlock['unsafe']): ModsDict {
-		if (link == null) {
-			return {};
-		}
-
-		const modsProp = component[link];
-
-		if (!Object.isDictionary(modsProp)) {
-			return {};
-		}
-
-		const
-			declaredMods = component.meta.component.mods,
-			expandedModsProp = <ModsDict>{...modsProp};
-
-		const attrNames = Object.keys(component.$attrs);
+	function initAttrMods() {
+		const attrNames = Object.keys(oldComponent.$attrs);
 
 		for (let i = 0; i < attrNames.length; i++) {
 			const attrName = attrNames[i];
 
-			if (attrName in declaredMods) {
-				const attr = <CanUndef<string>>component.$attrs[attrName];
-
-				if (attr != null) {
-					expandedModsProp[attrName] = attr;
-				}
+			if (attrName in declaredMods && component.$attrs[attrName] === oldComponent.$attrs[attrName]) {
+				mergedMods[attrName] = oldMods[attrName];
 			}
 		}
+	}
 
-		return expandedModsProp;
+	function initModsProp() {
+		const
+			currentModsProps = component.modsProp,
+			oldModsProps = oldComponent.modsProp;
+
+		if (oldModsProps == null || currentModsProps == null || currentModsProps === oldModsProps) {
+			return;
+		}
+
+		const modNames = Object.keys(oldModsProps);
+
+		for (let i = 0; i < modNames.length; i++) {
+			const modName = modNames[i];
+
+			if (currentModsProps[modName] === oldModsProps[modName]) {
+				mergedMods[modName] = oldMods[modName];
+			}
+		}
 	}
 }
 
