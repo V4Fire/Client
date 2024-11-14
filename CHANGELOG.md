@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-11-??)
+
+#### :bug: Bug Fix
+
+* Re-fixed loss of refs in slots inside async render (see v4.0.0-beta.52)
+  by converting `v-ref` to a prop for regular components `build/snakeskin/filters`
+
+#### :house: Internal
+
+* Removed context binding in wrapRenderList `core/component/render`
+
+
 ## v4.0.0-beta.152 (2024-11-11)
 
 #### :rocket: New Feature
