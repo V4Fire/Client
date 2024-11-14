@@ -43,7 +43,7 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
 		linkSharedMods();
 		linkModsProp();
 		linkAttrMods();
-		linExpMods();
+		linkExpMods();
 
 		return initMods();
 
@@ -104,7 +104,7 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
 			}
 		}
 
-		function linExpMods() {
+		function linkExpMods() {
 			const {experiments} = component.r.remoteState;
 
 			if (Object.isArray(experiments)) {
@@ -193,8 +193,8 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
 				el = component.$el;
 
 				if (el instanceof Element) {
-					for (let i = 0; i < sharedMods.length; i++) {
-						el.removeAttribute(sharedMods[i][0]);
+					for (let i = 0; i < remoteMods.length; i++) {
+						el.removeAttribute(remoteMods[i][0]);
 					}
 				}
 			}
