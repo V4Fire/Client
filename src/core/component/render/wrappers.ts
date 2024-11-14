@@ -557,14 +557,14 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
  * @param original
  */
 export function wrapWithModifiers<T extends typeof withModifiers>(original: T): T {
-	return Object.cast(function withModifiers(fn: Function, modifiers: string[]) {
+	return Object.cast(function withModifiers(fn: AnyFunction, modifiers: string[]) {
 		return (event: Event, ...args: unknown[]) => {
 			if (modifiers.includes('safe') && event.target instanceof Element && !event.target.isConnected) {
 				event.stopImmediatePropagation();
 				return;
 			}
 
-			return original(fn, modifiers)(event, ...args);
+			return original(fn, Object.cast<Parameters<T>[1]>(modifiers))(event, ...args);
 		};
 	});
 }
