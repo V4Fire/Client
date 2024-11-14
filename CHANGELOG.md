@@ -17,11 +17,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Re-fixed loss of refs in slots inside async render (see v4.0.0-beta.52)
   by converting `v-ref` to a prop for regular components `build/snakeskin/filters`
+* Fixed an issue with emitting the `close` after destroying the component.
+  This happened because we used `await` and this task could be executed after the component was destroyed.
+  So we replaced `await` with `SyncPromise`. `bBottomSlide`
 
 #### :house: Internal
 
 * Removed context binding in wrapRenderList `core/component/render`
-
 
 ## v4.0.0-beta.152 (2024-11-11)
 
