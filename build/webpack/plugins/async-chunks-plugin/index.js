@@ -23,15 +23,10 @@ class AsyncPlugRuntimeModule extends RuntimeModule {
 	generate() {
 		return `var loadScript = ${RuntimeGlobals.loadScript};
 function loadScriptReplacement(path, cb, chunk, id) {
-	if (document.getElementById(id) != null) {
-		const
-			tplText = document.getElementById(id).textContent,
-			tempDiv = document.createElement('div');
-
-		tempDiv.innerHTML = tplText;
-		document.body.appendChild(tempDiv.firstElementChild);
+	var tpl = document.getElementById(id);
+	if (tpl && tpl.content) {
+		document.body.appendChild(tpl.content.cloneNode(true));
 		cb();
-
 	} else {
 		loadScript(path, cb, chunk, id);
 	}
