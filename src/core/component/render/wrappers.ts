@@ -301,16 +301,17 @@ export function wrapMergeProps<T extends typeof mergeProps>(original: T): T {
  * A wrapper for the component library `renderList` function
  *
  * @param original
- * @param withCtx
  */
-export function wrapRenderList<T extends typeof renderList, C extends typeof withCtx>(original: T, withCtx: C): T {
+export function wrapRenderList<T extends typeof renderList>(original: T): T {
 	return Object.cast(function renderList(
 		this: ComponentInterface,
 		src: Nullable<Iterable<unknown> | Dictionary | number>,
 		cb: AnyFunction
 	) {
+		const wrappedCb: AnyFunction = Object.cast(cb);
+
 		const
-			vnodes = original(src, cb),
+			vnodes = original(src, wrappedCb),
 			asyncRenderId = src?.[ASYNC_RENDER_ID];
 
 		if (asyncRenderId != null) {

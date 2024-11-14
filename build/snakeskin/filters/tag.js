@@ -80,7 +80,7 @@ module.exports = [
 
 		// Adding the v-ref directive to a non-functional component can lead to excessive re-renders
 		// with any change in the parent state, so we add it as a prop
-		if (!isSimpleTag && !isFunctional && !vFuncDir) {
+		if (!isSimpleTag && !isFunctional && vFuncDir !== 'true') {
 			vRef = `:${vRef}`;
 		}
 
