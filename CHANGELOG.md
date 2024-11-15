@@ -13,6 +13,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2024-11-??)
 
+#### :house: Internal
+
+* Fixed an issue with reloading after a component is destroyed.
+Reloading now occurs for unloaded components or when explicitly specified with `reloadOnActivation: true`.
+`components/super/i-block/modules/activation`
+* Removed context binding in wrapRenderList `core/component/render`
+
 #### :bug: Bug Fix
 
 * Re-fixed loss of refs in slots inside async render (see v4.0.0-beta.52)
@@ -20,10 +27,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed an issue with emitting the `close` after destroying the component.
   This happened because we used `await` and this task could be executed after the component was destroyed.
   So we replaced `await` with `SyncPromise`. `bBottomSlide`
-
-#### :house: Internal
-
-* Removed context binding in wrapRenderList `core/component/render`
+* Fix error "ctx.$vueWatch is not a function" caused by the incorrect fix in the v4.0.0-beta.146 `core/component/watch`
 
 ## v4.0.0-beta.152 (2024-11-11)
 
