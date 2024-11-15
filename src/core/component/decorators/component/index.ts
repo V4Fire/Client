@@ -12,6 +12,7 @@
  */
 
 import { identity } from 'core/functools';
+import log from 'core/log';
 
 import {
 
@@ -38,12 +39,14 @@ import {
 } from 'core/component/meta';
 
 import { initEmitter } from 'core/component/event';
-import { getComponent, ComponentEngine } from 'core/component/engines';
+import { getComponent, ComponentEngine, AsyncComponentOptions } from 'core/component/engines';
 
 import { getComponentMods, getInfoFromConstructor } from 'core/component/reflect';
 import { registerComponent, registerParentComponents } from 'core/component/init';
 
 import type { ComponentConstructor, ComponentOptions } from 'core/component/interface';
+
+const logger = log.namespace('core/component');
 
 const OVERRIDDEN = Symbol('This class is overridden in the child layer');
 
@@ -226,7 +229,7 @@ export function component(opts?: ComponentOptions): Function {
 				fillMeta(meta, target);
 
 				if (!componentInfo.isAbstract) {
-					Promise.resolve(loadTemplate(meta.component)).catch(stderr);
+					Promise.resolve(loadTemplate(meta.component, true)).catch(stderr);
 				}
 
 			} else if (meta.params.root) {
@@ -241,11 +244,34 @@ export function component(opts?: ComponentOptions): Function {
 				}
 			}
 
-			function loadTemplate(component: object): CanPromise<ComponentOptions> {
-				let resolve: Function = identity;
-				return meta.params.tpl === false ? attachTemplatesAndResolve() : waitComponentTemplates();
+			function loadTemplate(
+				component: object,
+				isFunctional: boolean = false
+			): ComponentOptions | AsyncComponentOptions {
+				let
+					resolve: Function = identity,
+					reject: Function;
 
-				function waitComponentTemplates() {
+				if (meta.params.tpl === false) {
+					return attachTemplatesAndResolve();
+				}
+
+				if (TPLS[meta.componentName] != null) {
+					return waitComponentTemplates();
+				}
+
+				if (isFunctional) {
+					logger.info('loadTemplate', `Template missing for functional component: ${meta.componentName}`);
+				}
+
+				return {
+					loader: () => Promise.resolve(waitComponentTemplates(Date.now())),
+					onError(error: Error) {
+						logger.error('async-loader', error, meta.componentName);
+					}
+				};
+
+				function waitComponentTemplates(startedLoadingAt: number = 0) {
 					const fns = TPLS[meta.componentName];
 
 					if (fns != null) {
@@ -257,9 +283,11 @@ export function component(opts?: ComponentOptions): Function {
 						return;
 					}
 
+					// Return promise on first try
 					if (resolve === identity) {
-						return new Promise((r) => {
-							resolve = r;
+						return new Promise((res, rej) => {
+							resolve = res;
+							reject = rej;
 							retry();
 						});
 					}
@@ -267,7 +295,13 @@ export function component(opts?: ComponentOptions): Function {
 					retry();
 
 					function retry() {
-						requestIdleCallback(waitComponentTemplates, {timeout: 50});
+						// The template should be loaded in 10 seconds after it was requested by the render engine
+						if (Date.now() - startedLoadingAt > (10).seconds()) {
+							reject(new Error('The component template could not be loaded in 10 seconds'));
+
+						} else {
+							requestIdleCallback(waitComponentTemplates.bind(null, startedLoadingAt), {timeout: 50});
+						}
 					}
 				}
 
