@@ -13,6 +13,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.??? (2024-11-??)
 
+#### :house: Internal
+
+* Fixed an issue with reloading after a component is destroyed.
+Reloading now occurs for unloaded components or when explicitly specified with `reloadOnActivation: true`.
+`components/super/i-block/modules/activation`
+
 #### :bug: Bug Fix
 
 * Fixed an issue with emitting the `close` after destroying the component.
