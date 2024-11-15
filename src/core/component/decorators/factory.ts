@@ -226,6 +226,10 @@ export function paramsFactory<T = object>(
 					}
 				});
 
+				if (metaKey === 'props') {
+					desc.forceUpdate ??= true;
+				}
+
 				metaCluster[key] = desc;
 
 				if (metaKey === 'props' && desc.forceUpdate === false) {
@@ -263,13 +267,13 @@ export function paramsFactory<T = object>(
 							const info = {...invertedMetaCluster[key]};
 							delete info.functional;
 
-							if (invertedMetaKey === 'prop') {
+							if (invertedMetaKey === 'props') {
 								if (Object.isFunction(info.default)) {
 									(<ComponentField>info).init = info.default;
 									delete info.default;
 								}
 
-							} else if (metaKey === 'prop') {
+							} else if (metaKey === 'props') {
 								delete (<ComponentField>info).init;
 							}
 
