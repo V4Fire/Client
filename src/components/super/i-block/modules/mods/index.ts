@@ -217,49 +217,60 @@ export function initMods(component: iBlock['unsafe']): ModsDict {
  * @param oldComponent
  */
 export function mergeMods(component: iBlock['unsafe'], oldComponent: iBlock['unsafe']): void {
-	const declaredMods = component.meta.component.mods;
+	const
+		currentModsProps = component.modsProp,
+		oldModsProps = oldComponent.modsProp;
 
 	const
-		oldMods = oldComponent.mods,
-		mergedMods = {...oldMods, ...component.mods};
+		currentAttrs = component.$attrs,
+		oldAttrs = oldComponent.$attrs;
 
-	initModsProp();
-	initAttrMods();
+	const
+		currentMods = component.mods,
+		oldMods = oldComponent.mods;
+
+	const
+		mergedMods = {...currentMods},
+		isModsPropsPassed = currentModsProps != null && oldModsProps != null;
+
+	const modNames = Object.keys(oldMods);
+
+	for (let i = 0; i < modNames.length; i++) {
+		const modName = modNames[i];
+
+		const
+			currentModVal = currentMods[modName],
+			oldModVal = oldMods[modName];
+
+		// True if the modifier value needs to be taken from the old component
+		let shouldSetFromOld =
+			currentModVal !== oldModVal &&
+
+			// Do not merge modifiers that receive their value through `sync.mod`
+			component.sync.syncModCache[modName] == null;
+
+		if (shouldSetFromOld) {
+			// If a modifier was passed through the `modsProp` prop, but the value in the prop has changed
+			if (isModsPropsPassed && currentModsProps[modName] !== oldMods[modName]) {
+				shouldSetFromOld = false;
+
+			} else {
+				const attrName = modName.dasherize();
+
+				// If a modifier was passed through the component's attributes, but its value has changed
+				if (currentAttrs[attrName] !== oldAttrs[attrName]) {
+					shouldSetFromOld = false;
+				}
+			}
+
+			if (shouldSetFromOld) {
+				mergedMods[modName] = oldModVal;
+			}
+		}
+	}
 
 	// @ts-ignore (readonly)
 	component.mods = mergedMods;
-
-	function initAttrMods() {
-		const attrNames = Object.keys(oldComponent.$attrs);
-
-		for (let i = 0; i < attrNames.length; i++) {
-			const attrName = attrNames[i];
-
-			if (attrName in declaredMods && component.$attrs[attrName] === oldComponent.$attrs[attrName]) {
-				mergedMods[attrName] = oldMods[attrName];
-			}
-		}
-	}
-
-	function initModsProp() {
-		const
-			currentModsProps = component.modsProp,
-			oldModsProps = oldComponent.modsProp;
-
-		if (oldModsProps == null || currentModsProps == null || currentModsProps === oldModsProps) {
-			return;
-		}
-
-		const modNames = Object.keys(oldModsProps);
-
-		for (let i = 0; i < modNames.length; i++) {
-			const modName = modNames[i];
-
-			if (currentModsProps[modName] === oldModsProps[modName]) {
-				mergedMods[modName] = oldMods[modName];
-			}
-		}
-	}
 }
 
 /**
