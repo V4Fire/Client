@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-11-??)
+
+#### :bug: Bug Fix
+
+* Fix error "ctx.$vueWatch is not a function" caused by the incorrect fix in the v4.0.0-beta.146 `core/component/watch`
+
 ## v4.0.0-beta.152 (2024-11-11)
 
 #### :rocket: New Feature
