@@ -1,5 +1,5 @@
 {
-  "hash": "7b16e904c8d6785034161f61a4a4b42111ccf767585d6f643478eec974899aa8",
+  "hash": "8f18802f0b580482f8a74dc03c996770a4b40f666d675930c34391d617e48966",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2866,6 +2866,7 @@
             "parent": "i-static-page",
             "dependencies": [
               "b-dummy",
+              "b-directives-ref-dummy",
               "b-router",
               "b-dynamic-page",
               "b-remote-provider",
@@ -2915,6 +2916,7 @@
           "parent": "i-static-page",
           "dependencies": [
             "b-dummy",
+            "b-directives-ref-dummy",
             "b-router",
             "b-dynamic-page",
             "b-remote-provider",
