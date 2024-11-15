@@ -176,9 +176,7 @@ export function onActivated(component: iBlock, force: boolean = false): void {
 		unsafe.componentStatus = 'beforeReady';
 	}
 
-	const needInitLoadOrReload =
-		!unsafe.isReadyOnce &&
-		force || unsafe.reloadOnActivation;
+	const needInitLoadOrReload = unsafe.reloadOnActivation || unsafe.componentStatus === 'unloaded';
 
 	if (needInitLoadOrReload) {
 		const group = {group: 'requestSync:get'};
@@ -220,6 +218,11 @@ export function onDeactivated(component: iBlock): void {
 
 	async.forEach(($a) => {
 		Object.entries(Namespaces).forEach(([key, namespace]) => {
+			if (unsafe.reloadOnActivation && namespace === Namespaces.request) {
+				$a.muteRequest();
+				return;
+			}
+
 			if (Object.isNumber(namespace) && nonMuteAsyncNamespaces[namespace]) {
 				return;
 			}

@@ -23,6 +23,15 @@ Changelog
 
 * The decorators from `core/component/decorators` no longer use a single factory module. Now, each decorator is implemented independently.
 
+## v4.0.0-beta.153 (2024-11-15)
+
+#### :bug: Bug Fix
+
+* Fixed endless attempts to load a component template that is not in use.
+  Added a 10-second limit for attempts to load the template.
+* Default `forceUpdate` param of a property no longer overrides its value inherited from the parent component
+* Fixed typo: `"prop"` -> `"props"` when inheriting parent properties
+
 ## v4.0.0-beta.144 (2024-10-09)
 
 #### :bug: Bug Fix

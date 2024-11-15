@@ -311,17 +311,13 @@ export function wrapMergeProps<T extends typeof mergeProps>(original: T): T {
  * @param original
  * @param withCtx
  */
-export function wrapRenderList<T extends typeof renderList, C extends typeof withCtx>(original: T, withCtx: C): T {
+export function wrapRenderList<T extends typeof renderList>(original: T): T {
 	return Object.cast(function renderList(
 		this: ComponentInterface,
 		src: Nullable<Iterable<unknown> | Dictionary | number>,
 		cb: AnyFunction
 	) {
-		const
-			ctx = this.$renderEngine.r.getCurrentInstance(),
-
-			// Preserve rendering context for the async render
-			wrappedCb: AnyFunction = Object.cast(withCtx(cb, ctx));
+		const wrappedCb: AnyFunction = Object.cast(cb);
 
 		const
 			vnodes = original(src, wrappedCb),

@@ -41,10 +41,17 @@ export function canSkipWatching(
 
 		const isFunctional = params.functional === true;
 
-		if (propInfo.type === 'prop' || (propInfo.type === 'attr' && !propInfo.fullPath.endsWith('$attrs'))) {
+		const
+			isProp = propInfo.type === 'prop',
+			isAttr = propInfo.type === 'attr';
+
+		if (isProp || isAttr) {
 			skipWatching = SSR || params.root === true || isFunctional;
 
-			if (!skipWatching) {
+			if (
+				!skipWatching &&
+				(isProp || propInfo.fullPath !== '$attrs' && !propInfo.fullPath.endsWith('.$attrs'))
+			) {
 				const
 					prop = meta.props[propInfo.name],
 					propName = prop?.forceUpdate !== false ? propInfo.name : `on:${propInfo.name}`;

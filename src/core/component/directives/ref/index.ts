@@ -24,10 +24,6 @@ import type { DirectiveOptions } from 'core/component/directives/ref/interface';
 export * from 'core/component/directives/ref/const';
 export * from 'core/component/directives/ref/interface';
 
-//#if runtime has dummyComponents
-import('core/component/directives/ref/test/b-directives-ref-dummy');
-//#endif
-
 ComponentEngine.directive('ref', {
 	mounted: updateRef,
 	updated: updateRef
