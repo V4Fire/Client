@@ -143,23 +143,7 @@ export const
 
 export const withModifiers = wrapWithModifiers(superWithModifiers);
 
-export const renderList = wrapRenderList(
-	superRenderList,
-	(...args: Parameters<typeof superWithCtx>) => {
-		// Vue has two contexts for instances: `currentInstance` and `currentRenderingInstance`.
-		// The context for the renderList should be a `currentRenderingInstance`
-		// because `renderList` is called during component rendering.
-		const fn = superWithCtx(...args);
-
-		// Enable block tracking
-		// @see https://github.com/vuejs/core/blob/45984d559fe0c036657d5f2626087ea8eec205a8/packages/runtime-core/src/componentRenderContext.ts#L88
-		if ('_d' in fn) {
-			(<Function & {_d: boolean}>fn)._d = false;
-		}
-
-		return fn;
-	}
-);
+export const renderList = wrapRenderList(superRenderList);
 
 /**
  * Renders the specified VNode and returns the result

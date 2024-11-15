@@ -91,6 +91,27 @@ test.describe('<b-bottom-slide> gestures', () => {
 		test.expect(openedModVal).toBe('true');
 	});
 
+	test('should stop tracking gestures on the content block when content swipes tracking disabled', async ({page}) => {
+		const component = await renderBottomSlide(page, {
+			heightMode: 'content',
+			trackContentSwipes: false,
+			visible: 80
+		});
+
+		await open(page, component);
+
+		const
+			windowY = await getComponentWindowYPos(component);
+
+		await gestures.evaluate((ctx, windowY) =>
+			ctx.swipe(ctx.buildSteps(5, 40, windowY + 20, 0, 30)), windowY);
+
+		const
+			openedModVal = await component.evaluate(({mods}) => mods.opened);
+
+		test.expect(openedModVal).toBe('true');
+	});
+
 	test('should pull up the window when the cursor moves up', async ({page}) => {
 		const component = await renderBottomSlide(page, {
 			heightMode: 'full',

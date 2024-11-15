@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.153 (2024-11-15)
+
+#### :bug: Bug Fix
+
+* Re-fixed loss of refs in slots inside async render (see v4.0.0-beta.52)
+  by converting `v-ref` to a prop for regular components `build/snakeskin/filters`
+
 ## v4.0.0-beta.145 (2024-10-14)
 
 #### :bug: Bug Fix

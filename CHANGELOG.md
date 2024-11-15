@@ -11,6 +11,34 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.153 (2024-11-15)
+
+#### :house: Internal
+
+* Fixed an issue with reloading after a component is destroyed.
+Reloading now occurs for unloaded components or when explicitly specified with `reloadOnActivation: true`.
+`components/super/i-block/modules/activation`
+* Removed context binding in wrapRenderList `core/component/render`
+
+#### :bug: Bug Fix
+
+* Re-fixed loss of refs in slots inside async render (see v4.0.0-beta.52)
+  by converting `v-ref` to a prop for regular components `build/snakeskin/filters`
+* Fixed an issue with emitting the `close` after destroying the component.
+  This happened because we used `await` and this task could be executed after the component was destroyed.
+  So we replaced `await` with `SyncPromise`. `bBottomSlide`
+* Fix error "ctx.$vueWatch is not a function" caused by the incorrect fix in the v4.0.0-beta.146 `core/component/watch`
+* Fixed endless attempts to load a component template that is not in use.
+  Added a 10-second limit for attempts to load the template. `core/component/decorators/component`
+* Default `forceUpdate` param of a property no longer overrides its value inherited from parent component `core/component/decorators/prop`
+* Fixed typo: `"prop"` -> `"props"` when inheriting parent properties `core/component/decorators/factory`
+
+## v4.0.0-beta.152 (2024-11-11)
+
+#### :rocket: New Feature
+
+* Added `trackContentSwipes` - a flag to prevent unexpected closure of a component instance `bBottomSlide`
+
 ## v4.0.0-beta.151 (2024-11-06)
 
 #### :bug: Bug Fix

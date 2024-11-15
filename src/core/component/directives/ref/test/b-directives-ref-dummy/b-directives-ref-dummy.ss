@@ -33,6 +33,12 @@
 					< b-dummy ref = slotComponent | id = slot | v-func = true
 						< b-dummy ref = nestedSlotComponent | id = nested
 
+			< template v-if = stage === 'slot component has directive'
+				< b-dummy ref = component | id = main
+					/// Adding a directive so that a vnode becomes wrapped by the "withDirectives" helper
+					< b-dummy ref = slotComponent | id = slot | v-func = false
+						< b-dummy ref = nestedSlotComponent | id = nested
+
 			< template v-else-if = stage === 'main component is regular and slot components are functional'
 				< b-dummy ref = component | id = main
 					< b-dummy ref = slotComponent | id = slot | v-func = true
