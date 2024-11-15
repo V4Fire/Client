@@ -154,9 +154,9 @@ export function normalizeComponentAttrs(
 			}
 		}
 
-		const needSetAdditionalProp =
-			functional === true && dynamicProps != null &&
-			isPropGetter.test(attrName) && Object.isFunction(value);
+		const
+			isGetter = isPropGetter.test(attrName) && Object.isFunction(value),
+			needSetAdditionalProp = functional === true && dynamicProps != null && isGetter;
 
 		// For correct operation in functional components, we need to additionally duplicate such props
 		if (needSetAdditionalProp) {
@@ -167,6 +167,10 @@ export function normalizeComponentAttrs(
 			normalizedAttrs[tiedPropName] = tiedPropValue;
 			normalizeAttr([tiedPropName, tiedPropValue]);
 			dynamicProps.push(tiedPropName);
+
+		} else if (isGetter) {
+			// For non-functional components (especially in SSR), remove a paired prop, because getter prop is sufficient
+			delete normalizedAttrs[isPropGetter.replace(attrName)];
 		}
 
 		if (propName in props || isPropGetter.replace(propName) in props) {
