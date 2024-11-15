@@ -90,15 +90,9 @@ function getPageAsyncScripts() {
 			fileContent = fs.readFileSync(filePath, 'utf-8'),
 			asyncChunks = JSON.parse(fileContent);
 
-		if (webpack.mode() === 'production') {
-			return asyncChunks.reduce((result, chunk) => `${result}<script type="template" id="${chunk.id}"><script>${
+		return `<frameset id="scripts-shadow-store">${asyncChunks.reduce((result, chunk) => `${result}<noframes id="${chunk.id}">${
 				chunk.files.map((fileName) => `include('${src.clientOutput(fileName)}');\n`).join()
-			}</script></script>`, '');
-		}
-
-		return `<div id="scripts-shadow-store">${asyncChunks.reduce((result, chunk) => `${result}<script type="template" id="${chunk.id}"><script id="${chunk.id}">${
-				chunk.files.map((fileName) => `include('${src.clientOutput(fileName)}');\n`).join()
-			}</script></script>`, '')}</div>`;
+			}</noframes>`, '')}</frameset>`;
 
 	} catch (e) {
 		return '';

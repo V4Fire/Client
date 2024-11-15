@@ -23,12 +23,16 @@ class AsyncPlugRuntimeModule extends RuntimeModule {
 	generate() {
 		return `var loadScript = ${RuntimeGlobals.loadScript};
 function loadScriptReplacement(path, cb, chunk, id) {
-	if (document.getElementById(id) != null) {
+	const tpl = document.getElementById(id);
+
+	if (tpl != null) {
 		const
-			tplText = document.getElementById(id).innerText,
-			tempDiv = document.createElement('div');
-		tempDiv.innerHTML = tplText;
-		document.body.appendChild(tempDiv.firstElementChild);
+			js = new Blob([tpl.textContent], {type: 'text/javascript'}),
+			src = URL.createObjectURL(js),
+			script = document.createElement('script');
+
+		script.src = src;
+		document.body.appendChild(script);
 		cb();
 	} else {
 		loadScript(path, cb, chunk, id);
@@ -40,6 +44,7 @@ ${RuntimeGlobals.loadScript} = loadScriptReplacement`;
 
 class Index {
 	apply(compiler) {
+		debugger;
 		compiler.hooks.thisCompilation.tap(
 			'AsyncChunksPlugin',
 			(compilation) => {
