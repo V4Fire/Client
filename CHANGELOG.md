@@ -25,7 +25,8 @@ Reloading now occurs for unloaded components or when explicitly specified with `
 This happened because we used `await` and this task could be executed after the component was destroyed.
 So we replaced `await` with `SyncPromise`. `bBottomSlide`
 * Fix error "ctx.$vueWatch is not a function" caused by the incorrect fix in the v4.0.0-beta.146 `core/component/watch`
-* Fixed endless attempts to load a component template that is not in use `core/component/decorators/component`
+* Fixed endless attempts to load a component template that is not in use.
+  Added a 10-second limit for attempts to load the template. `core/component/decorators/component`
 
 ## v4.0.0-beta.152 (2024-11-11)
 

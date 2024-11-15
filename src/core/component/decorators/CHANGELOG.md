@@ -13,7 +13,8 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed endless attempts to load a component template that is not in use
+* Fixed endless attempts to load a component template that is not in use.
+  Added a 10-second limit for attempts to load the template.
 
 ## v4.0.0-beta.144 (2024-10-09)
 
