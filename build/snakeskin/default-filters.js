@@ -15,7 +15,7 @@ const
 const
 	{webpack} = require('@config/config'),
 	{validators} = require('@pzlr/build-core'),
-	{isV4Prop, isStaticV4Prop} = include('build/snakeskin/filters/const');
+	{isV4Prop, isStaticV4Prop, isWebComponent} = include('build/snakeskin/filters/const');
 
 const
 	componentParams = include('build/graph/component-params');
