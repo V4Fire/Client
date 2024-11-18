@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed and issue with `g-slider` was not compiled
+
 ## 4.0.0-beta.71 (2024-03-12)
 
 #### :rocket: New feature
