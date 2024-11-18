@@ -15,7 +15,7 @@ const
 const
 	{webpack} = require('@config/config'),
 	{validators} = require('@pzlr/build-core'),
-	{isV4Prop, isStaticV4Prop, isWebComponent} = include('build/snakeskin/filters/const');
+	{isV4Prop, isStaticV4Prop, isV4WebComponent} = include('build/snakeskin/filters/const');
 
 const
 	componentParams = include('build/graph/component-params');
@@ -62,7 +62,7 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 	Object.entries(attrs).forEach(([key, attr]) => {
 		if (isStaticV4Prop.test(key)) {
 			// Do not change any attrs name for web components
-			if (isWebComponent.test(tag)) {
+			if (isV4WebComponent.test(tag)) {
 				return;
 			}
 
