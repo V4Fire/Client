@@ -90,9 +90,9 @@ function getPageAsyncScripts() {
 			fileContent = fs.readFileSync(filePath, 'utf-8'),
 			asyncChunks = JSON.parse(fileContent);
 
-		return `<frameset id="scripts-shadow-store">${asyncChunks.reduce((result, chunk) => `${result}<noframes id="${chunk.id}">${
+		return `${asyncChunks.reduce((result, chunk) => `${result}<noframes id="${chunk.id}">${
 				chunk.files.map((fileName) => `include('${src.clientOutput(fileName)}');\n`).join()
-			}</noframes>`, '')}</frameset>`;
+			}</noframes>`, '')}`;
 
 	} catch (e) {
 		return '';
