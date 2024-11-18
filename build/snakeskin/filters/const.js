@@ -31,3 +31,8 @@ exports.commaRgxp = /\s*,\s*/;
  * @type {RegExp}
  */
 exports.ssExtRgxp = /\.e?ss$/;
+
+/**
+ * A RegExp to detect web component tag
+ */
+exports.isV4WebComponent = /^b-wc/;

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.154 (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with web component props being dasherized `build/snakeskin`
+
 ## v4.0.0-beta.153 (2024-11-15)
 
 #### :bug: Bug Fix

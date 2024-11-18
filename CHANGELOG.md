@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.154 (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with web component props being dasherized `build/snakeskin`
+
 ## v4.0.0-beta.153 (2024-11-15)
 
 #### :house: Internal

@@ -61,6 +61,11 @@ Snakeskin.importFilters({
 function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplName, cursor) {
 	Object.entries(attrs).forEach(([key, attr]) => {
 		if (isStaticV4Prop.test(key)) {
+			// Do not change any attrs name for web components
+			if (isWebComponent.test(tag)) {
+				return;
+			}
+
 			// Since HTML is not case-sensitive, the name can be written differently.
 			// We will explicitly normalize the name to the most popular format for HTML notation.
 			const tmp = key.dasherize(key.startsWith(':'));
