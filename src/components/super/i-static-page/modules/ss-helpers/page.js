@@ -91,8 +91,8 @@ function getPageAsyncScripts() {
 			asyncChunks = JSON.parse(fileContent);
 
 		return `${asyncChunks.reduce((result, chunk) => `${result}<noframes id="${chunk.id}">${
-				chunk.files.map((fileName) => `include('${src.clientOutput(fileName)}');\n`).join()
-			}</noframes>`, '')}`;
+			chunk.files.map((fileName) => `include('${src.clientOutput(fileName)}');\n`).join()
+		}</noframes>`, '')}`;
 
 	} catch (e) {
 		return '';
