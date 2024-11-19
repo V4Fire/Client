@@ -140,6 +140,7 @@
 					<! :: STYLES
 
 					- block headScripts
+						+= h.getPageAsyncScripts()
 						+= await h.loadLibs(deps.headScripts, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
 
 			< body ${rootAttrs|!html}
@@ -167,7 +168,6 @@
 							+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: true, js: true})
 
 					- block scripts
-						+= h.getPageAsyncScripts()
 						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
 						+= await h.loadLibs(deps.scripts, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
 
