@@ -95,7 +95,7 @@ test.describe('<b-dynamic-page>', () => {
 		await test.expect(
 			target.evaluate((ctx) => {
 				const {meta} = ctx.unsafe;
-				return 'component' in meta.accessors && !('component' in meta.computedFields);
+				return meta.accessors.component != null && meta.computedFields.component == null;
 			})
 		).toBeResolvedTo(true);
 	});

@@ -79,9 +79,9 @@ test.describe('<b-virtual-scroll-new>', () => {
 					chunkSize,
 					shouldStopRequestingData: () => true,
 					'@hook:beforeDataCreate': (ctx) => {
-						const original = ctx.emit;
+						const original = ctx.strictEmit;
 
-						ctx.emit = jestMock.mock((...args) => {
+						ctx.strictEmit = jestMock.mock((...args) => {
 							original(...args);
 							return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
 						});
@@ -92,7 +92,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 			await component.waitForLifecycleDone();
 
 			const
-				spy = await component.getSpy((ctx) => ctx.emit),
+				spy = await component.getSpy((ctx) => ctx.strictEmit),
 				results = filterEmitterResults(await spy.results, true, ['initLoadStart', 'initLoad']);
 
 			test.expect(results).toEqual([
@@ -163,9 +163,9 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withProps({
 					chunkSize,
 					'@hook:beforeDataCreate': (ctx) => {
-						const original = ctx.emit;
+						const original = ctx.strictEmit;
 
-						ctx.emit = jestMock.mock((...args) => {
+						ctx.strictEmit = jestMock.mock((...args) => {
 							original(...args);
 							return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
 						});
@@ -184,7 +184,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 			await component.waitForLifecycleDone();
 
 			const
-				spy = await component.getSpy((ctx) => ctx.emit),
+				spy = await component.getSpy((ctx) => ctx.strictEmit),
 				results = filterEmitterResults(await spy.results, true, ['initLoadStart', 'initLoad']);
 
 			test.expect(results).toEqual([
@@ -295,9 +295,9 @@ test.describe('<b-virtual-scroll-new>', () => {
 						Object.get(state, 'lastLoadedRawData.total') === state.data.length,
 
 					'@hook:beforeDataCreate': (ctx) => {
-						const original = ctx.emit;
+						const original = ctx.strictEmit;
 
-						ctx.emit = jestMock.mock((...args) => {
+						ctx.strictEmit = jestMock.mock((...args) => {
 							original(...args);
 							return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
 						});
@@ -312,7 +312,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 			await component.waitForLifecycleDone();
 
 			const
-				spy = await component.getSpy((ctx) => ctx.emit),
+				spy = await component.getSpy((ctx) => ctx.strictEmit),
 				results = filterEmitterResults(await spy.results, true, ['initLoadStart', 'initLoad']);
 
 			test.expect(results).toEqual([
@@ -382,9 +382,9 @@ test.describe('<b-virtual-scroll-new>', () => {
 					items: state.data.getDataChunk(0),
 
 					'@hook:beforeDataCreate': (ctx) => {
-						const original = ctx.emit;
+						const original = ctx.strictEmit;
 
-						ctx.emit = jestMock.mock((...args) => {
+						ctx.strictEmit = jestMock.mock((...args) => {
 							original(...args);
 							return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
 						});
@@ -399,7 +399,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 			await component.waitForLifecycleDone();
 
 			const
-				spy = await component.getSpy((ctx) => ctx.emit),
+				spy = await component.getSpy((ctx) => ctx.strictEmit),
 				results = filterEmitterResults(await spy.results, true, ['initLoadStart', 'initLoad']);
 
 			test.expect(results).toEqual([
@@ -452,9 +452,9 @@ test.describe('<b-virtual-scroll-new>', () => {
 				state.reset();
 
 				await component.evaluate((ctx) => {
-					const original = Object.cast<Function>(ctx.emit);
+					const original = Object.cast<Function>(ctx.strictEmit);
 
-					ctx.emit = jestMock.mock((...args) => {
+					ctx.strictEmit = jestMock.mock((...args) => {
 						original(...args);
 						return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
 					});
@@ -503,7 +503,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 				await component.waitForLifecycleDone();
 
 				const
-					spy = await component.getSpy((ctx) => ctx.emit),
+					spy = await component.getSpy((ctx) => ctx.strictEmit),
 					results = filterEmitterResults(await spy.results, true, ['initLoadStart', 'initLoad']);
 
 				test.expect(results).toEqual([

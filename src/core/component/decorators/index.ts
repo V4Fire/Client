@@ -12,7 +12,6 @@
  */
 
 export * from 'core/component/decorators/component';
-export * from 'core/component/decorators/factory';
 
 export * from 'core/component/decorators/prop';
 export * from 'core/component/decorators/field';
@@ -22,4 +21,5 @@ export * from 'core/component/decorators/computed';
 export * from 'core/component/decorators/hook';
 export * from 'core/component/decorators/watch';
 
+export * from 'core/component/decorators/const';
 export * from 'core/component/decorators/interface';

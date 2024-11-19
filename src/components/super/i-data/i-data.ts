@@ -26,6 +26,7 @@ import {
 
 	InitLoadCb,
 	InitLoadOptions,
+
 	UnsafeGetter
 
 } from 'components/super/i-block/i-block';
@@ -55,8 +56,7 @@ export {
 export * from 'components/super/i-block/i-block';
 export * from 'components/super/i-data/interface';
 
-const
-	$$ = symbolGenerator();
+const $$ = symbolGenerator();
 
 @component({functional: null})
 export default abstract class iData extends iDataHandlers {
@@ -84,7 +84,7 @@ export default abstract class iData extends iDataHandlers {
 
 		try {
 			if (opts.emitStartEvent !== false) {
-				this.emit('initLoadStart', opts);
+				this.strictEmit('initLoadStart', opts);
 			}
 
 			if (this.dataProviderProp != null && this.dataProvider == null) {

@@ -30,12 +30,26 @@ import { readyStatuses } from 'components/super/i-block/modules/activation';
 import { field, system, computed, wait, hook, WaitDecoratorOptions } from 'components/super/i-block/decorators';
 
 import type iBlock from 'components/super/i-block/i-block';
+
+import type { InferComponentEvents } from 'components/super/i-block/event';
 import type { Stage, ComponentStatus, ComponentStatuses } from 'components/super/i-block/interface';
 
 import iBlockMods from 'components/super/i-block/mods';
 
 @component({partial: 'iBlock'})
 export default abstract class iBlockState extends iBlockMods {
+	/** @inheritDoc */
+	declare readonly SelfEmitter: InferComponentEvents<[
+		[`hook:${Hook}`, Hook, Hook],
+		['hookChange', Hook, Hook],
+
+		[`componentStatus:${ComponentStatus}`, ComponentStatus, ComponentStatus],
+		['componentStatusChange', ComponentStatus, ComponentStatus],
+
+		[`stage:${string}`, CanUndef<Stage>, CanUndef<Stage>],
+		['stageChange', CanUndef<Stage>, CanUndef<Stage>]
+	], iBlockMods['SelfEmitter']>;
+
 	/**
 	 * A list of additional dependencies to load during the component's initialization
 	 * {@link iBlock.dependenciesProp}
@@ -197,7 +211,7 @@ export default abstract class iBlockState extends iBlockMods {
 			value === 'ready' && oldValue === 'beforeReady' ||
 			value === 'inactive' && !this.renderOnActivation ||
 
-			(<typeof iBlockState>this.instance.constructor).shadowComponentStatuses[value];
+			(<typeof iBlockState>this.constructor).shadowComponentStatuses[value];
 
 		if (isShadowStatus) {
 			this.shadowComponentStatusStore = value;
@@ -217,8 +231,8 @@ export default abstract class iBlockState extends iBlockMods {
 			}
 		}
 
-		this.emit(`componentStatus:${value}`, value, oldValue);
-		this.emit('componentStatusChange', value, oldValue);
+		this.strictEmit(<any>`componentStatus:${value}`, value, oldValue);
+		this.strictEmit('componentStatusChange', value, oldValue);
 	}
 
 	// eslint-disable-next-line jsdoc/require-param
@@ -290,10 +304,10 @@ export default abstract class iBlockState extends iBlockMods {
 		}
 
 		if (value != null) {
-			this.emit(`stage:${value}`, value, oldValue);
+			this.strictEmit(`stage:${value}`, value, oldValue);
 		}
 
-		this.emit('stageChange', value, oldValue);
+		this.strictEmit('stageChange', value, oldValue);
 	}
 
 	/**
@@ -377,8 +391,8 @@ export default abstract class iBlockState extends iBlockMods {
 		this.hookStore = value;
 
 		if ('lfc' in this && !this.lfc.isBeforeCreate('beforeDataCreate')) {
-			this.emit(`hook:${value}`, value, oldValue);
-			this.emit('hookChange', value, oldValue);
+			this.strictEmit(<any>`hook:${value}`, value, oldValue);
+			this.strictEmit('hookChange', value, oldValue);
 		}
 	}
 
@@ -595,21 +609,6 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * Initializes the theme modifier and attaches a listener to monitor changes of the theme
-	 */
-	@hook('created')
-	protected initThemeModListener(): void {
-		const theme = this.remoteState.theme.get();
-		void this.setMod('theme', theme.value);
-
-		this.async.on(
-			this.remoteState.theme.emitter,
-			'theme.change',
-			(theme: Theme) => this.setMod('theme', theme.value)
-		);
-	}
-
-	/**
 	 * Stores a boolean flag in the hydrationStore during SSR,
 	 * which determines whether the content of components should be rendered during hydration
 	 * if server-side rendering is disabled for the component
@@ -642,6 +641,9 @@ export default abstract class iBlockState extends iBlockMods {
 			const v = this.stage;
 			return v == null ? v : String(v);
 		});
+
+		this.sync.mod('theme', 'remoteState.theme.emitter:theme.change', {immediate: true}, (theme?: Theme) =>
+			(theme ?? this.remoteState.theme.get()).value);
 	}
 
 	/**

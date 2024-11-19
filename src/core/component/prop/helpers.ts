@@ -36,31 +36,30 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 			el = unsafe.$el,
 			propValuesToUpdate: string[][] = [];
 
-		Object.entries(unsafe.$attrs).forEach(([attrName, attrVal]) => {
-			const propPrefix = 'on:';
+		const attrNames = Object.keys(unsafe.$attrs);
 
-			if (meta.props[attrName]?.forceUpdate === false) {
-				const getterName = propPrefix + attrName;
+		for (let i = 0; i < attrNames.length; i++) {
+			const
+				// The name of an attribute can be either the name of a component prop,
+				// the name of a regular DOM node attribute,
+				// or an event handler (in which case the attribute name will start with `on`)
+				attrName = attrNames[i],
+				prop = meta.props[attrName];
 
-				if (attrVal !== undefined && !Object.isFunction(unsafe.$attrs[getterName])) {
-					throw new Error(`No accessors are defined for the prop "${attrName}". To set the accessors, pass them as ":${attrName} = propValue | @:${attrName} = createPropAccessors(() => propValue)()" or "v-attrs = {'@:${attrName}': createPropAccessors(() => propValue)}".`);
+			if (prop == null && isPropGetter.test(attrName)) {
+				const propName = isPropGetter.replace(attrName);
+
+				// If an accessor is provided for a prop with `forceUpdate: false`,
+				// it is included in the list of synchronized props
+				if (meta.props[propName]?.forceUpdate === false) {
+					propValuesToUpdate.push([propName, attrName]);
+
+					if (el instanceof Element) {
+						el.removeAttribute(propName);
+					}
 				}
 			}
-
-			if (!isPropGetter.test(attrName)) {
-				return;
-			}
-
-			const propName = isPropGetter.replace(attrName);
-
-			if (meta.props[propName]?.forceUpdate === false) {
-				propValuesToUpdate.push([propName, attrName]);
-
-				if (el instanceof Element) {
-					el.removeAttribute(propName);
-				}
-			}
-		});
+		}
 
 		if (propValuesToUpdate.length > 0) {
 			nonFunctionalParent.$on('hook:beforeUpdate', updatePropsValues);
@@ -79,13 +78,13 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 				await parent.$nextTick();
 			}
 
-			propValuesToUpdate.forEach(([propName, getterName]) => {
+			for (const [propName, getterName] of propValuesToUpdate) {
 				const getter = unsafe.$attrs[getterName];
 
 				if (Object.isFunction(getter)) {
 					unsafe[`[[${propName}]]`] = getter()[0];
 				}
-			});
+			}
 		}
 	}
 }

@@ -16,8 +16,7 @@ import iData, { component, prop, RequestError, RetryRequestFn } from 'components
 
 export * from 'components/super/i-data/i-data';
 
-const
-	$$ = symbolGenerator();
+const $$ = symbolGenerator();
 
 @component()
 export default class bRemoteProvider extends iData {
@@ -50,23 +49,20 @@ export default class bRemoteProvider extends iData {
 	 * @emits `change(db: CanUndef<T>)`
 	 */
 	protected syncDBWatcher(value: CanUndef<this['DB']>): void {
-		const
-			parent = this.$parent;
+		const parent = this.$parent;
 
 		if (parent == null) {
 			return;
 		}
 
-		const
-			fieldToUpdate = this.fieldProp;
+		const fieldToUpdate = this.fieldProp;
 
 		let
 			needUpdate = fieldToUpdate == null,
 			action: Function;
 
 		if (fieldToUpdate != null) {
-			const
-				field = parent.field.get(fieldToUpdate);
+			const field = parent.field.get(fieldToUpdate);
 
 			if (Object.isFunction(field)) {
 				action = () => field.call(parent, value);
@@ -100,8 +96,7 @@ export default class bRemoteProvider extends iData {
 	 * @emits `error(err:Error |` [[RequestError]]`, retry:` [[RetryRequestFn]]`)`
 	 */
 	protected override onRequestError(err: Error | RequestError, retry: RetryRequestFn): void {
-		const
-			a = this.$attrs;
+		const a = this.$attrs;
 
 		if (a.onError == null && a.onOnError == null) {
 			super.onRequestError(err, retry);
@@ -117,8 +112,7 @@ export default class bRemoteProvider extends iData {
 	 * @emits `addData(data: unknown)`
 	 */
 	protected override onAddData(data: unknown): void {
-		const
-			a = this.$attrs;
+		const a = this.$attrs;
 
 		if (a.onAddData == null && a.onOnAddData == null) {
 			return super.onAddData(data);
@@ -134,8 +128,7 @@ export default class bRemoteProvider extends iData {
 	 * @emits `updateData(data: unknown)`
 	 */
 	protected override onUpdateData(data: unknown): void {
-		const
-			a = this.$attrs;
+		const a = this.$attrs;
 
 		if (a.onUpdateData == null && a.onOnUpdateData == null) {
 			return super.onUpdateData(data);
@@ -151,8 +144,7 @@ export default class bRemoteProvider extends iData {
 	 * @emits `deleteData(data: unknown)`
 	 */
 	protected override onDeleteData(data: unknown): void {
-		const
-			a = this.$attrs;
+		const a = this.$attrs;
 
 		if (a.onDeleteData == null && a.onOnDeleteData == null) {
 			return super.onDeleteData(data);

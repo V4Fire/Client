@@ -41,14 +41,14 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withProps({
 					chunkSize,
 					shouldStopRequestingData: () => true,
-					'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
+					'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'strictEmit')
 				})
 				.build();
 
 			await component.waitForLifecycleDone();
 
 			const
-				spy = await component.getSpy((ctx) => ctx.emit),
+				spy = await component.getSpy((ctx) => ctx.strictEmit),
 				calls = filterEmitterCalls(await spy.calls);
 
 			test.expect(calls).toEqual([
@@ -86,7 +86,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withProps({
 					chunkSize,
 					shouldStopRequestingData: ({lastLoadedData}) => lastLoadedData.length === 0,
-					'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
+					'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'strictEmit')
 				})
 				.build();
 
@@ -95,7 +95,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 			await component.waitForLifecycleDone();
 
 			const
-				spy = await component.getSpy((ctx) => ctx.emit),
+				spy = await component.getSpy((ctx) => ctx.strictEmit),
 				calls = filterEmitterCalls(await spy.calls);
 
 			test.expect(calls).toEqual([
@@ -139,7 +139,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withProps({
 					chunkSize,
 					shouldStopRequestingData: ({lastLoadedData}) => lastLoadedData.length === 0,
-					'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
+					'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'strictEmit')
 				})
 				.build();
 
@@ -147,7 +147,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 			await component.waitForLifecycleDone();
 
 			const
-				spy = await component.getSpy((ctx) => ctx.emit),
+				spy = await component.getSpy((ctx) => ctx.strictEmit),
 				calls = filterEmitterCalls(await spy.calls);
 
 			test.expect(calls).toEqual([
@@ -181,7 +181,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withProps({
 					chunkSize,
 					shouldStopRequestingData: () => true,
-					'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
+					'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'strictEmit')
 				})
 				.build();
 
@@ -195,7 +195,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 			await component.waitForLifecycleDone();
 
 			const
-				spy = await component.getSpy((ctx) => ctx.emit),
+				spy = await component.getSpy((ctx) => ctx.strictEmit),
 				calls = filterEmitterCalls(await spy.calls);
 
 			test.expect(calls).toEqual([

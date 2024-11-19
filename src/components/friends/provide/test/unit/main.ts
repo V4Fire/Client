@@ -89,14 +89,9 @@ test.describe('friends/provide', () => {
 	});
 
 	test.describe('`mods`', () => {
-		test('should return a dictionary of active modifiers and their values', async () => {
-			await test.expect(target.evaluate(({provide}) => provide.mods()))
-				.resolves.toEqual({foo: 'bar'});
-		});
-
-		test('should return a dictionary of active and provided modifiers and their values', async () => {
+		test('should return a dictionary of provided modifiers and their values', async () => {
 			await test.expect(target.evaluate(({provide}) => provide.mods({baz: 'bla'})))
-				.resolves.toEqual({foo: 'bar', baz: 'bla'});
+				.resolves.toEqual({baz: 'bla'});
 		});
 	});
 

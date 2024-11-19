@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { derive } from 'core/functools/trait';
+import { derive } from 'components/traits';
 
 import iControlList, { Control } from 'components/traits/i-control-list/i-control-list';
 import iBlock, { component, prop } from 'components/super/i-block/i-block';

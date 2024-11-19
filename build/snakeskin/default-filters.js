@@ -59,28 +59,20 @@ Snakeskin.importFilters({
 });
 
 function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplName, cursor) {
-	Object.entries(attrs).forEach(([key, attr]) => {
-		if (isStaticV4Prop.test(key)) {
-			// Since HTML is not case-sensitive, the name can be written differently.
-			// We will explicitly normalize the name to the most popular format for HTML notation.
-			const tmp = key.dasherize(key.startsWith(':'));
-
-			if (tmp !== key) {
-				delete attrs[key];
-				attrs[tmp] = attr;
-			}
-		}
-	});
-
 	let componentName;
+
+	if (attrs[':instance-of']) {
+		attrs[':instanceOf'] = attrs[':instance-of'];
+		delete attrs[':instance-of'];
+	}
 
 	if (attrs[TYPE_OF]) {
 		componentName = attrs[TYPE_OF];
 
 	} else if (tag === 'component') {
-		if (attrs[':instance-of']) {
-			componentName = attrs[':instance-of'][0].camelize(false);
-			delete attrs[':instance-of'];
+		if (attrs[':instanceOf']) {
+			componentName = attrs[':instanceOf'][0].camelize(false);
+			delete attrs[':instanceOf'];
 
 		} else {
 			componentName = 'iBlock';
@@ -91,6 +83,41 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 	}
 
 	const component = componentParams[componentName];
+
+	Object.entries(attrs).forEach(([key, attr]) => {
+		if (isStaticV4Prop.test(key)) {
+			// Since HTML is not case-sensitive, the name can be written differently.
+			// We will explicitly normalize the name to the most popular format for HTML notation.
+			// For Vue component attributes such as `:` and `@`, we convert the prop to camelCase format.
+			let normalizedKey;
+
+			if (component) {
+				if (key.startsWith('@')) {
+					normalizedKey = key.camelize(false);
+
+				} else if (key.startsWith('v-on:')) {
+					normalizedKey = key.replace(/^v-on:([^.[]+)(.*)/, (_, event, rest) =>
+						`v-on:${event.camelize(false)}${rest}`);
+
+				} else if (key.startsWith(':') && !key.startsWith(':-') && !key.startsWith(':v-')) {
+					const camelizedKey = key.camelize(false);
+
+					if (component.props[camelizedKey.slice(1)]) {
+						normalizedKey = camelizedKey;
+					}
+				}
+			}
+
+			if (!normalizedKey) {
+				normalizedKey = key.dasherize();
+			}
+
+			if (normalizedKey !== key) {
+				delete attrs[key];
+				attrs[normalizedKey] = attr;
+			}
+		}
+	});
 
 	if (isSmartComponent(component)) {
 		attrs[SMART_PROPS] = component.functional;
@@ -177,8 +204,8 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 		attrs[':componentIdProp'] = [`componentId + ${JSON.stringify(id)}`];
 	}
 
-	if (component.inheritMods !== false && !attrs[':mods'] && !attrs[':modsProp']) {
-		attrs[':mods'] = ['provide.mods()'];
+	if (component.inheritMods !== false) {
+		attrs[':inheritMods'] = ['sharedMods != null'];
 	}
 
 	Object.entries(attrs).forEach(([name, val]) => {

@@ -252,7 +252,7 @@ import iBlock, { component, InferComponentEvents } from 'components/super/i-bloc
 
 @component()
 export default class bExample extends iBlock {
-  declare readonly SelfEmitter: InferComponentEvents<this, [
+  declare readonly SelfEmitter: InferComponentEvents<[
     ['myEvent', {data: string}],
     ['anotherEvent', string, boolean]
   ], iBlock['SelfEmitter']>;
@@ -279,7 +279,7 @@ import iBlock, { component, InferComponentEvents } from 'components/super/i-bloc
 
 @component()
 export default class bExample extends iBlock {
-  declare readonly SelfEmitter: InferComponentEvents<this, [
+  declare readonly SelfEmitter: InferComponentEvents<[
     ['myEvent', {data: string}],
     ['anotherEvent', string, boolean]
   ], iBlock['SelfEmitter']>;

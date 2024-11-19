@@ -13,8 +13,7 @@ import { makeLazy } from 'core/lazy';
 import { createApp, createSSRApp, defineAsyncComponent, App, Component } from 'vue';
 import type { AsyncComponentOptions, CreateAppFunction } from 'core/component/engines/interface';
 
-let
-	ssrContext = SSR || HYDRATION;
+let ssrContext = SSR || HYDRATION;
 
 const NewApp = <CreateAppFunction>function App(component: Component & {el?: Element}, rootProps: Nullable<Dictionary>) {
 	const app = Object.create((ssrContext ? createSSRApp : createApp)(component, rootProps));
@@ -65,9 +64,9 @@ const Vue = makeLazy(
 		call: {
 			component: (contexts, ...args) => {
 				if (args.length === 1) {
-					contexts.forEach((ctx) => {
+					for (const ctx of contexts) {
 						ctx.component.apply(ctx, Object.cast(args));
-					});
+					}
 
 					return;
 				}
@@ -79,9 +78,9 @@ const Vue = makeLazy(
 
 			directive: (contexts, ...args: any[]) => {
 				if (args.length === 1) {
-					contexts.forEach((ctx) => {
+					for (const ctx of contexts) {
 						ctx.directive.apply(ctx, Object.cast(args));
-					});
+					}
 
 					return;
 				}
@@ -92,15 +91,15 @@ const Vue = makeLazy(
 			},
 
 			mixin: (contexts, ...args) => {
-				contexts.forEach((ctx) => {
+				for (const ctx of contexts) {
 					ctx.mixin.apply(ctx, Object.cast(args));
-				});
+				}
 			},
 
 			provide: (contexts, ...args) => {
-				contexts.forEach((ctx) => {
+				for (const ctx of contexts) {
 					ctx.provide.apply(ctx, Object.cast(args));
-				});
+				}
 			}
 		}
 	}

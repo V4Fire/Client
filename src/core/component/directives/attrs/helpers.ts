@@ -69,13 +69,13 @@ export function normalizePropertyAttribute(name: string): string {
 export function normalizeDirectiveModifiers(rawModifiers: string): Record<string, boolean> {
 	const modifiers = {};
 
-	rawModifiers.split('.').forEach((modifier) => {
-		modifier = modifier.trim();
+	for (const rawModifier of rawModifiers.split('.')) {
+		const modifier = rawModifier.trim();
 
 		if (modifier !== '') {
 			modifiers[modifier] = true;
 		}
-	});
+	}
 
 	return modifiers;
 }

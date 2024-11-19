@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :house: Internal
+
+* The observation of accessor dependencies is now initialized only if the accessor has been used at least once
+
 ## v4.0.0-beta.138.dsl-speedup (2024-10-01)
 
 #### :rocket: New Feature

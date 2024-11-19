@@ -1,6 +1,6 @@
 # core/component/decorators/computed
 
-The decorator assigns meta-information to a computed field or an accessor within a component.
+The decorator assigns metainformation to a computed field or an accessor within a component.
 
 ```typescript
 import iBlock, {component, prop, computed} from 'components/super/i-block/i-block';

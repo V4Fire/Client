@@ -25,17 +25,13 @@ export function initFromStorage(this: Friend): CanPromise<boolean> {
 		return false;
 	}
 
-	const
-		key = $$.pendingLocalStore;
+	const key = $$.pendingLocalStore;
 
 	if (this[key] != null) {
 		return this[key];
 	}
 
-	const {
-		ctx,
-		async: $a
-	} = this;
+	const {ctx, async: $a} = this;
 
 	const storeWatchers = {group: 'storeWatchers'};
 	$a.clearAll(storeWatchers);
