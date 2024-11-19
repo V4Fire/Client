@@ -35,4 +35,8 @@ exports.ssExtRgxp = /\.e?ss$/;
 /**
  * A RegExp to detect web component tag
  */
-exports.isV4WebComponent = /^b-wc/;
+exports.isV4WebComponent = {
+	test(_name) {
+		return false;
+	}
+};
