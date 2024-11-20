@@ -16,7 +16,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed an issue with `g-slider` was not compiled `components/global/g-slider`
-* Fixed an issue with web component props being dasherized `build/snakeskin`
+
+#### :house: Internal
+
+* Added a function to check if a tag is a web component (currently it always returns false) `build/snakeskin`
+* Disabled props normalization for tags that are web components `build/snakeskin`
 
 ## v4.0.0-beta.154.dsl-speedup-3 (2024-11-19)
 

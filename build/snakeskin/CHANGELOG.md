@@ -11,9 +11,10 @@ Changelog
 
 ## v4.0.0-beta.155 (2024-11-20)
 
-#### :bug: Bug Fix
+#### :house: Internal
 
-* Fixed an issue with web component props being dasherized `build/snakeskin`
+* Added a function to check if a tag is a web component (currently it always returns false)
+* Disabled props normalization for tags that are web components
 
 ## v4.0.0-beta.153 (2024-11-15)
 
