@@ -6,7 +6,7 @@
   "packageManager": "yarn@4.0.2",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "4.0.0-beta.154.dsl-speedup-3",
+  "version": "4.0.0-beta.155",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
