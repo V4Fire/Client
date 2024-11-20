@@ -85,14 +85,13 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 			withProto: true
 		};
 
-		watchDependencies.forEach((deps, path) => {
-			const
-				newDeps: typeof deps = [];
+		for (const [path, deps] of watchDependencies) {
+			const newDeps: typeof deps = [];
 
-			let
-				needForkDeps = false;
+			let needForkDeps = false;
 
-			deps.forEach((dep, i) => {
+			for (let i = 0; i < deps.length; i++) {
+				const dep = deps[i];
 				newDeps[i] = dep;
 
 				const
@@ -102,7 +101,7 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 				if (watchInfo.ctx === component && !watchDependencies.has(dep)) {
 					needForkDeps = true;
 					newDeps[i] = watchInfo.path;
-					return;
+					continue;
 				}
 
 				const invalidateCache = (value, oldValue, info) => {
@@ -132,10 +131,11 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 						mutations = [Object.cast([mutations, ...args])];
 					}
 
-					const
-						modifiedMutations: Array<[unknown, unknown, WatchHandlerParams]> = [];
+					const modifiedMutations: Array<[unknown, unknown, WatchHandlerParams]> = [];
 
-					mutations.forEach(([value, oldValue, info]) => {
+					for (let i = 0; i < mutations.length; i++) {
+						const [value, oldValue, info] = mutations[i];
+
 						modifiedMutations.push([
 							value,
 							oldValue,
@@ -150,19 +150,18 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 								parent: {value, oldValue, info}
 							})
 						]);
-					});
+					}
 
 					broadcastAccessorMutations(modifiedMutations);
 				};
 
 				attachDynamicWatcher(component, watchInfo, watchOpts, broadcastMutations, dynamicHandlers);
-			});
+			}
 
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (needForkDeps) {
 				watchDependencies.set(path, newDeps);
 			}
-		});
+		}
 	}
 
 	// Watcher of fields
@@ -274,10 +273,10 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 					invalidateComputedCache[tiedWatchers] = tiedLinks;
 					broadcastAccessorMutations[tiedWatchers] = tiedLinks;
 
-					props.forEach((prop) => {
+					for (const prop of props) {
 						unsafe.$watch(prop, {...propWatchOpts, flush: 'sync'}, invalidateComputedCache);
 						unsafe.$watch(prop, propWatchOpts, broadcastAccessorMutations);
-					});
+					}
 				}
 			}
 		}
@@ -360,9 +359,11 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 				ctx = invalidateComputedCache[tiedWatchers] != null ? component : info.root[toComponentObject] ?? component,
 				currentDynamicHandlers = immediateDynamicHandlers.get(ctx)?.[rootKey];
 
-			currentDynamicHandlers?.forEach((handler) => {
-				handler(val, oldVal, info);
-			});
+			if (currentDynamicHandlers != null) {
+				for (const handler of currentDynamicHandlers) {
+					handler(val, oldVal, info);
+				}
+			}
 		};
 	}
 
@@ -374,20 +375,20 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 				mutations = [Object.cast([mutations, ...args])];
 			}
 
-			mutations.forEach(([val, oldVal, info]) => {
-				const
-					{path} = info;
+			for (let i = 0; i < mutations.length; i++) {
+				const [val, oldVal, info] = mutations[i];
+
+				const {path} = info;
 
 				if (path[path.length - 1] === '__proto__') {
-					return;
+					continue;
 				}
 
 				if (info.parent != null) {
-					const
-						{path: parentPath} = info.parent.info;
+					const {path: parentPath} = info.parent.info;
 
 					if (parentPath[parentPath.length - 1] === '__proto__') {
-						return;
+						continue;
 					}
 				}
 
@@ -396,24 +397,26 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 					ctx = emitAccessorEvents[tiedWatchers] != null ? component : info.root[toComponentObject] ?? component,
 					currentDynamicHandlers = dynamicHandlers.get(ctx)?.[rootKey];
 
-				currentDynamicHandlers?.forEach((handler) => {
-					// Because we register several watchers (props, fields, etc.) at the same time,
-					// we need to control that every dynamic handler must be invoked no more than one time per tick
-					if (usedHandlers.has(handler)) {
-						return;
-					}
+				if (currentDynamicHandlers != null) {
+					for (const handler of currentDynamicHandlers) {
+						// Because we register several watchers (props, fields, etc.) at the same time,
+						// we need to control that every dynamic handler must be invoked no more than one time per tick
+						if (usedHandlers.has(handler)) {
+							continue;
+						}
 
-					handler(val, oldVal, info);
-					usedHandlers.add(handler);
+						handler(val, oldVal, info);
+						usedHandlers.add(handler);
 
-					if (timerId == null) {
-						timerId = setImmediate(() => {
-							timerId = undefined;
-							usedHandlers.clear();
-						});
+						if (timerId == null) {
+							timerId = setImmediate(() => {
+								timerId = undefined;
+								usedHandlers.clear();
+							});
+						}
 					}
-				});
-			});
+				}
+			}
 		};
 	}
 }

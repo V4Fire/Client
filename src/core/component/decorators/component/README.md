@@ -185,11 +185,6 @@ class bLink extends iData {
 < b-button-functional
 ```
 
-### [defaultProps = `true`]
-
-If set to false, all default values for the input properties of the component will be disregarded.
-This parameter may be inherited from the parent component.
-
 ### [deprecatedProps]
 
 A dictionary that specifies deprecated component props along with their recommended alternatives.

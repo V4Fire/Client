@@ -61,17 +61,17 @@ interface Sync {
 @fakeMethods('object')
 class Sync extends Friend {
 	/**
-	 * Cache of functions to synchronize modifiers
+	 * A cache of functions for synchronizing modifiers
 	 */
 	readonly syncModCache!: Dictionary<Function>;
 
 	/**
-	 * Cache for links
+	 * A cache for storing links
 	 */
 	protected readonly linksCache!: Dictionary<Dictionary>;
 
 	/**
-	 * The index of the last added link
+	 * An index of the last added link
 	 */
 	protected lastSyncIndex: number = 0;
 

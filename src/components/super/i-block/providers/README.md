@@ -35,7 +35,7 @@ class bExample extends iBlock {
 If true, the component is marked as a removed provider.
 This means that the parent component will wait for the current component to load.
 
-#### [dontWaitRemoteProvidersProp]
+#### [dontWaitRemoteProviders = `false`]
 
 If true, the component will skip waiting for remote providers to avoid redundant re-rendering.
 This prop can help optimize your non-functional component when it does not contain any remote providers.
@@ -47,11 +47,6 @@ By default, this prop is automatically calculated based on component dependencie
 
 A list of additional dependencies to load during the component's initialization.
 The parameter is tied with the `dependenciesProp` prop.
-
-#### dontWaitRemoteProviders
-
-If true, the component will skip waiting for remote providers to avoid redundant re-rendering.
-The parameter is tied with the `dontWaitRemoteProvidersProp` prop.
 
 ### Methods
 

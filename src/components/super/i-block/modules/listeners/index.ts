@@ -31,13 +31,14 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 	// eslint-disable-next-line @v4fire/unbound-method
 	baseInitLoad ??= iBlock.prototype.initLoad;
 
-	const
-		ctx = component.unsafe;
+	const ctx = component.unsafe;
 
 	const {
 		async: $a,
+
 		globalName,
 		globalEmitter: $e,
+
 		state: $s,
 		state: {needRouterSync}
 	} = ctx;
@@ -45,7 +46,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 	$e.once(`destroy.${ctx.remoteState.appProcessId}`, ctx.$destroy.bind(ctx));
 
 	resetListener = Boolean(
-		(resetListener ?? baseInitLoad !== ctx.instance.initLoad) ||
+		(resetListener ?? baseInitLoad !== ctx.constructor.prototype.initLoad) ||
 		(globalName ?? needRouterSync)
 	);
 

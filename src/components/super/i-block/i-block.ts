@@ -94,15 +94,13 @@ export default abstract class iBlock extends iBlockProviders {
 	 */
 	@watch<iBlock>({
 		path: 'r.shouldMountTeleports',
-		flush: 'post'
+		flush: 'post',
+		shouldInit: (o) => o.r.shouldMountTeleports === false
 	})
 
 	@hook('before:mounted')
 	protected onMountTeleports(): void {
-		const {
-			$el: originalNode,
-			$async: $a
-		} = this;
+		const {$el: originalNode, $async: $a} = this;
 
 		if (originalNode == null) {
 			return;
@@ -130,7 +128,7 @@ export default abstract class iBlock extends iBlockProviders {
 			this.watch('$attrs', {deep: true}, mountAttrs);
 		}
 
-		function mountAttrs(attrs: Dictionary<string>) {
+		function mountAttrs(attrs: Dictionary<string | Function>) {
 			const mountedAttrsGroup = {group: 'mountedAttrs'};
 			$a.terminateWorker(mountedAttrsGroup);
 
@@ -139,34 +137,41 @@ export default abstract class iBlock extends iBlockProviders {
 			}
 
 			attrsStore ??= new Set<string>();
-			const mountedAttrs = attrsStore;
 
-			Object.entries(attrs).forEach(([name, attr]) => {
-				if (attr == null) {
-					return;
+			const
+				mountedAttrs = attrsStore,
+				attrNames = Object.keys(attrs);
+
+			for (let i = 0; i < attrNames.length; i++) {
+				const
+					attrName = attrNames[i],
+					attrVal = attrs[attrName];
+
+				if (attrVal == null) {
+					continue;
 				}
 
-				if (name === 'class') {
-					attr.split(/\s+/).forEach((val) => {
-						node.classList.add(val);
-						mountedAttrs.add(`class.${val}`);
-					});
+				if (attrName === 'class') {
+					for (const className of (<string>attrVal).split(/\s+/)) {
+						node.classList.add(className);
+						mountedAttrs.add(`class.${className}`);
+					}
 
-				} else if (originalNode.hasAttribute(name)) {
-					node.setAttribute(name, attr);
-					mountedAttrs.add(name);
+				} else if (originalNode.hasAttribute(attrName)) {
+					node.setAttribute(attrName, attrVal);
+					mountedAttrs.add(attrName);
 				}
-			});
+			}
 
 			$a.worker(() => {
-				mountedAttrs.forEach((attr) => {
-					if (attr.startsWith('class.')) {
-						node.classList.remove(attr.split('.')[1]);
+				for (const attrName of mountedAttrs) {
+					if (attrName.startsWith('class.')) {
+						node.classList.remove(attrName.split('.')[1]);
 
 					} else {
-						node.removeAttribute(attr);
+						node.removeAttribute(attrName);
 					}
-				});
+				}
 
 				mountedAttrs.clear();
 			}, mountedAttrsGroup);

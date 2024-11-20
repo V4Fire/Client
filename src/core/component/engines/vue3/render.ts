@@ -59,8 +59,8 @@ import {
 	wrapWithDirectives,
 	wrapResolveDirective,
 	wrapMergeProps,
-	wrapWithCtx,
 
+	wrapWithCtx,
 	wrapWithModifiers
 
 } from 'core/component/render';
@@ -233,8 +233,8 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 						gc.add(function* destructor() {
 							const vnodes = Array.toArray(vnode);
 
-							for (const vnode of vnodes) {
-								destroy(vnode);
+							for (let i = 0; i < vnodes.length; i++) {
+								destroy(vnodes[i]);
 								yield;
 							}
 
@@ -312,7 +312,10 @@ export function destroy(node: VNode | Node): void {
 		}
 
 		if (Object.isArray(vnode)) {
-			vnode.forEach(removeVNode);
+			for (let i = 0; i < vnode.length; i++) {
+				removeVNode(vnode[i]);
+			}
+
 			return;
 		}
 
@@ -323,11 +326,15 @@ export function destroy(node: VNode | Node): void {
 		destroyedVNodes.add(vnode);
 
 		if (Object.isArray(vnode.children)) {
-			vnode.children.forEach(removeVNode);
+			for (let i = 0; i < vnode.children.length; i++) {
+				removeVNode(vnode.children[i]);
+			}
 		}
 
-		if (Object.isArray(vnode['dynamicChildren'])) {
-			vnode['dynamicChildren'].forEach((vnode) => removeVNode(Object.cast(vnode)));
+		if ('dynamicChildren' in vnode && Object.isArray(vnode.dynamicChildren)) {
+			for (let i = 0; i < vnode.dynamicChildren.length; i++) {
+				removeVNode(vnode.dynamicChildren[i]);
+			}
 		}
 
 		gc.add(function* destructor() {
@@ -340,13 +347,13 @@ export function destroy(node: VNode | Node): void {
 
 			yield;
 
-			['dirs', 'children', 'dynamicChildren', 'dynamicProps'].forEach((key) => {
+			for (const key of ['dirs', 'children', 'dynamicChildren', 'dynamicProps']) {
 				vnode[key] = [];
-			});
+			}
 
-			['el', 'ctx', 'ref', 'virtualComponent', 'virtualContext'].forEach((key) => {
+			for (const key of ['el', 'ctx', 'ref', 'virtualComponent', 'virtualContext']) {
 				vnode[key] = null;
-			});
+			}
 		}());
 	}
 }

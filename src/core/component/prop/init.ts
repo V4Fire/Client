@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { DEFAULT_WRAPPER } from 'core/component/const';
-
 import type { ComponentInterface } from 'core/component/interface';
 import type { InitPropsObjectOptions } from 'core/component/prop/interface';
 
@@ -38,29 +36,36 @@ export function initProps(
 		...opts
 	};
 
-	const {
-		store,
-		from
-	} = p;
+	const {store, from} = p;
 
 	const
 		isFunctional = meta.params.functional === true,
 		source: typeof props = p.forceUpdate ? props : attrs;
 
-	Object.entries(source).forEach(([propName, prop]) => {
+	const
+		propNames = Object.keys(source),
+		passedProps = unsafe.getPassedProps?.();
+
+	for (let i = 0; i < propNames.length; i++) {
+		const
+			propName = propNames[i],
+			prop = source[propName];
+
 		const canSkip =
 			prop == null ||
 			!SSR && isFunctional && prop.functional === false;
 
 		if (canSkip) {
-			return;
+			continue;
 		}
 
 		unsafe.$activeField = propName;
 
 		let propValue = (from ?? component)[propName];
 
-		const getAccessors = unsafe.$attrs[`on:${propName}`];
+		const
+			accessorName = `on:${propName}`,
+			getAccessors = unsafe.$attrs[accessorName];
 
 		if (propValue === undefined && Object.isFunction(getAccessors)) {
 			propValue = getAccessors()[0];
@@ -71,7 +76,7 @@ export function initProps(
 		if (propValue === undefined && prop.default !== undefined) {
 			propValue = prop.default;
 
-			if (Object.isFunction(propValue) && (opts.saveToStore === true || propValue[DEFAULT_WRAPPER] !== true)) {
+			if (Object.isFunction(propValue) && opts.saveToStore) {
 				propValue = prop.type === Function ? propValue : propValue(component);
 
 				if (Object.isFunction(propValue)) {
@@ -96,7 +101,7 @@ export function initProps(
 		if (needSaveToStore) {
 			const privateField = `[[${propName}]]`;
 
-			if (!opts.forceUpdate) {
+			if (!opts.forceUpdate && passedProps?.hasOwnProperty(accessorName)) {
 				// Set the property as enumerable so that it can be deleted in the destructor later
 				Object.defineProperty(store, privateField, {
 					configurable: true,
@@ -106,13 +111,23 @@ export function initProps(
 				});
 			}
 
-			Object.defineProperty(store, propName, {
-				configurable: true,
-				enumerable: true,
-				get: () => opts.forceUpdate ? propValue : store[privateField]
-			});
+			if (opts.forceUpdate) {
+				Object.defineProperty(store, propName, {
+					configurable: true,
+					enumerable: true,
+					writable: false,
+					value: propValue
+				});
+
+			} else {
+				Object.defineProperty(store, propName, {
+					configurable: true,
+					enumerable: true,
+					get: () => Object.hasOwn(store, privateField) ? store[privateField] : propValue
+				});
+			}
 		}
-	});
+	}
 
 	unsafe.$activeField = undefined;
 	return store;

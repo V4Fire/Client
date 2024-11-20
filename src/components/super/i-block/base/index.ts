@@ -28,20 +28,17 @@ import {
 
 } from 'core/async';
 
-import config from 'config';
-
 import {
 
 	component,
-	getComponentName,
 	getPropertyInfo,
 
 	canSkipWatching,
 	bindRemoteWatchers,
 	isCustomWatcher,
 
-	RawWatchHandler,
 	WatchPath,
+	RawWatchHandler,
 
 	SetupContext
 
@@ -128,24 +125,20 @@ export default abstract class iBlockBase extends iBlockFriends {
 			});
 		}
 
-		if (!o.isFunctional) {
-			o.watch('activatedProp', (val: CanUndef<boolean>) => {
-				val = val !== false;
+		return o.sync.link('activatedProp', (isActivated: CanUndef<boolean>) => {
+			isActivated = isActivated !== false;
 
-				if (o.hook !== 'beforeDataCreate') {
-					if (val) {
-						o.activate();
+			if (o.hook !== 'beforeDataCreate') {
+				if (isActivated) {
+					o.activate();
 
-					} else {
-						o.deactivate();
-					}
+				} else {
+					o.deactivate();
 				}
+			}
 
-				o.isActivated = val;
-			});
-		}
-
-		return o.activatedProp;
+			return isActivated;
+		});
 	})
 
 	isActivated!: boolean;
@@ -243,19 +236,19 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 */
 	@computed({cache: 'forever'})
 	protected get componentI18nKeysets(): string[] {
-		const {constructor} = this.meta;
+		const {meta} = this;
 
-		let keysets: CanUndef<string[]> = i18nKeysets.get(constructor);
+		let keysets: CanUndef<string[]> = i18nKeysets.get(meta.constructor);
 
 		if (keysets == null) {
-			keysets = [];
-			i18nKeysets.set(constructor, keysets);
+			keysets = [meta.componentName];
+			i18nKeysets.set(meta.constructor, keysets);
 
-			let keyset: CanUndef<string> = getComponentName(constructor);
+			let {parentMeta} = meta;
 
-			while (keyset != null) {
-				keysets.push(keyset);
-				keyset = config.components[keyset]?.parent;
+			while (parentMeta != null) {
+				keysets.push(parentMeta.componentName);
+				parentMeta = parentMeta.parentMeta;
 			}
 		}
 
@@ -530,17 +523,12 @@ export default abstract class iBlockBase extends iBlockFriends {
 				wrappedHandler['originalLength'] = handler['originalLength'] ?? handler.length;
 				handler = wrappedHandler;
 
-				$a.worker(() => {
-					if (link != null) {
-						$a.off(link);
-					}
-				}, opts);
-
+				$a.worker(() => link != null && $a.off(link), opts);
 				return () => unwatch?.();
 			};
 
 			link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(opts, 'watchers'));
-			unwatch = that.$watch(Object.cast(path), opts, handler);
+			unwatch = that.$watch(info ?? Object.cast(path), opts, handler);
 		}
 	}
 

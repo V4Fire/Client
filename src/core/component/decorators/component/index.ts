@@ -33,8 +33,7 @@ import {
 	inheritMods,
 	inheritParams,
 
-	attachTemplatesToMeta,
-	addMethodsToMeta
+	attachTemplatesToMeta
 
 } from 'core/component/meta';
 
@@ -43,6 +42,8 @@ import { getComponent, ComponentEngine, AsyncComponentOptions } from 'core/compo
 
 import { getComponentMods, getInfoFromConstructor } from 'core/component/reflect';
 import { registerComponent, registerParentComponents } from 'core/component/init';
+
+import { registeredComponent } from 'core/component/decorators/const';
 
 import type { ComponentConstructor, ComponentOptions } from 'core/component/interface';
 
@@ -77,6 +78,12 @@ const OVERRIDDEN = Symbol('This class is overridden in the child layer');
  */
 export function component(opts?: ComponentOptions): Function {
 	return (target: ComponentConstructor) => {
+		if (registeredComponent.event == null) {
+			return;
+		}
+
+		const regComponentEvent = registeredComponent.event;
+
 		const
 			componentInfo = getInfoFromConstructor(target, opts),
 			componentParams = componentInfo.params,
@@ -91,12 +98,6 @@ export function component(opts?: ComponentOptions): Function {
 			Object.defineProperty(componentInfo.parent, OVERRIDDEN, {value: true});
 		}
 
-		// Add information about the layer in which the component is described
-		// to correctly handle situations where the component is overridden in child layers of the application
-		const regEvent = `constructor.${componentNormalizedName}.${componentInfo.layer}`;
-
-		initEmitter.emit('bindConstructor', componentNormalizedName, regEvent);
-
 		if (isPartial) {
 			pushToInitList(() => {
 				// Partial classes reuse the same metaobject
@@ -106,10 +107,6 @@ export function component(opts?: ComponentOptions): Function {
 					meta = createMeta(componentInfo);
 					components.set(componentFullName, meta);
 				}
-
-				initEmitter.once(regEvent, () => {
-					addMethodsToMeta(components.get(componentFullName)!, target);
-				});
 			});
 
 			return;
@@ -124,9 +121,6 @@ export function component(opts?: ComponentOptions): Function {
 
 		if (needRegisterImmediate) {
 			registerComponent(componentFullName);
-
-		} else {
-			requestIdleCallback(registerComponent.bind(null, componentFullName));
 		}
 
 		// If we have a smart component,
@@ -215,7 +209,7 @@ export function component(opts?: ComponentOptions): Function {
 				components.set(target, meta);
 			}
 
-			initEmitter.emit(regEvent, {
+			initEmitter.emit(regComponentEvent, {
 				meta,
 				parentMeta: componentInfo.parentMeta
 			});

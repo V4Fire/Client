@@ -165,11 +165,13 @@ export function setField<T = unknown>(
 	let prop = keyGetter ? <PropertyKey>keyGetter(chunks[0], ref) : chunks[0];
 
 	if (chunks.length > 1) {
-		chunks.some((chunk, i) => {
+		for (let i = 0; i < chunks.length; i++) {
+			const chunk = chunks[i];
+
 			prop = keyGetter ? <PropertyKey>keyGetter(chunk, ref) : chunk;
 
 			if (i + 1 === chunks.length) {
-				return true;
+				break;
 			}
 
 			type AnyMap = Map<any, any>;
@@ -198,9 +200,7 @@ export function setField<T = unknown>(
 			} else {
 				ref = ref[prop];
 			}
-
-			return false;
-		});
+		}
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
