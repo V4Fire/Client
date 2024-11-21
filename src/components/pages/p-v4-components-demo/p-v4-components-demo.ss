@@ -20,3 +20,13 @@
 
 		< template v-if = stage?.startsWith('refs-async:')
 			< b-directives-ref-dummy :useAsyncRender = true | :stage = stage.split(':')[1]
+
+		< b-button @click:component = () => async.clearAll({group: /hello/})
+			Clear async
+
+		< .async-1 v-async-target | :style = {background: 'cyan'}
+			< template v-for = _ in asyncRender.iterate(1, {filter: (el) => async.sleep(100), group: 'hello'})
+				< b-button
+					Functional button
+
+				< div
