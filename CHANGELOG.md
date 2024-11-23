@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.158 (2024-11-26)
+
+#### :house: Internal
+
+* Added error details to the logging when checking the stylesheet loading status
+
 ## v4.0.0-beta.157 (2024-11-25)
 
 #### :bug: Bug Fix
