@@ -27,7 +27,7 @@ const
  * @returns {Promise<string>}
  */
 module.exports = async function attachComponentDependencies(str, filePath) {
-	if (webpack.fatHTML() && webpack.fatHTML() !== 3) {
+	if (webpack.fatHTML() && webpack.fatHTML() != 3) {
 		return str;
 	}
 

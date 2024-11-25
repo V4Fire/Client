@@ -101,7 +101,7 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 
 		// In FatHTML (excepting 3rd mode), we do not include dynamically loaded CSS because it leads to duplication
 		// of the CSS and its associated assets
-		const isThirdFatHTMLMode = fatHTML === 3;
+		const isThirdFatHTMLMode = fatHTML == 3;
 
 		if (isThirdFatHTMLMode || !fatHTML) {
 			const

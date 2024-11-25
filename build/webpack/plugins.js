@@ -68,7 +68,7 @@ module.exports = async function plugins({name}) {
 		plugins.set('progress-plugin', createProgressPlugin(name));
 	}
 
-	const isThirdFatHTMLMode = config.webpack.fatHTML() === 3;
+	const isThirdFatHTMLMode = config.webpack.fatHTML() == 3;
 
 	if ((config.webpack.fatHTML() || config.webpack.storybook() || config.webpack.ssr) && !isThirdFatHTMLMode) {
 		plugins.set('limit-chunk-count-plugin', new webpack.optimize.LimitChunkCountPlugin({
