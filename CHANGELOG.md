@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.156 (2024-11-25)
+
+#### :boom: Breaking Change
+
+* Now items processors will be generated only for the first render and will be reused for all subsequent ones until a reset occurs `components/base/b-virtual-scroll-new`
+
 ## v4.0.0-beta.155 (2024-11-20)
 
 #### :bug: Bug Fix
