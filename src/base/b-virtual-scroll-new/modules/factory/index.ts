@@ -93,8 +93,15 @@ export class ComponentFactory extends Friend {
 	 */
 	protected itemsProcessor(items: ComponentItem[]): ComponentItem[] {
 		const
-			{ctx} = this,
-			itemsProcessors = ctx.getItemsProcessors();
+			{ctx} = this;
+
+		const
+			{currentItemsProcessors} = ctx,
+			itemsProcessors = currentItemsProcessors ?? ctx.getItemsProcessors();
+
+		if (currentItemsProcessors == null) {
+			ctx.currentItemsProcessors = itemsProcessors;
+		}
 
 		if (!itemsProcessors) {
 			return items;
