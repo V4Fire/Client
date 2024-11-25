@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-11-25)
+
+#### :bug: Bug Fix
+
+* Added the `default` getter to static compiled routes `core/router/modules`.
+This is necessary to correctly compare the compiled route and the current route of the router.
+
 ## v4.0.0-beta.156 (2024-11-25)
 
 #### :boom: Breaking Change
