@@ -107,7 +107,7 @@ export class ComponentFactory extends Friend {
 			itemsProcessors = currentItemsProcessors ?? ctx.getItemsProcessors();
 
 		if (currentItemsProcessors == null) {
-			ctx.currentItemsProcessors = currentItemsProcessors;
+			ctx.currentItemsProcessors = itemsProcessors;
 		}
 
 		if (!itemsProcessors) {
