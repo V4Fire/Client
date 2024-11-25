@@ -57,6 +57,12 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 	@system<bVirtualScrollNew>((ctx) => new Observer(ctx))
 	protected readonly observer!: Observer;
 
+	/**
+	 * `itemsProcessors` involved in the current rendering lifecycle
+	 */
+	@system()
+	protected currentItemsProcessors?: ItemsProcessors;
+
 	protected override readonly $refs!: iData['$refs'] & $ComponentRefs;
 
 	// @ts-ignore (getter instead readonly)
