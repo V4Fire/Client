@@ -118,7 +118,7 @@ class bVirtualScrollNew extends iVirtualScrollProps implements iItems {
 	 * `itemsProcessors` involved in the current rendering lifecycle
 	 */
 	@system()
-	protected currentItemsProcessors?: ItemsProcessors;	
+	protected currentItemsProcessors?: ItemsProcessors;
 
 	/** @inheritDoc */
 	declare protected readonly $refs: iData['$refs'] & $ComponentRefs;

@@ -103,7 +103,7 @@ export class ComponentFactory extends Friend {
 		const {ctx, component} = this;
 
 		const
-			currentItemsProcessors = ctx.currentItemsProcessors,
+			{currentItemsProcessors} = ctx,
 			itemsProcessors = currentItemsProcessors ?? ctx.getItemsProcessors();
 
 		if (currentItemsProcessors == null) {
