@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-11-25)
+
+#### :bug: Bug Fix
+
+* Added the `default` getter to static compiled routes.
+This is necessary to correctly compare the compiled route and the current route of the router.
+
 ## v4.0.0-beta.42 (2023-11-23)
 
 #### :rocket: New Feature
