@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.75.1 (2024-11-26)
+
+#### :bug: Bug Fix
+
+* Fixed an issue where the stored items processors were not cleared on reset `base/b-virtual-scroll-new`
+
 ## v3.75.0 (2024-11-25)
 
 #### :boom: Breaking Change
