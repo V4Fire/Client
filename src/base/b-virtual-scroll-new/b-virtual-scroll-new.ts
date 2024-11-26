@@ -283,6 +283,7 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 	 * Resets the component state to its initial state
 	 */
 	protected reset(): void {
+		this.currentItemsProcessors = undefined;
 		this.onReset();
 	}
 
