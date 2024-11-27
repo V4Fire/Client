@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-11-??)
+
+#### :bug: Bug Fix
+
+* Execute default value getter only if prop type is `Function` `core/component/decorators/default-value`
+* Retrieve original function from `defaultValue` if prop type is `Function` `core/component/decorators/prop`
+
 ## v4.0.0-beta.154.dsl-speedup-3 (2024-11-19)
 
 #### :rocket: New Feature

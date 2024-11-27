@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-11-??)
+
+#### :bug: Bug Fix
+
+* Execute default value getter only if prop type is `Function` `core/component/decorators/default-value`
+* Retrieve original function from `defaultValue` if prop type is `Function` `core/component/decorators/prop`
+
 ## v4.0.0-beta.158 (2024-11-26)
 
 #### :house: Internal
