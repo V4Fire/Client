@@ -41,14 +41,5 @@ extend({
 		USE_PROFILES: {
 			html: true
 		}
-	},
-
-	components: (() => {
-		try {
-			return COMPONENTS;
-
-		} catch {
-			return {};
-		}
-	})()
+	}
 });

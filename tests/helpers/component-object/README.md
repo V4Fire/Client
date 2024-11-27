@@ -274,11 +274,11 @@ Here's an example of setting up a spy to track the `emit` method of a component 
 const myComponent = new MyComponentObject(page, 'b-component');
 
 await myComponent.withProps({
-  '@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit'),
+  '@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'strictEmit'),
 });
 
 // Extract the spy
-const spy = await myComponent.component.getSpy((ctx) => ctx.emit);
+const spy = await myComponent.component.getSpy((ctx) => ctx.strictEmit);
 
 // Access the spy
 console.log(await spy.calls);

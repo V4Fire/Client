@@ -6,10 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { WatchPath, ComponentAccessorCacheType } from 'core/component/interface';
-import type { DecoratorFunctionalOptions } from 'core/component/decorators/interface/types';
+import type { WatchPath } from 'core/object/watch';
 
-export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
+import type { ComponentAccessorCacheType } from 'core/component/interface';
+import type { DecoratorFunctionalOptions } from 'core/component/decorators/interface';
+
+export interface DecoratorComputed extends DecoratorFunctionalOptions {
 	/**
 	 * If set to true, the accessor value will be cached after the first touch.
 	 *

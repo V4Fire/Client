@@ -9,6 +9,29 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.154.dsl-speedup-3 (2024-11-19)
+
+#### :rocket: New Feature
+
+* Added new decorators, defaultValue and method, for the class-based DSL.
+  These decorators are used during code generation by the TS transformer DSL.
+
+* The prop, field, and system decorators can now accept a default value for the field as a second argument.
+  This argument is used during code generation by the TS transformer DSL.
+
+#### :house: Internal
+
+* The decorators from `core/component/decorators` no longer use a single factory module. Now, each decorator is implemented independently.
+
+## v4.0.0-beta.153 (2024-11-15)
+
+#### :bug: Bug Fix
+
+* Fixed endless attempts to load a component template that is not in use.
+  Added a 10-second limit for attempts to load the template.
+* Default `forceUpdate` param of a property no longer overrides its value inherited from the parent component
+* Fixed typo: `"prop"` -> `"props"` when inheriting parent properties
+
 ## v4.0.0-beta.144 (2024-10-09)
 
 #### :bug: Bug Fix

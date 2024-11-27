@@ -71,6 +71,7 @@ async function buildProjectGraph() {
 	if (build.buildGraphFromCache && fs.existsSync(graphCacheFile)) {
 		const cache = loadFromCache();
 		buildFinished();
+		module.exports.graph = await cache;
 		return cache;
 	}
 
@@ -168,6 +169,7 @@ async function buildProjectGraph() {
 	console.log('The project graph is initialized');
 	buildFinished();
 
+	module.exports.graph = res;
 	return res;
 
 	/**

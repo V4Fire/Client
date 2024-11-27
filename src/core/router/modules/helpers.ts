@@ -344,7 +344,7 @@ export function getRoutePath(ref: string, routes: RouteBlueprints, opts: Transit
 export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpts = {}): RouteBlueprints {
 	const
 		{basePath = ''} = opts,
-		compiledRoutes = {};
+		compiledRoutes: RouteBlueprints = {};
 
 	Object.keys(routes).forEach((name) => {
 		const
@@ -370,12 +370,17 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 				pattern,
 				rgxp,
 
-				get pathParams(): Key[] {
+				get default(): boolean {
+					return this.meta.default;
+				},
+
+				get pathParams(): PathParam[] {
 					return pathParams;
 				},
 
 				meta: {
 					name,
+					default: false,
 					external: isExternal.test(pattern)
 				}
 			};
@@ -406,7 +411,11 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 				pattern,
 				rgxp,
 
-				get pathParams(): Key[] {
+				get default(): boolean {
+					return this.meta.default;
+				},
+
+				get pathParams(): PathParam[] {
 					return pathParams;
 				},
 

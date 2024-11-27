@@ -7,7 +7,7 @@
  */
 
 import type { ComponentInterface } from 'core/component/interface';
-import type { DecoratorFieldWatcher } from 'core/component/decorators/interface/watcher';
+import type { DecoratorFieldWatcher } from 'core/component/decorators/watch';
 
 /**
  * Options of a component prop
@@ -131,15 +131,6 @@ export interface DecoratorProp<
 	forceUpdate?: boolean;
 
 	/**
-	 * If set to true, the prop always uses its own default value when needed.
-	 * This option is actually used when the `defaultProps` property is set to false for the described component
-	 * (via the `@component` decorator), and we want to override this behavior for a particular prop.
-	 *
-	 * @default `false`
-	 */
-	forceDefault?: boolean;
-
-	/**
 	 * A watcher or a list of watchers for the current prop.
 	 * The watcher can be defined as a component method to invoke, callback function, or watch handle.
 	 *
@@ -214,7 +205,7 @@ export interface DecoratorProp<
 
 export type Prop<T = unknown> =
 	{(): T} |
-	{new(...args: any[]): T & object} |
-	{new(...args: string[]): Function};
+	{new (...args: any[]): T & object} |
+	{new (...args: string[]): Function};
 
 export type PropType<T = unknown> = CanArray<Prop<T>>;

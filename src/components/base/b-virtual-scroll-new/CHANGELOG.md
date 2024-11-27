@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.156 (2024-11-25)
+
+#### :boom: Breaking Change
+
+* Now items processors will be generated only for the first render and will be reused for all subsequent ones until a reset occurs
+
 ## v4.0.0-beta.114 (2024-07-24)
 
 #### :house: Internal

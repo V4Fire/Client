@@ -392,9 +392,3 @@ class bExample extends iBlock {
 ### [functional = `true`]
 
 If set to false, the prop can't be passed to a functional component.
-
-### [forceDefault = `false`]
-
-If set to true, the prop always uses its own default value when needed.
-This option is actually used when the `defaultProps` property is set to false for the described component
-(via the `@component` decorator) and we want to override this behavior for a particular prop.

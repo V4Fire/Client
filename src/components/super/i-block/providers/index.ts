@@ -11,7 +11,6 @@
  * @packageDocumentation
  */
 
-import config from 'config';
 import symbolGenerator from 'core/symbol';
 
 import SyncPromise from 'core/promise/sync';
@@ -27,35 +26,31 @@ import type iData from 'components/super/i-data/i-data';
 import type iBlock from 'components/super/i-block/i-block';
 
 import { statuses } from 'components/super/i-block/const';
-import { system, hook } from 'components/super/i-block/decorators';
+import { hook } from 'components/super/i-block/decorators';
 
 import type { InitLoadCb, InitLoadOptions } from 'components/super/i-block/interface';
 
 import iBlockState from 'components/super/i-block/state';
+
+import type { InferComponentEvents } from 'components/super/i-block/event';
 import type { DataProviderProp } from 'components/super/i-block/providers/interface';
 
 export * from 'components/super/i-block/providers/interface';
 
-const
-	$$ = symbolGenerator();
+const $$ = symbolGenerator();
 
 @component({partial: 'iBlock'})
 export default abstract class iBlockProviders extends iBlockState {
+	/** @inheritDoc */
+	declare readonly SelfEmitter: InferComponentEvents<[
+		['initLoadStart', InitLoadOptions],
+		[event: 'initLoad', data: unknown, opts: InitLoadOptions]
+	], iBlockState['SelfEmitter']>;
+
 	/** {@link iBlock.dontWaitRemoteProvidersProp} */
-	@system((o) => o.sync.link((val) => {
-		if (val == null) {
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (o.dontWaitRemoteProviders != null) {
-				return o.dontWaitRemoteProviders;
-			}
-
-			return !config.components[o.componentName]?.dependencies.some((dep) => dep.includes('remote-provider'));
-		}
-
-		return val;
-	}))
-
-	dontWaitRemoteProviders!: boolean;
+	get dontWaitRemoteProviders(): boolean {
+		return this.dontWaitRemoteProvidersProp ?? this.dontWaitRemoteProvidersHint();
+	}
 
 	/**
 	 * Loads component initialization data.
@@ -109,7 +104,7 @@ export default abstract class iBlockProviders extends iBlockState {
 
 		try {
 			if (opts.emitStartEvent !== false) {
-				this.emit('initLoadStart', opts);
+				this.strictEmit('initLoadStart', opts);
 			}
 
 			if (!opts.silent) {
@@ -179,7 +174,7 @@ export default abstract class iBlockProviders extends iBlockState {
 									route: this.route,
 									globalName: component.globalName,
 									component: component.componentName,
-									dataProvider: (<iData>component).dataProvider?.provider.constructor.name
+									dataProvider: Object.cast<iData>(component).dataProvider?.provider.constructor.name
 								}
 							}
 						);
@@ -228,7 +223,7 @@ export default abstract class iBlockProviders extends iBlockState {
 				}
 
 				function emitInitLoad() {
-					that.emit('initLoad', get(), opts);
+					that.strictEmit('initLoad', get(), opts);
 				}
 			}
 
@@ -360,5 +355,13 @@ export default abstract class iBlockProviders extends iBlockState {
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 		this.createDataProviderInstance = this.instance.createDataProviderInstance.bind(this);
+	}
+
+	/**
+	 * Returns a hint on whether the component initialization mode can be used without waiting for remote providers.
+	 * This method is overridden by a transformer at build time.
+	 */
+	protected dontWaitRemoteProvidersHint(): boolean {
+		return true;
 	}
 }

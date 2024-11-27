@@ -14,7 +14,7 @@
 import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
 
-import { derive } from 'core/functools/trait';
+import { derive } from 'components/traits';
 
 import History from 'components/traits/i-history/history';
 import type iHistory from 'components/traits/i-history/i-history';
@@ -203,6 +203,28 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iOpen, 
 	}
 
 	/**
+	 * Attributes object for the component view block
+	 */
+	protected get viewBlockAttrs(): object {
+		const defaultAttrs = {
+			'v-on-resize': {handler: this.recalculateState.bind(this)}
+		};
+
+		const tracking = this.trackContentSwipes ?
+			{
+				'@touchstart': (e: TouchEvent) => this.swipeControl.onPullStart(e),
+				'@touchmove': (e: TouchEvent) => this.swipeControl.onPull(e),
+				'v-safe-on:touchend': () => this.swipeControl.onPullEnd()
+			} :
+			{};
+
+		return {
+			...defaultAttrs,
+			...tracking
+		};
+	}
+
+	/**
 	 * The minimum value of the height of the component visible part (in percent),
 	 * i.e., even if the component is closed, this part will still be visible
 	 * {@link bBottomSlide.visible}
@@ -293,12 +315,22 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iOpen, 
 
 		if (this.visible === 0) {
 			iOpen.close(this).catch(stderr);
-			await this.setMod('hidden', true);
 		}
 
-		this.history.clear();
-		this.emit('close');
-		return true;
+		const updateVisibility = () => {
+			if (this.visible === 0) {
+				return SyncPromise.resolve(this.setMod('hidden', true));
+			}
+
+			return SyncPromise.resolve();
+		};
+
+		return this.async.promise(updateVisibility()).then(() => {
+			this.history.clear();
+			this.emit('close');
+
+			return true;
+		});
 	}
 
 	/**

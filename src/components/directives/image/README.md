@@ -11,7 +11,7 @@ The directive cannot be applied to `img`, `picture`, or `object` tags.
 } .
 ```
 
-## Why is This Directive Needed?
+## Why is This Directive Necessary?
 
 When working with images, it is common to display a placeholder or an error message during the loading process.
 However, there is no native API to implement this feature.

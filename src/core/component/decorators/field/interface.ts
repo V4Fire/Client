@@ -6,6 +6,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ComponentField } from 'core/component/interface';
-
-export type SortedFields = Array<[string, CanUndef<ComponentField>]>;
+export * from 'core/component/decorators/system';

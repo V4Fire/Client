@@ -149,9 +149,11 @@ export function getField<T = unknown>(
 		}
 
 	} else {
-		const hasNoProperty = chunks.some((chunk) => {
+		for (let i = 0; i < chunks.length; i++) {
+			const chunk = chunks[i];
+
 			if (res == null) {
-				return true;
+				return undefined;
 			}
 
 			if (Object.isPromiseLike(res) && !(chunk in res)) {
@@ -186,12 +188,6 @@ export function getField<T = unknown>(
 					res = typeof obj !== 'object' || chunk in obj ? obj[chunk] : undefined;
 				}
 			}
-
-			return false;
-		});
-
-		if (hasNoProperty) {
-			return undefined;
 		}
 	}
 

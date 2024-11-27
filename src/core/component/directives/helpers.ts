@@ -23,8 +23,7 @@ import { vOnKeyModifiers, vOnModifiers } from 'core/component/directives/const';
  * @param idsCache - the store for the registered elements
  */
 export function getElementId(el: Element, idsCache: WeakMap<Element, string>): string {
-	let
-		id = idsCache.get(el);
+	let id = idsCache.get(el);
 
 	if (id == null) {
 		id = Object.fastHash(Math.random());
@@ -145,7 +144,7 @@ export function patchVnodeEventListener(
 	// For the transmission of accessors, `forceUpdate: false` props use events.
 	// For example, `@:value = createPropAccessors(() => someValue)`.
 	// A distinctive feature of such events is the prefix `@:` or `on:`.
-	// Such events are processed in a special way.
+	// Such events are processed specially.
 	const isSystemGetter = isPropGetter.test(event);
 	props[event] = attrVal;
 

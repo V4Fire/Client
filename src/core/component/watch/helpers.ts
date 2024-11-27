@@ -41,15 +41,22 @@ export function canSkipWatching(
 
 		const isFunctional = params.functional === true;
 
-		if (propInfo.type === 'prop' || (propInfo.type === 'attr' && !propInfo.fullPath.endsWith('$attrs'))) {
+		const
+			isProp = propInfo.type === 'prop',
+			isAttr = propInfo.type === 'attr';
+
+		if (isProp || isAttr) {
 			skipWatching = SSR || params.root === true || isFunctional;
 
-			if (!skipWatching) {
+			if (
+				!skipWatching &&
+				(isProp || propInfo.fullPath !== '$attrs' && !propInfo.fullPath.endsWith('.$attrs'))
+			) {
 				const
 					prop = meta.props[propInfo.name],
 					propName = prop?.forceUpdate !== false ? propInfo.name : `on:${propInfo.name}`;
 
-				skipWatching = ctx.getPassedProps?.().has(propName) === false;
+				skipWatching = ctx.getPassedProps?.().hasOwnProperty(propName) === false;
 			}
 
 		} else {
@@ -109,9 +116,8 @@ export function attachDynamicWatcher(
 
 		const filteredMutations: unknown[] = [];
 
-		mutations.forEach((mutation) => {
-			const
-				[value, oldValue, info] = mutation;
+		for (const mutation of mutations) {
+			const [value, oldValue, info] = mutation;
 
 			if (
 				// We don't watch deep mutations
@@ -123,11 +129,11 @@ export function attachDynamicWatcher(
 				// The mutation has been already fired
 				watchOpts.eventFilter && !Object.isTruly(watchOpts.eventFilter(value, oldValue, info))
 			) {
-				return;
+				continue;
 			}
 
 			filteredMutations.push(mutation);
-		});
+		}
 
 		if (filteredMutations.length > 0) {
 			if (isPacked) {
@@ -142,8 +148,7 @@ export function attachDynamicWatcher(
 	let destructor: Function;
 
 	if (prop.type === 'mounted') {
-		let
-			watcher: Watcher;
+		let watcher: Watcher;
 
 		if (Object.size(prop.path) > 0) {
 			watcher = watch(prop.ctx, prop.path, watchOpts, wrapper);

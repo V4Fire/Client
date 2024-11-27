@@ -17,6 +17,116 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added a new webpack loader for responsive images `build/webpack/loaders/responsive-images-loader`
 
+## v4.0.0-beta.158 (2024-11-26)
+
+#### :house: Internal
+
+* Added error details to the logging when checking the stylesheet loading status
+
+## v4.0.0-beta.157 (2024-11-25)
+
+#### :bug: Bug Fix
+
+* Added the `default` getter to static compiled routes `core/router/modules`.
+This is necessary to correctly compare the compiled route and the current route of the router.
+
+## v4.0.0-beta.156 (2024-11-25)
+
+#### :boom: Breaking Change
+
+* Now items processors will be generated only for the first render and will be reused for all subsequent ones until a reset occurs `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.155 (2024-11-20)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `g-slider` was not compiled `components/global/g-slider`
+
+#### :house: Internal
+
+* Added a function to check if a tag is a web component (currently it always returns false) `build/snakeskin`
+* Disabled props normalization for tags that are web components `build/snakeskin`
+
+## v4.0.0-beta.154.dsl-speedup-3 (2024-11-19)
+
+#### :boom: Breaking Change
+
+* The `getPassedProps` method now returns a dictionary instead of a set `core/component`
+
+* `iBlock`:
+  * The API for `InferComponentEvents` has been changed so that you no longer need to pass `this` as the first argument
+  * Component events without an `error` or `warning` status are logged only if the `verbose` prop is set
+  * The `strictEmit` method no longer performs normalization of the event name
+
+* To automatically implement traits or characteristics for components,
+  the `derive` decorator from the `components/traits` module should now be used.
+
+* Removed the constants `COMPONENTS` and `BLOCK_NAMES` `build/globals.webpack`
+* Removed the `components` property `config`
+
+#### :bug: Bug Fix
+
+* Fixed an error in normalizing attribute and prop values in Snakeskin `build`
+
+#### :rocket: New Feature
+
+* `core/component/decorators`:
+  * Added new decorators, defaultValue and method, for the class-based DSL.
+    These decorators are used during code generation by the TS transformer DSL.
+
+  * The prop, field, and system decorators can now accept a default value for the field as a second argument.
+    This argument is used during code generation by the TS transformer DSL.
+
+#### :house: Internal
+
+* Various micro-optimizations
+
+* `build`:
+  * Added a new TypeScript transformer to automatically apply decorators to parts of a component:
+    methods, accessors, field overrides, etc.
+  * Now, only the value from the decorator is used to get the default field value.
+    Default values specified in the class property will automatically be passed to the decorator by the transformer.
+
+* The observation of accessor dependencies is now initialized only if the accessor has been used at least once `core/component/accessor`
+
+* The decorators from `core/component/decorators` no longer use a single factory module.
+  Now, each decorator is implemented independently.
+
+* `core/component/meta`:
+  * When inheriting metaobjects, prototype chains are now used instead of full copying.
+    This optimizes the process of creating metaobjects.
+  * Methods and accessors are now added to the metaobject via the `method` decorator instead of runtime reflection.
+    This decorator is automatically added during the build process.
+  * Optimized creation of metaobjects.
+
+## v4.0.0-beta.153 (2024-11-15)
+
+#### :house: Internal
+
+* Fixed an issue with reloading after a component is destroyed.
+Reloading now occurs for unloaded components or when explicitly specified with `reloadOnActivation: true`.
+`components/super/i-block/modules/activation`
+* Removed context binding in wrapRenderList `core/component/render`
+
+#### :bug: Bug Fix
+
+* Re-fixed loss of refs in slots inside async render (see v4.0.0-beta.52)
+  by converting `v-ref` to a prop for regular components `build/snakeskin/filters`
+* Fixed an issue with emitting the `close` after destroying the component.
+  This happened because we used `await` and this task could be executed after the component was destroyed.
+  So we replaced `await` with `SyncPromise`. `bBottomSlide`
+* Fix error "ctx.$vueWatch is not a function" caused by the incorrect fix in the v4.0.0-beta.146 `core/component/watch`
+* Fixed endless attempts to load a component template that is not in use.
+  Added a 10-second limit for attempts to load the template. `core/component/decorators/component`
+* Default `forceUpdate` param of a property no longer overrides its value inherited from the parent component `core/component/decorators/prop`
+* Fixed typo: `"prop"` -> `"props"` when inheriting parent properties `core/component/decorators/factory`
+
+## v4.0.0-beta.152 (2024-11-11)
+
+#### :rocket: New Feature
+
+* Added `trackContentSwipes` - a flag to prevent unexpected closure of a component instance `bBottomSlide`
+
 ## v4.0.0-beta.151 (2024-11-06)
 
 #### :bug: Bug Fix

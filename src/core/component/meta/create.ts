@@ -12,6 +12,8 @@ import { inheritMeta } from 'core/component/meta/inherit';
 
 import type { ComponentMeta, ComponentConstructorInfo } from 'core/component/interface';
 
+const INSTANCE = Symbol('The component instance');
+
 /**
  * Creates a component metaobject based on the information from its constructor, and then returns this object
  * @param component - information obtained from the component constructor using the `getInfoFromConstructor` function
@@ -19,21 +21,34 @@ import type { ComponentMeta, ComponentConstructorInfo } from 'core/component/int
 export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 	const meta: ComponentMeta = {
 		name: component.name,
-		layer: component.layer,
 		componentName: component.componentName,
+		layer: component.layer,
 
+		params: component.params,
 		parentMeta: component.parentMeta,
+
 		constructor: component.constructor,
 
-		instance: {},
-		params: component.params,
+		get instance() {
+			const {constructor} = <ComponentMeta>this;
+
+			if (!constructor.hasOwnProperty(INSTANCE)) {
+				Object.defineProperty(constructor, INSTANCE, {value: Object.create(constructor.prototype)});
+			}
+
+			return constructor[INSTANCE];
+		},
 
 		props: {},
 		mods: component.params.partial == null ? getComponentMods(component) : {},
 
 		fields: {},
-		tiedFields: {},
+		fieldInitializers: [],
+
 		systemFields: {},
+		systemFieldInitializers: [],
+
+		tiedFields: {},
 		computedFields: {},
 
 		methods: {},
@@ -65,15 +80,15 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			renderTriggered: []
 		},
 
+		metaInitializers: new Map(),
+
 		component: {
 			name: component.name,
 
 			mods: {},
 			props: {},
 			attrs: {},
-
 			computed: {},
-			methods: {},
 
 			render() {
 				throw new ReferenceError(`The render function for the component "${component.componentName}" is not specified`);

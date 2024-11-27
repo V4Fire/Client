@@ -74,8 +74,7 @@ function run(): void {
 				done = opts.weightPerTick;
 			}
 
-			const
-				w = val.weight ?? 1;
+			const w = val.weight ?? 1;
 
 			if (done - w < 0 && done !== opts.weightPerTick) {
 				continue;

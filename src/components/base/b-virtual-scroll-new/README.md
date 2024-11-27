@@ -591,7 +591,7 @@ Let's also look at another common scenario:
        .
       ```
 
-   2. Implement a global `itemsProcessor` that will add advertisements based on the meta-information.
+   2. Implement a global `itemsProcessor` that will add advertisements based on the metainformation.
 
       ```typescript
       import { itemsProcessors } from '@v4fire/client/components/base/b-virtual-scroll-new/const.ts'

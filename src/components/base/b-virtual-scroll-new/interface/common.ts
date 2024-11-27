@@ -91,4 +91,7 @@ export interface UnsafeBVirtualScroll<CTX extends bVirtualScrollNew = bVirtualSc
 
 	// @ts-ignore (access)
 	observer: CTX['observer'];
+
+	// @ts-ignore (access)
+	currentItemsProcessors: CTX['currentItemsProcessors'];
 }

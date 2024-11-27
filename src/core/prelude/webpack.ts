@@ -40,9 +40,20 @@ function __webpack_component_styles_are_loaded__(componentName: string): boolean
 		const {styleSheets} = document;
 
 		for (let i = 0; i < styleSheets.length; i++) {
-			const rules = styleSheets[i].cssRules;
+			const styleSheet = styleSheets[i];
 
-			if (rules[loadedStylesIndexed] === true) {
+			if (styleSheet[loadedStylesIndexed] === true) {
+				continue;
+			}
+
+			let rules: CSSRuleList;
+
+			try {
+				rules = styleSheet.cssRules;
+
+			} catch (err) {
+				stderr(err, {styleSheetHref: styleSheet.href});
+				styleSheet[loadedStylesIndexed] = true;
 				continue;
 			}
 
@@ -53,10 +64,9 @@ function __webpack_component_styles_are_loaded__(componentName: string): boolean
 					const component = selector.slice(1, -'-is-style-loaded'.length);
 					loadedStyles.add(component);
 				}
-
 			}
 
-			rules[loadedStylesIndexed] = true;
+			styleSheet[loadedStylesIndexed] = true;
 		}
 
 		return loadedStyles.has(componentName);
