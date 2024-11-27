@@ -51,11 +51,15 @@ export function prop(
 		let params = typeOrParams;
 
 		if (defaultValue !== undefined && !hasDefault) {
+			const getDefault = (type: PropType) => type === Function && Object.isFunction(defaultValue) ?
+				defaultValue() :
+				defaultValue;
+
 			if (Object.isDictionary(params)) {
-				params.default = defaultValue;
+				params.default = getDefault(<PropType>params.type);
 
 			} else {
-				params = {default: defaultValue};
+				params = {default: getDefault(<PropType>typeOrParams)};
 
 				if (typeOrParams !== undefined) {
 					params.type = <PropType>typeOrParams;
