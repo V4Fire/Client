@@ -44,7 +44,8 @@ export function defaultValue(getter: unknown): PartDecorator {
 		const isFunction = Object.isFunction(getter);
 
 		if (meta.props[key] != null) {
-			regProp(key, {default: isFunction ? getter() : getter}, meta);
+			const needExec = isFunction && meta.props[key]!.type === Function;
+			regProp(key, {default: needExec ? getter() : getter}, meta);
 
 		} else {
 			const
