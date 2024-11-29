@@ -17,6 +17,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added a new webpack loader for responsive images `build/webpack/loaders/responsive-images-loader`
 
+## v4.0.0-beta.159 (2024-11-27)
+
+#### :bug: Bug Fix
+
+* Execute default value getter only if prop type is `Function` `core/component/decorators/default-value`
+* Retrieve original function from `defaultValue` if prop type is `Function` `core/component/decorators/prop`
+
 ## v4.0.0-beta.158 (2024-11-26)
 
 #### :house: Internal
