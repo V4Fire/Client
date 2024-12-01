@@ -202,8 +202,7 @@ export function fullElementName(
 	modNameOrModValue?: string | unknown,
 	modValue?: unknown
 ): string {
-	const
-		l = arguments.length;
+	const l = arguments.length;
 
 	let
 		componentName: string,

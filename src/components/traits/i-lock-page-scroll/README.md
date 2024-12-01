@@ -12,7 +12,7 @@ It is useful if you have an issue with page scrolling under popups or other over
 * The trait can be automatically derived.
 
   ```typescript
-  import { derive } from 'core/functools/trait';
+  import { derive } from 'components/traits';
 
   import iLockPageScroll from 'components/traits/i-lock-page-scroll/i-lock-page-scroll';
   import iBlock, { component, wait } from 'components/super/i-block/i-block';

@@ -25,7 +25,7 @@ class Daemons extends Friend {
 	 * A dictionary with the declared component daemons
 	 */
 	protected get daemons(): WrappedDaemonsDict {
-		return Object.cast((<typeof iBlock>this.ctx.instance.constructor).daemons);
+		return Object.cast((<typeof iBlock>this.ctx.constructor).daemons);
 	}
 
 	init(): void {

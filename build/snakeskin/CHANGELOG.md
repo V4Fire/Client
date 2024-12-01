@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.155 (2024-11-20)
+
+#### :house: Internal
+
+* Added a function to check if a tag is a web component (currently it always returns false)
+* Disabled props normalization for tags that are web components
+
 ## v4.0.0-beta.153 (2024-11-15)
 
 #### :bug: Bug Fix

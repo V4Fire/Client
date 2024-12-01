@@ -160,14 +160,6 @@ export interface ComponentOptions {
 	functional?: Nullable<boolean> | Dictionary<CanArray<JSONLikeValue>>;
 
 	/**
-	 * If set to false, all default values for the input properties of the component will be disregarded.
-	 * This parameter may be inherited from the parent component.
-	 *
-	 * @default `true`
-	 */
-	defaultProps?: boolean;
-
-	/**
 	 * A dictionary that specifies deprecated component props along with their recommended alternatives.
 	 * The keys in the dictionary represent the deprecated props,
 	 * while the values represent their replacements or alternatives.
@@ -220,9 +212,7 @@ export interface ComponentOptions {
 	inheritAttrs?: boolean;
 
 	/**
-	 * If set to true, the component will automatically inherit base modifiers from its parent component.
-	 * This parameter may be inherited from the parent component.
-	 *
+	 * If set to true, the component will inherit modifiers from the parent `sharedMods` property
 	 * @default `true`
 	 */
 	inheritMods?: boolean;

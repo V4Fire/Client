@@ -100,7 +100,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added the ability to manipulate meta-information of a page
+* Added the ability to manipulate metainformation of a page
 
 ## v3.29.0 (2022-09-13)
 

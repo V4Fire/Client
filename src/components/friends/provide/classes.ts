@@ -84,9 +84,15 @@ export function classes(
 
 	classes ??= {};
 
-	const map = {};
+	const
+		classNames = Object.keys(classes),
+		classesMap = {};
 
-	Object.entries(classes).forEach(([innerEl, outerEl]) => {
+	for (let i = 0; i < classNames.length; i++) {
+		const innerEl = classNames[i];
+
+		let outerEl = classes[innerEl];
+
 		if (outerEl === true) {
 			outerEl = innerEl;
 
@@ -98,18 +104,12 @@ export function classes(
 					outerEl[i] = innerEl;
 				}
 			}
-
-			outerEl.forEach((el, i) => {
-				if (el === true) {
-					outerEl![i] = innerEl;
-				}
-			});
 		}
 
-		map[innerEl.dasherize()] = fullElementName.apply(this, Array.toArray(componentName, outerEl));
-	});
+		classesMap[innerEl.dasherize()] = fullElementName.apply(this, Array.toArray(componentName, outerEl));
+	}
 
-	return map;
+	return classesMap;
 }
 
 /**
@@ -174,13 +174,19 @@ export function componentClasses(
 
 	mods ??= {};
 
-	const classes = [(<Function>fullComponentName).call(this, componentName)];
+	const
+		modNames = Object.keys(mods),
+		classes = [(<Function>fullComponentName).call(this, componentName)];
 
-	Object.entries(mods).forEach(([key, val]) => {
-		if (val !== undefined) {
-			classes.push(fullComponentName.call(this, componentName, key, val));
+	for (let i = 0; i < modNames.length; i++) {
+		const
+			modName = modNames[i],
+			modVal = mods[modName];
+
+		if (modVal !== undefined) {
+			classes.push(fullComponentName.call(this, componentName, modName, modVal));
 		}
-	});
+	}
 
 	return classes;
 }
@@ -257,23 +263,35 @@ export function elementClasses(
 		return [];
 	}
 
-	const classes = componentId != null ? [componentId] : [];
+	const
+		elNames = Object.keys(els),
+		classes = componentId != null ? [componentId] : [];
 
-	Object.entries(els).forEach(([el, mods]) => {
+	for (let i = 0; i < elNames.length; i++) {
+		const
+			elName = elNames[i],
+			elMods = els[elName];
+
 		classes.push(
-			(<Function>fullElementName).call(this, componentName, el)
+			(<Function>fullElementName).call(this, componentName, elName)
 		);
 
-		if (!Object.isDictionary(mods)) {
-			return;
+		if (!Object.isDictionary(elMods)) {
+			continue;
 		}
 
-		Object.entries(mods).forEach(([key, val]) => {
-			if (val !== undefined) {
-				classes.push(fullElementName.call(this, componentName, el, key, val));
+		const modNames = Object.keys(elMods);
+
+		for (let i = 0; i < modNames.length; i++) {
+			const
+				modName = modNames[i],
+				modVal = elMods[modName];
+
+			if (modVal !== undefined) {
+				classes.push(fullElementName.call(this, componentName, elName, modName, modVal));
 			}
-		});
-	});
+		}
+	}
 
 	return classes;
 }

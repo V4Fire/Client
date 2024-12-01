@@ -34,9 +34,7 @@ declare const MODULE: string;
 declare const PATH: Dictionary<CanUndef<string>>;
 declare const PUBLIC_PATH: CanUndef<string>;
 
-declare const COMPONENTS: Dictionary<{parent: string; dependencies: string[]}>;
 declare const TPLS: Dictionary<Dictionary<Function>>;
-declare const BLOCK_NAMES: CanUndef<string[]>;
 
 declare const THEME: CanUndef<string>;
 declare const THEME_ATTRIBUTE: CanUndef<string>;

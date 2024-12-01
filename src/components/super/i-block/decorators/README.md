@@ -8,7 +8,7 @@ This module re-exports the base decorators from `core/component/decorators` and 
 * `@prop` to declare a component input property (aka "prop");
 * `@field` to declare a component field;
 * `@system` to declare a component system field (system field mutations never cause components to re-render);
-* `@computed` to attach meta-information to a component computed field or accessor;
+* `@computed` to attach metainformation to a component computed field or accessor;
 * `@hook` to attach a hook listener;
 * `@watch` to attach a watcher.
 

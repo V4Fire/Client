@@ -10,12 +10,13 @@ $p = {
 
 }
 
-g-slider
+.g-slider
 	display flex
 	white-space nowrap
 
 	overflow-x auto
-	scroll-snap-type x mandatory
+
+	scrollbar-width none
 
 	&_horizontal_true
 		scroll-snap-type x mandatory
@@ -39,5 +40,5 @@ g-slider
 	&__slide_snap_end
 		scroll-snap-align end
 
-.g-slider
-	g-slider()
+	&::-webkit-scrollbar
+		display none

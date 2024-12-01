@@ -14,7 +14,7 @@ or disabling.
 * The trait can be automatically derived.
 
   ```typescript
-  import { derive } from 'core/functools/trait';
+  import { derive } from 'components/traits';
 
   import iAccess from 'components/traits/i-access/i-access';
   import iBlock, { component } from 'components/super/i-block/i-block';

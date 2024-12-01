@@ -9,6 +9,23 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.154.dsl-speedup-3 (2024-11-19)
+
+#### :boom: Breaking Change
+
+* Removed the constants `COMPONENTS` and `BLOCK_NAMES` `globals.webpack`
+
+#### :bug: Bug Fix
+
+* Fixed an error in normalizing attribute and prop values in Snakeskin
+
+#### :house: Internal
+
+* Added a new TypeScript transformer to automatically apply decorators to parts of a component:
+  methods, accessors, field overrides, etc.
+* Now, only the value from the decorator is used to get the default field value.
+  Default values specified in the class property will automatically be passed to the decorator by the transformer.
+
 ## v4.0.0-beta.138.dsl-speedup (2024-10-01)
 
 #### :house: Internal

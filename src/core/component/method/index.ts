@@ -11,26 +11,29 @@
  * @packageDocumentation
  */
 
-import type { ComponentInterface } from 'core/component/interface';
+import type { ComponentInterface, UnsafeComponentInterface } from 'core/component/interface';
 
 /**
  * Attaches methods to the passed component instance, taken from its associated metaobject
  * @param component
  */
 export function attachMethodsFromMeta(component: ComponentInterface): void {
-	const {meta, meta: {methods}} = component.unsafe;
+	const {meta, meta: {methods}} = Object.cast<UnsafeComponentInterface>(component);
 
-	const isFunctional = meta.params.functional === true;
+	// eslint-disable-next-line guard-for-in
+	for (const methodName in methods) {
+		const method = methods[methodName];
 
-	Object.entries(methods).forEach(([name, method]) => {
-		if (method == null || !SSR && isFunctional && method.functional === false) {
-			return;
+		// Methods for accessors, such as fooGetter/fooSetter,
+		// are used only with super, so it's not necessary to initialize them as a method on the component
+		if (method == null || method.accessor) {
+			continue;
 		}
 
-		component[name] = method.fn.bind(component);
-	});
+		component[methodName] = method.fn.bind(component);
+	}
 
-	if (isFunctional) {
+	if (meta.params.functional === true) {
 		component.render = Object.cast(meta.component.render);
 	}
 }

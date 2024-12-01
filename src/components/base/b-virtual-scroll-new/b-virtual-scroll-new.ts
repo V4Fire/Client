@@ -12,7 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { derive } from 'core/functools/trait';
+import { derive } from 'components/traits';
 
 import type { AsyncOptions } from 'core/async';
 import SyncPromise from 'core/promise/sync';
@@ -60,6 +60,7 @@ import iData, {
 	component,
 	field,
 	computed,
+	system,
 
 	watch,
 	wait,
@@ -112,6 +113,12 @@ class bVirtualScrollNew extends iVirtualScrollProps implements iItems {
 	protected get observer(): Observer {
 		return new Observer(this);
 	}
+
+	/**
+	 * `itemsProcessors` involved in the current rendering lifecycle
+	 */
+	@system()
+	protected currentItemsProcessors?: ItemsProcessors;
 
 	/** @inheritDoc */
 	declare protected readonly $refs: iData['$refs'] & $ComponentRefs;
@@ -355,6 +362,7 @@ class bVirtualScrollNew extends iVirtualScrollProps implements iItems {
 	 * Resets the component state to its initial state
 	 */
 	protected reset(): void {
+		this.currentItemsProcessors = undefined;
 		this.onReset();
 	}
 

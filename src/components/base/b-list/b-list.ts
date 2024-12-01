@@ -12,7 +12,7 @@
  */
 
 import SyncPromise from 'core/promise/sync';
-import { derive } from 'core/functools/trait';
+import { derive } from 'components/traits';
 
 import DOM, { delegateElement } from 'components/friends/dom';
 import Block, { element, elements, setElementMod } from 'components/friends/block';
@@ -302,8 +302,7 @@ class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
-		const
-			i = this.instance;
+		const i = this.instance;
 
 		this.isActive = i.isActive.bind(this);
 		this.setActive = i.setActive.bind(this);

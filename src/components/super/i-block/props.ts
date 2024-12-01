@@ -57,6 +57,9 @@ export default abstract class iBlockProps extends ComponentInterface {
 	@prop({type: Object, required: false, forceUpdate: false})
 	override readonly modsProp?: ModsProp;
 
+	@prop({type: Boolean, required: false})
+	override readonly inheritMods?: boolean;
+
 	/**
 	 * If set to true, the component will be activated by default.
 	 * A deactivated component will not retrieve data from providers during initialization.
@@ -112,7 +115,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 	/**
 	 * If set to false, the component will not render its content during SSR
 	 */
-	@prop({type: Boolean, forceDefault: true})
+	@prop({type: Boolean})
 	readonly ssrRenderingProp: boolean = true;
 
 	/**
@@ -309,7 +312,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 	@prop({type: Object, required: false})
 	override readonly styles?: Dictionary<CanArray<string> | Dictionary<string>>;
 
-	@prop({type: Boolean, forceDefault: true})
+	@prop({type: Boolean})
 	override readonly canFunctional: boolean = false;
 
 	@prop({type: Function, required: false})
@@ -319,5 +322,5 @@ export default abstract class iBlockProps extends ComponentInterface {
 	override readonly getParent?: () => this['$parent'];
 
 	@prop({type: Function, required: false})
-	override readonly getPassedProps?: () => Set<string>;
+	override readonly getPassedProps?: () => Dictionary;
 }

@@ -9,19 +9,21 @@
 import type { WatchPath } from 'core/object/watch';
 
 import type { WritableComputedOptions, DirectiveBinding } from 'core/component/engines';
+
 import type { PropOptions, InitFieldFn, MergeFieldFn, UniqueFieldFn } from 'core/component/decorators';
 
 import type { ComponentInterface, FieldWatcher, MethodWatcher, Hook } from 'core/component/interface';
 
 export interface ComponentProp extends PropOptions {
 	forceUpdate: boolean;
-	forceDefault?: boolean;
+
 	watchers?: Map<string | Function, FieldWatcher>;
 	default?: unknown;
+
 	meta: Dictionary;
 }
 
-export interface ComponentSystemField<CTX extends ComponentInterface = ComponentInterface> {
+export interface ComponentSystemField<Ctx extends ComponentInterface = ComponentInterface> {
 	src: string;
 	meta: Dictionary;
 
@@ -29,19 +31,22 @@ export interface ComponentSystemField<CTX extends ComponentInterface = Component
 	after?: Set<string>;
 
 	default?: unknown;
-	unique?: boolean | UniqueFieldFn<CTX>;
+	unique?: boolean | UniqueFieldFn<Ctx>;
 
 	functional?: boolean;
 	functionalWatching?: boolean;
 
-	init?: InitFieldFn<CTX>;
-	merge?: MergeFieldFn<CTX> | boolean;
-}
+	init?: InitFieldFn<Ctx>;
+	merge?: MergeFieldFn<Ctx> | boolean;
 
-export interface ComponentField<CTX extends ComponentInterface = ComponentInterface> extends ComponentSystemField<CTX> {
-	forceUpdate?: boolean;
 	watchers?: Map<string | Function, FieldWatcher>;
 }
+
+export interface ComponentField<Ctx extends ComponentInterface = ComponentInterface> extends ComponentSystemField<Ctx> {
+	forceUpdate?: boolean;
+}
+
+export type ComponentFieldInitializers = Array<[string, CanUndef<ComponentSystemField>]>;
 
 export type ComponentAccessorCacheType =
 	boolean |
@@ -64,7 +69,7 @@ export interface ComponentMethod {
 
 	src?: string;
 	wrapper?: boolean;
-	functional?: boolean;
+	accessor?: boolean;
 
 	watchers?: Dictionary<MethodWatcher>;
 	hooks?: ComponentMethodHooks;
@@ -94,6 +99,3 @@ export type ComponentMethodHooks = {
 };
 
 export interface ComponentDirectiveOptions extends DirectiveBinding {}
-
-export type ComponentWatchDependencies = Map<WatchPath, WatchPath[]>;
-export type ComponentWatchPropDependencies = Map<WatchPath, Set<string>>;

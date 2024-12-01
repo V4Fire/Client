@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import { derive } from 'core/functools/trait';
+import { derive } from 'components/traits';
 import DataProvider, { getDefaultRequestParams, base, get } from 'components/friends/data-provider';
 
 import type bForm from 'components/form/b-form/b-form';
@@ -65,8 +65,7 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 	 */
 	@computed({dependencies: ['type', 'form', 'href', 'hasDropdown']})
 	get attrs(): Dictionary {
-		const
-			attrs = {...this.attrsProp};
+		const attrs = {...this.attrsProp};
 
 		if (this.type === 'link') {
 			attrs.href = this.href;
@@ -87,8 +86,7 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 	/** {@link iAccess.prototype.isFocused} */
 	@computed({dependencies: ['mods.focused']})
 	get isFocused(): boolean {
-		const
-			{button} = this.$refs;
+		const {button} = this.$refs;
 
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (button != null) {
@@ -141,8 +139,7 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 	 */
 	@wait('ready')
 	reset(): CanPromise<void> {
-		const
-			{file} = this.$refs;
+		const {file} = this.$refs;
 
 		if (file != null) {
 			file.value = '';
@@ -155,16 +152,28 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 		iOpenToggle.initCloseHelpers(this, events);
 	}
 
+	protected override syncDataProviderWatcher(initLoad: boolean = true): void {
+		if (
+			this.href != null ||
+			this.request != null ||
+			this.dataProviderProp !== 'Provider' ||
+			this.dataProviderOptions != null
+		) {
+			super.syncDataProviderWatcher(initLoad);
+		}
+	}
+
 	protected override initModEvents(): void {
-		const
-			{localEmitter: $e} = this;
+		const {localEmitter: $e} = this;
 
 		super.initModEvents();
 
 		iProgress.initModEvents(this);
 		iProgress.initDisableBehavior(this);
+
 		iAccess.initModEvents(this);
 		iOpenToggle.initModEvents(this);
+
 		iVisible.initModEvents(this);
 
 		$e.on('block.mod.*.opened.*', (e: ModEvent) => this.waitComponentStatus('ready', () => {
@@ -173,10 +182,7 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 		}));
 
 		$e.on('block.mod.*.disabled.*', (e: ModEvent) => this.waitComponentStatus('ready', () => {
-			const {
-				button,
-				file
-			} = this.$refs;
+			const {button, file} = this.$refs;
 
 			const disabled = e.value !== 'false' && e.type !== 'remove';
 			button.disabled = disabled;
@@ -187,8 +193,7 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 		}));
 
 		$e.on('block.mod.*.focused.*', (e: ModEvent) => this.waitComponentStatus('ready', () => {
-			const
-				{button} = this.$refs;
+			const {button} = this.$refs;
 
 			if (e.value !== 'false' && e.type !== 'remove') {
 				button.focus();
@@ -217,8 +222,7 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 			default: {
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (this.dataProviderProp != null && (this.dataProviderProp !== 'Provider' || this.href != null)) {
-					let
-						{dataProvider} = this;
+					let {dataProvider} = this;
 
 					if (dataProvider == null) {
 						throw new ReferenceError('Missing data provider to send data');
@@ -237,8 +241,9 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 				// Form attribute fix for MS Edge && IE
 				} else if (this.form != null && this.type === 'submit') {
 					e.preventDefault();
+
 					const form = this.dom.getComponent<bForm>(`#${this.form}`);
-					form && await form.submit();
+					await form?.submit();
 				}
 
 				await this.toggle();
