@@ -20,3 +20,15 @@
 
 		< template v-if = stage === 'passing mods as undefined'
 			< b-checkbox ref = dummy | :size = undefined | v-attrs = {checked: undefined}
+
+		< template v-if = stage === 'updating. providing mods as separate attributes'
+			< b-checkbox v-func = false | ref = dummy | :checked = checked
+
+		< template v-if = stage === 'updating. providing mods by v-attrs'
+			< b-checkbox v-func = false | ref = dummy | :v-attrs = {checked}
+
+		< template v-if = stage === 'updating. providing mods using modsProp'
+			< b-checkbox v-func = false | ref = dummy | :mods = {checked}
+
+		< template v-if = stage === 'updating. providing mods using modsProp by v-attrs'
+			< b-checkbox v-func = false | ref = dummy | :v-attrs = {'@:mods': createPropAccessors(() => ({checked}))}

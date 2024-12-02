@@ -144,6 +144,30 @@ test.describe('<i-block> props', () => {
 				theme: LIGHT
 			});
 		});
+
+		test.describe('updating', () => {
+			for (const [testCase, dummyStage] of [
+				['Modifiers should update when provided as separate attributes', 'updating. providing mods as separate attributes'],
+				['Modifiers should update when provided by `v-attrs`', 'updating. providing mods by v-attrs'],
+				['Modifiers should update when provided using `modsProp`', 'updating. providing mods using modsProp'],
+				['Modifiers should update when provided with `modsProp` by `v-attrs`', 'updating. providing mods using modsProp by v-attrs']
+			]) {
+				test(testCase, async ({page}) => {
+					const target = await renderModsDummy(page, {
+						stage: dummyStage
+					});
+
+					await test.expect(
+						target.evaluate((ctx) => ctx.providedMods.checked)
+					).resolves.toBe('false');
+
+					await target.evaluate((ctx) => ctx.checked = true);
+					await test.expect.poll(
+						() => target.evaluate((ctx) => ctx.providedMods.checked)
+					).toBe('true');
+				});
+			}
+		});
 	});
 
 	test('`stage` should set the stage of the component', async ({page}) => {
