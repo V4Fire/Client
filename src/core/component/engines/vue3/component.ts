@@ -12,7 +12,7 @@ import * as init from 'core/component/init';
 import { beforeRenderHooks } from 'core/component/const';
 
 import { fillMeta } from 'core/component/meta';
-import { getComponentContext, dropRawComponentContext } from 'core/component/context';
+import { getComponentContext } from 'core/component/context';
 import { wrapAPI } from 'core/component/render';
 
 import type { ComponentEngine, ComponentOptions, SetupContext } from 'core/component/engines';
@@ -29,9 +29,6 @@ import {
 
 	onBeforeUpdate,
 	onUpdated,
-
-	onBeforeUnmount,
-	onUnmounted,
 
 	onErrorCaptured,
 	onServerPrefetch,
@@ -157,26 +154,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 				}
 
 				init.updatedState(ctx);
-			});
-
-			onBeforeUnmount(() => {
-				if (ctx == null) {
-					return;
-				}
-
-				init.beforeDestroyState(ctx, {recursive: false});
-			});
-
-			onUnmounted(() => {
-				if (ctx == null) {
-					return;
-				}
-
-				init.destroyedState(ctx);
-				dropRawComponentContext(ctx);
-
-				ctx = null;
-				unsafe = null;
 			});
 
 			onErrorCaptured((...args) => {

@@ -25,9 +25,6 @@ import { attachMethodsFromMeta, callMethodFromComponent } from 'core/component/m
 import { runHook } from 'core/component/hook';
 import { implementEventEmitterAPI } from 'core/component/event';
 
-import { beforeDestroyState } from 'core/component/init/states/before-destroy';
-import { destroyedState } from 'core/component/init/states/destroyed';
-
 import type { ComponentInterface, ComponentMeta, ComponentElement, ComponentDestructorOptions } from 'core/component/interface';
 import type { InitBeforeCreateStateOptions } from 'core/component/init/interface';
 
@@ -87,9 +84,8 @@ export function beforeCreateState(
 		configurable: true,
 		enumerable: false,
 		writable: true,
-		value: (opts: ComponentDestructorOptions) => {
-			beforeDestroyState(component, opts);
-			destroyedState(component);
+		value: (_opts: ComponentDestructorOptions) => {
+			// Do nothing
 		}
 	});
 
