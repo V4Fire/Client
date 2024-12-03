@@ -132,7 +132,6 @@ function generateSpecs(engineName: EngineName) {
 
 			await root.evaluate((ctx) => ctx.router?.push('second'));
 			await root.evaluate(({router}) => router?.back());
-			await BOM.waitForIdleCallback(page);
 
 			await scrollBy(page, [0, -300]);
 
