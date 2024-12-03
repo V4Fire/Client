@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { Page } from '@playwright/test';
 import { LIGHT } from 'core/theme-manager';
 
 import test from 'tests/config/unit/test';
@@ -146,27 +147,17 @@ test.describe('<i-block> props', () => {
 		});
 
 		test.describe('updating', () => {
-			for (const [testCase, dummyStage] of [
-				['Modifiers should update when provided as separate attributes', 'updating. providing mods as separate attributes'],
-				['Modifiers should update when provided by `v-attrs`', 'updating. providing mods by v-attrs'],
-				['Modifiers should update when provided using `modsProp`', 'updating. providing mods using modsProp'],
-				['Modifiers should update when provided with `modsProp` by `v-attrs`', 'updating. providing mods using modsProp by v-attrs']
-			]) {
-				test(testCase, async ({page}) => {
-					const target = await renderModsDummy(page, {
-						stage: dummyStage
-					});
+			test('Modifiers should update when provided as separate attributes', ({page}) =>
+				testModifiersUpdating('updating. providing mods as separate attributes', page));
 
-					await test.expect(
-						target.evaluate((ctx) => ctx.providedMods.checked)
-					).resolves.toBe('false');
+			test('Modifiers should update when provided by `v-attrs`', ({page}) =>
+				testModifiersUpdating('updating. providing mods by v-attrs', page));
 
-					await target.evaluate((ctx) => ctx.checked = true);
-					await test.expect.poll(
-						() => target.evaluate((ctx) => ctx.providedMods.checked)
-					).toBe('true');
-				});
-			}
+			test('Modifiers should update when provided using `modsProp`', ({page}) =>
+				testModifiersUpdating('updating. providing mods using modsProp', page));
+
+			test('Modifiers should update when provided with `modsProp` by `v-attrs`', ({page}) =>
+				testModifiersUpdating('updating. providing mods using modsProp by v-attrs', page));
 		});
 	});
 
@@ -271,4 +262,17 @@ test.describe('<i-block> props', () => {
 			test.expect(scan).toBe('foo');
 		});
 	});
+
+	async function testModifiersUpdating(stage: string, page: Page): Promise<void> {
+		const target = await renderModsDummy(page, {stage});
+
+		await test.expect(
+			target.evaluate((ctx) => ctx.providedMods.checked)
+		).resolves.toBe('false');
+
+		await target.evaluate((ctx) => ctx.checked = true);
+		await test.expect.poll(
+			() => target.evaluate((ctx) => ctx.providedMods.checked)
+		).toBe('true');
+	}
 });
