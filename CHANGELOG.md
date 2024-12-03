@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.160 (2024-03-12)
+
+#### :rocket: New Feature
+
+* Added a new webpack loader for responsive images `build/webpack/loaders/responsive-images-loader`
+
 ## v4.0.0-beta.159 (2024-11-27)
 
 #### :bug: Bug Fix
