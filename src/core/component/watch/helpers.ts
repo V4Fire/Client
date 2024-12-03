@@ -50,7 +50,7 @@ export function canSkipWatching(
 
 			if (
 				!skipWatching &&
-				(isProp || propInfo.fullPath !== '$attrs' && !propInfo.fullPath.endsWith('.$attrs'))
+				(isProp || !propInfo.fullPath.startsWith('$attrs') && !propInfo.fullPath.endsWith('.$attrs'))
 			) {
 				const
 					prop = meta.props[propInfo.name],
