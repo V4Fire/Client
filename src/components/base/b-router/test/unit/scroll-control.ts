@@ -134,12 +134,12 @@ function generateSpecs(engineName: EngineName) {
 			await root.evaluate(({router}) => router?.back());
 			await BOM.waitForIdleCallback(page);
 
-			await scrollBy(page, [0, -500]);
+			await scrollBy(page, [0, -300]);
 
 			await root.evaluate(({router}) => router?.replace(null, {query: {foo: 1}}));
 			await BOM.waitForIdleCallback(page);
 
-			await test.expect(getScrollPosition(page)).resolves.toEqual([0, 0]);
+			await test.expect(getScrollPosition(page)).resolves.toEqual([0, 200]);
 		}
 	);
 
