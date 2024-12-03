@@ -269,7 +269,7 @@ export default class bRouter extends iRouterProps {
 				deep: true,
 				skipUndefs: false,
 				extendFilter: (el) => !Object.isArray(el)
-			}, {}, this.previousTransitionOptions, opts);
+			}, {}, this.previousTransitionOptions, {meta: {scroll: undefined}}, opts);
 		}
 
 		this.previousTransitionOptions = opts;

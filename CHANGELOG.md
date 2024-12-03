@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-12-??)
+
+#### :boom: Breaking Change
+
+* The `soft` transition using the `replace` method for the same route no longer restores the scroll position by default.
+To restore the scroll position during a `soft` transition, explicitly pass the `scroll` option. `bRouter`
+
 ## v4.0.0-beta.161 (2024-12-03)
 
 #### :bug: Bug Fix

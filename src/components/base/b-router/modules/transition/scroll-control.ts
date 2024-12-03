@@ -78,7 +78,11 @@ export default class ScrollControl {
 		const
 			{meta} = this.transition.newRouteInfo ?? {};
 
-		if (SSR || !meta || meta.autoScroll === false) {
+		if (
+			SSR ||
+			(!meta || meta.autoScroll === false) ||
+			(this.transition.isSoftTransitionInSameRoute && !this.transition.isTransitionWithProvidedScroll)
+		) {
 			return;
 		}
 
