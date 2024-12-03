@@ -43,6 +43,7 @@ $RECYCLE.BIN
 # Build && test
 /coverage
 /storybook-static
+/test-results
 /.nyc_output
 /dist
 /tsconfig.json
