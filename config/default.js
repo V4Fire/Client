@@ -1424,6 +1424,21 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
+	 * Returns parameters for `responsive-images-loader`
+	 * @returns {object}
+	 */
+	responsiveImagesOpts() {
+		return {
+			outputPath: path.dirname(this.webpack.assetsOutput()),
+			name: isProd ? '[hash]-[width].[ext]' : '[name].[ext]',
+			adapter: include('build/webpack/loaders/responsive-images-loader/adapter'),
+			sizes: [1, 2, 3],
+			formats: ['webp', 'avif'],
+			disable: !isProd
+		};
+	},
+
+	/**
 	 * Returns parameters for `typograf`
 	 * @returns {object}
 	 */
