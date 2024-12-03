@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.??? (2024-12-03)
+
+#### :bug: Bug Fix
+
+* Fix watching for nested fields inside `$attrs` `core/component/watch`
+
 ## v4.0.0-beta.159 (2024-11-27)
 
 #### :bug: Bug Fix
