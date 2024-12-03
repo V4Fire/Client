@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { JSHandle, Page } from 'playwright';
+import type { ElementHandle, JSHandle, Page } from 'playwright';
 import { build } from '@config/config';
 
 import { concatURLs } from 'core/url';
@@ -30,7 +30,7 @@ export default class DemoPage {
 	/**
 	 * Page component reference.
 	 */
-	component?: JSHandle<pV4ComponentsDemo>;
+	component?: ElementHandle<pV4ComponentsDemo>;
 
 	/**
 	 * Returns the initial page name
@@ -65,7 +65,7 @@ export default class DemoPage {
 		await this.page.goto(concatURLs(this.baseUrl, `${this.pageFileName}.html`) + (query.length > 0 ? `?${query}` : ''), {waitUntil: 'networkidle'});
 		await root.waitFor({state: 'attached'});
 
-		this.component = await root.evaluateHandle((ctx) => ctx.component);
+		this.component = await root.evaluate((ctx) => (ctx as unknown as DemoPage).component);
 
 		return this;
 	}
