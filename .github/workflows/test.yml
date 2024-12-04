@@ -37,7 +37,7 @@ jobs:
 
       - name: Save build in cache
         id: cache-build
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: dist
           key: cache-${{ github.sha }}
@@ -93,13 +93,16 @@ jobs:
 
       - name: Restore build from cache
         id: cache-build
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: dist
           key: cache-${{ github.sha }}
 
       - name: Install dependencies
         run: yarn
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
 
       - name: Build tsconfig
         run: yarn build:tsconfig
@@ -129,7 +132,7 @@ jobs:
 
       - name: Restore build from cache
         id: cache-build
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
            path: dist
            key: cache-${{ github.sha }}
