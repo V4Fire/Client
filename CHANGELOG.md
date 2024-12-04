@@ -18,6 +18,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * The `soft` transition using the `replace` method for the same route no longer restores the scroll position by default.
 To restore the scroll position during a `soft` transition, explicitly pass the `scroll` option. `bRouter`
 
+## v4.0.0-beta.162 (2024-12-04)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `changedTouches` was not provided in gestures test module `core/prelude/test-env/gestures.ts`
+
 ## v4.0.0-beta.161 (2024-12-03)
 
 #### :bug: Bug Fix
