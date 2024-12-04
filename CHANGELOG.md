@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.162 (2024-12-04)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `changedTouches` was not provided in gestures test module `core/prelude/test-env/gestures.ts`
+
 ## v4.0.0-beta.161 (2024-12-03)
 
 #### :bug: Bug Fix
