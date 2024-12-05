@@ -122,6 +122,25 @@ function generateSpecs(engineName: EngineName) {
 		}
 	);
 
+	test(
+		'the router should not restore the scroll if the transition is to the same route without providing a scroll',
+
+		async ({page}) => {
+			await scrollBy(page, [0, 500]);
+
+			await test.expect(getScrollPosition(page)).resolves.toEqual([0, 500]);
+
+			await root.evaluate((ctx) => ctx.router?.push('second'));
+			await root.evaluate(({router}) => router?.back());
+
+			await scrollBy(page, [0, -300]);
+
+			await root.evaluate(({router}) => router?.replace(null, {query: {foo: 1}}));
+
+			await test.expect.poll(() => getScrollPosition(page)).toEqual([0, 200]);
+		}
+	);
+
 	/**
 	 * Returns the scroll position: [x, y]
 	 * @param page
