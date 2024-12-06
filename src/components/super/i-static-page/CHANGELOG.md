@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.??? (2024-12-06)
+
+### :rocket: New Feature
+
+* Add `iife` parameter for `Lib`, which wraps script output into IIFE
+
 ## v4.0.0-beta.129 (2024-09-04)
 
 #### :nail_care: Polish

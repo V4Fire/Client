@@ -26,9 +26,10 @@ exports.LibSource = LibSource;
  * 1. src - a relative path to the loaded file, i.e., without referencing to `/node_modules`, etc.
  * 2. [source='lib'] - the source type of the library, i.e., where the library is placed
  * 3. [inline=false] - if true, the library is placed as text
- * 4. [defer=true] - if true, the library is declared with the `defer` attribute
- * 5. [load=true] - if false, the library won't be automatically loaded with page
- * 6. [attrs] - a dictionary with attributes to set. You can provide an attribute value in different ways:
+ * 4. [iife=false] - if true, the library will be wrapped in the IIFE
+ * 5. [defer=true] - if true, the library is declared with the `defer` attribute
+ * 6. [load=true] - if false, the library won't be automatically loaded with page
+ * 7. [attrs] - a dictionary with attributes to set. You can provide an attribute value in different ways:
  *   1. a simple string, or null (when an attribute does not have a value);
  *   2. an array (to interpolate the value as JS);
  *   3. an object with the predefined `toString` method
@@ -39,6 +40,8 @@ exports.LibSource = LibSource;
  *   src: string,
  *   source?: LibSource,
  *   inline?: boolean,
+ *   iife?: boolean,
+ *   defer?: boolean,
  *   load?: boolean,
  *   attrs?: Object
  * }}
@@ -51,10 +54,11 @@ exports.Lib = Lib;
  *
  * 1. src - the path to library file
  * 2. [inline=false] - whether to include the library code inline in a `<script>` tag
- * 3. [defer=true] - whether the script should be deferred
- * 4. [load=true] - whether the library should be loaded at all
- * 5. [js=false] - if true, the function returns JS code to create and append a `<script>` element
- * 6. [attrs] - a dictionary with attributes to set.
+ * 3. [iife=false] - whether to wrap the library in the IIFE
+ * 4. [defer=true] - whether the script should be deferred
+ * 6. [load=true] - whether the library should be loaded at all
+ * 6. [js=false] - if true, the function returns JS code to create and append a `<script>` element
+ * 7. [attrs] - a dictionary with attributes to set.
  *   You can provide an attribute value in different ways:
  *   1. a simple string, or null (when an attribute does not have a value);
  *   2. an array (to interpolate the value as JS);
@@ -62,13 +66,14 @@ exports.Lib = Lib;
  *     (in this way you can also provide flags `escape: ` to disable escaping non-secure characters
  *     and `interpolate: true` to enable the interpolation of a value).
  *
- * 7. [staticAttrs] - a string with additional attributes for the script tag
+ * 8. [staticAttrs] - a string with additional attributes for the script tag
  *
  * {@link Lib}
  *
  * @typedef {{
  *   src: string,
  *   inline?: boolean,
+ *   iife?: boolean,
  *   defer?: boolean,
  *   load?: boolean,
  *   js?: boolean,
