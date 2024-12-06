@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-12-??)
+
+#### :bug: Bug Fix
+
+* Add "flush: 'sync'" to the page watcher. This restores the original semantics of the "immediate: true" option `bDynamicPage`
+
 ## v4.0.0-beta.164 (2024-12-06)
 
 #### :bug: Bug Fix
