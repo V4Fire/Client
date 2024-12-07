@@ -141,13 +141,23 @@
 
 					- block headScripts
 						+= await h.loadLibs(deps.headScripts, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
-						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
+
+						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: true, js: inlineDepsDeclarations})
+
 						+= await h.loadLibs(deps.scripts, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
 
-						+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
-						+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
+						- if !inlineDepsDeclarations
+							< script #scripts
+								+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: false, js: false})
+								+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: false, js: false})
 
-						+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
+								+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: false, js: false})
+
+						- else
+							+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: true, js: true})
+							+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: true, js: true})
+
+							+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: true, js: true})
 
 			< body ${rootAttrs|!html}
 				<! :: SSR
