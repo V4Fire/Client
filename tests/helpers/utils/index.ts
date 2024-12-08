@@ -6,14 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Page, JSHandle, ElementHandle } from "playwright";
+import type { Page, JSHandle, ElementHandle } from 'playwright';
 
-import { evalFn } from "core/prelude/test-env/components/json";
+import { evalFn } from 'core/prelude/test-env/components/json';
 
-import BOM, { WaitForIdleOptions } from "tests/helpers/bom";
-import type { ExtractFromJSHandle } from "tests/helpers/mock";
+import BOM, { WaitForIdleOptions } from 'tests/helpers/bom';
+import type { ExtractFromJSHandle } from 'tests/helpers/mock';
 
-const logsMap = new WeakMap<Page, string[]>();
+const
+	logsMap = new WeakMap<Page, string[]>();
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default class Utils {
@@ -33,54 +34,51 @@ export default class Utils {
 	 *
 	 * @deprecated https://playwright.dev/docs/api/class-page#page-wait-for-function
 	 */
-	static waitForFunction<
-		ARGS extends any[] = any[],
-		CTX extends JSHandle = JSHandle
-	>(
+	static waitForFunction<ARGS extends any[] = any[], CTX extends JSHandle = JSHandle>(
 		ctx: CTX,
 		fn: (this: any, ctx: ExtractFromJSHandle<CTX>, ...args: ARGS) => unknown,
 		...args: ARGS
 	): Promise<void> {
-		const strFn = fn.toString();
+		const
+			strFn = fn.toString();
 
-		return ctx.evaluate(
-			(ctx, [strFn, ...args]) => {
-				const timeout = 4e3,
-					// eslint-disable-next-line no-new-func
-					newFn = Function(
-						`return (${strFn}).apply(this, [this, ...${JSON.stringify(args)}])`
-					);
+		return ctx.evaluate((ctx, [strFn, ...args]) => {
+			const
+				timeout = 4e3,
+				// eslint-disable-next-line no-new-func
+				newFn = Function(`return (${strFn}).apply(this, [this, ...${JSON.stringify(args)}])`);
 
-				let isTimeout = false;
+			let
+				isTimeout = false;
 
-				return new Promise<void>((res, rej) => {
-					const timeoutTimer = setTimeout(() => (isTimeout = true), timeout);
+			return new Promise<void>((res, rej) => {
+				const
+					timeoutTimer = setTimeout(() => isTimeout = true, timeout);
 
-					const interval = setInterval(() => {
-						try {
-							const fnRes = Boolean(newFn.call(ctx));
+				const interval = setInterval(() => {
+					try {
+						const
+							fnRes = Boolean(newFn.call(ctx));
 
-							if (fnRes) {
-								clearTimeout(timeoutTimer);
-								clearInterval(interval);
-								res();
-							}
-
-							if (isTimeout) {
-								clearInterval(interval);
-								rej(
-									`The given function\n${newFn.toString()}\nreturns a negative result`
-								);
-							}
-						} catch (err) {
+						if (fnRes) {
+							clearTimeout(timeoutTimer);
 							clearInterval(interval);
-							rej(err);
+							res();
 						}
-					}, 15);
-				});
-			},
-			[strFn, ...args]
-		);
+
+						if (isTimeout) {
+							clearInterval(interval);
+							rej(`The given function\n${newFn.toString()}\nreturns a negative result`);
+						}
+
+					} catch (err) {
+						clearInterval(interval);
+						rej(err);
+					}
+				}, 15);
+			});
+
+		}, [strFn, ...args]);
 	}
 
 	/**
@@ -90,19 +88,16 @@ export default class Utils {
 	 * @param moduleName
 	 */
 	static import<T>(page: Page, moduleName: string): Promise<JSHandle<T>> {
-		if (!moduleName.startsWith("./")) {
+		if (!moduleName.startsWith('./')) {
 			moduleName = `./src/${moduleName}`;
 		}
 
-		if (!moduleName.endsWith(".ts")) {
+		if (!moduleName.endsWith('.ts')) {
 			moduleName = `${moduleName}/index.ts`;
 		}
 
-		return <Promise<ElementHandle<T>>>(
-			page.evaluateHandle(
-				([{ moduleName }]) => globalThis.importModule(moduleName),
-				[{ moduleName }]
-			)
+		return <Promise<ElementHandle<T>>>page.evaluateHandle(
+			([{moduleName}]) => globalThis.importModule(moduleName), [{moduleName}]
 		);
 	}
 
@@ -114,11 +109,8 @@ export default class Utils {
 	 *
 	 * @deprecated
 	 */
-	static async reloadAndWaitForIdle(
-		page: Page,
-		idleOptions?: WaitForIdleOptions
-	): Promise<void> {
-		await page.reload({ waitUntil: "networkidle" });
+	static async reloadAndWaitForIdle(page: Page, idleOptions?: WaitForIdleOptions): Promise<void> {
+		await page.reload({waitUntil: 'networkidle'});
 		await BOM.waitForIdleCallback(page, idleOptions);
 	}
 
@@ -135,7 +127,7 @@ export default class Utils {
 			const logsArr = <string[]>[];
 			logsMap.set(page, logsArr);
 
-			page.on("console", (message) => {
+			page.on('console', (message) => {
 				logsArr.push(message.text());
 			});
 		}
@@ -154,11 +146,12 @@ export default class Utils {
 	 * @param page
 	 */
 	static printPageLogs(page: Page): void {
-		const logs = logsMap.get(page);
+		const
+			logs = logsMap.get(page);
 
 		if (logs) {
 			// eslint-disable-next-line no-console
-			console.log(logs.join("\n"));
+			console.log(logs.join('\n'));
 			logsMap.delete(page);
 		}
 	}
