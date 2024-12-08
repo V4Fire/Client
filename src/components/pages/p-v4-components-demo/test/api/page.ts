@@ -65,7 +65,7 @@ export default class DemoPage {
 		await this.page.goto(concatURLs(this.baseUrl, `${this.pageFileName}.html`) + (query.length > 0 ? `?${query}` : ''), {waitUntil: 'networkidle'});
 		await root.waitFor({state: 'attached'});
 
-		this.component = await root.evaluateHandle((ctx) => ctx.component);
+		this.component = await root.evaluate((ctx) => (<DemoPage><unknown>ctx).component);
 
 		return this;
 	}

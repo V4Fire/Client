@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Page, JSHandle } from 'playwright';
+import type { Page, JSHandle, ElementHandle } from 'playwright';
 
 import { evalFn } from 'core/prelude/test-env/components/json';
 
@@ -96,7 +96,7 @@ export default class Utils {
 			moduleName = `${moduleName}/index.ts`;
 		}
 
-		return <Promise<JSHandle<T>>>page.evaluateHandle(
+		return <Promise<ElementHandle<T>>>page.evaluateHandle(
 			([{moduleName}]) => globalThis.importModule(moduleName), [{moduleName}]
 		);
 	}
