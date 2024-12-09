@@ -11,6 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-12-??)
+
+#### :bug: Bug Fix
+
+* Fix binding a non-promise handler for the custom watcher.
+After rewriting the loop from `.forEach` to native `for`, `return` statement was not changed to `continue`.
+`core/component/watch`
+
 ## v4.0.0-beta.163 (2024-12-05)
 
 #### :boom: Breaking Change
