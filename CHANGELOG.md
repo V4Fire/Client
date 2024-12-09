@@ -19,6 +19,22 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 After rewriting the loop from `.forEach` to native `for`, `return` statement was not changed to `continue`.
 `core/component/watch`
 
+## v4.0.0-beta.?? (2024-12-??)
+
+#### :bug: Bug Fix
+
+* Add "flush: 'sync'" to the page watcher. This restores the original semantics of the "immediate: true" option `bDynamicPage`
+
+## v4.0.0-beta.164 (2024-12-06)
+
+#### :bug: Bug Fix
+
+* Add `appendChild` to DOM class prototype `bVirtualScrollNew`
+
+### :rocket: New Feature
+
+* Add `iife` parameter for `Lib`, which wraps script output into IIFE `iStaticPage`
+
 ## v4.0.0-beta.163 (2024-12-05)
 
 #### :boom: Breaking Change

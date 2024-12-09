@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-12-??)
+
+#### :bug: Bug Fix
+
+* Add "flush: 'sync'" to the page watcher. This restores the original semantics of the "immediate: true" option
+
 ## v4.0.0-beta.145 (2024-10-14)
 
 #### :bug: Bug Fix
