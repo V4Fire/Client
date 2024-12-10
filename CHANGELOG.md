@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.166 (2024-12-09)
+
+#### :house: Internal
+
+* Hint classes are now optional to set on link elements `components/base/b-list`
+
 ## v4.0.0-beta.165 (2024-12-09)
 
 #### :bug: Bug Fix

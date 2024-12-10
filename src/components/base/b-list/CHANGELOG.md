@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.166 (2024-12-09)
+
+#### :house: Internal
+
+* Hint classes are now optional to set on link elements
+
 ## v4.0.0-beta.147 (2024-10-25)
 
 #### :bug: Bug Fix

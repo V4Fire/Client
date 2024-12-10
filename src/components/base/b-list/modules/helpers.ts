@@ -63,7 +63,7 @@ export function normalizeItems(this: bList, items: CanUndef<Item[]>): Item[] {
 		}
 
 		const
-			classes = this.provide.hintClasses(item.hintPos).concat(item.classes ?? []),
+			classes = this.hints ? this.provide.hintClasses(item.hintPos).concat(item.classes ?? []) : item.classes,
 			attrs = {...item.attrs};
 
 		if (href === undefined) {
