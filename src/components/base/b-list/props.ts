@@ -88,4 +88,10 @@ export default abstract class iListProps extends iData {
 	 */
 	@prop({type: Object, required: false})
 	readonly attrsProp?: Dictionary;
+
+	/**
+	 * If true, then `.g-hint` will be added to the link elements
+	 */
+	@prop(Boolean)
+	readonly hints: boolean = true;
 }
