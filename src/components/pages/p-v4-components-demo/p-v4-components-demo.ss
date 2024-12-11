@@ -20,3 +20,16 @@
 
 		< template v-if = stage?.startsWith('refs-async:')
 			< b-directives-ref-dummy :useAsyncRender = true | :stage = stage.split(':')[1]
+
+		< b-button @click = () => async.clearAll({group: /test/})
+			Destroy
+
+		< hr
+
+		< . v-async-target
+			< template v-for = _ in asyncRender.iterate(1, {filter: async.sleep.bind(async, 100), group: 'test'})
+				< b-example-issue-one
+				< hr
+				< b-example-issue-two
+				< hr
+				< b-example-issue-three

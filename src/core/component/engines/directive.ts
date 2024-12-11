@@ -72,7 +72,10 @@ ComponentEngine.directive = function directive(name: string, directive?: Directi
 			if (vnode.virtualContext != null) {
 				vnode.virtualContext.unsafe.$once('[[BEFORE_DESTROY]]', (opts: Required<ComponentDestructorOptions>) => {
 					if (opts.shouldUnmountVNodes) {
-						originalUnmounted.apply(this, args);
+						// NOTE: disabled unmount call on component destroy to visualize
+						// bugs when Vue doesn't call unmount for the vnodes
+
+						// originalUnmounted.apply(this, args);
 					}
 				});
 			}

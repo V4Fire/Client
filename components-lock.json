@@ -1,5 +1,5 @@
 {
-  "hash": "8f18802f0b580482f8a74dc03c996770a4b40f666d675930c34391d617e48966",
+  "hash": "2fbe4bcba9db29250d5697765336baedbf8a8c9efde147930419d19d010fc092",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -412,6 +412,134 @@
             "src/core/component/decorators/prop/test/b-effect-prop-wrapper-dummy/b-effect-prop-wrapper-dummy.styl"
           ],
           "tpl": "src/core/component/decorators/prop/test/b-effect-prop-wrapper-dummy/b-effect-prop-wrapper-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-example-issue-func",
+        {
+          "index": "src/components/dummies/b-example-issue-func/index.js",
+          "declaration": {
+            "name": "b-example-issue-func",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-example-issue-func",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/dummies/b-example-issue-func/b-example-issue-func.ts",
+          "styles": [
+            "src/components/dummies/b-example-issue-func/b-example-issue-func.styl"
+          ],
+          "tpl": "src/components/dummies/b-example-issue-func/b-example-issue-func.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-example-issue-one",
+        {
+          "index": "src/components/dummies/b-example-issue-one/index.js",
+          "declaration": {
+            "name": "b-example-issue-one",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-example-issue-one",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/dummies/b-example-issue-one/b-example-issue-one.ts",
+          "styles": [
+            "src/components/dummies/b-example-issue-one/b-example-issue-one.styl"
+          ],
+          "tpl": "src/components/dummies/b-example-issue-one/b-example-issue-one.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-example-issue-three",
+        {
+          "index": "src/components/dummies/b-example-issue-three/index.js",
+          "declaration": {
+            "name": "b-example-issue-three",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-example-issue-three",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/dummies/b-example-issue-three/b-example-issue-three.ts",
+          "styles": [
+            "src/components/dummies/b-example-issue-three/b-example-issue-three.styl"
+          ],
+          "tpl": "src/components/dummies/b-example-issue-three/b-example-issue-three.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-example-issue-two",
+        {
+          "index": "src/components/dummies/b-example-issue-two/index.js",
+          "declaration": {
+            "name": "b-example-issue-two",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-example-issue-two",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/dummies/b-example-issue-two/b-example-issue-two.ts",
+          "styles": [
+            "src/components/dummies/b-example-issue-two/b-example-issue-two.styl"
+          ],
+          "tpl": "src/components/dummies/b-example-issue-two/b-example-issue-two.ss",
           "etpl": null
         }
       ],
@@ -2892,7 +3020,11 @@
               "b-select-date",
               "p-v4-dynamic-page1",
               "p-v4-dynamic-page2",
-              "p-v4-dynamic-page3"
+              "p-v4-dynamic-page3",
+              "b-example-issue-func",
+              "b-example-issue-one",
+              "b-example-issue-two",
+              "b-example-issue-three"
             ],
             "libs": [
               "components/directives/bind-with",
@@ -2942,7 +3074,11 @@
             "b-select-date",
             "p-v4-dynamic-page1",
             "p-v4-dynamic-page2",
-            "p-v4-dynamic-page3"
+            "p-v4-dynamic-page3",
+            "b-example-issue-func",
+            "b-example-issue-one",
+            "b-example-issue-two",
+            "b-example-issue-three"
           ],
           "libs": [
             "components/directives/bind-with",

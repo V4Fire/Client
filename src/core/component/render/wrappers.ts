@@ -458,6 +458,8 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 				});
 
 			} else if (!('virtualContext' in vnode)) {
+				// QUESTION: Why we always write virtualContext for the component?
+				// Isn't it should be written only for func components?
 				Object.defineProperty(vnode, 'virtualContext', {
 					configurable: true,
 					enumerable: true,
