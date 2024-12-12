@@ -50,9 +50,10 @@ ComponentEngine.directive = function directive(name: string, directive?: Directi
 
 	const
 		originalCreated = directive.created,
+		originalBeforeUnmount = directive.beforeUnmount,
 		originalUnmounted = directive.unmounted;
 
-	if (originalUnmounted == null) {
+	if (originalUnmounted == null && originalBeforeUnmount == null) {
 		return originalDirective.call(ctx, name, directive);
 	}
 
@@ -72,7 +73,8 @@ ComponentEngine.directive = function directive(name: string, directive?: Directi
 			if (vnode.virtualContext != null) {
 				vnode.virtualContext.unsafe.$once('[[BEFORE_DESTROY]]', (opts: Required<ComponentDestructorOptions>) => {
 					if (opts.shouldUnmountVNodes) {
-						originalUnmounted.apply(this, args);
+						originalBeforeUnmount?.apply(this, args);
+						originalUnmounted?.apply(this, args);
 					}
 				});
 			}
