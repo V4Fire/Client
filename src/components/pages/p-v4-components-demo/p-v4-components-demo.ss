@@ -20,3 +20,19 @@
 
 		< template v-if = stage?.startsWith('refs-async:')
 			< b-directives-ref-dummy :useAsyncRender = true | :stage = stage.split(':')[1]
+
+		< b-button @click = onClick
+			Destroy
+
+		< hr
+
+		< div v-if = someField === 'foo'
+			< b-dummy
+				< . v-async-target
+					< template v-for = _ in asyncRender.iterate(1, {filter: async.sleep.bind(async, 100), group: 'test'})
+						/// BUG: v-hook destroy won't be called
+						< div v-hook = {unmounted: () => console.log('v-hook destroy')}
+							Hello
+
+						/// BUG: destructor of b-progress-icon won't be called
+						< b-progress-icon

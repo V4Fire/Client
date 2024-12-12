@@ -43,6 +43,10 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	@field()
 	someField: unknown = 'foo';
 
+	onClick(): void {
+		this.someField = 'bar';
+	}
+
 	@hook('beforeCreate')
 	setStageFromLocation(): void {
 		const matches = /stage=(.*)/.exec(globalThis.location.search);
