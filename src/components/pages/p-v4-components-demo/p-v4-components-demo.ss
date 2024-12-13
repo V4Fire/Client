@@ -20,3 +20,12 @@
 
 		< template v-if = stage?.startsWith('refs-async:')
 			< b-directives-ref-dummy :useAsyncRender = true | :stage = stage.split(':')[1]
+
+		< b-input &
+			/// v-func = false |
+			ref = input |
+			:value = someField |
+			:messageHelpers = true |
+			:ds = 'true' |
+			@onActionChange = onInputChange
+		.

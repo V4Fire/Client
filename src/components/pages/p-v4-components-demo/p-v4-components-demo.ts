@@ -43,6 +43,12 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	@field()
 	someField: unknown = 'foo';
 
+	onInputChange(v: string): void {
+		this.someField = v;
+
+		(<any>this.$refs).input.error = v.trim().length === 0 ? 'Это поле обязательное' : undefined;
+	}
+
 	@hook('beforeCreate')
 	setStageFromLocation(): void {
 		const matches = /stage=(.*)/.exec(globalThis.location.search);
