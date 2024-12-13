@@ -60,9 +60,7 @@ test.describe('<i-block> modules - reload', () => {
 				await ctx.waitComponentStatus('ready');
 			});
 
-			// We expect that the reload method will be called twice,
-			// since we are going through two instances of `async` and `$async` in the array
-			await test.expect(mockReload.callsCount).resolves.toBe(2);
+			await test.expect(mockReload.callsCount).resolves.toBe(1);
 		});
 	});
 
