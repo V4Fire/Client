@@ -11,10 +11,7 @@
  * @param args
  */
 export function measure(...args: Parameters<Performance['measure']>): CanUndef<ReturnType<Performance['measure']>> {
-	if (
-		'performance' in globalThis &&
-		Object.isFunction(Object.get(globalThis, 'performance.measure'))
-	) {
+	if (typeof globalThis.performance?.measure === 'function') {
 		return performance.measure(...args);
 	}
 }
