@@ -34,11 +34,11 @@ export function wrapWithMeasurement<TThis = unknown, TArgs extends unknown[] = u
 	original: (this: TThis, ...args: TArgs) => TResult,
 	enableMeasurement: boolean = !IS_PROD
 ) {
-	return function inner(this: TThis, ...args: TArgs): TResult {
-		if (!enableMeasurement) {
-			return original.call(this, ...args);
-		}
+	if (!enableMeasurement) {
+		return original;
+	}
 
+	return function wrapper(this: TThis, ...args: TArgs): TResult {
 		let start = performance.now();
 
 		const result = original.call(this, ...args);
