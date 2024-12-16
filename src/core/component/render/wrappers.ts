@@ -8,7 +8,7 @@
 
 /* eslint-disable prefer-spread */
 
-import { measure } from 'core/performance';
+import { wrapWithMeasurement } from 'core/performance';
 
 import { app, isComponent, componentRenderFactories, destroyedHooks, ASYNC_RENDER_ID } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
@@ -84,9 +84,17 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
  * @param original
  */
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
-	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
-		const start = performance.now();
+	function getMeasurementName(this: ComponentInterface, ...args: Parameters<T>): string {
+		let [name] = args;
 
+		if (!Object.isString(name) && !Object.isPrimitive(name) && 'name' in name) {
+			name = name.name ?? '';
+		}
+
+		return `<${String(name).camelize(true)}> create block`;
+	}
+
+	function innerCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
 		let [
 			name,
 			attrs,
@@ -242,15 +250,15 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		functionalVNode.children = [];
 		functionalVNode.dynamicChildren = [];
 
-		if (!IS_PROD) {
-			measure(`<${componentName.camelize(true)}> create block`, {
-				start,
-				end: performance.now()
-			});
-		}
-
 		return vnode;
-	});
+	}
+
+	return Object.cast(
+		wrapWithMeasurement(
+			getMeasurementName,
+			innerCreateBlock
+		)
+	)
 }
 
 /**
@@ -258,21 +266,18 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
  * @param original
  */
 export function wrapCreateElementBlock<T extends typeof createElementBlock>(original: T): T {
-	return Object.cast(function createElementBlock(this: ComponentInterface, ...args: Parameters<T>) {
-		const start = performance.now();
+	return Object.cast(
+		wrapWithMeasurement(
+			function getMeasurementName(this: ComponentInterface) {
+				return `<${this.componentName.camelize(true)}> create element block`;
+			},
 
-		args[3] = normalizePatchFlagUsingProps.call(this, args[3], args[1]);
-		const result = resolveAttrs.call(this, original.apply(null, args));
-
-		if (!IS_PROD) {
-			measure(`<${this.componentName.camelize(true)}> create element block`, {
-				start,
-				end: performance.now()
-			});
-		}
-
-		return result;
-	});
+			function createElementBlock(this: ComponentInterface, ...args: Parameters<T>) {
+				args[3] = normalizePatchFlagUsingProps.call(this, args[3], args[1]);
+				return resolveAttrs.call(this, original.apply(null, args));
+			}
+		)
+	);
 }
 
 /**
@@ -341,43 +346,42 @@ export function wrapMergeProps<T extends typeof mergeProps>(original: T): T {
  * @param withCtx
  */
 export function wrapRenderList<T extends typeof renderList, C extends typeof withCtx>(original: T, withCtx: C): T {
-	return Object.cast(function renderList(
-		this: ComponentInterface,
-		src: Iterable<unknown> | Dictionary | number | undefined | null,
-		cb: AnyFunction
-	) {
-		const start = performance.now();
+	return Object.cast(
+		wrapWithMeasurement(
+			function getMeasurementName(this: ComponentInterface, ..._args: unknown[]) {
+				return `<${this.componentName.camelize(true)}> render list`;
+			},
 
-		const
-			ctx = this.$renderEngine.r.getCurrentInstance(),
+			function renderList(
+				this: ComponentInterface,
+				src: Iterable<unknown> | Dictionary | number | undefined | null,
+				cb: AnyFunction
+			) {
+				const
+					ctx = this.$renderEngine.r.getCurrentInstance(),
 
-			// Preserve rendering context for the async render
-			wrappedCb: AnyFunction = Object.cast(withCtx(cb, ctx));
+					// Preserve rendering context for the async render
+					wrappedCb: AnyFunction = Object.cast(withCtx(cb, ctx));
 
-		const
-			vnodes = original(src, wrappedCb),
-			asyncRenderId = src?.[ASYNC_RENDER_ID];
+				const
+					vnodes = original(src, wrappedCb),
+					asyncRenderId = src?.[ASYNC_RENDER_ID];
 
-		if (asyncRenderId != null) {
-			this.$emit('[[V_FOR_CB]]', {wrappedCb});
+				if (asyncRenderId != null) {
+					this.$emit('[[V_FOR_CB]]', {wrappedCb});
 
-			Object.defineProperty(vnodes, ASYNC_RENDER_ID, {
-				writable: false,
-				enumerable: false,
-				configurable: false,
-				value: asyncRenderId
-			});
-		}
+					Object.defineProperty(vnodes, ASYNC_RENDER_ID, {
+						writable: false,
+						enumerable: false,
+						configurable: false,
+						value: asyncRenderId
+					});
+				}
 
-		if (!IS_PROD) {
-			measure(`<${this.componentName.camelize(true)}> render list`, {
-				start,
-				end: performance.now()
-			});
-		}
-
-		return vnodes;
-	});
+				return vnodes;
+			}
+		)
+	);
 }
 
 /**

@@ -20,3 +20,38 @@ export function measure(...args: Parameters<Performance['measure']>): CanUndef<R
 	//#endif
 }
 
+/**
+ * Wraps given function `original` with performance measurement with name `measurement`.
+ * By default, measurements are only enabled if IS_PROD is false.
+ * This may be overridden by supplying `enableMeasurement`.
+ *
+ * @param measurement
+ * @param original
+ * @param [enableMeasurement]
+ */
+export function wrapWithMeasurement<TThis = unknown, TArgs extends unknown[] = unknown[], TResult = void>(
+	measurement: string | ((this: TThis, ...args: TArgs) => string),
+	original: (this: TThis, ...args: TArgs) => TResult,
+	enableMeasurement: boolean = !IS_PROD
+) {
+	return function inner(this: TThis, ...args: TArgs): TResult {
+		if (!enableMeasurement) {
+			return original.call(this, ...args);
+		}
+
+		let start = performance.now();
+
+		const result = original.call(this, ...args);
+
+		if (typeof measurement === 'function') {
+			measurement = <string>measurement.call(this, ...args);
+		}
+
+		measure(measurement, {
+			start,
+			end: performance.now()
+		});
+
+		return result;
+	};
+}
