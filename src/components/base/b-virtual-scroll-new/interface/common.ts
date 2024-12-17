@@ -64,18 +64,34 @@ export interface ShouldPerform<RES = boolean> {
 export interface UnsafeBVirtualScroll<CTX extends bVirtualScrollNew = bVirtualScrollNew> extends UnsafeIData<CTX> {
 	// @ts-ignore (access)
 	onRenderEngineStart: CTX['onRenderEngineStart'];
+
 	// @ts-ignore (access)
 	onRenderEngineDone: CTX['onRenderEngineDone'];
+
 	// @ts-ignore (access)
 	onElementEnters: CTX['onElementEnters'];
+
 	// @ts-ignore (access)
 	componentEmitter: CTX['componentEmitter'];
+
 	// @ts-ignore (access)
 	slotsStateController: CTX['slotsStateController'];
+
 	// @ts-ignore (access)
 	componentInternalState: CTX['componentInternalState'];
+
 	// @ts-ignore (access)
 	componentFactory: CTX['componentFactory'];
+
+	// @ts-ignore (access)
+	shouldStopRequestingDataWrapper: CTX['shouldStopRequestingDataWrapper'];
+
+	// @ts-ignore (access)
+	loadDataOrPerformRender: CTX['loadDataOrPerformRender'];
+
 	// @ts-ignore (access)
 	observer: CTX['observer'];
+
+	// @ts-ignore (access)
+	currentItemsProcessors: CTX['currentItemsProcessors'];
 }

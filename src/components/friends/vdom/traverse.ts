@@ -79,32 +79,25 @@ export function findElement(
 	return search(where);
 
 	function search(vnode: VNode) {
-		const
-			props = vnode.props ?? {};
+		const props = vnode.props ?? {};
 
 		if (props.class != null) {
-			const
-				classes = normalizeClass(props.class).split(' ');
+			const classes = normalizeClass(props.class).split(' ');
 
 			if (classes.includes(selector)) {
 				return vnode;
 			}
 		}
 
-		const
-			{children} = vnode;
+		const {children} = vnode;
 
 		if (Object.isArray(children)) {
-			for (let i = 0; i < children.length; i++) {
-				const
-					el = children[i];
-
+			for (const el of children) {
 				if (Object.isPrimitive(el) || Object.isArray(el)) {
 					continue;
 				}
 
-				const
-					res = search(Object.cast(el));
+				const res = search(Object.cast(el));
 
 				if (res != null) {
 					return res;

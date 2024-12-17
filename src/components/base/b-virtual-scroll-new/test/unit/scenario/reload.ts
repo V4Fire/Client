@@ -19,18 +19,17 @@ test.describe('<b-virtual-scroll-new>', () => {
 	let
 		component: VirtualScrollTestHelpers['component'],
 		provider: VirtualScrollTestHelpers['provider'],
-		state: VirtualScrollTestHelpers['state'],
-		initLoadSpy: VirtualScrollTestHelpers['initLoadSpy'];
+		state: VirtualScrollTestHelpers['state'];
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 
-		({component, provider, state, initLoadSpy} = await createTestHelpers(page));
+		({component, provider, state} = await createTestHelpers(page));
 		await provider.start();
 	});
 
 	test.describe('`request` prop was changed', () => {
-		test('Should reset state and reload the component data', async () => {
+		test('should reset state and reload the component data', async () => {
 			const
 				chunkSize = [12, 20];
 
@@ -43,7 +42,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withDefaultPaginationProviderProps({chunkSize: chunkSize[0]})
 				.withProps({
 					chunkSize: chunkSize[0],
-					'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
+					'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'strictEmit')
 				})
 				.build({useDummy: true});
 
@@ -63,7 +62,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 			await component.waitForDataIndexChild(chunkSize[1] - 1);
 
 			const
-				spy = await component.getSpy((ctx) => ctx.emit),
+				spy = await component.getSpy((ctx) => ctx.strictEmit),
 				calls = filterEmitterCalls(await spy.calls, true, ['initLoadStart', 'initLoad']).map(([event]) => event);
 
 			test.expect(calls).toEqual([
@@ -92,14 +91,13 @@ test.describe('<b-virtual-scroll-new>', () => {
 				'renderDone'
 			]);
 
-			await test.expect(initLoadSpy.calls).resolves.toEqual([[], []]);
 			await test.expect(component.waitForChildCountEqualsTo(chunkSize[1])).resolves.toBeUndefined();
 		});
 	});
 
-	['reset', 'reset.silence', 'reset.load', 'reset.load.silence'].forEach((event, i) => {
+	['reset', 'reset.silence', 'reset.load', 'reset.load.silence'].forEach((event) => {
 		test.describe(`${event} fired`, () => {
-			test('Should reset state and reload the component data', async () => {
+			test('should reset state and reload the component data', async () => {
 				const
 					chunkSize = 12;
 
@@ -112,7 +110,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 					.withDefaultPaginationProviderProps({chunkSize})
 					.withProps({
 						chunkSize,
-						'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
+						'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'strictEmit')
 					})
 					.build();
 
@@ -121,7 +119,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 				await component.waitForDataIndexChild(chunkSize * 2 - 1);
 
 				const
-					spy = await component.getSpy((ctx) => ctx.emit),
+					spy = await component.getSpy((ctx) => ctx.strictEmit),
 					calls = filterEmitterCalls(await spy.calls, true, ['initLoadStart', 'initLoad']).map(([event]) => event);
 
 				test.expect(calls).toEqual([
@@ -150,14 +148,6 @@ test.describe('<b-virtual-scroll-new>', () => {
 					'renderDone'
 				]);
 
-				const initLoadArgs = [
-					[[], []],
-					[[], [undefined, {silent: true}]],
-					[[], []],
-					[[], [undefined, {silent: true}]]
-				];
-
-				await test.expect(initLoadSpy.calls).resolves.toEqual(initLoadArgs[i]);
 				await test.expect(component.waitForChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
 			});
 		});

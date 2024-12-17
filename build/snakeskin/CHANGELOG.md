@@ -9,6 +9,26 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.155 (2024-11-20)
+
+#### :house: Internal
+
+* Added a function to check if a tag is a web component (currently it always returns false)
+* Disabled props normalization for tags that are web components
+
+## v4.0.0-beta.153 (2024-11-15)
+
+#### :bug: Bug Fix
+
+* Re-fixed loss of refs in slots inside async render (see v4.0.0-beta.52)
+  by converting `v-ref` to a prop for regular components `build/snakeskin/filters`
+
+## v4.0.0-beta.145 (2024-10-14)
+
+#### :bug: Bug Fix
+
+* Fixed the issue with incorrectly detecting the functional smart component
+
 ## v4.0.0-beta.91 (2024-04-19)
 
 #### :house: Internal

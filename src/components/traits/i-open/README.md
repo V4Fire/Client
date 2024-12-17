@@ -11,7 +11,7 @@ This module provides a trait for a component that needs to implement the "openin
 * The trait can be automatically derived.
 
   ```typescript
-  import { derive } from 'core/functools/trait';
+  import { derive } from 'components/traits';
 
   import iOpen from 'components/traits/i-open/i-open';
   import iBlock, { component } from 'components/super/i-block/i-block';
@@ -23,7 +23,7 @@ This module provides a trait for a component that needs to implement the "openin
   class bButton extends iBlock implements iOpen {
     static override readonly mods: ModsDecl = {
       ...iOpen.mods
-    }
+    };
 
     protected override initModEvents(): void {
       super.initModEvents();
@@ -50,7 +50,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 export default class bButton implements iOpen {
   static override readonly mods: ModsDecl = {
     ...iOpen.mods
-  }
+  };
 }
 ```
 

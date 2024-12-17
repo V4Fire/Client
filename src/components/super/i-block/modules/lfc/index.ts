@@ -16,11 +16,12 @@ import SyncPromise from 'core/promise/sync';
 import type Async from 'core/async';
 import type { AsyncOptions } from 'core/async';
 
+import { beforeHooks, Hook } from 'core/component';
+
 import Friend from 'components/friends/friend';
 
 import { statuses } from 'components/super/i-block/const';
 
-import type { Hook } from 'core/component';
 import type { Cb } from 'components/super/i-block/modules/lfc/interface';
 
 export * from 'components/super/i-block/modules/lfc/interface';
@@ -44,14 +45,9 @@ export default class Lfc extends Friend {
 	 * ```
 	 */
 	isBeforeCreate(...skip: Hook[]): boolean {
-		const beforeHooks = {
-			beforeRuntime: true,
-			beforeCreate: true,
-			beforeDataCreate: true
-		};
-
-		skip.forEach((hook) => beforeHooks[hook] = false);
-		return Boolean(beforeHooks[<string>this.hook]);
+		const hooks = {...beforeHooks};
+		skip.forEach((hook) => hooks[hook] = false);
+		return Boolean(hooks[<string>this.hook]);
 	}
 
 	/**
@@ -75,9 +71,15 @@ export default class Lfc extends Friend {
 	 */
 	execCbAtTheRightTime<R = unknown>(cb: Cb<this['C'], R>, opts?: AsyncOptions): CanPromise<CanVoid<R>> {
 		if (this.isBeforeCreate('beforeDataCreate')) {
-			return this.async.promise(new SyncPromise<R>((r) => {
+			const promise = new SyncPromise<R>((r) => {
 				this.meta.hooks.beforeDataCreate.push({fn: () => r(cb.call(this.component))});
-			}), opts).catch(stderr);
+			});
+
+			if (opts != null) {
+				return this.async.promise(promise, opts).catch(stderr);
+			}
+
+			return promise;
 		}
 
 		if (this.hook === 'beforeDataCreate') {
@@ -86,8 +88,7 @@ export default class Lfc extends Friend {
 
 		this.ctx.beforeReadyListeners++;
 
-		const
-			res = this.ctx.waitComponentStatus('beforeReady', cb, opts);
+		const res = this.ctx.waitComponentStatus('beforeReady', cb, opts);
 
 		if (Object.isPromise(res)) {
 			return res.catch(stderr);
@@ -112,7 +113,7 @@ export default class Lfc extends Friend {
 	 * ```
 	 */
 	execCbAfterBlockReady<R = unknown>(cb: Cb<this['C'], R>, opts?: AsyncOptions): CanUndef<CanPromise<R>> {
-		if (this.ctx.block) {
+		if ('block' in this.ctx) {
 			if (statuses[this.componentStatus] >= 0) {
 				return cb.call(this.component);
 			}
@@ -144,9 +145,15 @@ export default class Lfc extends Friend {
 	 */
 	execCbAfterComponentCreated<R = unknown>(cb: Cb<this['C'], R>, opts?: AsyncOptions): CanPromise<CanVoid<R>> {
 		if (this.isBeforeCreate()) {
-			return this.async.promise(new SyncPromise<R>((r) => {
+			const promise = new SyncPromise<R>((r) => {
 				this.meta.hooks['before:created'].push({fn: () => r(cb.call(this.component))});
-			}), opts).catch(stderr);
+			});
+
+			if (opts != null) {
+				return this.async.promise(promise, opts).catch(stderr);
+			}
+
+			return promise;
 		}
 
 		if (statuses[this.componentStatus] >= 0) {

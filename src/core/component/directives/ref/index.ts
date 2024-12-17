@@ -24,23 +24,16 @@ import type { DirectiveOptions } from 'core/component/directives/ref/interface';
 export * from 'core/component/directives/ref/const';
 export * from 'core/component/directives/ref/interface';
 
-//#if runtime has dummyComponents
-import('core/component/directives/ref/test/b-directives-ref-dummy');
-//#endif
-
 ComponentEngine.directive('ref', {
 	mounted: updateRef,
 	updated: updateRef
 });
 
 function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode: VNode): void {
-	const {
-		value,
-		instance
-	} = opts;
+	const {value, instance} = opts;
 
 	let ctx = getDirectiveContext(opts, vnode);
-	ctx = Object.cast(ctx?.unsafe.meta.params.functional === true ? ctx : instance);
+	ctx = Object.cast(ctx?.meta.params.functional === true ? ctx : instance);
 
 	if (
 		value == null ||
@@ -65,8 +58,7 @@ function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode
 		refs = ctx.$refs;
 
 	if (vnode.virtualComponent != null) {
-		const
-			refVal = getRefVal();
+		const refVal = getRefVal();
 
 		if (Object.isArray(refVal)) {
 			refVal[REF_ID] ??= Math.random();
@@ -107,11 +99,9 @@ function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode
 	}
 
 	function resolveRefVal(key?: PropertyKey) {
-		const
-			refVal = getRefVal();
+		const refVal = getRefVal();
 
-		let
-			ref: unknown;
+		let ref: unknown;
 
 		if (Object.isArray(refVal)) {
 			if (key != null) {

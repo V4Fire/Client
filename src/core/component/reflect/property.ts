@@ -7,10 +7,12 @@
  */
 
 import { deprecate } from 'core/functools/deprecation';
-import { ComponentInterface } from 'core/component/interface';
 
-import { propRgxp, attrRgxp, privateFieldRgxp, storeRgxp, hasSeparator } from 'core/component/reflect/const';
+import { V4_COMPONENT } from 'core/component/const';
+import { isStore, isPrivateField } from 'core/component/reflect/const';
+
 import type { PropertyInfo, AccessorType } from 'core/component/reflect/interface';
+import type { ComponentInterface } from 'core/component/interface';
 
 /**
  * Returns an object containing information of the component property by the specified path
@@ -59,20 +61,26 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		chunks: Nullable<string[]>,
 		rootI = 0;
 
-	if (hasSeparator.test(path)) {
+	if (path.includes('.')) {
 		chunks = path.split('.');
 
-		let
-			obj: Nullable<ComponentInterface> = component;
+		let obj: Nullable<ComponentInterface> = component;
 
 		for (let i = 0; i < chunks.length; i++) {
+			const chunk = chunks[i];
+
 			if (obj == null) {
 				break;
 			}
 
-			obj = obj[chunks[i]];
+			if (Object.isMap(obj)) {
+				obj = Object.cast(obj.get(chunk));
 
-			if (obj?.instance instanceof ComponentInterface) {
+			} else {
+				obj = typeof obj !== 'object' || chunk in obj ? obj[chunk] : undefined;
+			}
+
+			if (obj != null && typeof obj === 'object' && V4_COMPONENT in obj) {
 				component = obj;
 				rootI = i === chunks.length - 1 ? i : i + 1;
 			}
@@ -128,22 +136,22 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		originalTopPath
 	};
 
-	if (privateFieldRgxp.test(name)) {
+	if (isPrivateField.test(name)) {
 		info.type = 'system';
 		return info;
 	}
 
-	if (RegExp.test(propRgxp, name)) {
+	if (name.startsWith('$props') || name.endsWith('Prop')) {
 		info.type = 'prop';
 		return info;
 	}
 
-	if (RegExp.test(attrRgxp, name)) {
+	if (name.startsWith('$attrs')) {
 		info.type = 'attr';
 		return info;
 	}
 
-	if (RegExp.test(storeRgxp, name)) {
+	if (isStore.test(name)) {
 		if (fields[name] != null) {
 			return info;
 		}
@@ -225,8 +233,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 
 	if (accessorType != null) {
 		if ((computedFields[name] ?? accessors[name])!.watchable) {
-			let
-				ctxPath: ObjectPropertyPath;
+			let ctxPath: ObjectPropertyPath;
 
 			if (chunks != null) {
 				ctxPath = chunks.slice(0, rootI + 1);

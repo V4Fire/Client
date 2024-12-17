@@ -90,6 +90,4 @@ export interface Config extends SuperConfig {
 	 * For more information, see `components/directives/safe-html`.
 	 */
 	safeHtml: SanitizedOptions;
-
-	components: typeof COMPONENTS;
 }

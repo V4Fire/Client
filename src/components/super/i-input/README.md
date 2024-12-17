@@ -48,7 +48,7 @@ import iInput, { component } from 'components/super/i-input/i-input';
 
 @component()
 export default class MyInput extends iInput {
-  protected override readonly $refs!: {input: HTMLInputElement};
+  declare protected readonly $refs: iInput['$refs'] & {input: HTMLInputElement};
 }
 ```
 
@@ -64,9 +64,9 @@ import iInput, { component } from 'components/super/i-input/i-input';
 
 @component()
 export default class MyInput extends iInput {
-  override readonly Value!: string;
+  declare readonly Value: string;
 
-  override readonly FormValue!: Number;
+  declare readonly FormValue: Number;
 
   override readonly dataType: Function = parseInt;
 
@@ -348,9 +348,9 @@ import iInput, { component } from 'components/super/i-input/i-input';
 
 @component()
 export default class MyInput extends iInput {
-  override readonly Value!: string;
+  declare readonly Value: string;
 
-  override readonly FormValue!: Number;
+  declare readonly FormValue: Number;
 
   override readonly dataType: Function = parseInt;
 

@@ -35,32 +35,6 @@ test.describe('contracts for props effects', () => {
 
 			await test.expect(res).resolves.toBe(42);
 		});
-
-		test.describe('an accessor error', () => {
-			test.beforeEach(async ({consoleTracker}) => {
-				await consoleTracker.setMessageFilters({
-					'No accessors are defined for the prop "dataProp".': (msg) => msg.args()[3].evaluate((err) => err.message)
-				});
-			});
-
-			test('should be thrown if the value is not an accessor', async ({consoleTracker}) => {
-				await target.evaluate((ctx) => {
-					const vnode = ctx.vdom.create('b-non-effect-prop-dummy', {attrs: {dataProp: {a: 1}}});
-					ctx.vdom.render(vnode);
-				});
-
-				await test.expect(consoleTracker.getMessages()).resolves.toHaveLength(1);
-			});
-
-			test('should not be thrown if the value is `undefined`', async ({consoleTracker}) => {
-				await target.evaluate((ctx) => {
-					const vnode = ctx.vdom.create('b-non-effect-prop-dummy', {attrs: {dataProp: undefined}});
-					ctx.vdom.render(vnode);
-				});
-
-				await test.expect(consoleTracker.getMessages()).resolves.toHaveLength(0);
-			});
-		});
 	});
 
 	test.describe('changing the value of the prop with `forceUpdate: false`', () => {

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.154.dsl-speedup-3 (2024-11-19)
+
+#### :boom: Breaking Change
+
+* Removed the `components` property
+
 ## v4.0.0-beta.122 (2024-08-06)
 
 #### :rocket: New Feature

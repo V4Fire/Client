@@ -48,8 +48,11 @@ export { Value, FormValue };
 })
 
 export default class bCheckbox extends iInput implements iSize {
-	override readonly Value!: Value;
-	override readonly FormValue!: FormValue;
+	/** @inheritDoc */
+	declare readonly Value: Value;
+
+	/** @inheritDoc */
+	declare readonly FormValue: FormValue;
 
 	/**
 	 * If true, the component is checked by default.
@@ -183,7 +186,8 @@ export default class bCheckbox extends iInput implements iSize {
 	@system()
 	protected override valueStore!: this['Value'];
 
-	protected override readonly $refs!: iInput['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iInput['$refs'] & {
 		input: HTMLInputElement;
 	};
 
@@ -237,8 +241,7 @@ export default class bCheckbox extends iInput implements iSize {
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
-		const
-			i = this.instance;
+		const i = this.instance;
 
 		this.convertValueToChecked = i.convertValueToChecked.bind(this);
 		this.onCheckedChange = i.onCheckedChange.bind(this);
@@ -282,8 +285,7 @@ export default class bCheckbox extends iInput implements iSize {
 	}
 
 	protected override resolveValue(value?: this['Value']): this['Value'] {
-		const
-			i = this.instance;
+		const i = this.instance;
 
 		const canApplyDefault =
 			value === undefined &&

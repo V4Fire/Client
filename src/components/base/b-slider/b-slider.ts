@@ -13,7 +13,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { derive } from 'core/functools/trait';
+import { derive } from 'components/traits';
 
 import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
@@ -172,7 +172,8 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	@field((o) => o.sync.link())
 	protected mode!: Mode;
 
-	protected override readonly $refs!: iSliderProps['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iSliderProps['$refs'] & {
 		view?: HTMLElement;
 		content?: HTMLElement;
 		contentWrapper?: HTMLElement;

@@ -95,7 +95,7 @@ test.describe('<b-dynamic-page>', () => {
 		await test.expect(
 			target.evaluate((ctx) => {
 				const {meta} = ctx.unsafe;
-				return 'component' in meta.accessors && !('component' in meta.computedFields);
+				return meta.accessors.component != null && meta.computedFields.component == null;
 			})
 		).toBeResolvedTo(true);
 	});
@@ -147,4 +147,17 @@ test.describe('<b-dynamic-page>', () => {
 		]);
 	});
 
+	test('should not render an empty node if the page is `undefined`', async ({page}) => {
+		const target = await renderDynamicPage(page, {'data-testid': 'target'});
+
+		await target.evaluate((ctx) => {
+			ctx.page = undefined;
+
+			return ctx.$nextTick();
+		});
+
+		const componentInnerHtml = await page.getByTestId('target').innerHTML();
+
+		test.expect(componentInnerHtml).toBe('');
+	});
 });

@@ -10,6 +10,7 @@ package('p-v4-components-demo')
 	.extends('i-static-page')
 	.dependencies(
 		'b-dummy',
+		'b-directives-ref-dummy',
 
 		'b-router',
 		'b-dynamic-page',
@@ -49,6 +50,7 @@ package('p-v4-components-demo')
 		'components/directives/icon',
 		'components/directives/in-view',
 		'components/directives/safe-html',
+		'components/directives/safe-on',
 
 		'core/router/engines/browser-history',
 		'core/router/engines/in-memory',

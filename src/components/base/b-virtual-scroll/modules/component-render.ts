@@ -15,7 +15,8 @@ import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scro
 import type { RenderItem, DataToRender, ItemAttrs, VirtualItemEl } from 'components/base/b-virtual-scroll/interface';
 
 export default class ComponentRender extends Friend {
-	override readonly C!: bVirtualScroll;
+	/** @inheritDoc */
+	declare readonly C: bVirtualScroll;
 
 	/**
 	 * Async group

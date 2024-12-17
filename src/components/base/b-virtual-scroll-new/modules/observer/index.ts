@@ -20,7 +20,8 @@ export { default as IoObserver } from 'components/base/b-virtual-scroll-new/modu
  * It provides observation capabilities using different engines such as IoObserver and ScrollObserver.
  */
 export class Observer extends Friend {
-	override readonly C!: bVirtualScrollNew;
+	/** @inheritDoc */
+	declare readonly C: bVirtualScrollNew;
 
 	/**
 	 * The observation engine used by the Observer.
@@ -30,9 +31,8 @@ export class Observer extends Friend {
 	/**
 	 * @param ctx - the `bVirtualScrollNew` component instance.
 	 */
-	constructor(ctx: bVirtualScrollNew) {
+	constructor(ctx: bVirtualScrollNew | bVirtualScrollNew['unsafe']) {
 		super(ctx);
-
 		this.engine = new IoObserver(ctx);
 	}
 

@@ -9,61 +9,80 @@
 import type { WatchPath } from 'core/object/watch';
 
 import type { WritableComputedOptions, DirectiveBinding } from 'core/component/engines';
+
 import type { PropOptions, InitFieldFn, MergeFieldFn, UniqueFieldFn } from 'core/component/decorators';
+
 import type { ComponentInterface, FieldWatcher, MethodWatcher, Hook } from 'core/component/interface';
 
 export interface ComponentProp extends PropOptions {
-	watchers: Map<string | Function, FieldWatcher>;
 	forceUpdate: boolean;
-	forceDefault?: boolean;
+
+	watchers?: Map<string | Function, FieldWatcher>;
 	default?: unknown;
+
 	meta: Dictionary;
 }
 
-export interface ComponentSystemField<CTX extends ComponentInterface = ComponentInterface> {
+export interface ComponentSystemField<Ctx extends ComponentInterface = ComponentInterface> {
 	src: string;
+	meta: Dictionary;
+
 	atom?: boolean;
+	after?: Set<string>;
+
 	default?: unknown;
-	unique?: boolean | UniqueFieldFn<CTX>;
+	unique?: boolean | UniqueFieldFn<Ctx>;
+
 	functional?: boolean;
 	functionalWatching?: boolean;
-	after?: Set<string>;
-	init?: InitFieldFn<CTX>;
-	merge?: MergeFieldFn<CTX> | boolean;
-	meta: Dictionary;
+
+	init?: InitFieldFn<Ctx>;
+	merge?: MergeFieldFn<Ctx> | boolean;
+
+	watchers?: Map<string | Function, FieldWatcher>;
 }
 
-export interface ComponentField<CTX extends ComponentInterface = ComponentInterface> extends ComponentSystemField<CTX> {
-	watchers?: Map<string | Function, FieldWatcher>;
+export interface ComponentField<Ctx extends ComponentInterface = ComponentInterface> extends ComponentSystemField<Ctx> {
 	forceUpdate?: boolean;
 }
 
+export type ComponentFieldInitializers = Array<[string, CanUndef<ComponentSystemField>]>;
+
 export type ComponentAccessorCacheType =
 	boolean |
+	'forever' |
 	'auto';
 
 export interface ComponentAccessor<T = unknown> extends Partial<WritableComputedOptions<T>> {
 	src: string;
 	cache: ComponentAccessorCacheType;
+
 	functional?: boolean;
 	watchable?: boolean;
+
+	dependencies?: WatchPath[];
+	tiedWith?: ComponentProp | ComponentField;
 }
 
 export interface ComponentMethod {
 	fn: Function;
+
 	src?: string;
 	wrapper?: boolean;
-	functional?: boolean;
+	accessor?: boolean;
+
 	watchers?: Dictionary<MethodWatcher>;
 	hooks?: ComponentMethodHooks;
 }
 
 export interface ComponentHook {
 	fn: Function;
+
 	name?: string;
+	after?: Set<string>;
+
 	functional?: boolean;
 	once?: boolean;
-	after?: Set<string>;
 }
 
 export type ComponentHooks = {
@@ -80,6 +99,3 @@ export type ComponentMethodHooks = {
 };
 
 export interface ComponentDirectiveOptions extends DirectiveBinding {}
-
-export type ComponentWatchDependencies = Map<WatchPath, WatchPath[]>;
-export type ComponentWatchPropDependencies = Map<WatchPath, Set<string>>;

@@ -8,18 +8,29 @@
 
 import { normalizeClass, normalizeStyle } from 'core/component/render/helpers/normalizers';
 
-export const
-	isHandler = /^on[^a-z]/;
+export const isHandler = {
+	test(key: string): boolean {
+		if (key.length < 3 || !key.startsWith('on')) {
+			return false;
+		}
+
+		const codePoint = key.codePointAt(2);
+
+		// [^a-z]
+		return codePoint != null && (codePoint < 97 || codePoint > 122);
+	}
+};
 
 /**
  * Merges the specified props into one and returns a single merged prop object
  * @param args
  */
 export function mergeProps(...args: Dictionary[]): Dictionary {
-	const
-		props: Dictionary = {};
+	const props: Dictionary = {};
 
-	args.forEach((toMerge) => {
+	for (let i = 0; i < args.length; i += 1) {
+		const toMerge = args[i];
+
 		for (const key in toMerge) {
 			if (key === 'class') {
 				if (props.class !== toMerge.class) {
@@ -38,14 +49,14 @@ export function mergeProps(...args: Dictionary[]): Dictionary {
 					existing !== incoming &&
 					!(Object.isArray(existing) && existing.includes(incoming))
 				) {
-					props[key] = Object.isTruly(existing) ? (<unknown[]>[]).concat(existing, incoming) : incoming;
+					props[key] = Object.isTruly(existing) ? Array.toArray(existing, incoming) : incoming;
 				}
 
 			} else if (key !== '') {
 				props[key] = toMerge[key];
 			}
 		}
-	});
+	}
 
 	return props;
 }

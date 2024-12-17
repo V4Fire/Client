@@ -12,19 +12,17 @@
  */
 
 import { components } from 'core/component/const';
-import { isPropGetter, propGetterRgxp } from 'core/component/reflect';
+import { isPropGetter } from 'core/component/reflect';
 import { ComponentEngine, DirectiveBinding, VNode } from 'core/component/engines';
 
-import { setVNodePatchFlags, normalizeComponentAttrs } from 'core/component/render';
-import { getDirectiveContext } from 'core/component/directives/helpers';
+import { normalizeComponentAttrs } from 'core/component/render';
+import { getDirectiveContext, patchVnodeEventListener } from 'core/component/directives/helpers';
 
 import {
 
 	directiveRgxp,
 
-	handlers,
-	modifiers,
-	keyModifiers
+	handlers
 
 } from 'core/component/directives/attrs/const';
 
@@ -67,8 +65,7 @@ ComponentEngine.directive('attrs', {
 			r = ctx.$renderEngine.r;
 		}
 
-		let
-			attrs = {...params.value};
+		let attrs = {...params.value};
 
 		if (componentMeta != null) {
 			attrs = normalizeComponentAttrs(attrs, vnode.dynamicProps, componentMeta)!;
@@ -87,7 +84,7 @@ ComponentEngine.directive('attrs', {
 				parseDirective(attrName, attrVal);
 
 			} else if (attrName.startsWith('@')) {
-				parseEventListener(attrName, attrVal);
+				patchVnodeEventListener(ctx, vnode, props, attrName, attrVal);
 
 			} else {
 				parseProperty(attrName, attrVal);
@@ -115,21 +112,17 @@ ComponentEngine.directive('attrs', {
 		}
 
 		function parseDirective(attrName: string, attrVal: unknown) {
-			const
-				decl = directiveRgxp.exec(attrName);
+			const decl = directiveRgxp.exec(attrName);
 
-			let
-				value = attrVal;
+			let value = attrVal;
 
 			if (decl == null) {
 				throw new SyntaxError('Invalid directive declaration');
 			}
 
-			const
-				[, name, arg = '', rawModifiers = ''] = decl;
+			const [, name, arg = '', rawModifiers = ''] = decl;
 
-			let
-				dir: CanUndef<object>;
+			let dir: CanUndef<object>;
 
 			switch (name) {
 				case 'show': {
@@ -139,9 +132,9 @@ ComponentEngine.directive('attrs', {
 
 				case 'on': {
 					if (Object.isDictionary(value)) {
-						Object.entries(value).forEach(([name, handler]) => {
-							attachEvent(name, handler);
-						});
+						for (const name of Object.keys(value)) {
+							attachEvent(name, value[name]);
+						}
 					}
 
 					return;
@@ -149,10 +142,10 @@ ComponentEngine.directive('attrs', {
 
 				case 'bind': {
 					if (Object.isDictionary(value)) {
-						Object.entries(value).forEach(([name, val]) => {
-							attrs[name] = val;
+						for (const name of Object.keys(value)) {
+							attrs[name] = value[name];
 							attrsKeys.push(name);
-						});
+						}
 					}
 
 					return;
@@ -167,8 +160,7 @@ ComponentEngine.directive('attrs', {
 						handlerCache = getHandlerStore(),
 						handlerKey = `onUpdate:${modelProp}:${modelValLink}`;
 
-					let
-						handler = handlerCache.get(handlerKey);
+					let handler = handlerCache.get(handlerKey);
 
 					if (handler == null) {
 						handler = (newVal: unknown) => {
@@ -233,8 +225,7 @@ ComponentEngine.directive('attrs', {
 
 			if (Object.isDictionary(dir)) {
 				if (Object.isFunction(dir.beforeCreate)) {
-					const
-						newVnode = dir.beforeCreate(binding, vnode);
+					const newVnode = dir.beforeCreate(binding, vnode);
 
 					if (newVnode != null) {
 						vnode = newVnode;
@@ -257,73 +248,6 @@ ComponentEngine.directive('attrs', {
 			event = `@${event}`;
 			attrsKeys.push(event);
 			attrs[event] = handler;
-		}
-
-		function parseEventListener(attrName: string, attrVal: unknown) {
-			let event = attrName.slice(1).camelize(false);
-
-			const
-				eventChunks = event.split('.'),
-				flags = Object.createDict<boolean>();
-
-			// The first element is the event name; we need to slice only the part containing the event modifiers
-			eventChunks.slice(1).forEach((chunk) => flags[chunk] = true);
-			event = eventChunks[0];
-
-			if (flags.right && !event.startsWith('key')) {
-				event = 'onContextmenu';
-				delete flags.right;
-
-			} else if (flags.middle && event !== 'mousedown') {
-				event = 'onMouseup';
-
-			} else {
-				event = `on${event.capitalize()}`;
-			}
-
-			if (flags.capture) {
-				event += 'Capture';
-				delete flags.capture;
-			}
-
-			if (flags.once) {
-				event += 'Once';
-				delete flags.once;
-			}
-
-			if (flags.passive) {
-				event += 'Passive';
-				delete flags.passive;
-			}
-
-			if (Object.keys(flags).length > 0) {
-				const
-					registeredModifiers = Object.keys(Object.select(flags, modifiers)),
-					registeredKeyModifiers = Object.keys(Object.select(flags, keyModifiers));
-
-				if (registeredModifiers.length > 0) {
-					attrVal = r?.withModifiers.call(ctx, Object.cast(attrVal), registeredKeyModifiers);
-				}
-
-				if (registeredKeyModifiers.length > 0) {
-					attrVal = r?.withKeys.call(ctx, Object.cast(attrVal), registeredKeyModifiers);
-				}
-			}
-
-			// For the transmission of accessors, `forceUpdate: false` props use events.
-			// For example, `@:value = createPropAccessors(() => someValue)`.
-			// A distinctive feature of such events is the prefix `@:` or `on:`.
-			// Such events are processed in a special way.
-			const isSystemGetter = propGetterRgxp.test(event);
-			props[event] = attrVal;
-
-			if (!isSystemGetter) {
-				setVNodePatchFlags(vnode, 'events');
-
-				const dynamicProps = vnode.dynamicProps ?? [];
-				vnode.dynamicProps = dynamicProps;
-				dynamicProps.push(event);
-			}
 		}
 
 		function getHandlerStore() {
@@ -356,8 +280,11 @@ ComponentEngine.directive('attrs', {
 			props: Dictionary = vnode?.props ?? {},
 			componentMeta = ctx?.meta;
 
-		let
-			attrs = {...params.value};
+		let attrs = {...params.value};
+
+		if (vnode != null) {
+			vnode.props ??= props;
+		}
 
 		if (vnode != null) {
 			vnode.props ??= props;
@@ -367,30 +294,29 @@ ComponentEngine.directive('attrs', {
 			attrs = normalizeComponentAttrs(attrs, null, componentMeta)!;
 		}
 
-		Object.entries(attrs).forEach(([name, value]) => {
+		for (const name of Object.keys(attrs)) {
+			const value = attrs[name];
+
 			if (name.startsWith('v-')) {
 				parseDirective(name, value);
 
 			} else if (!name.startsWith('@') || isPropGetter.test(name)) {
 				patchProps(props, normalizePropertyAttribute(name), value);
 			}
-		});
+		}
 
 		return props;
 
 		function parseDirective(attrName: string, attrVal: unknown) {
-			const
-				decl = directiveRgxp.exec(attrName);
+			const decl = directiveRgxp.exec(attrName);
 
 			if (decl == null) {
 				throw new SyntaxError('Invalid directive declaration');
 			}
 
-			const
-				[, name, arg = '', rawModifiers = ''] = decl;
+			const [, name, arg = '', rawModifiers = ''] = decl;
 
-			let
-				dir: CanUndef<object>;
+			let dir: CanUndef<object>;
 
 			switch (name) {
 				case 'show': {
@@ -400,9 +326,9 @@ ComponentEngine.directive('attrs', {
 
 				case 'bind': {
 					if (Object.isDictionary(attrVal)) {
-						Object.entries(attrVal).forEach(([name, val]) => {
-							props[name] = val;
-						});
+						for (const name of Object.keys(attrVal)) {
+							props[name] = attrVal[name];
+						}
 					}
 
 					return;

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { propGetterRgxp } from 'core/component/reflect';
+import { isPropGetter } from 'core/component/reflect';
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
@@ -17,10 +17,7 @@ import type { ComponentInterface } from 'core/component/interface';
  * @param component
  */
 export function attachAttrPropsListeners(component: ComponentInterface): void {
-	const {
-		unsafe,
-		unsafe: {meta}
-	} = component;
+	const {unsafe, unsafe: {meta}} = component;
 
 	if (unsafe.meta.params.functional === true) {
 		return;
@@ -39,35 +36,34 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 			el = unsafe.$el,
 			propValuesToUpdate: string[][] = [];
 
-		Object.entries(unsafe.$attrs).forEach(([attrName, attrVal]) => {
-			const propPrefix = 'on:';
+		const attrNames = Object.keys(unsafe.$attrs);
 
-			if (meta.props[attrName]?.forceUpdate === false) {
-				const getterName = propPrefix + attrName;
+		for (let i = 0; i < attrNames.length; i++) {
+			const
+				// The name of an attribute can be either the name of a component prop,
+				// the name of a regular DOM node attribute,
+				// or an event handler (in which case the attribute name will start with `on`)
+				attrName = attrNames[i],
+				prop = meta.props[attrName];
 
-				if (attrVal !== undefined && !Object.isFunction(unsafe.$attrs[getterName])) {
-					throw new Error(`No accessors are defined for the prop "${attrName}". To set the accessors, pass them as ":${attrName} = propValue | @:${attrName} = createPropAccessors(() => propValue)()" or "v-attrs = {'@:${attrName}': createPropAccessors(() => propValue)}".`);
+			if (prop == null && isPropGetter.test(attrName)) {
+				const propName = isPropGetter.replace(attrName);
+
+				// If an accessor is provided for a prop with `forceUpdate: false`,
+				// it is included in the list of synchronized props
+				if (meta.props[propName]?.forceUpdate === false) {
+					propValuesToUpdate.push([propName, attrName]);
+
+					if (el instanceof Element) {
+						el.removeAttribute(propName);
+					}
 				}
 			}
-
-			if (!attrName.startsWith(propPrefix)) {
-				return;
-			}
-
-			const propName = attrName.replace(propGetterRgxp, '');
-
-			if (meta.props[propName]?.forceUpdate === false) {
-				propValuesToUpdate.push([propName, attrName]);
-
-				if (el instanceof Element) {
-					el.removeAttribute(propName);
-				}
-			}
-		});
+		}
 
 		if (propValuesToUpdate.length > 0) {
 			nonFunctionalParent.$on('hook:beforeUpdate', updatePropsValues);
-			unsafe.$async.worker(() => nonFunctionalParent.$off('hook:beforeUpdate', updatePropsValues));
+			unsafe.$destructors.push(() => nonFunctionalParent.$off('hook:beforeUpdate', updatePropsValues));
 		}
 
 		async function updatePropsValues() {
@@ -78,41 +74,17 @@ export function attachAttrPropsListeners(component: ComponentInterface): void {
 			}
 
 			// For functional components, their complete mounting into the DOM is additionally awaited
-			if (parent.isFunctional === true) {
+			if (parent.meta.params.functional === true) {
 				await parent.$nextTick();
 			}
 
-			propValuesToUpdate.forEach(([propName, getterName]) => {
+			for (const [propName, getterName] of propValuesToUpdate) {
 				const getter = unsafe.$attrs[getterName];
 
 				if (Object.isFunction(getter)) {
 					unsafe[`[[${propName}]]`] = getter()[0];
 				}
-			});
+			}
 		}
 	}
-}
-
-/**
- * Returns true if the given prop type can be a function.
- *
- * @param type
- *
- * @example
- * ```js
- * console.log(isTypeCanBeFunc(Boolean));             // false
- * console.log(isTypeCanBeFunc(Function));            // true
- * console.log(isTypeCanBeFunc([Function, Boolean])); // true
- * ```
- */
-export function isTypeCanBeFunc(type: CanUndef<CanArray<Function | FunctionConstructor>>): boolean {
-	if (!type) {
-		return false;
-	}
-
-	if (Object.isArray(type)) {
-		return type.some((type) => type === Function);
-	}
-
-	return type === Function;
 }

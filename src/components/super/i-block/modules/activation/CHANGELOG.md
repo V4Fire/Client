@@ -9,6 +9,19 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.168 (2024-12-13)
+
+#### :bug: Bug Fix
+
+* Call component's `reload` just once on reactivation
+
+## v4.0.0-beta.153 (2024-11-15)
+
+#### :house: Internal
+
+* Fixed an issue with reloading after a component is destroyed.
+Reloading now occurs for unloaded components or when explicitly specified with `reloadOnActivation: true`.
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :memo: Documentation

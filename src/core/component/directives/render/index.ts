@@ -21,8 +21,7 @@ export * from 'core/component/directives/render/interface';
 
 ComponentEngine.directive('render', {
 	beforeCreate(params: DirectiveParams, vnode: VNode): CanUndef<VNode> {
-		const
-			ctx = getDirectiveContext(params, vnode);
+		const ctx = getDirectiveContext(params, vnode);
 
 		const
 			newVNode = Object.cast<CanUndef<CanArray<VNode>>>(params.value),
@@ -43,7 +42,7 @@ ComponentEngine.directive('render', {
 
 		if (Object.isString(vnode.type)) {
 			if (SSR) {
-				const children = Array.concat([], newBuffer);
+				const children = Array.toArray(newBuffer);
 
 				if (isTemplate) {
 					vnode.type = 'ssr-fragment';
@@ -55,7 +54,7 @@ ComponentEngine.directive('render', {
 				};
 
 			} else {
-				const children = Array.concat([], newVNode);
+				const children = Array.toArray(newVNode);
 
 				vnode.children = children;
 				vnode.dynamicChildren = Object.cast(children.slice());
@@ -76,14 +75,15 @@ ComponentEngine.directive('render', {
 			} else {
 				if (Object.isArray(newVNode)) {
 					if (isSlot(newVNode[0])) {
-						newVNode.forEach((vnode) => {
+						for (let i = 0; i < newVNode.length; i++) {
 							const
+								vnode = newVNode[i],
 								slot = vnode.props?.slot;
 
 							if (slot != null) {
 								slots[slot] = () => vnode.children ?? getDefaultSlotFromChildren(slot);
 							}
-						});
+						}
 
 						return;
 					}
@@ -103,7 +103,7 @@ ComponentEngine.directive('render', {
 		}
 
 		async function getSSRInnerHTML(content: CanArray<SSRBufferItem>) {
-			let normalizedContent = Array.concat([], content);
+			let normalizedContent: SSRBufferItem[] = Array.toArray(content);
 
 			while (normalizedContent.some(isRecursiveBufferItem)) {
 				normalizedContent = (await Promise.all(normalizedContent)).flat();
@@ -117,8 +117,7 @@ ComponentEngine.directive('render', {
 				return;
 			}
 
-			const
-				{r} = ctx.$renderEngine;
+			const {r} = ctx.$renderEngine;
 
 			return r.createVNode.call(ctx, 'ssr-fragment', {
 				innerHTML: getSSRInnerHTML(content)
@@ -131,8 +130,7 @@ ComponentEngine.directive('render', {
 
 		function getDefaultSlotFromChildren(slotName: string): unknown {
 			if (Object.isPlainObject(originalChildren)) {
-				const
-					slot = originalChildren[slotName];
+				const slot = originalChildren[slotName];
 
 				if (Object.isFunction(slot)) {
 					return slot();

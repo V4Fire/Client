@@ -9,6 +9,31 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.165 (2024-12-09)
+
+#### :bug: Bug Fix
+
+* Fix binding a non-promise handler for the custom watcher.
+After rewriting the loop from `.forEach` to native `for`, `return` statement was not changed to `continue`.
+
+## v4.0.0-beta.161 (2024-12-03)
+
+#### :bug: Bug Fix
+
+* Fix watching for nested fields inside `$attrs`
+
+## v4.0.0-beta.153 (2024-11-15)
+
+#### :bug: Bug Fix
+
+* Fix error "ctx.$vueWatch is not a function" caused by the incorrect fix in the v4.0.0-beta.146
+
+## v4.0.0-beta.146 (2024-10-18)
+
+#### :bug: Bug Fix
+
+* Fixed `$attrs` not being watched
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :rocket: New Feature

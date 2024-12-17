@@ -30,7 +30,7 @@ export interface ComponentMeta {
   instance: Dictionary;
 
   /**
-   * A dictionary that contains the parameters provided to the `@component` decorator for the component
+   * A dictionary containing the parameters provided to the `@component` decorator for the component
    */
   params: ComponentOptions;
 
@@ -40,12 +40,12 @@ export interface ComponentMeta {
   parentMeta?: ComponentMeta;
 
   /**
-   * A dictionary that contains the input properties (props) for the component
+   * A dictionary containing the input properties (props) for the component
    */
   props: Dictionary<ComponentProp>;
 
   /**
-   * A dictionary that contains the available component modifiers.
+   * A dictionary containing the available component modifiers.
    * Modifiers are a way to alter the behavior or appearance of a component without changing its underlying
    * functionality.
    * They can be used to customize components for specific use cases, or to extend their capabilities.
@@ -54,12 +54,12 @@ export interface ComponentMeta {
   mods: ModsDecl;
 
   /**
-   * A dictionary that contains the component fields that can trigger a re-rendering of the component
+   * A dictionary containing the component fields that can trigger a re-rendering of the component
    */
   fields: Dictionary<ComponentField>;
 
   /**
-   * A dictionary that contains the component fields that do not cause a re-rendering of the component when they change.
+   * A dictionary containing the component fields that do not cause a re-rendering of the component when they change.
    * These fields are typically used for internal bookkeeping or for caching computed values,
    * and do not affect the visual representation of the component.
    * Examples include variables used for storing data or for tracking the component's internal state,
@@ -70,24 +70,24 @@ export interface ComponentMeta {
   systemFields: Dictionary<ComponentField>;
 
   /**
-   * A dictionary that contains the component fields that have a "Store" postfix in their name
+   * A dictionary containing the component fields that have a "Store" postfix in their name
    */
   tiedFields: Dictionary<string>;
 
   /**
-   * A dictionary that contains the accessor methods of the component that support caching or watching
+   * A dictionary containing the accessor methods of the component that support caching or watching
    */
   computedFields: Dictionary<ComponentAccessor>;
 
   /**
-   * A dictionary that contains the simple component accessors,
+   * A dictionary containing the simple component accessors,
    * which are typically used for retrieving or modifying the value of a non-reactive property
    * that does not require caching or watching
    */
   accessors: Dictionary<ComponentAccessor>;
 
   /**
-   * A dictionary that contains the component methods
+   * A dictionary containing the component methods
    */
   methods: Dictionary<ComponentMethod>;
 
@@ -97,18 +97,18 @@ export interface ComponentMeta {
   watchers: Dictionary<WatchObject[]>;
 
   /**
-   * A dictionary that contains the component dependencies to watch in order to invalidate the cache of computed fields
+   * A dictionary containing the component dependencies to watch to invalidate the cache of computed fields
    */
   watchDependencies: ComponentWatchDependencies;
 
   /**
-   * A dictionary that contains the component prop dependencies to watch in order
+   * A dictionary containing the component prop dependencies to watch
    * to invalidate the cache of computed fields
    */
   watchPropDependencies: ComponentWatchPropDependencies;
 
   /**
-   * A dictionary that contains the component hook listeners,
+   * A dictionary containing the component hook listeners,
    * which are essentially functions that are executed at specific stages in the V4Fire component's lifecycle
    */
   hooks: ComponentHooks;
@@ -124,7 +124,7 @@ export interface ComponentMeta {
     name: string;
 
     /**
-     * A dictionary that contains the input properties (props) for the component
+     * A dictionary containing the input properties (props) for the component
      */
     props: Dictionary<PropOptions>;
 
@@ -135,27 +135,27 @@ export interface ComponentMeta {
     attrs: Dictionary<PropOptions>;
 
     /**
-     * A dictionary that contains the default component modifiers
+     * A dictionary containing the default component modifiers
      */
     mods: Dictionary<string>;
 
     /**
-     * A dictionary that contains the accessor methods of the component that support caching or watching
+     * A dictionary containing the accessor methods of the component that support caching or watching
      */
     computed: Dictionary<Partial<WritableComputedOptions<unknown>>>;
 
     /**
-     * A dictionary that contains the component methods
+     * A dictionary containing the component methods
      */
     methods: Dictionary<Function>;
 
     /**
-     * A dictionary that contains the available component directives
+     * A dictionary containing the available component directives
      */
     directives?: Dictionary<ComponentDirectiveOptions>;
 
     /**
-     * A dictionary that contains the available local components
+     * A dictionary containing the available local components
      */
     components?: Dictionary<ComponentMeta['component']>;
 
@@ -188,14 +188,19 @@ Forks the metaobject of the passed component and returns the copy.
 Inherits the specified metaobject from another one.
 This function modifies the original object and returns it.
 
+### inheritParams
+
+Inherits the `params` property for a given metaobject based on the parent one.
+This function modifies the original object.
+
+### inheritMods
+
+Inherits the `mods` property for a given metaobject based on the parent one.
+This function modifies the original object.
+
 ### fillMeta
 
 Populates the passed metaobject with methods and properties from the specified component class constructor.
-
-### addMethodsToMeta
-
-Loops through the prototype of the passed component constructor and
-adds methods and accessors to the specified metaobject.
 
 ### attachTemplatesToMeta
 

@@ -14,6 +14,7 @@
 import type { EventListener } from 'core/component/queue-emitter/interface';
 
 export * from 'core/component/queue-emitter/interface';
+
 export default class QueueEmitter {
 	/**
 	 * A queue of event handlers that are ready to be executed
@@ -34,11 +35,11 @@ export default class QueueEmitter {
 	 */
 	on(event: Nullable<Set<string>>, handler: Function): void {
 		if (event != null && event.size > 0) {
-			event.forEach((name) => {
+			for (const name of event) {
 				const listeners = this.listeners[name] ?? [];
 				listeners.push({event, handler});
 				this.listeners[name] = listeners;
-			});
+			}
 
 			return;
 		}
@@ -54,34 +55,33 @@ export default class QueueEmitter {
 	 * @param event
 	 */
 	emit(event: string): CanPromise<void> {
-		const
-			queue = this.listeners[event];
+		const queue = this.listeners[event];
 
 		if (queue == null) {
 			return;
 		}
 
-		const
-			tasks: Array<CanPromise<unknown>> = [];
+		const tasks: Array<CanPromise<unknown>> = [];
 
-		queue.forEach((el) => {
+		for (let i = 0; i < queue.length; i++) {
+			const el = queue[i];
+
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (el == null) {
-				return;
+				continue;
 			}
 
 			const ev = el.event;
 			ev.delete(event);
 
 			if (ev.size === 0) {
-				const
-					task = el.handler();
+				const task = el.handler();
 
 				if (Object.isPromise(task)) {
 					tasks.push(task);
 				}
 			}
-		});
+		}
 
 		if (tasks.length > 0) {
 			return Promise.all(tasks).then(() => undefined);
@@ -94,20 +94,17 @@ export default class QueueEmitter {
 	 * the method will return a promise that will only be resolved once all internal promises are resolved.
 	 */
 	drain(): CanPromise<void> {
-		const
-			{queue} = this;
+		const {queue} = this;
 
-		const
-			tasks: Array<Promise<unknown>> = [];
+		const tasks: Array<Promise<unknown>> = [];
 
-		queue.forEach((el) => {
-			const
-				task = el();
+		for (let i = 0; i < queue.length; i++) {
+			const task = queue[i]();
 
 			if (Object.isPromise(task)) {
 				tasks.push(task);
 			}
-		});
+		}
 
 		if (tasks.length > 0) {
 			return Promise.all(tasks).then(() => undefined);

@@ -78,7 +78,7 @@ export function onKeyPress(this: Mask, e: KeyboardEvent): void {
 
 	const
 		additionalPlaceholder = [...fittedMask.placeholder.letters()].slice(boundedTextChunks.length),
-		fittedTextChunks = Array.concat([], boundedTextChunks, ...additionalPlaceholder);
+		fittedTextChunks = Array.toArray(boundedTextChunks, ...additionalPlaceholder);
 
 	let
 		symbolsInSelection = selectionRange + 1,

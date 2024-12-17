@@ -9,7 +9,7 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.136-ssr (2024-11-07)
+## v4.0.0-beta.151 (2024-11-06)
 
 #### :bug: Bug Fix
 
@@ -18,6 +18,12 @@ Changelog
 #### :rocket: New Feature
 
 * The `getSSRProps` method now accepts a `vnode` parameter for direct modification of vnode props, similar to the `beforeCreate` method
+
+## v4.0.0-beta.149 (2024-10-31)
+
+#### :house: Internal
+
+* Moved the `parseEventListener` function to common directive helpers
 
 ## v4.0.0-beta.111 (2024-07-18)
 

@@ -24,7 +24,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 export default class bButton extends iBlock implements iProgress {
   static override readonly mods: ModsDecl = {
     ...iProgress.mods
-  }
+  };
 }
 ```
 

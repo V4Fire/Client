@@ -23,7 +23,8 @@ export default class bFunctionalDummy extends bDummy {
 	@system()
 	counterStore: number = 0;
 
-	protected override $refs!: bDummy['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: bDummy['$refs'] & {
 		button?: bFunctionalButtonDummy;
 		gettersDummy?: bFunctionalGettersDummy;
 	};

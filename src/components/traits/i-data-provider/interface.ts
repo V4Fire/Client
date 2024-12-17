@@ -31,3 +31,17 @@ export interface CreateRequestOptions<T = unknown> extends BaseCreateRequestOpti
 	showProgress?: boolean;
 	hideProgress?: boolean;
 }
+
+export interface RequestFilterOptions<D = unknown> {
+	isEmpty: boolean;
+	method: ModelMethod;
+	params: CreateRequestOptions<D>;
+}
+
+export interface RequestFilterFn<D = unknown> {
+	(data: RequestQuery | RequestBody, opts: RequestFilterOptions<D>): boolean;
+}
+
+export type RequestFilter<D = unknown> =
+	boolean |
+	RequestFilterFn<D>;

@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { Page } from '@playwright/test';
 import { LIGHT } from 'core/theme-manager';
 
 import test from 'tests/config/unit/test';
@@ -144,6 +145,20 @@ test.describe('<i-block> props', () => {
 				theme: LIGHT
 			});
 		});
+
+		test.describe('updating', () => {
+			test('Modifiers should update when provided as separate attributes', ({page}) =>
+				testModifiersUpdating('updating. providing mods as separate attributes', page));
+
+			test('Modifiers should update when provided by `v-attrs`', ({page}) =>
+				testModifiersUpdating('updating. providing mods by v-attrs', page));
+
+			test('Modifiers should update when provided using `modsProp`', ({page}) =>
+				testModifiersUpdating('updating. providing mods using modsProp', page));
+
+			test('Modifiers should update when provided with `modsProp` by `v-attrs`', ({page}) =>
+				testModifiersUpdating('updating. providing mods using modsProp by v-attrs', page));
+		});
 	});
 
 	test('`stage` should set the stage of the component', async ({page}) => {
@@ -183,7 +198,7 @@ test.describe('<i-block> props', () => {
 	});
 
 	test.describe('`watchProp` should call `setStage` method', () => {
-		test('when the parent\'s `stage` property changes', async ({page}) => {
+		test("when the parent's `stage` property changes", async ({page}) => {
 			const target = await renderDummy(page, {
 				watchProp: {
 					setStage: 'stage'
@@ -247,4 +262,17 @@ test.describe('<i-block> props', () => {
 			test.expect(scan).toBe('foo');
 		});
 	});
+
+	async function testModifiersUpdating(stage: string, page: Page): Promise<void> {
+		const target = await renderModsDummy(page, {stage});
+
+		await test.expect(
+			target.evaluate((ctx) => ctx.providedMods.checked)
+		).resolves.toBe('false');
+
+		await target.evaluate((ctx) => ctx.checked = true);
+		await test.expect.poll(
+			() => target.evaluate((ctx) => ctx.providedMods.checked)
+		).toBe('true');
+	}
 });

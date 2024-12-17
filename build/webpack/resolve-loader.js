@@ -20,22 +20,23 @@ const
  * Map with aliases for custom (not external) loaders from all layers
  * @type {object}
  */
-const alias = $C([resolve.cwd, ...config.dependencies]).to({}).reduce((map, el, i) => {
-	const loaders = [].concat(
+const alias = $C([resolve.cwd, ...config.dependencies]).to({}).reduce((loaders, el, i) => {
+	const loaderPaths = [].concat(
 		glob.sync(path.join(i ? resolve.lib : '', el, 'build/webpack/loaders/*.js')),
 		glob.sync(path.join(i ? resolve.lib : '', el, 'build/webpack/loaders/*/index.js'))
 	);
 
-	$C(loaders).forEach((el) => {
+	$C(loaderPaths).forEach((loaderPath) => {
 		const
-			key = path.basename(el, path.extname(el));
+			chunks = loaderPath.split(path.sep),
+			loaderName = chunks[chunks.length - 2];
 
-		if (!map[key]) {
-			map[key] = el;
+		if (!loaders[loaderName]) {
+			loaders[loaderName] = loaderPath;
 		}
 	});
 
-	return map;
+	return loaders;
 });
 
 /**

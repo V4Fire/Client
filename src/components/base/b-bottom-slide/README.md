@@ -97,8 +97,7 @@ __b-modal.ts__
 ```typescript
 @component()
 export default class bModal extends iBlock {
-  /** @override */
-  protected $refs!: {
+  declare protected readonly $refs: iBlock['$refs'] & {
     bottomSlide: bBottomSlide;
   };
 
@@ -135,8 +134,7 @@ __p-root.ts__
 ```typescript
 @component({root: true})
 export default class pV4ComponentsDemo extends iStaticPage {
-  /** @override */
-  protected $refs!: {
+  declare protected readonly $refs: iStaticPage['$refs'] & {
     modal: bModal;
   };
 
@@ -188,8 +186,7 @@ export default class bModal extends iBlock {
   @field()
   text?: string;
 
-  /** @override */
-  protected $refs!: {
+  declare protected readonly $refs: iBlock['$refs'] & {
     bottomSlide: HTMLElement;
   };
 
@@ -248,6 +245,12 @@ Component height mode:
 
 * `content` - the height value is based on the component content, but no larger than the viewport height;
 * `full` - the height value is equal to the height of the viewport.
+
+#### [trackContentSwipes = `true`]
+
+A flag to control swipes tracking on passed content. If true, component tracks touch events on content to animate sheet pulling or to close an instance.
+
+Setting `trackContentSwipes` to `false` is useful when passed content (such as game or map layout) uses gestures to provide additional functionality.
 
 #### [stepsProp = `[]`]
 

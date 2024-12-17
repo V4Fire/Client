@@ -314,6 +314,9 @@ export interface RouteBlueprint<META extends object = Dictionary> {
 	 */
 	rgxp?: RegExp;
 
+	/** {@link StaticRouteMeta.default} */
+	default: boolean;
+
 	/**
 	 * A list of parameters that are passed to the route path
 	 *

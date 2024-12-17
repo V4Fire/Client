@@ -12,7 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { derive } from 'core/functools/trait';
+import { derive } from 'components/traits';
 
 import Block, { getElementSelector } from 'components/friends/block';
 
@@ -143,7 +143,8 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 		]
 	};
 
-	protected override readonly $refs!: iData['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iData['$refs'] & {
 		window: HTMLElement;
 	};
 

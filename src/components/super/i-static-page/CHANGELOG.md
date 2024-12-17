@@ -9,9 +9,15 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.164 (2024-12-06)
+
+### :rocket: New Feature
+
+* Add `iife` parameter for `Lib`, which wraps script output into IIFE
+
 ## v4.0.0-beta.129 (2024-09-04)
 
-* #### :nail_care: Polish
+#### :nail_care: Polish
 
 * Now, if an external link is passed to `initLibs()`, `PUBLIC_PATH` won't be added to it.
 
@@ -100,7 +106,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added the ability to manipulate meta-information of a page
+* Added the ability to manipulate metainformation of a page
 
 ## v3.29.0 (2022-09-13)
 

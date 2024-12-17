@@ -9,6 +9,28 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.150 (2024-11-05)
+
+#### :bug: Bug Fix
+
+* Omit detailed component information to prevent event loop freezing associated
+with certain warnings. Vue uses a `get` trap within the proxy to verify the presence
+of a property in the instance. Accessing undefined properties via the `getComponentInfo` method
+during a warn or error handler will trigger infinite recursion.
+
+## v4.0.0-beta.141 (2024-10-03)
+
+#### :bug: Bug Fix
+
+* Do not call destructor recursively on before unmount
+
+## v4.0.0-beta.139.dsl-speedup-2 (2024-10-03)
+
+#### :house: Internal
+
+* Migration to the Composition API
+* Added support for the `renderTracked` hook
+
 ## v4.0.0-beta.112 (2024-07-22)
 
 #### :bug: Bug Fix

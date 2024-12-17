@@ -6,6 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+const componentPrefixes = new Set([
+	'b-',
+	'g-',
+	'p-',
+	'i-'
+]);
+
 /**
  * A RegExp to check if the given string is the name of a component
  *
@@ -15,4 +22,12 @@
  * console.log(isComponent.test('button'));   // false
  * ```
  */
-export const isComponent = /^([bgp]-[^ _]+)$/;
+export const isComponent = {
+	test(name: Nullable<string>): boolean {
+		if (name == null) {
+			return false;
+		}
+
+		return componentPrefixes.has(name.slice(0, 2)) && !name.includes(' ', 2);
+	}
+};

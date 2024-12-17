@@ -13,7 +13,7 @@
 
 import SyncPromise from 'core/promise/sync';
 
-import { derive } from 'core/functools/trait';
+import { derive } from 'components/traits';
 
 import Block, { setElementMod, removeElementMod, getElementSelector, element, elements } from 'components/friends/block';
 import DOM, { delegateElement } from 'components/friends/dom';
@@ -149,7 +149,7 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 		const val = this.field.get('defaultProp');
 
 		if (this.multiple) {
-			return new Set(Object.isIterable(val) ? val : Array.concat([], val));
+			return new Set(Object.isIterable(val) ? val : Array.toArray(val));
 		}
 
 		return val;
@@ -249,7 +249,8 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	@system()
 	protected keydownHandlerEnabled: boolean = false;
 
-	protected override readonly $refs!: iInputText['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iInputText['$refs'] & {
 		dropdown?: Element;
 	};
 
@@ -305,7 +306,7 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 		}
 
 		SyncPromise.resolve(this.activeElement).then((els) => {
-			Array.concat([], els).forEach((el) => {
+			Array.toArray(els).forEach((el) => {
 				h.setSelectedMod.call(this, el, true);
 			});
 		}).catch(stderr);
@@ -330,7 +331,7 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 		}
 
 		SyncPromise.resolve(previousActiveElement).then((els) => {
-			Array.concat([], els).forEach((el) => {
+			Array.toArray(els).forEach((el) => {
 				const
 					id = el.getAttribute('data-id'),
 					item = this.values.getItem(id ?? -1);
@@ -440,11 +441,7 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
-
-		const
-			i = this.instance;
-
-		this.normalizeItems = i.normalizeItems.bind(this);
+		this.normalizeItems = this.instance.normalizeItems.bind(this);
 	}
 
 	/** {@link iOpenToggle.initCloseHelpers} */

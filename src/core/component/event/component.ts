@@ -59,8 +59,8 @@ export function resetComponents(type?: ComponentResetType): void {
  */
 export function implementEventEmitterAPI(component: object): void {
 	const
-		ctx = Object.cast<UnsafeComponentInterface>(component),
-		nativeEmit = Object.cast<CanUndef<typeof ctx.$emit>>(ctx.$emit);
+		unsafe = Object.cast<UnsafeComponentInterface>(component),
+		nativeEmit = Object.cast<CanUndef<typeof unsafe.$emit>>(unsafe.$emit);
 
 	const regularEmitter = new EventEmitter({
 		maxListeners: 1e3,
@@ -68,7 +68,7 @@ export function implementEventEmitterAPI(component: object): void {
 		wildcard: true
 	});
 
-	const wrappedEmitter = ctx.$async.wrapEventEmitter(regularEmitter);
+	const wrappedEmitter = unsafe.$async.wrapEventEmitter(regularEmitter);
 
 	const reversedEmitter = Object.cast<typeof regularEmitter>({
 		on: (...args: Parameters<EventEmitter['prependListener']>) => regularEmitter.prependListener(...args),
@@ -78,46 +78,47 @@ export function implementEventEmitterAPI(component: object): void {
 
 	const wrappedReversedEmitter = Object.cast<typeof regularEmitter>(reversedEmitter);
 
-	Object.defineProperty(ctx, '$emit', {
+	Object.defineProperty(unsafe, '$emit', {
 		configurable: true,
 		enumerable: false,
 		writable: false,
 
 		value(event: string, ...args: unknown[]) {
-			if (!event.startsWith('[[')) {
-				nativeEmit?.(event, ...args);
+			if (nativeEmit != null && !event.startsWith('[[')) {
+				nativeEmit(event, ...args);
 			}
 
 			regularEmitter.emit(event, ...args);
+
 			return this;
 		}
 	});
 
-	Object.defineProperty(ctx, '$on', {
+	Object.defineProperty(unsafe, '$on', {
 		configurable: true,
 		enumerable: false,
 		writable: false,
 		value: getMethod('on')
 	});
 
-	Object.defineProperty(ctx, '$once', {
+	Object.defineProperty(unsafe, '$once', {
 		configurable: true,
 		enumerable: false,
 		writable: false,
 		value: getMethod('once')
 	});
 
-	Object.defineProperty(ctx, '$off', {
+	Object.defineProperty(unsafe, '$off', {
 		configurable: true,
 		enumerable: false,
 		writable: false,
 		value: getMethod('off')
 	});
 
-	ctx.$async.worker(() => {
+	unsafe.$destructors.push(() => {
 		gc.add(function* destructor() {
 			for (const key of ['$emit', '$on', '$once', '$off']) {
-				Object.defineProperty(ctx, key, {
+				Object.defineProperty(unsafe, key, {
 					configurable: true,
 					enumerable: true,
 					writable: false,
@@ -148,19 +149,20 @@ export function implementEventEmitterAPI(component: object): void {
 				emitter = Object.cast(opts.rawEmitter ? reversedEmitter : wrappedReversedEmitter);
 			}
 
-			Array.concat([], event).forEach((event) => {
+			const events = Array.toArray(event);
+
+			for (const event of events) {
 				if (method === 'off' && cb == null) {
 					emitter.removeAllListeners(event);
 
 				} else {
-					const
-						link = emitter[method](Object.cast(event), Object.cast(cb));
+					const link = emitter[method](Object.cast(event), Object.cast(cb));
 
 					if (isOnLike) {
 						links.push(Object.cast(opts.rawEmitter ? cb : link));
 					}
 				}
-			});
+			}
 
 			if (isOnLike) {
 				return Object.isArray(event) ? links : links[0];

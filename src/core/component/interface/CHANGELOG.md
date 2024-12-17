@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.154.dsl-speedup-3 (2024-11-19)
+
+#### :boom: Breaking Change
+
+* The `getPassedProps` method now returns a dictionary instead of a set
+
+## v4.0.0-beta.139.dsl-speedup-2 (2024-10-03)
+
+#### :rocket: New Feature
+
+* Added a new default prop `getPassedProps`, which allows identifying which props were passed through the template
+
 ## v4.0.0-beta.121.the-phantom-menace (2024-08-05)
 
 #### :boom: Breaking Change

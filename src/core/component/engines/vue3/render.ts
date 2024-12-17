@@ -29,6 +29,8 @@ import {
 	withDirectives as superWithDirectives,
 	resolveDirective as superResolveDirective,
 
+	withModifiers as superWithModifiers,
+
 	VNodeChild,
 	VNodeArrayChildren,
 
@@ -56,7 +58,10 @@ import {
 
 	wrapWithDirectives,
 	wrapResolveDirective,
-	wrapMergeProps, wrapWithCtx
+	wrapMergeProps,
+
+	wrapWithCtx,
+	wrapWithModifiers
 
 } from 'core/component/render';
 
@@ -102,7 +107,6 @@ export {
 	withAsyncContext,
 
 	withKeys,
-	withModifiers,
 	withMemo,
 
 	vShow,
@@ -137,23 +141,9 @@ export const
 	withDirectives = wrapWithDirectives(superWithDirectives),
 	resolveDirective = wrapResolveDirective(superResolveDirective);
 
-export const renderList = wrapRenderList(
-	superRenderList,
-	(...args: Parameters<typeof superWithCtx>) => {
-		// Vue has two contexts for instances: `currentInstance` and `currentRenderingInstance`.
-		// The context for the renderList should be a `currentRenderingInstance`
-		// because `renderList` is called during component rendering.
-		const fn = superWithCtx(...args);
+export const withModifiers = wrapWithModifiers(superWithModifiers);
 
-		// Enable block tracking
-		// @see https://github.com/vuejs/core/blob/45984d559fe0c036657d5f2626087ea8eec205a8/packages/runtime-core/src/componentRenderContext.ts#L88
-		if ('_d' in fn) {
-			(<Function & {_d: boolean}>fn)._d = false;
-		}
-
-		return fn;
-	}
-);
+export const renderList = wrapRenderList(superRenderList);
 
 /**
  * Renders the specified VNode and returns the result
@@ -241,10 +231,10 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 						});
 
 						gc.add(function* destructor() {
-							const vnodes = Object.isArray(vnode) ? vnode : [vnode];
+							const vnodes = Array.toArray(vnode);
 
-							for (const vnode of vnodes) {
-								destroy(vnode);
+							for (let i = 0; i < vnodes.length; i++) {
+								destroy(vnodes[i]);
 								yield;
 							}
 
@@ -322,7 +312,10 @@ export function destroy(node: VNode | Node): void {
 		}
 
 		if (Object.isArray(vnode)) {
-			vnode.forEach(removeVNode);
+			for (let i = 0; i < vnode.length; i++) {
+				removeVNode(vnode[i]);
+			}
+
 			return;
 		}
 
@@ -333,11 +326,15 @@ export function destroy(node: VNode | Node): void {
 		destroyedVNodes.add(vnode);
 
 		if (Object.isArray(vnode.children)) {
-			vnode.children.forEach(removeVNode);
+			for (let i = 0; i < vnode.children.length; i++) {
+				removeVNode(vnode.children[i]);
+			}
 		}
 
-		if (Object.isArray(vnode['dynamicChildren'])) {
-			vnode['dynamicChildren'].forEach((vnode) => removeVNode(Object.cast(vnode)));
+		if ('dynamicChildren' in vnode && Object.isArray(vnode.dynamicChildren)) {
+			for (let i = 0; i < vnode.dynamicChildren.length; i++) {
+				removeVNode(vnode.dynamicChildren[i]);
+			}
 		}
 
 		gc.add(function* destructor() {
@@ -350,13 +347,13 @@ export function destroy(node: VNode | Node): void {
 
 			yield;
 
-			['dirs', 'children', 'dynamicChildren', 'dynamicProps'].forEach((key) => {
+			for (const key of ['dirs', 'children', 'dynamicChildren', 'dynamicProps']) {
 				vnode[key] = [];
-			});
+			}
 
-			['el', 'ctx', 'ref', 'virtualComponent', 'virtualContext'].forEach((key) => {
+			for (const key of ['el', 'ctx', 'ref', 'virtualComponent', 'virtualContext']) {
 				vnode[key] = null;
-			});
+			}
 		}());
 	}
 }

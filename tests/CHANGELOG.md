@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.143 (2024-10-09)
+
+#### :rocket: New Feature
+
+* Added `JSHandle` representing the mock agent in `SpyObject.handle`
+
 ## v4.0.0 (2023-04-19)
 
 #### :boom: Breaking Change

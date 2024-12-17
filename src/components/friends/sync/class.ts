@@ -26,6 +26,10 @@ import type {
 
 } from 'components/friends/sync/interface';
 
+//#if runtime has dummyComponents
+import('components/friends/sync/test/b-friends-sync-dummy');
+//#endif
+
 interface Sync {
 	mod<D = unknown, R = unknown>(
 		modName: string,
@@ -57,14 +61,19 @@ interface Sync {
 @fakeMethods('object')
 class Sync extends Friend {
 	/**
-	 * Cache of functions to synchronize modifiers
+	 * A cache of functions for synchronizing modifiers
 	 */
 	readonly syncModCache!: Dictionary<Function>;
 
 	/**
-	 * Cache for links
+	 * A cache for storing links
 	 */
 	protected readonly linksCache!: Dictionary<Dictionary>;
+
+	/**
+	 * An index of the last added link
+	 */
+	protected lastSyncIndex: number = 0;
 
 	/** {@link iBlock.$syncLinkCache} */
 	protected get syncLinkCache(): SyncLinkCache {
@@ -73,7 +82,7 @@ class Sync extends Friend {
 
 	/** {@link iBlock.$syncLinkCache} */
 	protected set syncLinkCache(value: SyncLinkCache) {
-		Object.set(this.ctx, '$syncLinkCache', value);
+		this.ctx.$syncLinkCache = value;
 	}
 
 	constructor(component: iBlock) {

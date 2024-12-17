@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { callMethodFromComponent } from 'core/component/method';
 import { runHook } from 'core/component/hook';
 
 import type { ComponentInterface } from 'core/component/interface';
@@ -18,7 +17,5 @@ import type { ComponentInterface } from 'core/component/interface';
  * @param args - additional arguments
  */
 export function renderTriggeredState(component: ComponentInterface, ...args: unknown[]): void {
-	runHook('renderTriggered', component, ...args).then(() => {
-		callMethodFromComponent(component, 'renderTriggered', ...args);
-	}).catch(stderr);
+	runHook('renderTriggered', component, ...args).catch(stderr);
 }

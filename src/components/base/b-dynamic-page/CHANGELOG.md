@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.165 (2024-12-09)
+
+#### :bug: Bug Fix
+
+* Add "flush: 'sync'" to the page watcher. This restores the original semantics of the "immediate: true" option
+
+## v4.0.0-beta.145 (2024-10-14)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the comment node in `$refs` that occurs when rendering an `undefined` page
+
 ## v4.0.0-beta.126 (2024-08-23)
 
 #### :rocket: New Feature

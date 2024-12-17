@@ -12,6 +12,7 @@
  */
 
 import { identity } from 'core/functools';
+import log from 'core/log';
 
 import {
 
@@ -24,17 +25,31 @@ import {
 
 } from 'core/component/const';
 
-import { initEmitter } from 'core/component/event';
-import { createMeta, fillMeta, attachTemplatesToMeta } from 'core/component/meta';
-import { getInfoFromConstructor } from 'core/component/reflect';
+import {
 
-import { getComponent, ComponentEngine } from 'core/component/engines';
-import { registerParentComponents } from 'core/component/init';
+	createMeta,
+	fillMeta,
+
+	inheritMods,
+	inheritParams,
+
+	attachTemplatesToMeta
+
+} from 'core/component/meta';
+
+import { initEmitter } from 'core/component/event';
+import { getComponent, ComponentEngine, AsyncComponentOptions } from 'core/component/engines';
+
+import { getComponentMods, getInfoFromConstructor } from 'core/component/reflect';
+import { registerComponent, registerParentComponents } from 'core/component/init';
+
+import { registeredComponent } from 'core/component/decorators/const';
 
 import type { ComponentConstructor, ComponentOptions } from 'core/component/interface';
 
-const
-	OVERRIDDEN = Symbol('This class is overridden');
+const logger = log.namespace('core/component');
+
+const OVERRIDDEN = Symbol('This class is overridden in the child layer');
 
 /**
  * Registers a new component based on the tied class
@@ -63,84 +78,195 @@ const
  */
 export function component(opts?: ComponentOptions): Function {
 	return (target: ComponentConstructor) => {
-		const
-			componentInfo = getInfoFromConstructor(target, opts),
-			componentParams = componentInfo.params;
-
-		if (componentInfo.name === componentInfo.parentParams?.name) {
-			Object.defineProperty(componentInfo.parent!, OVERRIDDEN, {value: true});
+		if (registeredComponent.event == null) {
+			return;
 		}
 
-		initEmitter
-			.emit('bindConstructor', componentInfo.name);
+		const regComponentEvent = registeredComponent.event;
 
-		if (!Object.isTruly(componentInfo.name) || componentParams.root || componentInfo.isAbstract) {
-			regComponent();
+		const
+			componentInfo = getInfoFromConstructor(target, opts),
+			componentParams = componentInfo.params,
+			isPartial = componentParams.partial != null;
 
-		} else {
-			const initList = componentRegInitializers[componentInfo.name] ?? [];
-			componentRegInitializers[componentInfo.name] = initList;
-			initList.push(regComponent);
+		const
+			componentFullName = componentInfo.name,
+			componentNormalizedName = componentInfo.componentName,
+			isParentLayerOverride = !isPartial && componentFullName === componentInfo.parentParams?.name;
+
+		if (isParentLayerOverride) {
+			Object.defineProperty(componentInfo.parent, OVERRIDDEN, {value: true});
+		}
+
+		if (isPartial) {
+			pushToInitList(() => {
+				// Partial classes reuse the same metaobject
+				let meta = components.get(componentFullName);
+
+				if (meta == null) {
+					meta = createMeta(componentInfo);
+					components.set(componentFullName, meta);
+				}
+			});
+
+			return;
+		}
+
+		pushToInitList(regComponent);
+
+		const needRegisterImmediate =
+			componentInfo.isAbstract ||
+			componentParams.root === true ||
+			!Object.isTruly(componentFullName);
+
+		if (needRegisterImmediate) {
+			registerComponent(componentFullName);
 		}
 
 		// If we have a smart component,
-		// we need to compile two components in the runtime
-		if (Object.isPlainObject(componentParams.functional)) {
+		// we need to compile two components at runtime
+		if (!componentInfo.isAbstract && Object.isPlainObject(componentParams.functional)) {
 			component({
 				...opts,
-				name: `${componentInfo.name}-functional`,
+				name: `${componentFullName}-functional`,
 				functional: true
 			})(target);
 		}
 
-		function regComponent(): void {
+		function regComponent() {
 			registerParentComponents(componentInfo);
 
-			const
-				{parentMeta} = componentInfo;
+			// The metaobject might have already been created by partial classes or in the case of a smart component
+			let rawMeta = !isParentLayerOverride ? components.get(componentNormalizedName) : null;
 
-			const
-				meta = createMeta(componentInfo),
-				componentName = componentInfo.name;
+			// If the metaobject has not been created, it should be created now
+			if (rawMeta == null) {
+				rawMeta = createMeta(componentInfo);
+				components.set(componentNormalizedName, rawMeta);
 
-			if (componentInfo.params.name == null || !componentInfo.isSmart) {
+			// If the metaobject has already been created, we create its shallow copy with some fields overridden.
+			// This is necessary because smart components use the same metaobject.
+			} else {
+				const hasNewTarget = target !== rawMeta.constructor;
+
+				rawMeta = Object.create(rawMeta, {
+					constructor: {
+						configurable: true,
+						enumerable: true,
+						writable: true,
+						value: target
+					},
+
+					mods: {
+						configurable: true,
+						enumerable: true,
+						writable: true,
+						value: hasNewTarget ? getComponentMods(componentInfo) : rawMeta.mods
+					},
+
+					params: {
+						configurable: true,
+						enumerable: true,
+						writable: true,
+						value: componentInfo.params
+					},
+
+					name: {
+						configurable: true,
+						enumerable: true,
+						writable: true,
+						value: componentInfo.name
+					},
+
+					component: {
+						configurable: true,
+						enumerable: true,
+						writable: true,
+						value: Object.create(rawMeta.component, {
+							name: {
+								configurable: true,
+								enumerable: true,
+								writable: true,
+								value: componentInfo.name
+							}
+						})
+					}
+				});
+
+				if (rawMeta != null && componentInfo.parentMeta != null) {
+					inheritParams(rawMeta, componentInfo.parentMeta);
+
+					if (hasNewTarget) {
+						inheritMods(rawMeta, componentInfo.parentMeta);
+					}
+				}
+			}
+
+			const meta = rawMeta!;
+			components.set(componentFullName, meta);
+
+			if (componentParams.name == null || !componentInfo.isSmart) {
 				components.set(target, meta);
 			}
 
-			components.set(componentName, meta);
-			initEmitter.emit(`constructor.${componentName}`, {meta, parentMeta});
+			initEmitter.emit(regComponentEvent, {
+				meta,
+				parentMeta: componentInfo.parentMeta
+			});
 
 			const noNeedToRegisterAsComponent =
-				target.hasOwnProperty(OVERRIDDEN) ||
 				componentInfo.isAbstract ||
+				target.hasOwnProperty(OVERRIDDEN) ||
 				!SSR && meta.params.functional === true;
 
 			if (noNeedToRegisterAsComponent) {
 				fillMeta(meta, target);
 
 				if (!componentInfo.isAbstract) {
-					Promise.resolve(loadTemplate(meta.component)).catch(stderr);
+					Promise.resolve(loadTemplate(meta.component, true)).catch(stderr);
 				}
 
 			} else if (meta.params.root) {
-				rootComponents[componentName] = loadTemplate(getComponent(meta));
+				rootComponents[componentFullName] = loadTemplate(getComponent(meta));
 
 			} else {
-				const componentDeclArgs = <const>[componentName, loadTemplate(getComponent(meta))];
+				const componentDeclArgs = <const>[componentFullName, loadTemplate(getComponent(meta))];
 				ComponentEngine.component(...componentDeclArgs);
 
-				if (app.context != null && app.context.component(componentName) == null) {
+				if (app.context != null && app.context.component(componentFullName) == null) {
 					app.context.component(...componentDeclArgs);
 				}
 			}
 
-			function loadTemplate(component: object): CanPromise<ComponentOptions> {
-				let resolve: Function = identity;
-				return meta.params.tpl === false ? attachTemplatesAndResolve() : waitComponentTemplates();
+			function loadTemplate(
+				component: object,
+				isFunctional: boolean = false
+			): ComponentOptions | AsyncComponentOptions {
+				let
+					resolve: Function = identity,
+					reject: Function;
 
-				function waitComponentTemplates() {
-					const
-						fns = TPLS[meta.componentName];
+				if (meta.params.tpl === false) {
+					return attachTemplatesAndResolve();
+				}
+
+				if (TPLS[meta.componentName] != null) {
+					return waitComponentTemplates();
+				}
+
+				if (isFunctional) {
+					logger.info('loadTemplate', `Template missing for functional component: ${meta.componentName}`);
+				}
+
+				return {
+					loader: () => Promise.resolve(waitComponentTemplates(Date.now())),
+					onError(error: Error) {
+						logger.error('async-loader', error, meta.componentName);
+					}
+				};
+
+				function waitComponentTemplates(startedLoadingAt: number = 0) {
+					const fns = TPLS[meta.componentName];
 
 					if (fns != null) {
 						return attachTemplatesAndResolve(fns);
@@ -151,9 +277,11 @@ export function component(opts?: ComponentOptions): Function {
 						return;
 					}
 
+					// Return promise on first try
 					if (resolve === identity) {
-						return new Promise((r) => {
-							resolve = r;
+						return new Promise((res, rej) => {
+							resolve = res;
+							reject = rej;
 							retry();
 						});
 					}
@@ -161,7 +289,13 @@ export function component(opts?: ComponentOptions): Function {
 					retry();
 
 					function retry() {
-						requestIdleCallback(waitComponentTemplates, {timeout: 50});
+						// The template should be loaded in 10 seconds after it was requested by the render engine
+						if (Date.now() - startedLoadingAt > (10).seconds()) {
+							reject(new Error('The component template could not be loaded in 10 seconds'));
+
+						} else {
+							requestIdleCallback(waitComponentTemplates.bind(null, startedLoadingAt), {timeout: 50});
+						}
 					}
 				}
 
@@ -170,6 +304,12 @@ export function component(opts?: ComponentOptions): Function {
 					return resolve(component);
 				}
 			}
+		}
+
+		function pushToInitList(init: Function) {
+			const initList = componentRegInitializers[componentFullName] ?? [];
+			componentRegInitializers[componentFullName] = initList;
+			initList.push(init);
 		}
 	};
 }

@@ -64,18 +64,10 @@ export * from 'components/base/b-dynamic-page/interface';
 Block.addToPrototype({element});
 AsyncRender.addToPrototype({iterate});
 
-const
-	$$ = symbolGenerator();
+const $$ = symbolGenerator();
 
-@component({
-	inheritMods: false,
-	defaultProps: false
-})
-
+@component({inheritMods: false})
 export default class bDynamicPage extends iDynamicPage {
-	@prop({forceDefault: true})
-	override readonly selfDispatching: boolean = true;
-
 	/**
 	 * The initial name of the page to load
 	 */
@@ -99,26 +91,27 @@ export default class bDynamicPage extends iDynamicPage {
 
 		return pageInfo?.[0];
 	}))
+
 	page?: string;
 
 	/**
-	 * Active page unique key.
-	 * It is used to determine whether to reuse current page component or create a new one when switching between routes
-	 * with the same page component.
+	 * The active page unique key.
+	 * It is used to determine whether to reuse the current page component
+	 * or create a new one when switching between routes with the same page component.
 	 */
 	@system()
 	pageKey?: CanUndef<string>;
 
 	/**
-	 * A function that takes a route object and returns the name of the page component to load.
-	 * Also, this function can return a tuple consisting of component name and unique key for the passed route. The key
-	 * will be used to determine whether to reuse current page component or create a new one
-	 * when switching between routes with the same page component.
+	 * A function that takes a route object and returns the name of the page component to be loaded.
+	 * Additionally, this function can return a tuple consisting of the component name and a unique key
+	 * for the given route.
+	 * The key will be used to determine whether to reuse the current page component
+	 * or create a new one when switching between routes that use the same page component.
 	 */
 	@prop({
 		type: Function,
-		default: (route: bDynamicPage['route']) => route != null ? (route.meta.component ?? route.name) : undefined,
-		forceDefault: true
+		default: (route: bDynamicPage['route']) => route != null ? (route.meta.component ?? route.name) : undefined
 	})
 
 	readonly pageGetter!: PageGetter;
@@ -197,12 +190,7 @@ export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * The page switching event name
 	 */
-	@prop({
-		type: String,
-		required: false,
-		forceDefault: true
-	})
-
+	@prop({type: String, required: false})
 	readonly event?: string = 'setRoute';
 
 	/**
@@ -238,7 +226,8 @@ export default class bDynamicPage extends iDynamicPage {
 
 	protected override readonly componentStatusStore: ComponentStatus = 'ready';
 
-	protected override readonly $refs!: iDynamicPage['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iDynamicPage['$refs'] & {
 		component?: iDynamicPage[];
 	};
 
@@ -324,8 +313,39 @@ export default class bDynamicPage extends iDynamicPage {
 		return component.reload(params);
 	}
 
-	override canSelfDispatchEvent(event: string): boolean {
-		return !/^hook(?::\w+(-\w+)*|-change)$/.test(event.dasherize());
+	/**
+	 * Returns a dictionary of props for the page being created.
+	 * The component interprets most of its input props as parameters for the page being created.
+	 */
+	protected getPageProps(): Dictionary {
+		const
+			props = {'@hook:destroyed': this.createPageDestructor()},
+			passedProps = this.getPassedProps?.();
+
+		if (passedProps != null) {
+			const rejectedProps = {
+				is: true,
+				dispatching: true,
+				componentIdProp: true,
+				getRoot: true,
+				getParent: true,
+				getPassedProps: true
+			};
+
+			Object.entries(passedProps).forEach(([propName, prop]) => {
+				if (rejectedProps.hasOwnProperty(propName) || this.meta.props.hasOwnProperty(propName)) {
+					return;
+				}
+
+				if (propName.startsWith('on')) {
+					propName = `@${propName[2].toLowerCase()}${propName.slice(3)}`;
+				}
+
+				props[propName] = prop;
+			});
+		}
+
+		return props;
 	}
 
 	/**
@@ -366,11 +386,9 @@ export default class bDynamicPage extends iDynamicPage {
 			return true;
 		}
 
-		const {
-			unsafe,
-			route,
-			r
-		} = this;
+		const that = this;
+
+		const {route, r} = this;
 
 		return new SyncPromise((resolve) => {
 			this.onPageChange = onPageChange(resolve, this.route);
@@ -380,22 +398,21 @@ export default class bDynamicPage extends iDynamicPage {
 			resolve: (status: boolean) => void,
 			currentRoute: typeof route
 		): AnyFunction {
-			return (newPageInfo: CanUndef<string>, currentPageInfo: CanUndef<string>) => {
-				unsafe.pageTakenFromCache = false;
+			return (newPage: CanUndef<string>, currentPage: CanUndef<string>) => {
+				that.pageTakenFromCache = false;
 
-				const componentRef = unsafe.$refs[unsafe.$resolveRef('component')];
+				const componentRef = that.$refs[that.$resolveRef('component')];
 				componentRef?.pop();
 
 				const
-					currentPageEl = unsafe.block?.element<iDynamicPageEl>('component'),
+					currentPageEl = that.block?.element<iDynamicPageEl>('component'),
 					currentPageComponent = currentPageEl?.component?.unsafe;
 
 				if (currentPageEl != null) {
 					r.emit('beforeSwitchPage', {saveScroll: saveScrollIntoAttribute});
 
 					if (currentPageComponent != null) {
-						const
-							currentPageStrategy = unsafe.getKeepAliveStrategy(currentPageInfo, currentRoute);
+						const currentPageStrategy = that.getKeepAliveStrategy(currentPage, currentRoute);
 
 						if (currentPageStrategy.isLoopback) {
 							currentPageComponent.$destroy();
@@ -410,36 +427,35 @@ export default class bDynamicPage extends iDynamicPage {
 				}
 
 				const
-					newPageStrategy = unsafe.getKeepAliveStrategy(newPageInfo),
+					newPageStrategy = that.getKeepAliveStrategy(newPage),
 					pageElFromCache = newPageStrategy.get();
 
 				if (pageElFromCache == null) {
 					const handler = () => {
 						if (!newPageStrategy.isLoopback) {
-							return SyncPromise.resolve(unsafe.component).then((c) => c.activate(true));
+							return SyncPromise.resolve(that.component).then((c) => c.activate(true));
 						}
 					};
 
-					unsafe.localEmitter.once('asyncRenderChunkComplete', handler, {
+					that.localEmitter.once('asyncRenderChunkComplete', handler, {
 						label: $$.renderFilter
 					});
 
 				} else {
-					const
-						pageComponentFromCache = pageElFromCache.component;
+					const pageComponentFromCache = pageElFromCache.component;
 
 					if (pageComponentFromCache != null) {
 						pageComponentFromCache.activate();
 
-						unsafe.async.requestAnimationFrame(() => {
+						that.async.requestAnimationFrame(() => {
 							restorePageElementsScroll(pageElFromCache);
 						}, {label: $$.restorePageElementsScroll});
 
-						unsafe.$el?.append(pageElFromCache);
+						that.$el?.append(pageElFromCache);
 						pageComponentFromCache.emit('mounted', pageElFromCache);
 
 						componentRef?.push(pageComponentFromCache);
-						unsafe.pageTakenFromCache = true;
+						that.pageTakenFromCache = true;
 
 					} else {
 						newPageStrategy.remove();
@@ -452,9 +468,9 @@ export default class bDynamicPage extends iDynamicPage {
 				// However, we can't guarantee that the next `renderFilter` call will occur before `syncPageWatcher`.
 				// If `syncPageWatcher` is called before the next `renderFilter`, it will execute
 				// the `onPageChange` callback, which is why we must clean it up here.
-				unsafe.onPageChange = undefined;
+				that.onPageChange = undefined;
 
-				resolve(true);
+				resolve(newPage != null);
 			};
 		}
 	}
@@ -478,8 +494,7 @@ export default class bDynamicPage extends iDynamicPage {
 			return loopbackStrategy;
 		}
 
-		const
-			{exclude, include} = this;
+		const {exclude, include} = this;
 
 		if (exclude != null) {
 			if (Object.isFunction(exclude)) {
@@ -487,16 +502,14 @@ export default class bDynamicPage extends iDynamicPage {
 					return loopbackStrategy;
 				}
 
-			} else if (Object.isRegExp(exclude) ? exclude.test(page) : Array.concat([], exclude).includes(page)) {
+			} else if (Object.isRegExp(exclude) ? exclude.test(page) : Array.toArray(exclude).includes(page)) {
 				return loopbackStrategy;
 			}
 		}
 
-		let
-			cacheKey = page;
+		let cacheKey = page;
 
-		const
-			globalCache = this.keepAliveCache.global!;
+		const globalCache = this.keepAliveCache.global!;
 
 		const globalStrategy: KeepAliveStrategy = {
 			isLoopback: false,
@@ -508,8 +521,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 		if (include != null) {
 			if (Object.isFunction(include)) {
-				const
-					res = include(page, route, this);
+				const res = include(page, route, this);
 
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (res == null || res === false) {
@@ -533,17 +545,12 @@ export default class bDynamicPage extends iDynamicPage {
 				};
 			}
 
-			if (Object.isRegExp(include) ? !include.test(page) : !Array.concat([], include).includes(page)) {
+			if (Object.isRegExp(include) ? !include.test(page) : !Array.toArray(include).includes(page)) {
 				return loopbackStrategy;
 			}
 		}
 
 		return globalStrategy;
-	}
-
-	protected override initBaseAPI(): void {
-		super.initBaseAPI();
-		this.addClearListenersToCache = this.instance.addClearListenersToCache.bind(this);
 	}
 
 	/**
@@ -553,11 +560,9 @@ export default class bDynamicPage extends iDynamicPage {
 	 * @param cache
 	 */
 	protected addClearListenersToCache<T extends AbstractCache<iDynamicPageEl>>(cache: T): T {
-		const
-			wrappedCache = addEmitter<AbstractCache<iDynamicPageEl>>(cache);
+		const wrappedCache = addEmitter<AbstractCache<iDynamicPageEl>>(cache);
 
-		let
-			instanceCache: WeakMap<iDynamicPageEl, number> = new WeakMap();
+		let instanceCache: WeakMap<iDynamicPageEl, number> = new WeakMap();
 
 		wrappedCache.subscribe('set', cache, changeCountInMap(0, 1));
 		wrappedCache.subscribe('remove', cache, changeCountInMap(1, -1));
@@ -607,8 +612,8 @@ export default class bDynamicPage extends iDynamicPage {
 				}
 
 				const
-					newPageInfo = this.pageGetter(route, this),
-					[newPageComponentName, newPageKey] = Object.isString(newPageInfo) ? [newPageInfo] : (newPageInfo ?? []);
+					newPage = this.pageGetter(route, this),
+					[newPageComponentName, newPageKey] = Object.isString(newPage) ? [newPage] : newPage ?? [];
 
 				const
 					pageChanged = newPageComponentName !== this.page,
@@ -633,7 +638,7 @@ export default class bDynamicPage extends iDynamicPage {
 	 * @param page
 	 * @param oldPage
 	 */
-	@watch({path: 'page', immediate: true})
+	@watch({path: 'page', immediate: true, flush: 'sync'})
 	protected syncPageWatcher(page: CanUndef<string>, oldPage: CanUndef<string>): void {
 		if (HYDRATION && !this.hydrated) {
 			const label = {
@@ -667,6 +672,11 @@ export default class bDynamicPage extends iDynamicPage {
 		} else {
 			this.onPageChange(page, oldPage);
 		}
+	}
+
+	protected override initBaseAPI(): void {
+		super.initBaseAPI();
+		this.addClearListenersToCache = this.instance.addClearListenersToCache.bind(this);
 	}
 
 	protected override initModEvents(): void {
