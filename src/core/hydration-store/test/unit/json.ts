@@ -39,6 +39,22 @@ test.describe('core/component/hydration converting to JSON', () => {
 		test.expect(valueByPath).toEqual({bar: 'baz'});
 	});
 
+	test('should not add harmful HTML to the JSON', async ({page}) => {
+		await serverHydrationStore.evaluate((ctx) => {
+			ctx.set('componentId', 'foo', {
+				bar: 'baz',
+				foo: '<script>alert(1)</script>'
+			});
+		});
+
+		await appendJSONToDOM(page);
+
+		const clientHydrationStore = await hydrationAPI.evaluateHandle(({default: HydrationStore}) => new HydrationStore('client'));
+
+		const valueByPath = await clientHydrationStore.evaluate((ctx) => ctx.get('componentId', 'foo'));
+		test.expect(valueByPath).toEqual({bar: 'baz', foo: ''});
+	});
+
 	test('should remove value from the JSON store when it is removed from the store', async ({page}) => {
 		await serverHydrationStore.evaluate((ctx) => {
 			ctx.set('componentId', 'foo', {bar: 'baz'});
@@ -100,7 +116,7 @@ test.describe('core/component/hydration converting to JSON', () => {
 
 		await page.evaluate(([json]) => {
 			const div = document.createElement('div');
-			div.innerHTML = `<noframes id="hydration-store" style="display: none">${json}</noframes>`;
+			div.innerHTML = `<noframes id="hydration-store" style="display: none;">${json}</noframes>`;
 			document.body.appendChild(div);
 		}, [json]);
 	}

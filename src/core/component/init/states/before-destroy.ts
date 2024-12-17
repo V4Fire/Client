@@ -8,10 +8,11 @@
 
 import * as gc from 'core/component/gc';
 
+import { runHook } from 'core/component/hook';
+
 import { dropRawComponentContext } from 'core/component/context';
 import { callMethodFromComponent } from 'core/component/method';
 
-import { runHook } from 'core/component/hook';
 import { destroyedHooks } from 'core/component/const';
 
 import type { ComponentInterface, ComponentDestructorOptions } from 'core/component/interface';
@@ -30,10 +31,7 @@ export function beforeDestroyState(component: ComponentInterface, opts: Componen
 	runHook('beforeDestroy', component).catch(stderr);
 	callMethodFromComponent(component, 'beforeDestroy');
 
-	const {
-		unsafe,
-		unsafe: {$el}
-	} = component;
+	const {unsafe, unsafe: {$el}} = component;
 
 	unsafe.$emit('[[BEFORE_DESTROY]]', <Required<ComponentDestructorOptions>>{
 		recursive: opts.recursive ?? true,
@@ -42,6 +40,10 @@ export function beforeDestroyState(component: ComponentInterface, opts: Componen
 
 	unsafe.async.clearAll().locked = true;
 	unsafe.$async.clearAll().locked = true;
+
+	for (let i = 0; i < unsafe.$destructors.length; i++) {
+		unsafe.$destructors[i]();
+	}
 
 	if ($el != null && $el.component === component) {
 		delete $el.component;

@@ -6,8 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { app, ComponentInterface } from 'core/component';
-import { registerComponent } from 'core/component/init';
+import { app, ComponentInterface, normalizeComponentForceUpdateProps } from 'core/component';
 import { render, create } from 'components/friends/vdom';
 
 import type iBlock from 'components/super/i-block/i-block';
@@ -15,8 +14,7 @@ import type { ComponentElement } from 'components/super/i-static-page/i-static-p
 
 import { expandedParse } from 'core/prelude/test-env/components/json';
 
-const
-	createdComponents = Symbol('A set of created components');
+const createdComponents = Symbol('A set of created components');
 
 globalThis.renderComponents = (
 	componentName: string,
@@ -30,11 +28,9 @@ globalThis.renderComponents = (
 		}
 	}
 
-	const
-		ID_ATTR = 'data-dynamic-component-id';
+	const ID_ATTR = 'data-dynamic-component-id';
 
-	const
-		ctx = <Nullable<iBlock['unsafe']>>app.component;
+	const ctx = <Nullable<iBlock['unsafe']>>app.component;
 
 	if (ctx == null) {
 		throw new ReferenceError('The root context for rendering is not defined');
@@ -46,13 +42,11 @@ globalThis.renderComponents = (
 
 	const ids = scheme.map(() => Math.random().toString(16).slice(2));
 
-	const componentMeta = registerComponent(componentName);
-
 	const vnodes = create.call(ctx.vdom, scheme.map(({attrs, children}, i) => ({
 		type: componentName,
 
 		attrs: {
-			...normalizeAttrs(attrs),
+			...(attrs != null ? normalizeComponentForceUpdateProps(app.component!, componentName, attrs) : {}),
 			[ID_ATTR]: ids[i]
 		},
 
@@ -68,36 +62,15 @@ globalThis.renderComponents = (
 	ids.forEach((id) => {
 		components.add(document.querySelector(`[${ID_ATTR}="${id}"]`));
 	});
-
-	function normalizeAttrs(attrs?: Dictionary): Nullable<Dictionary> {
-		if (attrs == null || componentMeta == null) {
-			return attrs;
-		}
-
-		const normalized = {};
-
-		Object.keys(attrs).forEach((key) => {
-			if (componentMeta.props[key]?.forceUpdate === false) {
-				const value = attrs[key];
-				normalized[`@:${key}`] = ctx!.createPropAccessors(() => <object>value);
-
-			} else {
-				normalized[key] = attrs[key];
-			}
-		});
-
-		return normalized;
-	}
 };
 
 globalThis.removeCreatedComponents = () => {
-	const
-		components = globalThis[createdComponents];
+	const components = globalThis[createdComponents];
 
 	if (Object.isSet(components)) {
-		Object.cast<Set<ComponentElement>>(components).forEach((node) => {
-			node.component?.unsafe.$destroy();
-			node.remove();
+		Object.cast<Set<Nullable<ComponentElement>>>(components).forEach((node) => {
+			node?.component?.unsafe.$destroy();
+			node?.remove();
 		});
 
 		components.clear();

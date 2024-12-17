@@ -12,7 +12,7 @@
  */
 
 import { setVNodePatchFlags } from 'core/component/render';
-import { ComponentEngine, VNode } from 'core/component/engines';
+import { ComponentEngine, SSRBufferItem, VNode } from 'core/component/engines';
 
 import { getDirectiveContext } from 'core/component/directives/helpers';
 import type { DirectiveParams } from 'core/component/directives/render/interface';
@@ -21,14 +21,14 @@ export * from 'core/component/directives/render/interface';
 
 ComponentEngine.directive('render', {
 	beforeCreate(params: DirectiveParams, vnode: VNode): CanUndef<VNode> {
-		const
-			ctx = getDirectiveContext(params, vnode);
+		const ctx = getDirectiveContext(params, vnode);
 
 		const
-			newVNode = params.value,
+			newVNode = Object.cast<CanUndef<CanArray<VNode>>>(params.value),
+			newBuffer = Object.cast<CanUndef<SSRBufferItem>>(params.value),
 			originalChildren = vnode.children;
 
-		if (newVNode == null) {
+		if (newVNode == null || newBuffer == null) {
 			return;
 		}
 
@@ -37,14 +37,13 @@ ComponentEngine.directive('render', {
 			canReplaceOriginalVNode = isTemplate && !Object.isArray(newVNode);
 
 		if (canReplaceOriginalVNode) {
-			return SSR ? renderSSRFragment(newVNode) : newVNode;
+			return SSR ? renderSSRFragment(newBuffer) : newVNode;
 		}
 
 		if (Object.isString(vnode.type)) {
-			const
-				children = Array.concat([], newVNode);
-
 			if (SSR) {
+				const children = Array.toArray(newBuffer);
+
 				if (isTemplate) {
 					vnode.type = 'ssr-fragment';
 				}
@@ -55,6 +54,8 @@ ComponentEngine.directive('render', {
 				};
 
 			} else {
+				const children = Array.toArray(newVNode);
+
 				vnode.children = children;
 				vnode.dynamicChildren = Object.cast(children.slice());
 				setVNodePatchFlags(vnode, 'children');
@@ -69,19 +70,20 @@ ComponentEngine.directive('render', {
 			setVNodePatchFlags(vnode, 'slots');
 
 			if (SSR) {
-				slots.default = () => renderSSRFragment(newVNode);
+				slots.default = () => renderSSRFragment(newBuffer);
 
 			} else {
 				if (Object.isArray(newVNode)) {
 					if (isSlot(newVNode[0])) {
-						newVNode.forEach((vnode) => {
+						for (let i = 0; i < newVNode.length; i++) {
 							const
+								vnode = newVNode[i],
 								slot = vnode.props?.slot;
 
 							if (slot != null) {
 								slots[slot] = () => vnode.children ?? getDefaultSlotFromChildren(slot);
 							}
-						});
+						}
 
 						return;
 					}
@@ -96,23 +98,26 @@ ComponentEngine.directive('render', {
 			}
 		}
 
-		async function getSSRInnerHTML(content: CanArray<CanPromise<VNode>>) {
-			let normalizedContent = Array.concat([], content);
+		function isRecursiveBufferItem(bufferItem: SSRBufferItem): bufferItem is Exclude<SSRBufferItem, string> {
+			return Object.isPromise(bufferItem) || Object.isArray(bufferItem);
+		}
 
-			while (normalizedContent.some(Object.isPromise)) {
+		async function getSSRInnerHTML(content: CanArray<SSRBufferItem>) {
+			let normalizedContent: SSRBufferItem[] = Array.toArray(content);
+
+			while (normalizedContent.some(isRecursiveBufferItem)) {
 				normalizedContent = (await Promise.all(normalizedContent)).flat();
 			}
 
 			return normalizedContent.join('');
 		}
 
-		function renderSSRFragment(content: CanArray<CanPromise<VNode>>) {
+		function renderSSRFragment(content: SSRBufferItem) {
 			if (ctx == null) {
 				return;
 			}
 
-			const
-				{r} = ctx.$renderEngine;
+			const {r} = ctx.$renderEngine;
 
 			return r.createVNode.call(ctx, 'ssr-fragment', {
 				innerHTML: getSSRInnerHTML(content)
@@ -125,8 +130,7 @@ ComponentEngine.directive('render', {
 
 		function getDefaultSlotFromChildren(slotName: string): unknown {
 			if (Object.isPlainObject(originalChildren)) {
-				const
-					slot = originalChildren[slotName];
+				const slot = originalChildren[slotName];
 
 				if (Object.isFunction(slot)) {
 					return slot();

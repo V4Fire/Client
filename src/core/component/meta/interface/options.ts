@@ -33,6 +33,39 @@ export interface ComponentOptions {
 	name?: string;
 
 	/**
+	 * The name of the component to which this one belongs.
+	 * This option is used when we want to split the component into multiple classes.
+	 *
+	 * Please note that in partial classes,
+	 * there should be no overrides in methods or properties with other partial classes of this component.
+	 *
+	 * @example
+	 * ```typescript
+	 * @component({partial: 'bExample'})
+	 * class bExampleProps extends iBlock {
+	 *   @prop({type: Number})
+	 *   value: number = 0;
+	 * }
+	 *
+	 * @component({partial: 'bExample'})
+	 * class bExampleAPI extends bExampleProps {
+	 *   getName(): string {
+	 *     return this.meta.componentName;
+	 *   }
+	 * }
+	 *
+	 * @component()
+	 * class bExample extends bExampleAPI {
+	 *   // This override will not work correctly, as it overrides what was added within the partial class
+	 *   override getName(): string {
+	 *     return this.meta.componentName;
+	 *   }
+	 * }
+	 * ```
+	 */
+	partial?: string;
+
+	/**
 	 * If set to true, the component is registered as the root component.
 	 * The root component sits at the top of the component hierarchy and contains all components in the application.
 	 * By default, all components have a link to the root component.
@@ -127,14 +160,6 @@ export interface ComponentOptions {
 	functional?: Nullable<boolean> | Dictionary<CanArray<JSONLikeValue>>;
 
 	/**
-	 * If set to false, all default values for the input properties of the component will be disregarded.
-	 * This parameter may be inherited from the parent component.
-	 *
-	 * @default `true`
-	 */
-	defaultProps?: boolean;
-
-	/**
 	 * A dictionary that specifies deprecated component props along with their recommended alternatives.
 	 * The keys in the dictionary represent the deprecated props,
 	 * while the values represent their replacements or alternatives.
@@ -187,9 +212,7 @@ export interface ComponentOptions {
 	inheritAttrs?: boolean;
 
 	/**
-	 * If set to true, the component will automatically inherit base modifiers from its parent component.
-	 * This parameter may be inherited from the parent component.
-	 *
+	 * If set to true, the component will inherit modifiers from the parent `sharedMods` property
 	 * @default `true`
 	 */
 	inheritMods?: boolean;

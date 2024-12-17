@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.167 (2024-12-12)
+
+#### :bug: Bug Fix
+
+* Call `beforeUnmount` hook of directive before `unmounted` hook
+
+## v4.0.0-beta.151 (2024-11-06)
+
+#### :rocket: New Feature
+
+* Add `SSRBuffer` and `SSRBufferItem` types
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change

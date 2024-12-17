@@ -13,26 +13,34 @@ import type { ComponentMeta } from 'core/component/interface';
  * @param base
  */
 export function forkMeta(base: ComponentMeta): ComponentMeta {
-	const
-		meta = Object.create(base);
+	const meta = Object.create(base);
 
-	meta.watchDependencies = new Map(meta.watchDependencies);
 	meta.params = Object.create(base.params);
-	meta.watchers = {};
+	meta.watchDependencies = new Map(meta.watchDependencies);
+
+	meta.tiedFields = {...meta.tiedFields};
 	meta.hooks = {};
 
-	Object.entries(base.hooks).forEach(([key, hooks]) => {
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		if (hooks != null) {
-			meta.hooks[key] = hooks.slice();
-		}
-	});
+	const hookNames = Object.keys(base.hooks);
 
-	Object.entries(base.watchers).forEach(([key, watchers]) => {
+	for (let i = 0; i < hookNames.length; i++) {
+		const name = hookNames[i];
+		meta.hooks[name] = base.hooks[name].slice();
+	}
+
+	meta.watchers = {};
+
+	const watcherNames = Object.keys(base.watchers);
+
+	for (let i = 0; i < watcherNames.length; i++) {
+		const
+			name = watcherNames[i],
+			watchers = base.watchers[name];
+
 		if (watchers != null) {
-			meta.watchers[key] = watchers.slice();
+			meta.watchers[name] = watchers.slice();
 		}
-	});
+	}
 
 	return meta;
 }

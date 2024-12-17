@@ -12,7 +12,6 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import type Async from 'core/async';
 
 import globalRoutes from 'routes';
 import * as router from 'core/router';
@@ -52,7 +51,8 @@ const
 
 @component()
 export default class bRouter extends iRouterProps {
-	public override async!: Async<this>;
+	/** @inheritDoc */
+	declare public async: iRouterProps['async'];
 
 	/**
 	 * Compiled application route map
@@ -60,7 +60,6 @@ export default class bRouter extends iRouterProps {
 	 */
 	@system<bRouter>({
 		after: 'engine',
-		// eslint-disable-next-line @v4fire/unbound-method
 		init: (o) => o.sync.link(o.compileStaticRoutes)
 	})
 
@@ -266,7 +265,11 @@ export default class bRouter extends iRouterProps {
 		method: TransitionMethod = 'push'
 	): Promise<CanUndef<router.Route>> {
 		if (method === 'replace' && ref == null) {
-			opts = Object.mixin(true, {}, this.previousTransitionOptions, opts);
+			opts = Object.mixin({
+				deep: true,
+				skipUndefs: false,
+				extendFilter: (el) => !Object.isArray(el)
+			}, {}, this.previousTransitionOptions, {meta: {scroll: undefined}}, opts);
 		}
 
 		this.previousTransitionOptions = opts;
@@ -421,8 +424,7 @@ export default class bRouter extends iRouterProps {
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
-		const
-			i = this.instance;
+		const i = this.instance;
 
 		this.compileStaticRoutes = i.compileStaticRoutes.bind(this);
 		this.emitTransition = i.emitTransition.bind(this);

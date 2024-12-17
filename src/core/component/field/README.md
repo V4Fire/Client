@@ -2,7 +2,7 @@
 
 This module provides an API to initialize component fields to a component instance.
 
-## What differences between fields and system fields?
+## What Are the Differences Between Fields and System Fields?
 
 The main difference between fields and system fields in V4Fire is that any changes to a regular field
 can trigger a re-render of the component template.
@@ -20,5 +20,5 @@ developers can design and optimize their components for optimal performance and 
 ### initFields
 
 Initializes all fields of a given component instance.
-This function returns a dictionary that contains the names of the initialized fields as keys,
+This function returns a dictionary containing the names of the initialized fields as keys,
 with their corresponding initialized values as values.

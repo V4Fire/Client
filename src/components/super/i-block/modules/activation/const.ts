@@ -6,11 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
+import { Namespaces } from 'core/async';
 
-export const
-	suspendRgxp = /:suspend(?:\b|$)/,
-	asyncNames = Async.linkNames;
+export const suspendRgxp = /:suspend(?:\b|$)/;
 
 export const inactiveStatuses: Dictionary<boolean> = Object.createDict({
 	destroyed: true,
@@ -23,7 +21,7 @@ export const readyStatuses: Dictionary<boolean> = Object.createDict({
 	ready: true
 });
 
-export const nonMuteAsyncLinkNames: Dictionary<boolean> = Object.createDict({
-	[asyncNames.promise]: true,
-	[asyncNames.request]: true
+export const nonMuteAsyncNamespaces: Dictionary<boolean> = Object.createDict({
+	[Namespaces.promise]: true,
+	[Namespaces.request]: true
 });

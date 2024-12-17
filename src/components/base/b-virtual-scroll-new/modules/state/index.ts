@@ -17,7 +17,8 @@ import type { MountedChild, VirtualScrollState, MountedItem, PrivateComponentSta
  * Friendly to the `bVirtualScrollNew` class that represents the internal state of a component.
  */
 export class ComponentInternalState extends Friend {
-	override readonly C!: bVirtualScrollNew;
+	/** @inheritDoc */
+	declare readonly C: bVirtualScrollNew;
 
 	/**
 	 * Current state of the component.

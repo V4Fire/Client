@@ -19,8 +19,7 @@ import type { Task } from 'core/component/render/daemon/interface';
 export * from 'core/component/render/daemon/const';
 export * from 'core/component/render/daemon/interface';
 
-const
-	opts = config.asyncRender;
+const opts = config.asyncRender;
 
 let
 	inProgress = false,
@@ -75,15 +74,13 @@ function run(): void {
 				done = opts.weightPerTick;
 			}
 
-			const
-				w = val.weight ?? 1;
+			const w = val.weight ?? 1;
 
 			if (done - w < 0 && done !== opts.weightPerTick) {
 				continue;
 			}
 
-			const
-				canRender = val.task();
+			const canRender = val.task();
 
 			const exec = (canRender: unknown) => {
 				if (Object.isTruly(canRender)) {

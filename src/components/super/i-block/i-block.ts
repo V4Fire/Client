@@ -11,9 +11,10 @@
  * @packageDocumentation
  */
 
-import { component, hook, watch, UnsafeGetter } from 'core/component';
+import { component, UnsafeGetter } from 'core/component';
 import type { Classes } from 'components/friends/provide';
 
+import { hook, watch } from 'components/super/i-block/decorators';
 import type { ModVal, ModsDecl, ModsProp, ModsDict } from 'components/super/i-block/modules/mods';
 import type { UnsafeIBlock } from 'components/super/i-block/interface';
 
@@ -72,7 +73,8 @@ export default abstract class iBlock extends iBlockProviders {
 		stage: []
 	};
 
-	protected override readonly $refs!: {
+	/** @inheritDoc */
+	declare protected readonly $refs: {
 		$el?: Element;
 	};
 
@@ -90,26 +92,27 @@ export default abstract class iBlock extends iBlockProviders {
 	 * Handler: fixes the issue where the teleported component
 	 * and its DOM nodes were rendered before the teleport container was ready
 	 */
-	@watch({
+	@watch<iBlock>({
 		path: 'r.shouldMountTeleports',
-		flush: 'post'
+		flush: 'post',
+		shouldInit: (o) => o.r.shouldMountTeleports === false
 	})
 
 	@hook('before:mounted')
 	protected onMountTeleports(): void {
+		const {$el: originalNode, $async: $a} = this;
+
+		if (originalNode == null) {
+			return;
+		}
+
 		const getNode = () => this.$refs[this.$resolveRef('$el')] ?? this.$el;
 
-		const {
-			$el: originalNode,
-			$async: $a
-		} = this;
+		const node = getNode();
 
-		const
-			node = getNode(),
-			mountedAttrs = new Set<string>(),
-			mountedAttrsGroup = {group: 'mountedAttrs'};
+		let attrsStore: CanNull<Set<string>> = null;
 
-		if (originalNode != null && node != null && originalNode !== node) {
+		if (node != null && originalNode !== node) {
 			// Fix the DOM element link to the component
 			originalNode.component = this;
 
@@ -125,42 +128,64 @@ export default abstract class iBlock extends iBlockProviders {
 			this.watch('$attrs', {deep: true}, mountAttrs);
 		}
 
-		function mountAttrs(attrs: Dictionary<string>) {
+		function mountAttrs(attrs: Dictionary<string | Function>) {
+			const mountedAttrsGroup = {group: 'mountedAttrs'};
 			$a.terminateWorker(mountedAttrsGroup);
 
 			if (node == null || originalNode == null) {
 				return;
 			}
 
-			Object.entries(attrs).forEach(([name, attr]) => {
-				if (attr == null) {
-					return;
+			attrsStore ??= new Set<string>();
+
+			const
+				mountedAttrs = attrsStore,
+				attrNames = Object.keys(attrs);
+
+			for (let i = 0; i < attrNames.length; i++) {
+				const
+					attrName = attrNames[i],
+					attrVal = attrs[attrName];
+
+				if (attrVal == null) {
+					continue;
 				}
 
-				if (name === 'class') {
-					attr.split(/\s+/).forEach((val) => {
-						node.classList.add(val);
-						mountedAttrs.add(`class.${val}`);
-					});
+				if (attrName === 'class') {
+					for (const className of (<string>attrVal).split(/\s+/)) {
+						node.classList.add(className);
+						mountedAttrs.add(`class.${className}`);
+					}
 
-				} else if (originalNode.hasAttribute(name)) {
-					node.setAttribute(name, attr);
-					mountedAttrs.add(name);
+				} else if (originalNode.hasAttribute(attrName)) {
+					node.setAttribute(attrName, attrVal);
+					mountedAttrs.add(attrName);
 				}
-			});
+			}
 
 			$a.worker(() => {
-				mountedAttrs.forEach((attr) => {
-					if (attr.startsWith('class.')) {
-						node.classList.remove(attr.split('.')[1]);
+				for (const attrName of mountedAttrs) {
+					if (attrName.startsWith('class.')) {
+						node.classList.remove(attrName.split('.')[1]);
 
 					} else {
-						node.removeAttribute(attr);
+						node.removeAttribute(attrName);
 					}
-				});
+				}
 
 				mountedAttrs.clear();
 			}, mountedAttrsGroup);
 		}
+	}
+
+	/**
+	 * Registers the handlers which will be called just before rendering the component
+	 */
+	@hook('beforeRuntime')
+	private registerRenderHandlers(): void {
+		this.$on('[[RENDER]]', () => {
+			this.vdom.saveRenderContext();
+			this.hydrateStyles();
+		});
 	}
 }

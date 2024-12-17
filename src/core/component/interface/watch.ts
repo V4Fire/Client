@@ -45,7 +45,7 @@ export interface FieldWatcher<
 	/**
 	 * This handler is called when a watcher event occurs
 	 */
-	handler: WatchHandler<A, B>;
+	handler: string | WatchHandler<A, B>;
 
 	/**
 	 * If set to false, the watcher will not be registered for functional components
@@ -63,7 +63,7 @@ export interface FieldWatcher<
 }
 
 export interface WatchObject<
-	CTX extends ComponentInterface = ComponentInterface,
+	Ctx extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
 > extends WatchOptions {
@@ -133,7 +133,7 @@ export interface WatchObject<
 	 * }
 	 * ```
 	 */
-	wrapper?: WatchWrapper<CTX, A, B>;
+	wrapper?: WatchWrapper<Ctx, A, B>;
 
 	/**
 	 * The name of a component method that is registered as a handler for the watcher
@@ -144,10 +144,19 @@ export interface WatchObject<
 	 * A handler, or the name of a component's method, that gets invoked upon watcher events
 	 */
 	handler: string | WatchHandler<A, B>;
+
+	/**
+	 * A function to determine whether a watcher should be initialized or not.
+	 * If the function returns false, the watcher will not be initialized.
+	 * Useful for precise component optimizations.
+	 *
+	 * @param ctx
+	 */
+	shouldInit?(ctx: Ctx): boolean;
 }
 
 export interface MethodWatcher<
-	CTX extends ComponentInterface = ComponentInterface,
+	Ctx extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
 > extends WatchOptions {
@@ -173,6 +182,15 @@ export interface MethodWatcher<
 	 * @default `true`
 	 */
 	functional?: boolean;
+
+	/**
+	 * A function to determine whether a watcher should be initialized or not.
+	 * If the function returns false, the watcher will not be initialized.
+	 * Useful for precise component optimizations.
+	 *
+	 * @param ctx
+	 */
+	shouldInit?(ctx: Ctx): boolean;
 
 	/**
 	 * An object with additional settings for the event emitter
@@ -210,7 +228,7 @@ export interface MethodWatcher<
 	 * }
 	 * ```
 	 */
-	wrapper?: WatchWrapper<CTX, A, B>;
+	wrapper?: WatchWrapper<Ctx, A, B>;
 }
 
 export type WatchPath =
@@ -218,9 +236,9 @@ export type WatchPath =
 	PropertyInfo |
 	{ctx: object; path?: RawWatchPath};
 
-export interface RawWatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
+export interface RawWatchHandler<Ctx extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
 	(a: A, b?: B, params?: WatchHandlerParams): void;
-	(this: CTX, a: A, b?: B, params?: WatchHandlerParams): void;
+	(this: Ctx, a: A, b?: B, params?: WatchHandlerParams): void;
 }
 
 export interface WatchHandler<A = unknown, B = A> {

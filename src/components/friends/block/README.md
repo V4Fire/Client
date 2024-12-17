@@ -233,7 +233,7 @@ To disable modifier inheritance, pass the `inheridMods: false` option when creat
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
 
-@component({inheritMods: false})
+@component()
 class bExample extends iBlock {}
 ```
 
@@ -246,7 +246,7 @@ Please note that the key must be in a dash style, i.e., normalized.
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
 
-@component({inheritMods: false})
+@component()
 class bExample extends iBlock {
   static mods: ModsDecl = {
     theme: [
@@ -266,7 +266,7 @@ This property can be observed using the watch API.
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
 
-@component({inheritMods: false})
+@component()
 class bExample extends iBlock {
   static mods: ModsDecl = {
     theme: [
@@ -310,7 +310,7 @@ To set a new modifier value or remove an old one, you must use the `setMod` and 
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
 
-@component({inheritMods: false})
+@component()
 class bExample extends iBlock {
   static mods: ModsDecl = {
     theme: [
@@ -343,7 +343,7 @@ inside and outside the component.
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
 
-@component({inheritMods: false})
+@component()
 class bExample extends iBlock {
   static mods: ModsDecl = {
     theme: [
@@ -380,7 +380,7 @@ this can be more convenient than handling each event individually.
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
 
-@component({inheritMods: false})
+@component()
 class bExample extends iBlock {
   static mods: ModsDecl = {
     theme: [
@@ -427,7 +427,7 @@ __b-example.ts__
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
 
-@component({inheritMods: false})
+@component()
 class bExample extends iBlock {
   mounted() {
     const

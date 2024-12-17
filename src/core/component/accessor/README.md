@@ -2,7 +2,7 @@
 
 This module provides an API to initialize component accessors and computed fields into a component instance.
 
-## What differences between accessors and computed fields?
+## What Differences Between Accessors and Computed Fields?
 
 A computed field is an accessor that can have its value cached or be watched for changes.
 To enable value caching, you can use the `@computed` decorator when defining or overriding your accessor.

@@ -6,12 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { sortFields } from 'core/component/field/helpers';
-import type { ComponentInterface, ComponentField } from 'core/component/interface';
+import type { ComponentMeta } from 'core/component/meta';
+import type { ComponentInterface } from 'core/component/interface';
 
 /**
  * Initializes all fields of a given component instance.
- * This function returns a dictionary that contains the names of the initialized fields as keys,
+ * This function returns a dictionary containing the names of the initialized fields as keys,
  * with their corresponding initialized values as values.
  *
  * @param from - the dictionary where is stored the passed component fields, like `$fields` or `$systemFields`
@@ -19,7 +19,7 @@ import type { ComponentInterface, ComponentField } from 'core/component/interfac
  * @param [store] - the store for initialized fields
  */
 export function initFields(
-	from: Dictionary<ComponentField>,
+	from: ComponentMeta['fieldInitializers'],
 	component: ComponentInterface,
 	store: Dictionary = {}
 ): Dictionary {
@@ -27,51 +27,22 @@ export function initFields(
 		component
 	);
 
-	const {
-		params,
-		instance
-	} = unsafe.meta;
+	for (let i = 0; i < from.length; i++) {
+		const [name, field] = from[i];
 
-	const
-		isFunctional = params.functional === true;
+		const sourceVal = store[name];
 
-	sortFields(from).forEach(([name, field]) => {
-		const
-			sourceVal = store[name];
-
-		const canSkip =
-			field == null || sourceVal !== undefined ||
-			!SSR && isFunctional && field.functional === false ||
-			field.init == null && field.default === undefined && instance[name] === undefined;
-
-		if (field == null || canSkip) {
+		if (sourceVal !== undefined || field?.init == null) {
 			store[name] = sourceVal;
-			return;
+			continue;
 		}
 
 		unsafe.$activeField = name;
 
-		let
-			val: unknown;
-
-		if (field.init != null) {
-			val = field.init(component.unsafe, store);
-		}
-
-		if (val === undefined) {
-			if (store[name] === undefined) {
-				// To prevent linking to the same type of component for non-primitive values,
-				// it's important to clone the default value from the component constructor.
-				val = field.default !== undefined ? field.default : Object.fastClone(instance[name]);
-				store[name] = val;
-			}
-
-		} else {
-			store[name] = val;
-		}
+		store[name] = field.init(unsafe, store);
 
 		unsafe.$activeField = undefined;
-	});
+	}
 
 	return store;
 }

@@ -14,7 +14,7 @@
 import symbolGenerator from 'core/symbol';
 
 import SyncPromise from 'core/promise/sync';
-import { derive } from 'core/functools/trait';
+import { derive } from 'components/traits';
 
 import AsyncRender, { iterate, TaskOptions } from 'components/friends/async-render';
 import Block, { getElementMod, setElementMod, getElementSelector, getFullElementName } from 'components/friends/block';
@@ -136,9 +136,10 @@ class bTree extends iTreeProps implements iActiveItems, iFoldable {
 		return normalizeItems.call(o, val);
 	}))
 
-	protected itemsStore: this['Items'] = [];
+	protected itemsStore!: this['Items'];
 
-	protected override readonly $refs!: iData['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iData['$refs'] & {
 		children?: bTree[];
 	};
 
@@ -184,11 +185,10 @@ class bTree extends iTreeProps implements iActiveItems, iFoldable {
 			renderFilter
 		};
 
-		const
-			a = this.$attrs;
+		const a = this.$attrs;
 
 		if (a.onFold != null) {
-			opts['@fold'] = a.onFold;
+			opts['@fold'] = this.$attrs.onFold;
 		}
 
 		return opts;
@@ -262,7 +262,7 @@ class bTree extends iTreeProps implements iActiveItems, iFoldable {
 
 		// Activate current active nodes
 		SyncPromise.resolve(this.activeElement).then((activeElement) => {
-			Array.concat([], activeElement).forEach((activeElement) => setActiveMod.call(top, activeElement, true));
+			Array.toArray(activeElement).forEach((activeElement) => setActiveMod.call(top, activeElement, true));
 		}).catch(stderr);
 
 		return true;

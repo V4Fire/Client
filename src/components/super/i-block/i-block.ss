@@ -96,7 +96,7 @@
 
 		: &
 			buble = require('buble'),
-			paths = Array.concat([], path),
+			paths = Array.toArray(path),
 			wait = opts.wait
 		.
 
@@ -261,9 +261,6 @@
 			< ${teleport ? 'span' : '?'}.i-block-helper.${self.name()} -teleport
 				< ${teleport ? 'teleport' : '?'} to = ${teleport}
 					< _ v-attrs = rootAttrs | ${rootAttrs|!html}
-						{{ void(vdom.saveRenderContext()) }}
-						{{ void(hydrateStyles('${self.name()}')) }}
-
 						/**
 						 * Generates a slot declaration by the specified parameters
 						 *

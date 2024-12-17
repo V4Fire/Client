@@ -25,6 +25,68 @@ test.describe('<b-dynamic-page>', () => {
 		await demoPage.goto();
 	});
 
+	test('should reuse the page component instance if the page does not change and the page key is not specified', async ({page}) => {
+		const target = await renderDynamicPage(
+			page,
+			{
+				keepAlive: true,
+				include: (_, route) => Object.fastHash(route.params)
+			},
+
+			{
+				page1: {
+					path: '/page-1/:id',
+					component: 'p-v4-dynamic-page1'
+				}
+			}
+		);
+
+		const isSamePageComponent = await target.evaluate(async (ctx) => {
+			await ctx.router?.push('page1', {params: {id: 1}});
+			const page1Component = ctx.unsafe.$refs.component?.[0];
+
+			const routeTransition = ctx.unsafe.async.promisifyOnce(ctx.r, 'transition');
+			await ctx.router?.push('page1', {params: {id: 2}});
+			await routeTransition;
+			const page2Component = ctx.unsafe.$refs.component?.[0];
+
+			return page1Component === page2Component;
+		});
+
+		test.expect(isSamePageComponent).toBe(true);
+	});
+
+	test('should create a new page component if the page does not change but the page key changes', async ({page}) => {
+		const target = await renderDynamicPage(
+			page,
+			{
+				keepAlive: true,
+				pageGetter: (route) => ([route?.meta?.component ?? null, Object.fastHash(route?.params)]),
+				include: (_, route) => Object.fastHash(route.params)
+			},
+			{
+				page1: {
+					path: '/page-1/:id',
+					component: 'p-v4-dynamic-page1'
+				}
+			}
+		);
+
+		const isSamePageComponent = await target.evaluate(async (ctx) => {
+			await ctx.router?.push('page1', {params: {id: 1}});
+			const page1Component = ctx.unsafe.$refs.component?.[0];
+
+			const routeTransition = ctx.unsafe.async.promisifyOnce(ctx.r, 'transition');
+			await ctx.router?.push('page1', {params: {id: 2}});
+			await routeTransition;
+			const page2Component = ctx.unsafe.$refs.component?.[0];
+
+			return page1Component === page2Component;
+		});
+
+		test.expect(isSamePageComponent).toBe(false);
+	});
+
 	test("shouldn't cache the `component` getter", async ({page}) => {
 		const target = await renderDynamicPage(page, {
 			page: Pages.DYNAMIC_1
@@ -33,7 +95,7 @@ test.describe('<b-dynamic-page>', () => {
 		await test.expect(
 			target.evaluate((ctx) => {
 				const {meta} = ctx.unsafe;
-				return 'component' in meta.accessors && !('component' in meta.computedFields);
+				return meta.accessors.component != null && meta.computedFields.component == null;
 			})
 		).toBeResolvedTo(true);
 	});
@@ -85,4 +147,17 @@ test.describe('<b-dynamic-page>', () => {
 		]);
 	});
 
+	test('should not render an empty node if the page is `undefined`', async ({page}) => {
+		const target = await renderDynamicPage(page, {'data-testid': 'target'});
+
+		await target.evaluate((ctx) => {
+			ctx.page = undefined;
+
+			return ctx.$nextTick();
+		});
+
+		const componentInnerHtml = await page.getByTestId('target').innerHTML();
+
+		test.expect(componentInnerHtml).toBe('');
+	});
 });

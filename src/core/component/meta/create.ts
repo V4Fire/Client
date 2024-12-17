@@ -12,6 +12,8 @@ import { inheritMeta } from 'core/component/meta/inherit';
 
 import type { ComponentMeta, ComponentConstructorInfo } from 'core/component/interface';
 
+const INSTANCE = Symbol('The component instance');
+
 /**
  * Creates a component metaobject based on the information from its constructor, and then returns this object
  * @param component - information obtained from the component constructor using the `getInfoFromConstructor` function
@@ -19,21 +21,34 @@ import type { ComponentMeta, ComponentConstructorInfo } from 'core/component/int
 export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 	const meta: ComponentMeta = {
 		name: component.name,
-		layer: component.layer,
 		componentName: component.componentName,
+		layer: component.layer,
 
+		params: component.params,
 		parentMeta: component.parentMeta,
+
 		constructor: component.constructor,
 
-		instance: {},
-		params: component.params,
+		get instance() {
+			const {constructor} = <ComponentMeta>this;
+
+			if (!constructor.hasOwnProperty(INSTANCE)) {
+				Object.defineProperty(constructor, INSTANCE, {value: Object.create(constructor.prototype)});
+			}
+
+			return constructor[INSTANCE];
+		},
 
 		props: {},
-		mods: getComponentMods(component),
+		mods: component.params.partial == null ? getComponentMods(component) : {},
 
 		fields: {},
-		tiedFields: {},
+		fieldInitializers: [],
+
 		systemFields: {},
+		systemFieldInitializers: [],
+
+		tiedFields: {},
 		computedFields: {},
 
 		methods: {},
@@ -60,9 +75,12 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			deactivated: [],
 			beforeDestroy: [],
 			destroyed: [],
-			renderTriggered: [],
-			errorCaptured: []
+			errorCaptured: [],
+			renderTracked: [],
+			renderTriggered: []
 		},
+
+		metaInitializers: new Map(),
 
 		component: {
 			name: component.name,
@@ -70,9 +88,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			mods: {},
 			props: {},
 			attrs: {},
-
 			computed: {},
-			methods: {},
 
 			render() {
 				throw new ReferenceError(`The render function for the component "${component.componentName}" is not specified`);
@@ -85,22 +101,23 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		cache = new Map();
 
 	meta.component[SSR ? 'ssrRender' : 'render'] = Object.cast((ctx: object, ...args: unknown[]) => {
-		const
-			unsafe = getComponentContext(ctx),
-			result = callRenderFunction();
+		const {unsafe} = getComponentContext(ctx, true);
+
+		unsafe.$emit('[[RENDER]]');
+
+		const res = callRenderFunction();
 
 		// @ts-ignore (unsafe)
 		unsafe['$renderCounter'] = unsafe.$renderCounter + 1;
 
-		return result;
+		return res;
 
 		function callRenderFunction() {
 			if (cache.has(ctx)) {
 				return cache.get(ctx)();
 			}
 
-			const
-				render = meta.methods.render!.fn.call(unsafe, unsafe, ...args);
+			const render = meta.methods.render!.fn.call(unsafe, unsafe, ...args);
 
 			if (!Object.isFunction(render)) {
 				return render;
@@ -112,17 +129,14 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 
 			if (needCacheRenderFn) {
 				cache.set(ctx, render);
-
-				unsafe.$async.worker(() => {
-					cache.delete(ctx);
-				}, {label});
+				unsafe.$async.worker(() => cache.delete(ctx), {label});
 			}
 
 			return render();
 		}
 	});
 
-	if (component.parentMeta) {
+	if (component.parentMeta != null) {
 		inheritMeta(meta, component.parentMeta);
 	}
 

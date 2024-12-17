@@ -14,7 +14,7 @@ import iData, { prop, component } from 'components/super/i-data/i-data';
 
 import type { Item } from 'components/base/b-list/b-list';
 
-@component()
+@component({partial: 'bList'})
 export default abstract class iListProps extends iData {
 	/** {@link iActiveItems.Item} */
 	readonly Item!: Item;
@@ -88,4 +88,10 @@ export default abstract class iListProps extends iData {
 	 */
 	@prop({type: Object, required: false})
 	readonly attrsProp?: Dictionary;
+
+	/**
+	 * If true, then `.g-hint` will be added to the link elements
+	 */
+	@prop(Boolean)
+	readonly hints: boolean = true;
 }

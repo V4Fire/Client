@@ -29,7 +29,7 @@ class bExample extends iBlock {
 }
 ```
 
-## Component life cycle
+## Component Life Cycle
 
 V4Fire components have a standard life cycle: the component is created, the component is mounted to the DOM,
 the component is unmounted from the DOM, and so on.
@@ -48,14 +48,14 @@ Also, V4Fire uses the `beforeDestroy` and `destroyed` hooks, not `beforeUnmount`
 The need for this hook exists due to Vue limitations: the fact is that when a component is called within a template,
 it has a state when it does not yet have its own methods and fields, but only props (`beforeCreate`).
 After `beforeCreate`, a special function is called on the component, which forms a base object with the watchable fields
-of the component, and only then `created` is triggered. So, before `created` we cannot use the component API, like methods,
-getters, etc. However, in order to use some methods before the `created` hook, the [[iBlock]] class has the following code.
+of the component, and only then `created` is triggered.
+So, before `created` we cannot use the component API, like methods, getters, etc.
+However, to use some methods before the `created` hook, the [[iBlock]] class has the following code.
 
 ```
 @hook('beforeRuntime')
 protected initBaseAPI() {
-  const
-    i = this.instance;
+  const i = this.instance;
 
   this.syncStorageState = i.syncStorageState.bind(this);
   this.syncRouterState = i.syncRouterState.bind(this);
@@ -68,16 +68,19 @@ protected initBaseAPI() {
 ```
 
 That is, before `beforeCreate`, a special method is triggered that explicitly sets the most necessary API,
-which the component should always have. There are not many methods that can be used before the `created` hook,
-and usually all of them are registered in `iBlock.initBaseAPI`. However, if your component has a new method that needs
-to be used in this way, you can always override the `initBaseAPI` method.
+which the component should always have.
+There are few methods that can be used before the `created` hook,
+and usually all of them are registered in `iBlock.initBaseAPI`.
+However, if your component has a new method that needs to be used in this way,
+you can always override the `initBaseAPI` method.
 
 ### beforeDataCreate
 
 It is often necessary to make some modification to watchable fields (such as normalization) before creating a component,
 because once created, any change to such fields can cause re-rendering and can be disastrous for performance.
 We have links, initializers, and API to control the order of initialization, but what if we need to get the entire
-watchable store and modify it in a complex way. It is to solve this problem that the `beforeDataCreate` hook exists:
+watchable store and modify it complexly.
+It is to solve this problem that the `beforeDataCreate` hook exists:
 it will be called exactly when all observable properties have been created, but not yet linked to the component,
 i.e., we can safely change them and not expect consequences.
 
@@ -104,12 +107,12 @@ export default class bExample extends iBlock {
 ```
 
 It should also be noted that the `@prop` and `@system` properties are initialized before `beforeCreate`,
-so no special methods or hooks are needed to access them.
+so no special methods or hooks are necessary to access them.
 
 As a rule, it is better to use link mechanisms to create relationships during initialization and normalization,
 but nevertheless, `beforeDataCreate` can be quite useful.
 
-## Hook change events
+## Hook Change Events
 
 Whenever a component hook value changes,
 the component emits a series of events that can be listened to both inside and outside the component.
@@ -177,7 +180,7 @@ To bind a method to a specific hook, there are three ways:
    }
    ```
 
-### Component hook accessor
+### Component Hook Accessor
 
 All V4Fire components have a hook accessor that indicates which hook the component is currently in.
 
@@ -194,11 +197,12 @@ class bExample extends iBlock {
 }
 ```
 
-## Hook handler execution order
+## Hook Handler Execution Order
 
 All hook handlers are executed in a queue: those added through the decorator are executed first (in order of addition),
-and then the associated methods (if any) are already executed. If we need to declare that some method should be executed
-only after the execution of another, then we can set this explicitly through a decorator.
+and then the associated methods (if any) are already executed.
+If we need to declare that some method should be executed only after the execution of another,
+then we can set this explicitly through a decorator.
 
 ```typescript
 import iBlock, { component, field, hook } from 'components/super/i-block/i-block';
@@ -238,7 +242,7 @@ then the rest will wait for its resolving to preserve the initialization order.
 
 ### [after]
 
-A method name or a list of names after which this handler should be invoked on a registered hook event.
+A method name or a list of method names after which this handler should be invoked during a registered hook event.
 
 ```typescript
 import iBlock, { component, hook } from 'components/super/i-block/i-block';

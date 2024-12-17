@@ -19,7 +19,8 @@ const
 	$$ = symbolGenerator();
 
 export default class ChunkRequest extends Friend {
-	override readonly C!: bVirtualScroll;
+	/** @inheritDoc */
+	declare readonly C: bVirtualScroll;
 
 	/**
 	 * Current page
@@ -276,7 +277,7 @@ export default class ChunkRequest extends Friend {
 
 				this.data = this.data.concat(data);
 				this.pendingData = this.pendingData.concat(data);
-				this.currentAccumulatedData = Array.concat(this.currentAccumulatedData ?? [], data);
+				this.currentAccumulatedData = Array.toArray(this.currentAccumulatedData, data);
 
 				ctx.emit('dbChange', {...v, data: this.data});
 				this.shouldStopRequest(this.ctx.getCurrentDataState());

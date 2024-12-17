@@ -24,6 +24,10 @@ export function setActiveMod(this: bList, el: Element, isActive: boolean): void 
 
 	this.block.setElementMod(el, 'link', 'active', isActive);
 
+	if (!isActive && el instanceof HTMLElement) {
+		el.blur();
+	}
+
 	if (el.hasAttribute('aria-selected')) {
 		el.setAttribute('aria-selected', String(isActive));
 	}
@@ -59,7 +63,8 @@ export function normalizeItems(this: bList, items: CanUndef<Item[]>): Item[] {
 		}
 
 		const
-			classes = this.provide.hintClasses(item.hintPos).concat(item.classes ?? []),
+			baseClasses = item.classes ?? [],
+			classes = this.hints ? this.provide.hintClasses(item.hintPos).concat(baseClasses) : baseClasses,
 			attrs = {...item.attrs};
 
 		if (href === undefined) {

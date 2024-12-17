@@ -1,14 +1,14 @@
 # components/traits
 
 The module provides a set of traits for components.
-A trait in TypeScript is an interface-like abstract class that serves as an interface.
+A trait in TypeScript is an abstract class that serves as an interface.
 But why do we need it?
 Unlike Java or Kotlin, TypeScript interfaces cannot have default method implementations.
 Consequently, in TypeScript, we have to implement every method in our classes,
 even if the implementation remains unchanged.
 This is where traits become useful.
 
-## How it works?
+## How Does It Work?
 
 Let's list the steps to create a trait.
 
@@ -99,7 +99,7 @@ We have defined a trait. We can now proceed to implement it in a basic class.
    specify any traits we want to automatically implement.
 
    ```typescript
-   import { derive } from 'core/functools/trait';
+   import { derive } from 'components/traits';
 
    interface DuckLike extends Trait<typeof Duckable> {}
 
@@ -116,7 +116,7 @@ We have defined a trait. We can now proceed to implement it in a basic class.
 4. Profit! Now TS will automatically understand the methods of the interface, and they will work at runtime.
 
    ```typescript
-   import { derive } from 'core/functools/trait';
+   import { derive } from 'components/traits';
 
    interface DuckLike extends Trait<typeof Duckable> {}
 
@@ -136,7 +136,7 @@ We have defined a trait. We can now proceed to implement it in a basic class.
 5. Of course, we can implement more than one trait in a component.
 
    ```typescript
-   import { derive } from 'core/functools/trait';
+   import { derive } from 'components/traits';
 
    interface DuckLike extends Trait<typeof Duckable>, Trait<typeof AnotherTrait> {}
 

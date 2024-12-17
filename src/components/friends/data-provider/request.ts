@@ -277,7 +277,7 @@ export function getDefaultRequestParams<T = unknown>(
 	const {ctx} = this;
 
 	const [customData, customOpts] = Object.cast<DefaultRequest<T>>(
-		Array.concat([], ctx.request?.[method])
+		Array.toArray(ctx.request?.[method])
 	);
 
 	const

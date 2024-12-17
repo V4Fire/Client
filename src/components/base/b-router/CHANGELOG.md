@@ -9,6 +9,19 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.163 (2024-12-05)
+
+#### :boom: Breaking Change
+
+* The `soft` transition using the `replace` method for the same route no longer restores the scroll position by default.
+To restore the scroll position during a `soft` transition, explicitly pass the `scroll` option.
+
+## v4.0.0-beta.135 (2024-09-17)
+
+#### :bug: Bug Fix
+
+* Removed the array merging logic from the old and current options during `replace(null, opts)`
+
 ## v4.0.0-beta.118 (2024-08-01)
 
 #### :bug: Bug Fix

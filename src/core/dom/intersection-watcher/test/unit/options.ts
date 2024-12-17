@@ -30,14 +30,16 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 		IntersectionObserverModule: JSHandle<{default: typeof IntersectionObserver}>,
 		HeightmapObserverModule: JSHandle<{default: typeof HeightmapObserver}>,
 
-		intersectionObserver: JSHandle<IntersectionWatcherAPI>,
-		heightmapObserver: JSHandle<IntersectionWatcherAPI>;
+		intersectionObserver: JSHandle<IntersectionObserver>,
+		heightmapObserver: JSHandle<HeightmapObserver>;
 
 	let
 		target: ElementHandle<HTMLDivElement>,
 		wasInvoked: JSHandle<{flag: boolean}>;
 
-	const getObserver = (engine: string) => engine === 'intersection' ? intersectionObserver : heightmapObserver;
+	function getObserver(engine: string): JSHandle<IntersectionWatcherAPI> {
+		return Object.cast(engine === 'intersection' ? intersectionObserver : heightmapObserver);
+	}
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();

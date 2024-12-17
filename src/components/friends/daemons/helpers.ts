@@ -40,7 +40,7 @@ export function mergeHooks(baseDaemon: Daemon, parentDaemon: Daemon): Hook[] {
 	}
 
 	return Array.from(
-		new Set(Array.concat(<Hook[]>[], parentHook, baseHook))
+		new Set(<Hook[]>Array.toArray(parentHook, baseHook))
 	);
 }
 
@@ -60,6 +60,6 @@ export function mergeWatchers(baseDaemon: Daemon, parentDaemon: Daemon): DaemonW
 	}
 
 	return Array.from(
-		new Set(Array.concat(<DaemonWatcher[]>[], parentWatch, baseWatch))
+		new Set(<DaemonWatcher[]>Array.toArray(parentWatch, baseWatch))
 	);
 }

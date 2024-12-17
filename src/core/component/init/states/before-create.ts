@@ -11,10 +11,10 @@ import Async from 'core/async';
 import * as gc from 'core/component/gc';
 import watch from 'core/object/watch';
 
+import { V4_COMPONENT } from 'core/component/const';
 import { getComponentContext } from 'core/component/context';
 
 import { forkMeta } from 'core/component/meta';
-import { getPropertyInfo, PropertyInfo } from 'core/component/reflect';
 import { getNormalParent } from 'core/component/traverse';
 
 import { initProps, attachAttrPropsListeners } from 'core/component/prop';
@@ -31,8 +31,13 @@ import { destroyedState } from 'core/component/init/states/destroyed';
 import type { ComponentInterface, ComponentMeta, ComponentElement, ComponentDestructorOptions } from 'core/component/interface';
 import type { InitBeforeCreateStateOptions } from 'core/component/init/interface';
 
+const
+	$getRoot = Symbol('$getRoot'),
+	$getParent = Symbol('$getParent');
+
 /**
- * Initializes the "beforeCreate" state to the specified component instance
+ * Initializes the "beforeCreate" state to the specified component instance.
+ * The function returns a function for transitioning to the beforeCreate hook.
  *
  * @param component
  * @param meta - the component metaobject
@@ -47,12 +52,24 @@ export function beforeCreateState(
 
 	// To avoid TS errors marks all properties as editable
 	const unsafe = Object.cast<Writable<ComponentInterface['unsafe']>>(component);
+	unsafe[V4_COMPONENT] = true;
 
+	// @ts-ignore (unsafe)
 	unsafe.unsafe = unsafe;
 	unsafe.componentName = meta.componentName;
-
 	unsafe.meta = meta;
-	unsafe.instance = Object.cast(meta.instance);
+
+	Object.defineProperty(unsafe, 'instance', {
+		configurable: true,
+		enumerable: true,
+		get: () => meta.instance
+	});
+
+	Object.defineProperty(unsafe, 'constructor', {
+		configurable: true,
+		enumerable: true,
+		value: meta.constructor
+	});
 
 	unsafe.$fields = {};
 	unsafe.$systemFields = {};
@@ -64,6 +81,7 @@ export function beforeCreateState(
 
 	unsafe.async = new Async(component);
 	unsafe.$async = new Async(component);
+	unsafe.$destructors = [];
 
 	Object.defineProperty(unsafe, '$destroy', {
 		configurable: true,
@@ -92,8 +110,6 @@ export function beforeCreateState(
 		}
 	});
 
-	const $getRoot = Symbol('$getRoot');
-
 	Object.defineProperty(unsafe, '$getRoot', {
 		configurable: true,
 		enumerable: false,
@@ -103,7 +119,9 @@ export function beforeCreateState(
 				return ctx[$getRoot];
 			}
 
-			const fn = () => ('getRoot' in ctx ? ctx.getRoot?.() : null) ?? ctx.$root;
+			let fn = () => ('getRoot' in ctx ? ctx.getRoot?.() : null) ?? ctx.$root;
+
+			fn = fn.once();
 
 			Object.defineProperty(ctx, $getRoot, {
 				configurable: true,
@@ -116,21 +134,23 @@ export function beforeCreateState(
 		})
 	});
 
+	let r: CanNull<ComponentInterface['Root']> = null;
+
 	Object.defineProperty(unsafe, 'r', {
 		configurable: true,
 		enumerable: true,
 		get: () => {
-			const r = ('getRoot' in unsafe ? unsafe.getRoot?.() : null) ?? unsafe.$root;
+			if (r == null) {
+				r = ('getRoot' in unsafe ? unsafe.getRoot?.() : null) ?? unsafe.$root;
 
-			if ('$remoteParent' in r.unsafe) {
-				return r.unsafe.$remoteParent!.$root;
+				if ('$remoteParent' in r.unsafe) {
+					r = r.unsafe.$remoteParent!.$root;
+				}
 			}
 
 			return r;
 		}
 	});
-
-	const $getParent = Symbol('$getParent');
 
 	Object.defineProperty(unsafe, '$getParent', {
 		configurable: true,
@@ -158,6 +178,8 @@ export function beforeCreateState(
 			if (fn == null) {
 				fn = () => ctx;
 			}
+
+			fn = fn.once();
 
 			Object.defineProperty(targetCtx, $getParent, {
 				configurable: true,
@@ -197,9 +219,8 @@ export function beforeCreateState(
 
 	unsafe.$normalParent = getNormalParent(component);
 
-	['$root', '$parent', '$normalParent'].forEach((key) => {
-		const
-			val = unsafe[key];
+	for (const key of ['$root', '$parent', '$normalParent']) {
+		const val = unsafe[key];
 
 		if (val != null) {
 			Object.defineProperty(unsafe, key, {
@@ -209,14 +230,13 @@ export function beforeCreateState(
 				value: getComponentContext(Object.cast(val))
 			});
 		}
-	});
+	}
 
 	Object.defineProperty(unsafe, '$children', {
 		configurable: true,
 		enumerable: true,
 		get() {
-			const
-				{$el} = unsafe;
+			const {$el} = unsafe;
 
 			// If the component node is null or a node that cannot have children (such as a text or comment node)
 			if ($el?.querySelectorAll == null) {
@@ -229,7 +249,7 @@ export function beforeCreateState(
 		}
 	});
 
-	unsafe.$async.worker(() => {
+	unsafe.$destructors.push(() => {
 		// eslint-disable-next-line require-yield
 		gc.add(function* destructor() {
 			for (const key of ['$root', '$parent', '$normalParent', '$children']) {
@@ -243,9 +263,7 @@ export function beforeCreateState(
 		}());
 	});
 
-	if (opts?.addMethods) {
-		attachMethodsFromMeta(component);
-	}
+	attachMethodsFromMeta(component);
 
 	if (opts?.implementEventAPI) {
 		implementEventEmitterAPI(component);
@@ -274,88 +292,12 @@ export function beforeCreateState(
 	});
 
 	attachAttrPropsListeners(component);
+
 	attachAccessorsFromMeta(component);
 
 	runHook('beforeRuntime', component).catch(stderr);
 
-	const {
-		systemFields,
-		tiedFields,
-
-		computedFields,
-		accessors,
-
-		watchDependencies,
-		watchers
-	} = meta;
-
-	initFields(systemFields, component, unsafe);
-
-	const fakeHandler = () => undefined;
-
-	if (watchDependencies.size > 0) {
-		const
-			isFunctional = meta.params.functional === true,
-			watchSet = new Set<PropertyInfo>();
-
-		watchDependencies.forEach((deps) => {
-			deps.forEach((dep) => {
-				const
-					path = Object.isArray(dep) ? dep.join('.') : String(dep),
-					info = getPropertyInfo(path, component);
-
-				if (info.type === 'system' || isFunctional && info.type === 'field') {
-					watchSet.add(info);
-				}
-			});
-		});
-
-		// If a computed property has a field or system field as a dependency
-		// and the host component does not have any watchers to this field,
-		// we need to register a "fake" watcher to enforce watching
-		watchSet.forEach((info) => {
-			const needToForceWatching =
-				watchers[info.name] == null &&
-				watchers[info.originalPath] == null &&
-				watchers[info.path] == null;
-
-			if (needToForceWatching) {
-				watchers[info.name] = [
-					{
-						deep: true,
-						immediate: true,
-						provideArgs: false,
-						handler: fakeHandler
-					}
-				];
-			}
-		});
-	}
-
-	// If a computed property is tied with a field or system field
-	// and the host component does not have any watchers to this field,
-	// we need to register a "fake" watcher to enforce watching
-	Object.entries(tiedFields).forEach(([name, normalizedName]) => {
-		if (normalizedName == null) {
-			return;
-		}
-
-		const needToForceWatching = watchers[name] == null && (
-			accessors[normalizedName] != null ||
-			computedFields[normalizedName] != null
-		);
-
-		if (needToForceWatching) {
-			watchers[name] = [
-				{
-					deep: true,
-					immediate: true,
-					provideArgs: false,
-					handler: fakeHandler
-				}
-			];
-		}
-	});
+	initFields(meta.systemFieldInitializers, component, unsafe);
 
 	runHook('beforeCreate', component).catch(stderr);
 	callMethodFromComponent(component, 'beforeCreate');

@@ -56,7 +56,8 @@ export default class bDummy extends iData {
 	@field()
 	storedAccessors: Dictionary = {};
 
-	protected override readonly $refs!: iData['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: iData['$refs'] & {
 		testComponent?: iBlock;
 	};
 
@@ -77,7 +78,7 @@ export default class bDummy extends iData {
 		Object.keys(this.testComponentAttrs).forEach((key) => {
 			const value = this.testComponentAttrs[key];
 
-			if (meta.props[key]?.forceUpdate === false) {
+			if (meta.props[key]?.forceUpdate === false || meta.props[`${key}Prop`]?.forceUpdate === false) {
 				if (key in this.storedProps) {
 					this.storedProps[key] = value;
 					attrs[`@:${key}`] = this.storedAccessors[key];

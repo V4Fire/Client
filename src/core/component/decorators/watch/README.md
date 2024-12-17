@@ -52,7 +52,7 @@ class Foo extends iBlock {
 }
 ```
 
-In order to listen to an event, you should use the special delimiter `:` within a watch path.
+To listen to an event, you should use the special delimiter `:` within a watch path.
 You can also specify an event emitter to listen to by writing a link before `:`.
 Here are some examples:
 
@@ -112,7 +112,7 @@ class bExample extends iBlock {
 }
 ```
 
-## Additional options
+## Additional Options
 
 The `@watch` decorator can accept any options compatible with the watch function from the `core/object/watch` module.
 For a more detailed list of these options, please refer to that module's documentation.
@@ -188,3 +188,24 @@ Determines the execution timing of the event handler:
    and is assured to be called before all linked templates are updated.
 
 3. `sync` - the handler will be invoked immediately after each mutation.
+
+### [shouldInit]
+
+A function to determine whether a watcher should be initialized or not.
+If the function returns false, the watcher will not be initialized.
+Useful for precise component optimizations.
+
+```typescript
+import iBlock, { component, prop, watch } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  @prop({required: false})
+  params?: Dictionary;
+
+  @watch({path: 'params', shouldInit: (o) => o.params != null})
+  watcher() {
+
+  }
+}
+```

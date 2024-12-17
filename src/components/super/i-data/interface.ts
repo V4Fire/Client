@@ -6,28 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { RequestQuery, RequestBody, ModelMethod } from 'core/data';
-import type { CreateRequestOptions } from 'components/traits/i-data-provider/i-data-provider';
-
 import type { UnsafeIBlock } from 'components/super/i-block/i-block';
 import type iData from 'components/super/i-data/i-data';
 
 export * from 'components/friends/data-provider';
 export * from 'components/traits/i-data-provider/i-data-provider';
-
-export interface RequestFilterOptions<D = unknown> {
-	isEmpty: boolean;
-	method: ModelMethod;
-	params: CreateRequestOptions<D>;
-}
-
-export interface RequestFilterFn<D = unknown> {
-	(data: RequestQuery | RequestBody, opts: RequestFilterOptions<D>): boolean;
-}
-
-export type RequestFilter<D = unknown> =
-	boolean |
-	RequestFilterFn<D>;
 
 export interface RetryRequestFn<T = unknown> {
 	(): Promise<CanUndef<T>>;
@@ -45,7 +28,6 @@ export type CheckDBEquality<T = unknown> =
 	boolean |
 	CheckDBEqualityFn<T>;
 
-// @ts-ignore (extend)
 export interface UnsafeIData<CTX extends iData = iData> extends UnsafeIBlock<CTX> {
 	// @ts-ignore (access)
 	dbStore: CTX['dbStore'];

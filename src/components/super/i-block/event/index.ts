@@ -21,7 +21,9 @@ import type { AsyncOptions, EventEmitterWrapper, ReadonlyEventEmitterWrapper, Ev
 
 import { component, globalEmitter, ComponentEmitterOptions } from 'core/component';
 
-import { system, hook, watch } from 'components/super/i-block/decorators';
+import type { SetModEvent, ModEvent } from 'components/friends/block';
+
+import { computed, hook, watch } from 'components/super/i-block/decorators';
 import { initGlobalListeners } from 'components/super/i-block/modules/listeners';
 
 import type iBlock from 'components/super/i-block/i-block';
@@ -36,18 +38,21 @@ export * from 'components/super/i-block/event/interface';
 const
 	$$ = symbolGenerator();
 
-@component()
+@component({partial: 'iBlock'})
 export default abstract class iBlockEvent extends iBlockBase {
 	/**
-	 * Associative type for typing events emitted by the component.
+	 * An associative type for typing events emitted by the component.
 	 * Events are described using tuples, where the first element is the event name, and the rest are arguments.
 	 */
-	readonly SelfEmitter!: InferComponentEvents<this, [
-		['error', boolean]
+	readonly SelfEmitter!: InferComponentEvents<[
+		['error', ...unknown[]],
+		[`mod:set:${string}`, SetModEvent],
+		[`mod:set:${string}:${string}`, SetModEvent],
+		[`mod:remove:${string}`, ModEvent]
 	]>;
 
 	/**
-	 * Associative type for typing events emitted by the `localEmitter`.
+	 * An associative type for typing events emitted by the `localEmitter`.
 	 * Events are described using tuples, where the first element is the event name, and the rest are arguments.
 	 */
 	readonly LocalEmitter!: {};
@@ -85,31 +90,29 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * this.selfEmitter.off({group: 'example'});
 	 * ```
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (o, d) => (<Async>d.async).wrapEventEmitter({
+	@computed({cache: 'forever'})
+	get selfEmitter(): this['SelfEmitter'] & EventEmitterWrapper<this> {
+		const emitter = this.async.wrapEventEmitter({
 			on: (event: string, handler: Function, opts?: ComponentEmitterOptions) =>
-				o.$on(normalizeEventName(event), handler, {...opts, rawEmitter: true}),
+				this.$on(normalizeEventName(event), handler, {...opts, rawEmitter: true}),
 
 			once: (event: string, handler: Function, opts?: ComponentEmitterOptions) =>
-				o.$once(normalizeEventName(event), handler, {...opts, rawEmitter: true}),
+				this.$once(normalizeEventName(event), handler, {...opts, rawEmitter: true}),
 
 			off: (eventOrLink: string | EventId, handler: Function) => {
 				if (Object.isString(eventOrLink)) {
-					return o.$off(normalizeEventName(eventOrLink), handler);
+					return this.$off(normalizeEventName(eventOrLink), handler);
 				}
 
-				return o.$off(eventOrLink);
+				return this.$off(eventOrLink);
 			},
 
-			emit: o.emit.bind(o),
-			strictEmit: o.emit.bind(o)
-		})
-	})
+			emit: this.emit.bind(this),
+			strictEmit: this.strictEmit.bind(this)
+		});
 
-	// @ts-ignore (ts)
-	readonly selfEmitter!: this['SelfEmitter'] & EventEmitterWrapper<this>;
+		return Object.cast(emitter);
+	}
 
 	/**
 	 * The component local event emitter.
@@ -130,23 +133,17 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * this.localEmitter.off({group: 'example.*'});
 	 * ```
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (_, d) => {
-			const emitter = (<Async>d.async).wrapEventEmitter(new EventEmitter({
-				maxListeners: 10e3,
-				newListener: false,
-				wildcard: true
-			}), {group: ':suspend'});
+	@computed({cache: 'forever'})
+	protected get localEmitter(): this['LocalEmitter'] & EventEmitterWrapper<this> {
+		const emitter = this.async.wrapEventEmitter(new EventEmitter({
+			maxListeners: 10e3,
+			newListener: false,
+			wildcard: true
+		}), {group: ':suspend'});
 
-			emitter['strictEmit'] = (event: string, ...args: unknown[]) => emitter.emit(event, ...args);
-			return emitter;
-		}
-	})
-
-	// @ts-ignore (ts)
-	protected readonly localEmitter!: this['LocalEmitter'] & EventEmitterWrapper<this>;
+		emitter['strictEmit'] = (event: string, ...args: unknown[]) => emitter.emit(event, ...args);
+		return emitter;
+	}
 
 	/**
 	 * The parent component event emitter.
@@ -163,28 +160,27 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * this.parentEmitter.off({group: 'myEvent'});
 	 * ```
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (o, d) => (<Async>d.async).wrapEventEmitter({
+	@computed({cache: 'forever'})
+	protected get parentEmitter(): ReadonlyEventEmitterWrapper<this> {
+		const that = this;
+
+		return this.async.wrapEventEmitter({
 			get on() {
-				const ee = o.$parent?.unsafe.selfEmitter;
+				const ee = that.$parent?.selfEmitter;
 				return ee?.on.bind(ee) ?? (() => Object.throw());
 			},
 
 			get once() {
-				const ee = o.$parent?.unsafe.selfEmitter;
+				const ee = that.$parent?.selfEmitter;
 				return ee?.once.bind(ee) ?? (() => Object.throw());
 			},
 
 			get off() {
-				const ee = o.$parent?.unsafe.selfEmitter;
+				const ee = that.$parent?.selfEmitter;
 				return ee?.off.bind(ee) ?? (() => Object.throw());
 			}
-		})
-	})
-
-	protected readonly parentEmitter!: ReadonlyEventEmitterWrapper<this>;
+		});
+	}
 
 	/**
 	 * The root component event emitter.
@@ -202,14 +198,10 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * this.parentEmitter.off({group: 'myEvent'});
 	 * ```
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (o, d) => (<Async>d.async).wrapEventEmitter(o.r.unsafe.selfEmitter)
-	})
-
-	// @ts-ignore (ts)
-	protected readonly rootEmitter!: this['Root']['SelfEmitter'] & ReadonlyEventEmitterWrapper<this['Root']>;
+	@computed({cache: 'forever'})
+	protected get rootEmitter(): this['Root']['SelfEmitter'] & ReadonlyEventEmitterWrapper<this['Root']> {
+		return this.async.wrapEventEmitter(this.r.unsafe.selfEmitter);
+	}
 
 	/**
 	 * The global event emitter located in `core/component/event`.
@@ -236,17 +228,12 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * this.globalEmitter.off({group: 'myEvent'});
 	 * ```
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (_, d) => {
-			const emitter = (<Async>d.async).wrapEventEmitter(globalEmitter);
-			emitter['strictEmit'] = (event: string, ...args: unknown[]) => emitter.emit(event, ...args);
-			return emitter;
-		}
-	})
-
-	protected readonly globalEmitter!: EventEmitterWrapper<this>;
+	@computed({cache: 'forever'})
+	protected get globalEmitter(): EventEmitterWrapper<this> {
+		const emitter = this.async.wrapEventEmitter(globalEmitter);
+		emitter['strictEmit'] = (event: string, ...args: unknown[]) => emitter.emit(event, ...args);
+		return emitter;
+	}
 
 	/**
 	 * Attaches an event listener to the specified component event
@@ -351,8 +338,47 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 */
 	emit: typeof this['selfEmitter']['emit'] =
 		function emit(this: iBlockEvent, event: string | ComponentEvent, ...args: unknown[]): void {
+			// @ts-ignore (cast)
+			this.strictEmit(normalizeEvent(event), ...args);
+		};
+
+	/**
+	 * Emits a component event.
+	 *
+	 * All events fired by this method can be listened to "outside" using the `v-on` directive.
+	 * Also, if the component is in `dispatching` mode, then this event will start bubbling up to the parent component.
+	 *
+	 * In addition, all emitted events are automatically logged using the `log` method.
+	 * The default logging level is `info` (logging requires the `verbose` prop to be set to true),
+	 * but you can set the logging level explicitly.
+	 *
+	 * Note that this method always fires three events:
+	 *
+	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event.
+	 * 2. `${event}:component`(self, ...args) - the event to avoid collisions between component events and
+	 *    native DOM events.
+	 *
+	 * 3. `on-${event}`(...args)
+	 *
+	 * @param event - the event name to dispatch
+	 * @param args - the event arguments
+	 *
+	 * @example
+	 * ```js
+	 * this.on('someEvent', console.log);   // [this, 42]
+	 * this.on('onSomeEvent', console.log); // [42]
+	 *
+	 * this.emit('someEvent', 42);
+	 *
+	 * // Enable logging
+	 * setEnv('log', {patterns: ['event:']});
+	 * this.emit({event: 'someEvent', logLevel: 'warn'}, 42);
+	 * ```
+	 */
+	strictEmit: typeof this['selfEmitter']['strictEmit'] =
+		function strictEmit(this: iBlockEvent, event: string | ComponentEvent, ...args: any[]): void {
 			const
-				eventDecl = normalizeEvent(event),
+				eventDecl = normalizeStrictEvent(event),
 				eventName = eventDecl.event;
 
 			this.$emit(eventName, this, ...args);
@@ -360,32 +386,22 @@ export default abstract class iBlockEvent extends iBlockBase {
 			this.$emit(getWrappedEventName(eventName), ...args);
 
 			if (this.dispatching) {
-				this.dispatch(eventDecl, ...args);
+				this.dispatch(event, ...args);
 			}
 
-			const logArgs = args.slice();
+			if (this.verbose || eventDecl.logLevel !== 'info') {
+				const logArgs = args.slice();
 
-			if (eventDecl.logLevel === 'error') {
-				logArgs.forEach((el, i) => {
-					if (Object.isFunction(el)) {
-						logArgs[i] = () => el;
-					}
-				});
+				if (eventDecl.logLevel === 'error') {
+					logArgs.forEach((el, i) => {
+						if (Object.isFunction(el)) {
+							logArgs[i] = () => el;
+						}
+					});
+				}
+
+				this.log({context: `event:${eventName}`, logLevel: eventDecl.logLevel}, this, ...logArgs);
 			}
-
-			this.log({context: `event:${eventName}`, logLevel: eventDecl.logLevel}, this, ...logArgs);
-		};
-
-	/**
-	 * An alias for the `emit` method, but with stricter type checking
-	 *
-	 * @alias
-	 * @param event
-	 * @param args
-	 */
-	strictEmit: typeof this['selfEmitter']['strictEmit'] =
-		function strictEmit(this: iBlockEvent, event: string | ComponentEvent, ...args: any[]): void {
-			this.emit(event, ...args);
 		};
 
 	/**
@@ -442,26 +458,21 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 */
 	dispatch: typeof this['selfEmitter']['emit'] =
 		function dispatch(this: iBlockEvent, event: string | ComponentEvent, ...args: unknown[]): void {
-			const
-				that = this;
+			const that = this;
 
-			const
-				eventDecl = normalizeEvent(event);
+			const eventDecl = normalizeStrictEvent(event);
 
 			const
 				eventName = eventDecl.event,
 				wrappedEventName = getWrappedEventName(eventName);
 
-			let {
-				globalName,
-				componentName,
-				$parent: parent
-			} = this;
+			let {globalName, componentName, $parent: parent} = this;
 
 			const
-				logArgs = args.slice();
+				log = this.verbose || eventDecl.logLevel !== 'info',
+				logArgs = log ? args.slice() : args;
 
-			if (eventDecl.logLevel === 'error') {
+			if (log && eventDecl.logLevel === 'error') {
 				logArgs.forEach((el, i) => {
 					if (Object.isFunction(el)) {
 						logArgs[i] = () => el;
@@ -474,16 +485,27 @@ export default abstract class iBlockEvent extends iBlockBase {
 					parent.$emit(eventName, this, ...args);
 					parent.$emit(getComponentEventName(eventName), this, ...args);
 					parent.$emit(wrappedEventName, ...args);
-					logFromParent(parent, `event:${eventName}`);
+
+					if (log) {
+						logFromParent(parent, `event:${eventName}`);
+					}
 
 				} else {
 					parent.$emit(normalizeEventName(`${componentName}::${eventName}`), this, ...args);
 					parent.$emit(normalizeEventName(`${componentName}::${wrappedEventName}`), ...args);
-					logFromParent(parent, `event:${componentName}::${eventName}`);
+
+					if (log) {
+						logFromParent(parent, `event:${componentName}::${eventName}`);
+					}
 
 					if (globalName != null) {
 						parent.$emit(normalizeEventName(`${globalName}::${eventName}`), this, ...args);
 						parent.$emit(normalizeEventName(`${globalName}::${wrappedEventName}`), ...args);
+
+						if (log) {
+							logFromParent(parent, `event:${componentName}::${eventName}`);
+						}
+
 						logFromParent(parent, `event:${globalName}::${eventName}`);
 					}
 				}
@@ -526,7 +548,9 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 *
 	 * @component()
 	 * export default class bExample extends iBlock {
-	 *   override $refs!: {myInput: HTMLInputElement};
+	 *   declare protected readonly $refs: iBlock['$refs'] & {
+	 *     myInput: HTMLInputElement
+	 *   };
 	 *
 	 *   created() {
 	 *     this.waitRef('myInput').then((myInput) => {
@@ -550,8 +574,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 */
 	protected waitRef<T = CanArray<iBlock | Element>>(ref: string, opts?: AsyncOptions): Promise<T> {
 		return this.async.promise<T>(() => new SyncPromise((resolve) => {
-			const
-				refVal = this.$refs[ref];
+			const refVal = this.$refs[ref];
 
 			if (refVal != null && (!Object.isArray(refVal) || refVal.length > 0)) {
 				resolve(<T>refVal);
@@ -574,8 +597,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
-		const
-			i = this.instance;
+		const i = this.instance;
 
 		this.on = i.on.bind(this);
 		this.once = i.once.bind(this);
@@ -593,7 +615,12 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 *
 	 * @param enable
 	 */
-	@watch({path: 'proxyCall', immediate: true})
+	@watch({
+		path: 'proxyCall',
+		immediate: true,
+		shouldInit: (o) => o.proxyCall != null
+	})
+
 	protected initCallChildListener(enable: boolean): void {
 		const label = {label: $$.initCallChildListener};
 		this.parentEmitter.off(label);
@@ -616,28 +643,37 @@ export default abstract class iBlockEvent extends iBlockBase {
 	}
 }
 
-function normalizeEvent(event: ComponentEvent | string): ComponentEvent {
+function normalizeEvent(event: ComponentEvent | string): string | ComponentEvent {
 	if (Object.isString(event)) {
-		return {
-			event: normalizeEventName(event),
-			logLevel: 'info'
-		};
+		return normalizeEventName(event);
 	}
 
 	return {
-		...event,
+		logLevel: event.logLevel,
 		event: normalizeEventName(event.event)
 	};
 }
 
+function normalizeStrictEvent(event: ComponentEvent | string): ComponentEvent {
+	if (Object.isString(event)) {
+		return {event, logLevel: 'info'};
+	}
+
+	return event;
+}
+
 function getWrappedEventName(event: string): string {
-	return normalizeEventName(`on-${event}`);
+	return `on${event[0].toUpperCase()}${event.slice(1)}`;
 }
 
 function getComponentEventName(event: string): string {
-	return normalizeEventName(`${event}:component`);
+	return `${event}:component`;
 }
 
 function normalizeEventName(event: string): string {
-	return event.camelize(false);
+	if (event.includes('-')) {
+		return event.camelize(false);
+	}
+
+	return event;
 }

@@ -15,6 +15,43 @@ Changelog
 
 * [Now key functions such as `createBlock` and `renderList` are being measured using the Performance API and will be available on the timeline](https://github.com/V4Fire/Client/issues/1389)
 
+## v4.0.0-beta.153 (2024-11-15)
+
+#### :house: Internal
+
+* Removed context binding in wrapRenderList
+
+## v4.0.0-beta.151 (2024-11-06)
+
+#### :bug: Bug Fix
+
+* Fixed the `resolveAttrs` function: property getters are no longer removed from props, the `v-attrs` directive now resolves with the correct method in SSR
+* Calls `resolveAttrs` to resolve directives for components rendered with `ssrRenderComponent`
+
+## v4.0.0-beta.149 (2024-10-31)
+
+#### :rocket: New Feature
+
+* Added a wrapper for `withModifiers` with support for the `safe` modifier
+
+## v4.0.0-beta.148 (2024-10-28)
+
+#### :house: Internal
+
+* Create a `normalizeComponentForceUpdateProps` for normalizing the props with `forceUpdate = false`
+
+## v4.0.0-beta.140 (2024-10-03)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect `shapeFlag` on a functional vnode
+
+## v4.0.0-beta.139.dsl-speedup-2 (2024-10-03)
+
+#### :rocket: New Feature
+
+* Added a new default prop `getPassedProps`, which allows identifying which props were passed through the template
+
 ## v4.0.0-beta.107 (2024-07-10)
 
 #### :bug: Bug Fix

@@ -25,7 +25,8 @@ export default class bEffectPropWrapperDummy extends bDummy {
 		return this.$refs.child;
 	}
 
-	protected override readonly $refs!: bDummy['$refs'] & {
+	/** @inheritDoc */
+	declare protected readonly $refs: bDummy['$refs'] & {
 		child: bNonEffectPropDummy;
 	};
 }

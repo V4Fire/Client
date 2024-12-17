@@ -20,18 +20,6 @@ export function delay(): Promise<void> {
 			return;
 		}
 
-		if (typeof requestIdleCallback === 'function') {
-			requestIdleCallback(() => {
-				resolve();
-			}, {timeout: config.gc.delay});
-
-		} else {
-			setTimeout(() => {
-				resolve();
-
-			// To avoid freezing during cleaning of a larger number of components at once,
-			// a little randomness is added to the process
-			}, config.gc.delay - Math.floor(Math.random() * (config.gc.delay / 3)));
-		}
+		requestIdleCallback(() => resolve(), {timeout: config.gc.delay});
 	}));
 }

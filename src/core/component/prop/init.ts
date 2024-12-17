@@ -6,10 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { DEFAULT_WRAPPER } from 'core/component/const';
 import type { ComponentInterface } from 'core/component/interface';
-
-import { isTypeCanBeFunc } from 'core/component/prop/helpers';
 import type { InitPropsObjectOptions } from 'core/component/prop/interface';
 
 /**
@@ -39,43 +36,53 @@ export function initProps(
 		...opts
 	};
 
-	const {
-		store,
-		from
-	} = p;
+	const {store, from} = p;
 
 	const
 		isFunctional = meta.params.functional === true,
 		source: typeof props = p.forceUpdate ? props : attrs;
 
-	Object.entries(source).forEach(([name, prop]) => {
+	const
+		propNames = Object.keys(source),
+		passedProps = unsafe.getPassedProps?.();
+
+	for (let i = 0; i < propNames.length; i++) {
+		const
+			propName = propNames[i],
+			prop = source[propName];
+
 		const canSkip =
 			prop == null ||
 			!SSR && isFunctional && prop.functional === false;
 
 		if (canSkip) {
-			return;
+			continue;
 		}
 
-		unsafe.$activeField = name;
+		unsafe.$activeField = propName;
 
-		let propValue = (from ?? component)[name];
+		let propValue = (from ?? component)[propName];
 
-		const getAccessors = unsafe.$attrs[`on:${name}`];
+		const
+			accessorName = `on:${propName}`,
+			getAccessors = unsafe.$attrs[accessorName];
 
 		if (propValue === undefined && Object.isFunction(getAccessors)) {
 			propValue = getAccessors()[0];
 		}
 
-		if (propValue === undefined) {
-			propValue = prop.default !== undefined ? prop.default : Object.fastClone(meta.instance[name]);
-		}
-
 		let needSaveToStore = opts.saveToStore;
 
-		if (Object.isFunction(propValue)) {
-			if (opts.saveToStore === true || propValue[DEFAULT_WRAPPER] !== true) {
-				propValue = isTypeCanBeFunc(prop.type) ? propValue.bind(component) : propValue.call(component);
+		if (propValue === undefined && prop.default !== undefined) {
+			propValue = prop.default;
+
+			if (Object.isFunction(propValue) && opts.saveToStore) {
+				propValue = prop.type === Function ? propValue : propValue(component);
+
+				if (Object.isFunction(propValue)) {
+					propValue = propValue.bind(component);
+				}
+
 				needSaveToStore = true;
 			}
 		}
@@ -84,17 +91,17 @@ export function initProps(
 
 		if (propValue === undefined) {
 			if (prop.required) {
-				throw new TypeError(`Missing required prop: "${name}" at ${componentName}`);
+				throw new TypeError(`Missing required prop: "${propName}" at ${componentName}`);
 			}
 
 		} else if (prop.validator != null && !prop.validator(propValue)) {
-			throw new TypeError(`Invalid prop: custom validator check failed for prop "${name}" at ${componentName}`);
+			throw new TypeError(`Invalid prop: custom validator check failed for prop "${propName}" at ${componentName}`);
 		}
 
 		if (needSaveToStore) {
-			const privateField = `[[${name}]]`;
+			const privateField = `[[${propName}]]`;
 
-			if (!opts.forceUpdate) {
+			if (!opts.forceUpdate && passedProps?.hasOwnProperty(accessorName)) {
 				// Set the property as enumerable so that it can be deleted in the destructor later
 				Object.defineProperty(store, privateField, {
 					configurable: true,
@@ -104,13 +111,23 @@ export function initProps(
 				});
 			}
 
-			Object.defineProperty(store, name, {
-				configurable: true,
-				enumerable: true,
-				get: () => opts.forceUpdate ? propValue : store[privateField]
-			});
+			if (opts.forceUpdate) {
+				Object.defineProperty(store, propName, {
+					configurable: true,
+					enumerable: true,
+					writable: false,
+					value: propValue
+				});
+
+			} else {
+				Object.defineProperty(store, propName, {
+					configurable: true,
+					enumerable: true,
+					get: () => Object.hasOwn(store, privateField) ? store[privateField] : propValue
+				});
+			}
 		}
-	});
+	}
 
 	unsafe.$activeField = undefined;
 	return store;

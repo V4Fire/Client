@@ -12,6 +12,7 @@ import { beforeMountHooks } from 'core/component/const';
 import type { VNode } from 'core/component/engines';
 
 import { isHandler, mergeProps } from 'core/component/render/helpers/props';
+import { isPropGetter } from 'core/component/reflect';
 
 import type { ComponentInterface } from 'core/component/interface';
 
@@ -59,7 +60,9 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	}
 
 	if (Object.isArray(children)) {
-		children.forEach((child) => resolveAttrs.call(this, Object.cast(child)));
+		for (let i = 0; i < children.length; i++) {
+			resolveAttrs.call(this, Object.cast(children[i]));
+		}
 	}
 
 	if (Object.isArray(dynamicChildren) && dynamicChildren.length > 0) {
@@ -75,8 +78,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 
 		if (props[key] != null) {
 			const dir = r.resolveDirective.call(this, 'attrs');
-
-			dir.beforeCreate({
+			const dirParams = {
 				dir,
 
 				modifiers: {},
@@ -86,7 +88,14 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 				oldValue: undefined,
 
 				instance: this
-			}, vnode);
+			};
+
+			if (SSR) {
+				dir.getSSRProps(dirParams, vnode);
+
+			} else {
+				dir.beforeCreate(dirParams, vnode);
+			}
 
 			props = vnode.props!;
 			delete props[key];
@@ -139,16 +148,20 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 				const dynamicProps = vnode.dynamicProps ?? [];
 				vnode.dynamicProps = dynamicProps;
 
-				Object.keys(props).forEach((prop) => {
-					if (isHandler.test(prop)) {
-						if (SSR) {
-							delete props![prop];
+				const propNames = Object.keys(props);
+
+				for (let i = 0; i < propNames.length; i++) {
+					const propName = propNames[i];
+
+					if (isHandler.test(propName)) {
+						if (SSR && !isPropGetter.test(propName)) {
+							delete props[propName];
 
 						} else {
-							dynamicProps.push(prop);
+							dynamicProps.push(propName);
 						}
 					}
-				});
+				}
 			}
 
 			delete props[key];
@@ -173,15 +186,19 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 			names = props[key];
 
 		if (names != null) {
-			names.split(' ').forEach((name: string) => {
+			const nameChunks = names.split(' ');
+
+			for (let i = 0; i < nameChunks.length; i++) {
+				const name = nameChunks[i];
+
 				if ('classes' in this && this.classes?.[name] != null) {
-					Object.assign(props, mergeProps({class: props?.class}, {class: this.classes[name]}));
+					Object.assign(props, mergeProps({class: props.class}, {class: this.classes[name]}));
 				}
 
 				if ('styles' in this && this.styles?.[name] != null) {
-					Object.assign(props, mergeProps({style: props?.style}, {style: this.styles[name]}));
+					Object.assign(props, mergeProps({style: props.style}, {style: this.styles[name]}));
 				}
-			});
+			}
 
 			delete props[key];
 		}

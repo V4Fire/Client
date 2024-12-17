@@ -15,7 +15,7 @@ const
 const
 	{webpack} = require('@config/config'),
 	{validators} = require('@pzlr/build-core'),
-	{isV4Prop, isStaticV4Prop} = include('build/snakeskin/filters/const');
+	{isV4Prop, isStaticV4Prop, isV4WebComponent} = include('build/snakeskin/filters/const');
 
 const
 	componentParams = include('build/graph/component-params');
@@ -59,28 +59,20 @@ Snakeskin.importFilters({
 });
 
 function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplName, cursor) {
-	Object.entries(attrs).forEach(([key, attr]) => {
-		if (isStaticV4Prop.test(key)) {
-			// Since HTML is not case-sensitive, the name can be written differently.
-			// We will explicitly normalize the name to the most popular format for HTML notation.
-			const tmp = key.dasherize(key.startsWith(':'));
-
-			if (tmp !== key) {
-				delete attrs[key];
-				attrs[tmp] = attr;
-			}
-		}
-	});
-
 	let componentName;
+
+	if (attrs[':instance-of']) {
+		attrs[':instanceOf'] = attrs[':instance-of'];
+		delete attrs[':instance-of'];
+	}
 
 	if (attrs[TYPE_OF]) {
 		componentName = attrs[TYPE_OF];
 
 	} else if (tag === 'component') {
-		if (attrs[':instance-of']) {
-			componentName = attrs[':instance-of'][0].camelize(false);
-			delete attrs[':instance-of'];
+		if (attrs[':instanceOf']) {
+			componentName = attrs[':instanceOf'][0].camelize(false);
+			delete attrs[':instanceOf'];
 
 		} else {
 			componentName = 'iBlock';
@@ -91,6 +83,50 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 	}
 
 	const component = componentParams[componentName];
+
+	Object.entries(attrs).forEach(([key, attr]) => {
+		if (isStaticV4Prop.test(key)) {
+			// Do not change any attrs name for web components
+			if (isV4WebComponent.test(tag)) {
+				return;
+			}
+
+			// Since HTML is not case-sensitive, the name can be written differently.
+			// We will explicitly normalize the name to the most popular format for HTML notation.
+			// For Vue component attributes such as `:` and `@`, we convert the prop to camelCase format.
+			let normalizedKey;
+
+			if (component) {
+				if (key.startsWith('@')) {
+					normalizedKey = key.camelize(false);
+
+				} else if (key.startsWith('v-on:')) {
+					normalizedKey = key.replace(/^v-on:([^.[]+)(.*)/, (_, event, rest) =>
+						`v-on:${event.camelize(false)}${rest}`);
+
+				} else if (key.startsWith(':') && !key.startsWith(':-') && !key.startsWith(':v-')) {
+					const camelizedKey = key.camelize(false);
+
+					if (component.props[camelizedKey.slice(1)]) {
+						normalizedKey = camelizedKey;
+					}
+				}
+			}
+
+			if (!normalizedKey) {
+				normalizedKey = key.dasherize();
+			}
+
+			if (normalizedKey !== key) {
+				delete attrs[key];
+				attrs[normalizedKey] = attr;
+			}
+		}
+	});
+
+	if (isSmartComponent(component)) {
+		attrs[SMART_PROPS] = component.functional;
+	}
 
 	const isSimpleTag =
 		tag !== 'component' &&
@@ -103,7 +139,7 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 	let isFunctional = false;
 
 	if (component) {
-		if (component && component.functional === true) {
+		if (component.functional === true) {
 			isFunctional = true;
 
 		} else if (!vFuncDir && attrs[SMART_PROPS] != null) {
@@ -173,8 +209,8 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 		attrs[':componentIdProp'] = [`componentId + ${JSON.stringify(id)}`];
 	}
 
-	if (component.inheritMods !== false && !attrs[':mods'] && !attrs[':modsProp']) {
-		attrs[':mods'] = ['provide.mods()'];
+	if (component.inheritMods !== false) {
+		attrs[':inheritMods'] = ['sharedMods != null'];
 	}
 
 	Object.entries(attrs).forEach(([name, val]) => {
@@ -203,22 +239,29 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 
 	if (isSmartFunctional) {
 		if (vFuncDir == null || vFuncDir === 'true') {
-			if (webpack.ssr) {
-				attrs[':canFunctional'] = [true];
-
-			} else {
-				attrs['is'] = [`${attrs['is'][0]}-functional`];
-			}
+			appendSmartFunctionalAttrs(attrs, true);
 
 		} else if (vFuncDir !== 'false') {
-			if (webpack.ssr) {
-				attrs[':canFunctional'] = [vFuncDir];
-
-			} else {
-				attrs[':is'] = [`'${attrs['is'][0]}' + (${vFuncDir} ? '-functional' : '')`];
-				delete attrs['is'];
-			}
+			appendSmartFunctionalAttrs(attrs, vFuncDir, false);
 		}
+	}
+}
+
+function appendSmartFunctionalAttrs(attrs, condition, isStaticCondition = true) {
+	if (webpack.ssr) {
+		attrs[':canFunctional'] = [condition];
+		return;
+	}
+
+	if (attrs[':is']) {
+		attrs[':is'] = [`${attrs[':is'][0]} + (${condition} ? '-functional' : '')`];
+
+	} else if (!isStaticCondition) {
+		attrs[':is'] = [`'${attrs['is'][0]}' + (${condition} ? '-functional' : '')`];
+		delete attrs['is'];
+
+	} else if (attrs['is']) {
+		attrs['is'] = [`${attrs['is'][0]}${condition ? '-functional' : ''}`];
 	}
 }
 
@@ -230,15 +273,10 @@ function tagNameFilter(tag, attrs, rootTag, forceRenderAsVNode) {
 		componentName = tag.camelize(false),
 		component = componentParams[componentName];
 
-	const isSmartComponent =
-		component != null &&
-		!Object.isBoolean(component.functional);
-
-	if (isSmartComponent) {
+	if (isSmartComponent(component)) {
 		attrs.is = [tag];
 
 		attrs[TYPE_OF] = componentName.camelize(false);
-		attrs[SMART_PROPS] = component.functional;
 
 		return 'component';
 	}
@@ -249,4 +287,8 @@ function tagNameFilter(tag, attrs, rootTag, forceRenderAsVNode) {
 function bemFilter(block, attrs, rootTag, value) {
 	attrs ??= {};
 	return bemFilters.reduce((res, filter) => res + filter(block, attrs, rootTag, value), '');
+}
+
+function isSmartComponent(component) {
+	return component != null && !Object.isBoolean(component.functional);
 }

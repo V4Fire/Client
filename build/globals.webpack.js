@@ -8,9 +8,7 @@
 
 'use strict';
 
-const
-	$C = require('collection.js'),
-	config = require('@config/config');
+const config = require('@config/config');
 
 const
 	{csp, build, webpack, i18n} = config,
@@ -18,9 +16,7 @@ const
 	{collectI18NKeysets} = include('build/helpers'),
 	{getDSComponentMods, getThemes, getDS} = include('build/ds');
 
-const
-	projectGraph = include('build/graph'),
-	s = JSON.stringify;
+const s = JSON.stringify;
 
 const
 	locales = i18n.supportedLocales(),
@@ -52,31 +48,6 @@ module.exports = {
 	REGION: typeof REGION !== 'undefined' ? s(REGION) : undefined,
 	LANG_KEYSETS: s(collectI18NKeysets(locales)),
 	LANG_PACKS: s(config.i18n.langPacksStore),
-
-	COMPONENTS: projectGraph.then(({components}) => {
-		if (Object.isMap(components)) {
-			return $C(components).to({}).reduce((res, el, key) => {
-				res[key] = {
-					parent: JSON.stringify(el.parent),
-					dependencies: JSON.stringify(el.dependencies)
-				};
-
-				return res;
-			});
-		}
-
-		return {};
-	}),
-
-	BLOCK_NAMES: runtime.blockNames ?
-		projectGraph.then(({components}) => {
-			if (Object.isMap(components)) {
-				const blockNames = Array.from(components.keys()).filter((el) => /^b-/.test(el));
-				return s(blockNames);
-			}
-		}) :
-
-		null,
 
 	THEME: s(config.theme.default()),
 	THEME_ATTRIBUTE: s(config.theme.attribute),

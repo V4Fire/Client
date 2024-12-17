@@ -12,6 +12,10 @@ import type iBlock from 'components/super/i-block/i-block';
 import * as block from 'components/friends/block/block';
 import type { ModEventReason, ModsProp } from 'components/super/i-block/i-block';
 
+//#if runtime has dummyComponents
+import('components/friends/block/test/b-friends-block-dummy');
+//#endif
+
 interface Block {
 	getMod(name: string, fromNode?: boolean): CanUndef<string>;
 	setMod(name: string, value: unknown, reason?: ModEventReason): boolean;

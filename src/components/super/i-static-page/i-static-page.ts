@@ -115,8 +115,9 @@ export default abstract class iStaticPage extends iPage {
 	 * This field is based on the one with the same name from `remoteState`.
 	 * It is used for convenience.
 	 */
-	@system((o) => o.sync.link('remoteState.lastOnlineDate'))
-	lastOnlineDate?: Date;
+	get lastOnlineDate(): Date {
+		return this.remoteState.lastOnlineDate!;
+	}
 
 	/**
 	 * Initial value for the active route.
@@ -124,6 +125,12 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system((o) => o.remoteState.route)
 	initialRoute?: InitialRoute | this['CurrentPage'];
+
+	/**
+	 * True if component teleports should be mounted
+	 */
+	@field()
+	shouldMountTeleports: boolean = false;
 
 	/**
 	 * Number of external root instances of the application.
@@ -135,9 +142,9 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * The name of the active route page
 	 */
-	@computed({cache: true, dependencies: ['route.meta.name']})
+	@computed({dependencies: ['route.meta.name']})
 	get activePage(): CanUndef<string> {
-		return this.field.get('route.meta.name');
+		return this.route?.meta.name;
 	}
 
 	/**
@@ -150,7 +157,7 @@ export default abstract class iStaticPage extends iPage {
 
 	@computed()
 	override get route(): CanUndef<this['CurrentPage']> {
-		return this.field.get('routeStore');
+		return this.field.getFieldsStore<this>().routeStore;
 	}
 
 	/**
@@ -160,7 +167,7 @@ export default abstract class iStaticPage extends iPage {
 	 * @emits `setRoute(value: CanUndef<this['CurrentPage']>)`
 	 */
 	override set route(value: CanUndef<this['CurrentPage']>) {
-		this.field.set('routeStore', value);
+		this.field.getFieldsStore<this>().routeStore = value;
 		this.emit('setRoute', value);
 	}
 
@@ -168,12 +175,6 @@ export default abstract class iStaticPage extends iPage {
 		this[$$.randomGenerator] ??= new Xor128(19881989);
 		return this[$$.randomGenerator];
 	}
-
-	/**
-	 * True if component teleports should be mounted
-	 */
-	@field()
-	protected shouldMountTeleports: boolean = false;
 
 	/**
 	 * The route information object store
@@ -295,8 +296,7 @@ export default abstract class iStaticPage extends iPage {
 				return false;
 			}
 
-			const
-				normalizedValue = value !== undefined ? String(value).dasherize() : undefined;
+			const normalizedValue = value !== undefined ? String(value).dasherize() : undefined;
 
 			if (normalizedValue === undefined || normalizedValue === cache.value) {
 				root.classList.remove(cache.class);

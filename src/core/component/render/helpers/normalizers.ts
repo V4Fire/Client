@@ -6,8 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { propGetterRgxp } from 'core/component/reflect';
 import type { ComponentMeta } from 'core/component/meta';
+import type { ComponentInterface } from 'core/component/interface';
+
+import { isPropGetter } from 'core/component/reflect';
+import { registerComponent } from 'core/component/init';
 
 /**
  * Normalizes the provided CSS classes and returns the resulting output
@@ -20,21 +23,26 @@ export function normalizeClass(classes: CanArray<string | Dictionary>): string {
 		classesStr = classes;
 
 	} else if (Object.isArray(classes)) {
-		classes.forEach((className) => {
+		for (let i = 0; i < classes.length; i += 1) {
 			const
+				className = classes[i],
 				normalizedClass = normalizeClass(className);
 
 			if (normalizedClass !== '') {
 				classesStr += `${normalizedClass} `;
 			}
-		});
+		}
 
 	} else if (Object.isDictionary(classes)) {
-		Object.entries(classes).forEach(([className, has]) => {
-			if (Object.isTruly(has)) {
+		const keys = Object.keys(classes);
+
+		for (let i = 0; i < keys.length; i++) {
+			const className = keys[i];
+
+			if (Object.isTruly(classes[className])) {
 				classesStr += `${className} `;
 			}
-		});
+		}
 	}
 
 	return classesStr.trim();
@@ -48,15 +56,22 @@ export function normalizeStyle(styles: CanArray<string | Dictionary<string>>): s
 	if (Object.isArray(styles)) {
 		const normalizedStyles = {};
 
-		styles.forEach((style) => {
+		for (let i = 0; i < styles.length; i++) {
+			const style = styles[i];
+
 			const normalizedStyle = Object.isString(style) ?
 				parseStringStyle(style) :
 				normalizeStyle(style);
 
-			if (Object.size(normalizedStyle) > 0) {
-				Object.entries(normalizedStyle).forEach(([name, style]) => normalizedStyles[name] = style);
+			if (Object.isDictionary(normalizedStyle)) {
+				const keys = Object.keys(normalizedStyle);
+
+				for (let i = 0; i < keys.length; i++) {
+					const name = keys[i];
+					normalizedStyles[name] = normalizedStyle[name];
+				}
 			}
-		});
+		}
 
 		return normalizedStyles;
 	}
@@ -83,18 +98,19 @@ const
 export function parseStringStyle(style: string): Dictionary<string> {
 	const styles = {};
 
-	style.split(listDelimiterRgxp).forEach((singleStyle) => {
-		singleStyle = singleStyle.trim();
+	const styleRules = style.split(listDelimiterRgxp);
 
-		if (singleStyle !== '') {
-			const
-				chunks = singleStyle.split(propertyDelimiterRgxp);
+	for (let i = 0; i < styleRules.length; i++) {
+		const style = styleRules[i].trim();
+
+		if (style !== '') {
+			const chunks = style.split(propertyDelimiterRgxp, 2);
 
 			if (chunks.length > 1) {
 				styles[chunks[0].trim()] = chunks[1].trim();
 			}
 		}
-	});
+	}
 
 	return styles;
 }
@@ -121,20 +137,26 @@ export function normalizeComponentAttrs(
 		return null;
 	}
 
-	const
-		dynamicPropsPatches = new Map<string, string>(),
-		normalizedAttrs = {...attrs};
+	let dynamicPropsPatches: CanNull<Map<string, string>> = null;
+
+	const normalizedAttrs = {...attrs};
 
 	if (Object.isDictionary(normalizedAttrs['v-attrs'])) {
 		normalizedAttrs['v-attrs'] = normalizeComponentAttrs(normalizedAttrs['v-attrs'], dynamicProps, component);
 	}
 
-	Object.entries(normalizedAttrs).forEach(normalizeAttr);
+	const attrNames = Object.keys(normalizedAttrs);
+
+	for (let i = 0; i < attrNames.length; i++) {
+		const attrName = attrNames[i];
+		normalizeAttr(attrName, normalizedAttrs[attrName]);
+	}
+
 	modifyDynamicPath();
 
 	return normalizedAttrs;
 
-	function normalizeAttr([attrName, value]: [string, unknown]) {
+	function normalizeAttr(attrName: string, value: unknown) {
 		let propName = `${attrName}Prop`.camelize(false);
 
 		if (attrName === 'ref' || attrName === 'ref_for') {
@@ -153,22 +175,26 @@ export function normalizeComponentAttrs(
 			}
 		}
 
-		const needSetAdditionalProp =
-			functional === true && dynamicProps != null &&
-			propGetterRgxp.test(attrName) && Object.isFunction(value);
+		const
+			isGetter = isPropGetter.test(attrName) && Object.isFunction(value),
+			needSetAdditionalProp = functional === true && dynamicProps != null && isGetter;
 
 		// For correct operation in functional components, we need to additionally duplicate such props
 		if (needSetAdditionalProp) {
 			const
-				tiedPropName = attrName.replace(propGetterRgxp, ''),
+				tiedPropName = isPropGetter.replace(attrName),
 				tiedPropValue = value()[0];
 
 			normalizedAttrs[tiedPropName] = tiedPropValue;
-			normalizeAttr([tiedPropName, tiedPropValue]);
+			normalizeAttr(tiedPropName, tiedPropValue);
 			dynamicProps.push(tiedPropName);
+
+		} else if (isGetter) {
+			// For non-functional components (especially in SSR), remove a paired prop, because getter prop is sufficient
+			delete normalizedAttrs[isPropGetter.replace(attrName)];
 		}
 
-		if (propName in props || propName.replace(propGetterRgxp, '') in props) {
+		if (propName in props || isPropGetter.replace(propName) in props) {
 			changeAttrName(attrName, propName);
 
 		} else {
@@ -184,18 +210,21 @@ export function normalizeComponentAttrs(
 			return;
 		}
 
+		dynamicPropsPatches ??= new Map();
 		dynamicPropsPatches.set(name, newName);
+
 		patchDynamicProps(newName);
 	}
 
 	function patchDynamicProps(propName: string) {
 		if (functional !== true && component.props[propName]?.forceUpdate === false) {
+			dynamicPropsPatches ??= new Map();
 			dynamicPropsPatches.set(propName, '');
 		}
 	}
 
 	function modifyDynamicPath() {
-		if (dynamicProps == null || dynamicPropsPatches.size === 0) {
+		if (dynamicProps == null || dynamicPropsPatches == null) {
 			return;
 		}
 
@@ -216,4 +245,44 @@ export function normalizeComponentAttrs(
 			}
 		}
 	}
+}
+
+/**
+ * Normalizes the props with forceUpdate set to false for a child component using the parent context.
+ * The function returns a new object containing the normalized props for the child component.
+ *
+ * @param parentCtx - the context of the parent component
+ * @param componentName - the name of the child component
+ * @param props - the initial props of the child component
+ */
+export function normalizeComponentForceUpdateProps(
+	parentCtx: ComponentInterface,
+	componentName: string,
+	props: Dictionary
+): Dictionary {
+	const meta = registerComponent(componentName);
+
+	if (meta == null) {
+		return props;
+	}
+
+	const
+		normalizedProps = {},
+		propNames = Object.keys(props);
+
+	for (let i = 0; i < propNames.length; i++) {
+		const
+			propName = propNames[i],
+			propVal = props[propName],
+			propInfo = meta.props[propName] ?? meta.props[`${propName}Prop`];
+
+		if (propInfo?.forceUpdate === false) {
+			normalizedProps[`@:${propName}`] = parentCtx.unsafe.createPropAccessors(() => <object>propVal);
+
+		} else {
+			normalizedProps[propName] = propVal;
+		}
+	}
+
+	return normalizedProps;
 }

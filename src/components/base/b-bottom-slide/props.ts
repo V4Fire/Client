@@ -12,8 +12,9 @@ import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
 import { heightMode } from 'components/base/b-bottom-slide/const';
 import type { HeightMode } from 'components/base/b-bottom-slide/interface';
+import type { SwipeControl } from 'components/base/b-bottom-slide/modules';
 
-@component()
+@component({partial: 'bBottomSlide'})
 export default abstract class iBottomSlideProps extends iBlock {
 	/**
 	 * Component height mode:
@@ -48,6 +49,13 @@ export default abstract class iBottomSlideProps extends iBlock {
 	 */
 	@prop({type: Number, validator: Number.isPositive})
 	readonly fastSwipeDelay: number = (0.3).seconds();
+
+	/**
+	 * True, if need to track touch events on a component content to close a component instance
+	 * {@link SwipeControl}
+	 */
+	@prop(Boolean)
+	readonly trackContentSwipes: boolean = true;
 
 	/**
 	 * The minimum required number of scroll pixels, after which it can be considered that there was a fast swipe

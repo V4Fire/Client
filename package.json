@@ -6,7 +6,7 @@
   "packageManager": "yarn@4.0.2",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "4.0.0-beta.125",
+  "version": "4.0.0-beta.168",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -31,7 +31,7 @@
     "build:file": "gulp build:tsconfig && webpack --env public-path",
     "build:ssr": "npx webpack --env ssr=true --env client-output=ssr",
     "build:hydration": "npx webpack --env hydration=true",
-    "dev": "gulp build:tsconfig && webpack --watch",
+    "dev": "gulp build:tsconfig && webpack --cache-type=filesystem --watch",
     "dev:file": "gulp build:tsconfig && webpack --watch --env public-path",
     "test": "yarn test:typescript && yarn test:eslint && yarn test:unit && yarn test:jest",
     "test:server": "cross-env NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" node tests/server",
@@ -66,7 +66,9 @@
     "jsdom": "16.7.0",
     "path-to-regexp": "3.2.0",
     "requestidlecallback": "0.3.0",
+    "resize-observer-polyfill": "1.5.1",
     "sharp": "0.30.6",
+    "simple-git": "3.25.0",
     "snakeskin": "github:SnakeskinTpl/Snakeskin#new-var",
     "tslib": "2.4.1",
     "vinyl": "2.2.1",
@@ -114,6 +116,7 @@
     "image-webpack-loader": "7.0.1",
     "imagemin-webp": "6.0.0",
     "is-path-inside": "3.0.3",
+    "json5": "2.2.3",
     "merge2": "1.4.1",
     "mini-css-extract-plugin": "2.5.3",
     "monic": "2.6.1",
@@ -127,6 +130,7 @@
     "postcss-discard-comments": "6.0.0",
     "postcss-loader": "6.2.1",
     "raw-loader": "4.0.2",
+    "responsive-loader": "3.1.2",
     "snakeskin-loader": "8.0.1",
     "ss2vue3": "github:snakeskintpl/ss2vue3",
     "style-loader": "3.3.1",
@@ -165,7 +169,7 @@
     "@types/semver": "7.3.10",
     "@types/webpack": "5.28.0",
     "@v4fire/cli": "1.6.0",
-    "@v4fire/core": "github:V4Fire/Core#v4",
+    "@v4fire/core": "4.0.0-alpha.50",
     "@v4fire/linters": "git+https://github.com/v4fire/linters#rework_rules",
     "@v4fire/storybook": "0.8.0",
     "@v4fire/storybook-framework-webpack5": "0.8.0",
@@ -184,7 +188,7 @@
     "ts-node": "10.7.0"
   },
   "peerDependencies": {
-    "@v4fire/core": "^4.0.0-alpha.37",
+    "@v4fire/core": "^4.0.0-alpha.47.speedup",
     "webpack": "^5.82.1"
   },
   "resolutions": {

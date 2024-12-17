@@ -16,7 +16,8 @@ const
 	$$ = symbolGenerator();
 
 export default class Geometry extends Friend {
-	override readonly C!: bBottomSlide;
+	/** @inheritDoc */
+	declare readonly C: bBottomSlide;
 
 	/**
 	 * Window height

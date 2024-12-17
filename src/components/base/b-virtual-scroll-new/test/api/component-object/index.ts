@@ -19,7 +19,7 @@ import { testStyles } from 'components/base/b-virtual-scroll-new/test/api/compon
 /**
  * The component object API for testing the {@link bVirtualScrollNew} component.
  */
-export class VirtualScrollComponentObject extends ComponentObject<bVirtualScrollNew['unsafe']> {
+export class VirtualScrollComponentObject extends ComponentObject<bVirtualScrollNew> {
 	/**
 	 * The locator for the container ref.
 	 */

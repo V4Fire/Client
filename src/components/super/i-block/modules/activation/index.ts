@@ -13,7 +13,9 @@
 
 import symbolGenerator from 'core/symbol';
 
+import { Namespaces } from 'core/async';
 import { unwrap } from 'core/object/watch';
+
 import { runHook, callMethodFromComponent } from 'core/component';
 
 import type iBlock from 'components/super/i-block/i-block';
@@ -22,12 +24,9 @@ import { statuses } from 'components/super/i-block/const';
 import {
 
 	suspendRgxp,
-
 	readyStatuses,
 	inactiveStatuses,
-
-	asyncNames,
-	nonMuteAsyncLinkNames
+	nonMuteAsyncNamespaces
 
 } from 'components/super/i-block/modules/activation/const';
 
@@ -177,13 +176,12 @@ export function onActivated(component: iBlock, force: boolean = false): void {
 		unsafe.componentStatus = 'beforeReady';
 	}
 
-	const needInitLoadOrReload =
-		!unsafe.isReadyOnce &&
-		force || unsafe.reloadOnActivation;
+	const needInitLoadOrReload = unsafe.reloadOnActivation || unsafe.componentStatus === 'unloaded';
 
 	if (needInitLoadOrReload) {
 		const group = {group: 'requestSync:get'};
-		async.forEach(($a) => $a.clearAll(group).setImmediate(load, group));
+		async.forEach(($a) => $a.clearAll(group));
+		unsafe.async.setImmediate(load, group);
 	}
 
 	if (unsafe.isReadyOnce) {
@@ -220,15 +218,20 @@ export function onDeactivated(component: iBlock): void {
 	];
 
 	async.forEach(($a) => {
-		Object.keys(asyncNames).forEach((key) => {
-			if (nonMuteAsyncLinkNames[key]) {
+		Object.entries(Namespaces).forEach(([key, namespace]) => {
+			if (unsafe.reloadOnActivation && namespace === Namespaces.request) {
+				$a.muteRequest();
 				return;
 			}
 
-			const fn = $a[`mute-${asyncNames[key]}`.camelize(false)];
+			if (Object.isNumber(namespace) && nonMuteAsyncNamespaces[namespace]) {
+				return;
+			}
 
-			if (Object.isFunction(fn)) {
-				fn.call($a);
+			const method = $a[`mute-${key}`.camelize(false)];
+
+			if (Object.isFunction(method)) {
+				method.call($a);
 			}
 		});
 

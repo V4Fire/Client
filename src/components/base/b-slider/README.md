@@ -228,8 +228,7 @@ Switches to the specified slide by an index.
 
 ```typescript
 class Test extends iData {
-  /** @override */
-  protected $refs!: {
+  declare protected readonly $refs: iData['$refs'] & {
     slider: bSlider
   };
 
@@ -245,8 +244,7 @@ Moves to the next or previous slide.
 
 ```typescript
 class Test extends iData {
-  /** @override */
-  protected $refs!: {
+  declare protected readonly $refs: iData['$refs'] & {
     slider: bSlider
   };
 

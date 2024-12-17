@@ -17,23 +17,14 @@
 		? rootAttrs['v-memo'] = '[]'
 
 	- block body
-		: graph = include('build/graph/component-params')
-
-		? Object.assign(attrs, graph.getComponentPropAttrs(self.name(PARENT_TPL_NAME)))
-		? delete attrs[':is']
-		? delete attrs[':keepAlive']
-		? delete attrs[':dispatching']
-
 		< template v-for = el in asyncRender.iterate(renderIterator, {filter: renderFilter, group: registerRenderGroup})
 			< component.&__component &
-				v-if = !pageTakenFromCache |
+				v-if = !pageTakenFromCache && page != null |
 				ref = component |
 
 				:is = page |
 				:instanceOf = iDynamicPage |
-				:dispatching = true |
 				:canFunctional = false |
 
-				v-attrs = {'@hook:destroyed': createPageDestructor()} |
-				${attrs}
+				v-attrs = getPageProps()
 			.

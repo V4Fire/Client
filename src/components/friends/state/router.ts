@@ -25,10 +25,7 @@ export function initFromRouter(this: State): boolean {
 		return false;
 	}
 
-	const {
-		ctx,
-		async: $a
-	} = this;
+	const {ctx, async: $a} = this;
 
 	const routerWatchers = {group: 'routerWatchers'};
 	$a.clearAll(routerWatchers);
@@ -37,11 +34,9 @@ export function initFromRouter(this: State): boolean {
 	return true;
 
 	async function loadFromRouter() {
-		const
-			{r} = ctx;
+		const {r} = ctx;
 
-		let
-			{router} = r;
+		let {router} = r;
 
 		if (router == null) {
 			await ($a.promisifyOnce(r, 'initRouter', {
@@ -97,8 +92,7 @@ export function initFromRouter(this: State): boolean {
 
 			if (Object.isDictionary(stateFields)) {
 				Object.keys(stateFields).forEach((key) => {
-					const
-						p = key.split('.');
+					const p = key.split('.');
 
 					if (p[0] === 'mods') {
 						$a.on(ctx.localEmitter, `block.mod.*.${p[1]}.*`, sync, routerWatchers);

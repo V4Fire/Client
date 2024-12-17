@@ -12,4 +12,4 @@
  */
 
 export * from 'core/component/field/init';
-export * from 'core/component/field/interface';
+export * from 'core/component/field/store';

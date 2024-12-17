@@ -14,6 +14,7 @@
 import symbolGenerator from 'core/symbol';
 
 import log, { LogMessageOptions } from 'core/log';
+import { isProxy } from 'core/object/watch';
 
 import type Async from 'core/async';
 
@@ -27,18 +28,17 @@ import {
 
 } from 'core/async';
 
-import config from 'config';
-
 import {
 
 	component,
-	getComponentName,
+	getPropertyInfo,
 
+	canSkipWatching,
 	bindRemoteWatchers,
-	customWatcherRgxp,
+	isCustomWatcher,
 
-	RawWatchHandler,
 	WatchPath,
+	RawWatchHandler,
 
 	SetupContext
 
@@ -57,34 +57,41 @@ import type { AsyncWatchOptions } from 'components/friends/sync';
 import iBlockFriends from 'components/super/i-block/friends';
 
 const
-	$$ = symbolGenerator();
+	$$ = symbolGenerator(),
+	i18nKeysets = new Map<Function, string[]>();
 
-@component()
+const $propIds = Symbol('propIds');
+
+@component({partial: 'iBlock'})
 export default abstract class iBlockBase extends iBlockFriends {
-	override readonly Component!: iBlock;
-	override readonly Root!: iStaticPage;
-	override readonly $root!: this['Root'];
+	/** @inheritDoc */
+	declare readonly Component: iBlock;
+
+	/** @inheritDoc */
+	declare readonly Root: iStaticPage;
+
+	/** @inheritDoc */
+	declare readonly $root: this['Root'];
 
 	@system({
 		atom: true,
+
 		unique: (ctx, oldCtx) =>
 			!ctx.$el?.classList.contains(oldCtx.componentId),
 
 		init: (o) => {
-			const
-				{r} = o;
+			const {r} = o;
 
-			let
-				id = o.componentIdProp;
+			let id = o.componentIdProp;
 
 			if (id != null) {
-				if (!($$.propIds in r)) {
-					r[$$.propIds] = Object.createDict();
+				if (!($propIds in r)) {
+					r[$propIds] = Object.createDict();
 				}
 
 				const
 					propId = id,
-					propIds = r[$$.propIds];
+					propIds = r[$propIds];
 
 				if (propIds[propId] != null) {
 					id += `-${propIds[propId]++}`;
@@ -107,27 +114,30 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 * {@link iBlock.activatedProp}
 	 */
 	@system((o) => {
-		void o.lfc.execCbAtTheRightTime(() => {
-			if (o.isFunctional && !o.field.get<boolean>('forceActivation')) {
-				return;
-			}
+		if (!o.isFunctional || o.forceActivation) {
+			void o.lfc.execCbAtTheRightTime(() => {
+				if (o.isActivated) {
+					o.activate(true);
 
-			if (o.field.get<boolean>('isActivated')) {
-				o.activate(true);
+				} else {
+					o.deactivate();
+				}
+			});
+		}
 
-			} else {
-				o.deactivate();
-			}
-		});
-
-		return o.sync.link('activatedProp', (val: CanUndef<boolean>) => {
-			val = val !== false;
+		return o.sync.link('activatedProp', (isActivated: CanUndef<boolean>) => {
+			isActivated = isActivated !== false;
 
 			if (o.hook !== 'beforeDataCreate') {
-				o[val ? 'activate' : 'deactivate']();
+				if (isActivated) {
+					o.activate();
+
+				} else {
+					o.deactivate();
+				}
 			}
 
-			return val;
+			return isActivated;
 		});
 	})
 
@@ -136,7 +146,6 @@ export default abstract class iBlockBase extends iBlockFriends {
 	/**
 	 * True if the component is a functional component
 	 */
-	@computed()
 	get isFunctional(): boolean {
 		return this.meta.params.functional === true;
 	}
@@ -150,10 +159,13 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
-	 * A dictionary with additional attributes for the component's root element
+	 * A dictionary containing additional attributes for the component's root element
 	 */
+	@computed({dependencies: []})
 	get rootAttrs(): Dictionary {
-		return this.field.get<Dictionary>('rootAttrsStore')!;
+		return this.meta.fields.rootAttrsStore != null ?
+			this.field.getFieldsStore().rootAttrsStore :
+			this.rootAttrsStore;
 	}
 
 	/**
@@ -181,8 +193,8 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 * A list of `blockReady` listeners.
 	 * This is used to optimize component initialization.
 	 */
-	@system({unique: true})
-	protected blockReadyListeners: Function[] = [];
+	@system({unique: true, init: () => []})
+	protected readonly blockReadyListeners!: Function[];
 
 	/**
 	 * A temporary cache dictionary.
@@ -199,8 +211,8 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 * A temporary cache dictionary.
 	 * Mutation of this object can cause the component to re-render.
 	 */
-	@field({merge: true})
-	protected reactiveTmp: Dictionary = {};
+	@field({merge: true, init: () => ({})})
+	protected reactiveTmp!: Dictionary;
 
 	/**
 	 * A cache dictionary of watched values
@@ -213,35 +225,39 @@ export default abstract class iBlockBase extends iBlockFriends {
 	protected watchCache!: Dictionary;
 
 	/**
-	 * A dictionary with additional attributes for the component's root element
+	 * A dictionary containing additional attributes for the component's root element
 	 * {@link iBlock.rootAttrsStore}
 	 */
-	@field()
-	protected rootAttrsStore: Dictionary = {};
+	@field({init: () => ({})})
+	protected rootAttrsStore!: Dictionary;
 
 	/**
 	 * A list of keyset names used to internationalize the component
 	 */
-	@system({atom: true, unique: true})
-	protected componentI18nKeysets: string[] = (() => {
-		const
-			res: string[] = [];
+	@computed({cache: 'forever'})
+	protected get componentI18nKeysets(): string[] {
+		const {meta} = this;
 
-		let
-			keyset: CanUndef<string> = getComponentName(this.constructor);
+		let keysets: CanUndef<string[]> = i18nKeysets.get(meta.constructor);
 
-		while (keyset != null) {
-			res.push(keyset);
-			keyset = config.components[keyset]?.parent;
+		if (keysets == null) {
+			keysets = [meta.componentName];
+			i18nKeysets.set(meta.constructor, keysets);
+
+			let {parentMeta} = meta;
+
+			while (parentMeta != null) {
+				keysets.push(parentMeta.componentName);
+				parentMeta = parentMeta.parentMeta;
+			}
 		}
 
-		return res;
-	})();
+		return keysets;
+	}
 
 	/**
 	 * A link to the component itself
 	 */
-	@computed()
 	protected get self(): this {
 		return this;
 	}
@@ -260,7 +276,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
-	 * Sets a watcher to the component/object property or event by the specified path.
+	 * Sets a watcher to the component/object property or event at the specified path.
 	 *
 	 * When you observe changes to certain properties,
 	 * the event handler function can accept a second argument that references the old value of the property.
@@ -323,8 +339,8 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 * Also, if you are listening to an event, you can control when to start listening to the event by using special
 	 * characters at the beginning of the path string:
 	 *
-	 * 1. `'!'` - start listening to an event on the "beforeCreate" hook, e.g.: `'!rootEmitter:reset'`;
-	 * 2. `'?'` - start listening to an event on the "mounted" hook, e.g.: `'?$el:click'`.
+	 * 1. `'!'` - start listening to an event on the "beforeCreate" hook, e.g., `'!rootEmitter:reset'`;
+	 * 2. `'?'` - start listening to an event on the "mounted" hook, e.g., `'?$el:click'`.
 	 *
 	 * By default, all events start listening on the "created" hook.
 	 *
@@ -381,7 +397,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	): void;
 
 	/**
-	 * Sets a watcher to the component property/event by the specified path
+	 * Sets a watcher to the component property/event at the specified path
 	 *
 	 * @param path - a path to the component property to watch or an event to listen
 	 * @param handler
@@ -444,8 +460,9 @@ export default abstract class iBlockBase extends iBlockFriends {
 			return;
 		}
 
-		const
-			{async: $a} = this;
+		const that = this;
+
+		const {meta: {hooks}, async: $a} = this;
 
 		let
 			handler: RawWatchHandler<this, T>,
@@ -460,7 +477,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 			opts = Object.isDictionary(optsOrHandler) ? optsOrHandler : {};
 		}
 
-		if (Object.isString(path) && RegExp.test(customWatcherRgxp, path)) {
+		if (Object.isString(path) && isCustomWatcher.test(path)) {
 			bindRemoteWatchers(this, {
 				async: $a,
 				watchers: {
@@ -476,7 +493,25 @@ export default abstract class iBlockBase extends iBlockFriends {
 			return;
 		}
 
-		void this.lfc.execCbAfterComponentCreated(() => {
+		if (this.lfc.isBeforeCreate()) {
+			hooks['before:created'].push({fn: initWatcher});
+
+		} else {
+			initWatcher();
+		}
+
+		function initWatcher() {
+			let info = Object.isString(path) ? getPropertyInfo(path, that) : null;
+
+			// TODO: Implement a more accurate check
+			if (info == null && !isProxy(path)) {
+				info = Object.cast(path);
+			}
+
+			if (canSkipWatching(info, opts)) {
+				return;
+			}
+
 			let
 				// eslint-disable-next-line prefer-const
 				link: Nullable<CanArray<IdObject>>,
@@ -484,22 +519,17 @@ export default abstract class iBlockBase extends iBlockFriends {
 				// eslint-disable-next-line prefer-const
 				unwatch: Nullable<Function>;
 
-			const emitter: Function = (_: any, wrappedHandler: RawWatchHandler<this, T>) => {
+			const emitter: Function = (_: any, wrappedHandler: RawWatchHandler<typeof that, T>) => {
 				wrappedHandler['originalLength'] = handler['originalLength'] ?? handler.length;
 				handler = wrappedHandler;
 
-				$a.worker(() => {
-					if (link != null) {
-						$a.off(link);
-					}
-				}, opts);
-
+				$a.worker(() => link != null && $a.off(link), opts);
 				return () => unwatch?.();
 			};
 
 			link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(opts, 'watchers'));
-			unwatch = this.$watch(Object.cast(path), opts, handler);
-		});
+			unwatch = that.$watch(info ?? Object.cast(path), opts, handler);
+		}
 	}
 
 	/**
@@ -519,8 +549,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 */
 	nextTick(opts?: AsyncOptions): Promise<void>;
 	nextTick(fnOrOpts?: BoundFn<this> | AsyncOptions, opts?: AsyncOptions): CanPromise<void> {
-		const
-			{async: $a} = this;
+		const {async: $a} = this;
 
 		if (Object.isFunction(fnOrOpts)) {
 			this.$nextTick($a.proxy(Object.cast<BoundFn<any>>(fnOrOpts), opts));
@@ -577,8 +606,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 			return;
 		}
 
-		let
-			resolvedContext: Array<string | LogMessageOptions>;
+		let resolvedContext: Array<string | LogMessageOptions>;
 
 		if (this.globalName != null) {
 			resolvedContext = ['component:global', this.globalName, context, this.componentName];
@@ -610,8 +638,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	@hook('mounted')
 	protected initBlockInstance(): void {
 		if (this.block != null) {
-			const
-				{node} = this.block;
+			const {node} = this.block;
 
 			if (node == null || node === this.$el) {
 				return;
@@ -626,13 +653,12 @@ export default abstract class iBlockBase extends iBlockFriends {
 		this.block = new Block(Object.cast(this));
 
 		if (this.blockReadyListeners.length > 0) {
-			this.blockReadyListeners.forEach((listener) => listener());
-			this.blockReadyListeners = [];
+			this.blockReadyListeners.splice(0, this.blockReadyListeners.length).forEach((listener) => listener());
 		}
 	}
 
 	/**
-	 * Initializes remote watchers from `watchProp`
+	 * Initializes remote watchers from the `watchProp` prop
 	 */
 	@hook({beforeDataCreate: {functional: false}})
 	protected initRemoteWatchers(): void {
@@ -660,10 +686,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 			Object.defineProperty(this, 'app', {
 				enumerable: true,
 				configurable: true,
-
-				get() {
-					return 'app' in this.r ? this.r['app'] : undefined;
-				}
+				get: () => 'app' in this.r ? this.r['app'] : undefined
 			});
 		}
 	}

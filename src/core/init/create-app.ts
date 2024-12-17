@@ -72,7 +72,7 @@ export async function createApp(
 
 		try {
 			ssrContent = (await renderToString(app)).replace(/<\/?ssr-fragment>/g, '');
-			hydratedData = `<noframes id="hydration-store" style="display: none">${state.hydrationStore.toString()}</noframes>`;
+			hydratedData = `<noframes id="hydration-store" style="display: none;">${state.hydrationStore.toString()}</noframes>`;
 
 			return {
 				state,
@@ -136,13 +136,16 @@ export async function createApp(
 			throw new Error("No name has been set for the application's root component");
 		}
 
-		const
-			rootComponentParams = await rootComponents[rootComponentName];
+		const rootComponentParams = await rootComponents[rootComponentName];
 
 		if (rootComponentParams == null) {
 			throw new ReferenceError(`The root component with the specified name "${rootComponentName}" was not found`);
 		}
 
-		return Object.mixin(true, {}, rootComponentParams);
+		if (SSR) {
+			return {...rootComponentParams};
+		}
+
+		return rootComponentParams;
 	}
 }

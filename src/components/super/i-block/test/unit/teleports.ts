@@ -45,7 +45,7 @@ test.describe('<i-block> using the root teleport', () => {
 			const attrs = await target.evaluate((ctx) =>
 				ctx.unsafe.$refs.component.$el!.className);
 
-			test.expect(attrs).toBe('i-block-helper u3b379f9a91182 b-bottom-slide b-bottom-slide_opened_false b-bottom-slide_stick_true b-bottom-slide_events_false b-bottom-slide_height-mode_full b-bottom-slide_visible_false b-bottom-slide_theme_light b-bottom-slide_hidden_true');
+			test.expect(attrs).toBe('i-block-helper u1e705d34abc46a b-bottom-slide b-bottom-slide_opened_false b-bottom-slide_stick_true b-bottom-slide_events_false b-bottom-slide_height-mode_full b-bottom-slide_theme_light b-bottom-slide_visible_false b-bottom-slide_hidden_true');
 		});
 	});
 
@@ -76,7 +76,7 @@ test.describe('<i-block> using the root teleport', () => {
 			const attrs = await target.evaluate((ctx) =>
 				ctx.unsafe.$el!.className);
 
-			test.expect(attrs).toBe('i-block-helper ue3771dae8cf71 b-bottom-slide b-bottom-slide_opened_false b-bottom-slide_hidden_true b-bottom-slide_stick_true b-bottom-slide_events_false b-bottom-slide_height-mode_full b-bottom-slide_theme_light b-bottom-slide_visible_false');
+			test.expect(attrs).toBe('i-block-helper u368b46b330c1c b-bottom-slide b-bottom-slide_opened_false b-bottom-slide_hidden_true b-bottom-slide_stick_true b-bottom-slide_events_false b-bottom-slide_height-mode_full b-bottom-slide_theme_light b-bottom-slide_visible_false');
 		});
 	});
 });

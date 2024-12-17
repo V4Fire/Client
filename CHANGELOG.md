@@ -18,6 +18,423 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * [The `performance` option in the Vue engine config is set to true by default for the dev build `core/component/engines/vue3/config.ts`](https://github.com/V4Fire/Client/issues/1389)
 * [Now key functions such as `createBlock` and `renderList` are being measured using the Performance API and will be available on the timeline `core/component/render/wrappers`](https://github.com/V4Fire/Client/issues/1389)
 
+## v4.0.0-beta.168 (2024-12-13)
+
+#### :bug: Bug Fix
+
+* Call component's `reload` just once on reactivation `components/super/i-block/modules/activation`
+
+## v4.0.0-beta.167 (2024-12-12)
+
+#### :bug: Bug Fix
+
+* Call `beforeUnmount` hook of directive before `unmounted` hook `core/component/engines/directive`
+
+## v4.0.0-beta.166 (2024-12-09)
+
+#### :house: Internal
+
+* Hint classes are now optional to set on link elements `components/base/b-list`
+
+## v4.0.0-beta.165 (2024-12-09)
+
+#### :bug: Bug Fix
+
+* Fix binding a non-promise handler for the custom watcher.
+After rewriting the loop from `.forEach` to native `for`, `return` statement was not changed to `continue`.
+`core/component/watch`
+* Add "flush: 'sync'" to the page watcher. This restores the original semantics of the "immediate: true" option `bDynamicPage`
+
+## v4.0.0-beta.164 (2024-12-06)
+
+#### :bug: Bug Fix
+
+* Add `appendChild` to DOM class prototype `bVirtualScrollNew`
+
+### :rocket: New Feature
+
+* Add `iife` parameter for `Lib`, which wraps script output into IIFE `iStaticPage`
+
+## v4.0.0-beta.163 (2024-12-05)
+
+#### :boom: Breaking Change
+
+* The `soft` transition using the `replace` method for the same route no longer restores the scroll position by default.
+To restore the scroll position during a `soft` transition, explicitly pass the `scroll` option. `bRouter`
+
+## v4.0.0-beta.162 (2024-12-04)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `changedTouches` was not provided in gestures test module `core/prelude/test-env/gestures.ts`
+
+## v4.0.0-beta.161 (2024-12-03)
+
+#### :bug: Bug Fix
+
+* Fix watching for nested fields inside `$attrs` `core/component/watch`
+
+## v4.0.0-beta.160 (2024-03-12)
+
+#### :rocket: New Feature
+
+* Added a new webpack loader for responsive images `build/webpack/loaders/responsive-images-loader`
+
+## v4.0.0-beta.159 (2024-11-27)
+
+#### :bug: Bug Fix
+
+* Execute default value getter only if prop type is `Function` `core/component/decorators/default-value`
+* Retrieve original function from `defaultValue` if prop type is `Function` `core/component/decorators/prop`
+
+## v4.0.0-beta.158 (2024-11-26)
+
+#### :house: Internal
+
+* Added error details to the logging when checking the stylesheet loading status
+
+## v4.0.0-beta.157 (2024-11-25)
+
+#### :bug: Bug Fix
+
+* Added the `default` getter to static compiled routes `core/router/modules`.
+This is necessary to correctly compare the compiled route and the current route of the router.
+
+## v4.0.0-beta.156 (2024-11-25)
+
+#### :boom: Breaking Change
+
+* Now items processors will be generated only for the first render and will be reused for all subsequent ones until a reset occurs `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.155 (2024-11-20)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `g-slider` was not compiled `components/global/g-slider`
+
+#### :house: Internal
+
+* Added a function to check if a tag is a web component (currently it always returns false) `build/snakeskin`
+* Disabled props normalization for tags that are web components `build/snakeskin`
+
+## v4.0.0-beta.154.dsl-speedup-3 (2024-11-19)
+
+#### :boom: Breaking Change
+
+* The `getPassedProps` method now returns a dictionary instead of a set `core/component`
+
+* `iBlock`:
+  * The API for `InferComponentEvents` has been changed so that you no longer need to pass `this` as the first argument
+  * Component events without an `error` or `warning` status are logged only if the `verbose` prop is set
+  * The `strictEmit` method no longer performs normalization of the event name
+
+* To automatically implement traits or characteristics for components,
+  the `derive` decorator from the `components/traits` module should now be used.
+
+* Removed the constants `COMPONENTS` and `BLOCK_NAMES` `build/globals.webpack`
+* Removed the `components` property `config`
+
+#### :bug: Bug Fix
+
+* Fixed an error in normalizing attribute and prop values in Snakeskin `build`
+
+#### :rocket: New Feature
+
+* `core/component/decorators`:
+  * Added new decorators, defaultValue and method, for the class-based DSL.
+    These decorators are used during code generation by the TS transformer DSL.
+
+  * The prop, field, and system decorators can now accept a default value for the field as a second argument.
+    This argument is used during code generation by the TS transformer DSL.
+
+#### :house: Internal
+
+* Various micro-optimizations
+
+* `build`:
+  * Added a new TypeScript transformer to automatically apply decorators to parts of a component:
+    methods, accessors, field overrides, etc.
+  * Now, only the value from the decorator is used to get the default field value.
+    Default values specified in the class property will automatically be passed to the decorator by the transformer.
+
+* The observation of accessor dependencies is now initialized only if the accessor has been used at least once `core/component/accessor`
+
+* The decorators from `core/component/decorators` no longer use a single factory module.
+  Now, each decorator is implemented independently.
+
+* `core/component/meta`:
+  * When inheriting metaobjects, prototype chains are now used instead of full copying.
+    This optimizes the process of creating metaobjects.
+  * Methods and accessors are now added to the metaobject via the `method` decorator instead of runtime reflection.
+    This decorator is automatically added during the build process.
+  * Optimized creation of metaobjects.
+
+## v4.0.0-beta.153 (2024-11-15)
+
+#### :house: Internal
+
+* Fixed an issue with reloading after a component is destroyed.
+Reloading now occurs for unloaded components or when explicitly specified with `reloadOnActivation: true`.
+`components/super/i-block/modules/activation`
+* Removed context binding in wrapRenderList `core/component/render`
+
+#### :bug: Bug Fix
+
+* Re-fixed loss of refs in slots inside async render (see v4.0.0-beta.52)
+  by converting `v-ref` to a prop for regular components `build/snakeskin/filters`
+* Fixed an issue with emitting the `close` after destroying the component.
+  This happened because we used `await` and this task could be executed after the component was destroyed.
+  So we replaced `await` with `SyncPromise`. `bBottomSlide`
+* Fix error "ctx.$vueWatch is not a function" caused by the incorrect fix in the v4.0.0-beta.146 `core/component/watch`
+* Fixed endless attempts to load a component template that is not in use.
+  Added a 10-second limit for attempts to load the template. `core/component/decorators/component`
+* Default `forceUpdate` param of a property no longer overrides its value inherited from the parent component `core/component/decorators/prop`
+* Fixed typo: `"prop"` -> `"props"` when inheriting parent properties `core/component/decorators/factory`
+
+## v4.0.0-beta.152 (2024-11-11)
+
+#### :rocket: New Feature
+
+* Added `trackContentSwipes` - a flag to prevent unexpected closure of a component instance `bBottomSlide`
+
+## v4.0.0-beta.151 (2024-11-06)
+
+#### :bug: Bug Fix
+
+* Updated the input parameter type to clarify that the function can handle not only VNodes but also buffers `core/component/directives/render`
+* Fixed the buffer rendering on server-side: it now correctly processes not only strings and promises but also nested buffers, as [dictated by Vue](https://github.com/vuejs/core/blob/main/packages/server-renderer/src/render.ts#L61-L65) `core/component/directives/render`
+* Fixed the handling of property getters in SSR: property getters are now included in props instead of being ignored as handlers `core/component/directives/attrs`
+* Fixed the `resolveAttrs` function: property getters are no longer removed from props, the `v-attrs` directive now resolves with the correct method in SSR `core/component/render/helpers/attrs`
+* Calls `resolveAttrs` to resolve directives for components rendered with `ssrRenderComponent` `core/component/render/wrappers`
+
+#### :rocket: New Feature
+
+* Add `SSRBuffer` and `SSRBufferItem` types `core/component/engines`
+* The `getSSRProps` method now accepts a `vnode` parameter for direct modification of vnode props, similar to the `beforeCreate` method `core/component/directives/attrs`
+
+## v4.0.0-beta.150 (2024-11-05)
+
+#### :bug: Bug Fix
+
+* Omit detailed component information to prevent event loop freezing associated
+with certain warnings. Vue uses a `get` trap within the proxy to verify the presence
+of a property in the instance. Accessing undefined properties via the `getComponentInfo` method
+during a warn or error handler will trigger infinite recursion. `core/component/engines/vue3`
+* The `create` method now handles quotation marks in meta tag values when building query selectors `core/page-meta-data/elements/abstract/engines/dom`
+
+#### :house: Internal
+
+* Revert: exclude SSR shims for non-SSR environments `core/shims`
+
+## v4.0.0-beta.149 (2024-10-31)
+
+#### :rocket: New Feature
+
+* Added the `v-safe-on` directive, which allows event handlers to execute only when the vnode is not unmounted
+  `components/directives/safe-on`
+* Added a wrapper for `withModifiers` with support for the `safe` modifier `core/component/render`
+
+#### :house: Internal
+
+* Moved the `parseEventListener` function to common directive helpers `core/component/directives/attrs`
+
+## v4.0.0-beta.148 (2024-10-28)
+
+#### :house: Internal
+
+* Create a `normalizeComponentForceUpdateProps` for normalizing the props with `forceUpdate = false` `core/component/render`
+* Exclude SSR shims for non-SSR environments `core/shims`
+
+## v4.0.0-beta.147 (2024-10-25)
+
+#### :bug: Bug Fix
+
+* Fixed the bug with previous active element not loosing its focus state `bList`
+
+## v4.0.0-beta.146 (2024-10-18)
+
+#### :bug: Bug Fix
+
+* Fixed `$attrs` not being watched `core/component/watch`
+
+## v4.0.0-beta.145 (2024-10-14)
+
+#### :bug: Bug Fix
+
+* Fixed the issue with incorrectly detecting the functional smart component `build/snakeskin`
+* Create a fallback for the addEventListener method on the MediaQueryList
+  `core/theme-manager/system-theme-extractor/engines/web`
+* Fixed an issue with the comment node in `$refs` that occurs when rendering an `undefined` page `bDynamicPage`
+
+## v4.0.0-beta.144 (2024-10-09)
+
+#### :bug: Bug Fix
+
+* Override a component name in the shared meta `core/component/decorators`
+
+## v4.0.0-beta.143 (2024-10-09)
+
+#### :rocket: New Feature
+
+* Added `JSHandle` representing the mock agent in `SpyObject.handle` `tests/helpers/mock`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with updating the `componentStatus` after destroying the component `iData`
+
+## v4.0.0-beta.142 (2024-10-04)
+
+#### :bug: Bug Fix
+
+* Better fix for the exports in transpiled snakeskin modules `build/webpack`
+
+## v4.0.0-beta.141 (2024-10-03)
+
+#### :bug: Bug Fix
+
+* Do not call destructor recursively on before unmount `core/component/engines/vue3`
+
+## v4.0.0-beta.140 (2024-10-03)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect `shapeFlag` on a functional vnode `core/component/render`
+
+## v4.0.0-beta.139.dsl-speedup-2 (2024-10-03)
+
+#### :rocket: New Feature
+
+* Added a new default prop `getPassedProps`, which allows identifying which props were passed through the template `core/component`
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the removal of modifiers from a comment node `components/friends/block`
+
+#### :house: Internal
+
+* Performance improvements `components/friends/sync` `iBlock`
+* `core/component/engines/vue3`:
+  * Migration to the Composition API
+  * Added support for the `renderTracked` hook
+
+## v4.0.0-beta.138.dsl-speedup (2024-10-01)
+
+#### :boom: Breaking Change
+
+* The `Async` module  has been moved to `V4/Core`
+
+#### :rocket: New Feature
+
+* Added the `partial` parameter for the declaration of components consisting of multiple classes `core/component/meta`
+* Added a new method for efficient access to the field store `getFieldsStore` `components/friends/field`
+* Introduced a new type of caching: `'forever'` `core/component/accessors`
+* Added the `test` parameter for fine-tuning watchers `core/component/decorators`
+
+#### :house: Internal
+
+* `iBlock`:
+  * Set all friend classes now through getters with `cache: 'forever'`
+  * Modules for friend classes are now loaded lazily
+
+* Apply the `symbol-generator-loader` consistently to optimize Runtime performance `build/webpack`
+* A lot of TypeScript type fixes
+* Performance improvements
+
+## 4.0.0-beta.137 (2024-09-24)
+
+#### :bug: Bug Fix
+
+* Fix the bug when the global event listener might be called after the component has been destroyed `iBlock`
+
+#### :house: Internal
+
+* Removed method calls from the `iBlock` template
+* Added a [[RENDER]] event before calling the component's render function `core/component/meta`
+
+## 4.0.0-beta.136 (2024-09-17)
+
+#### :house: Internal
+
+* Added sanitizing to `toString` method to prevent XSS vulnerabilities `core/hydration-store`
+
+## v4.0.0-beta.135 (2024-09-17)
+
+#### :bug: Bug Fix
+
+* Removed the array merging logic from the old and current options during `replace(null, opts)`
+
+## v4.0.0-beta.134 (2024-09-16)
+
+#### :house: Internal
+
+* Modified the method for checking the stylesheet loading status `core/prelude/webpack`
+
+## v4.0.0-beta.133 (2024-09-13)
+
+#### :bug: Bug Fix
+
+* Support for the recursive `dropCache` operation by adding the `recursive` argument `components/friends/data-provider`
+
+## v4.0.0-beta.132 (2024-09-12)
+
+#### :boom: Breaking Change
+
+* To improve performance, the `std.js` chunk has been moved back as the standalone entry
+
+#### :bug: Bug Fix
+
+* Fix exports in transpiled snakeskin modules `build/webpack`
+
+#### :house: Internal
+
+* Add ResizeObserver polyfill for legacy build
+
+## v4.0.0-beta.131 (2024-09-11)
+
+#### :rocket: New Feature
+
+* Enhanced filesystem cache invalidation criteria by including the current branch name and the most recent merge `build/webpack`
+
+#### :bug: Bug Fix
+
+* Fixed `env` argument for autoprefixer
+
+## v4.0.0-beta.130 (2024-09-05)
+
+#### :bug: Bug Fix
+
+* Fixed re-rendering issue when the value passed in `v-safe-html` changed. Added innerHTML updating in the `updated` hook.
+
+## v4.0.0-beta.129 (2024-09-04)
+
+#### :nail_care: Polish
+
+* Now, if an external link is passed to `initLibs()`, `PUBLIC_PATH` won't be added to it
+
+## v4.0.0-beta.128 (2024-09-03)
+
+#### :bug: Bug Fix
+
+* Fix normalization of the `forceUpdate` props declared as `*Prop` in:
+  * `bDummy`
+  * `bVirtualScrollNew`
+
+## v4.0.0-beta.127 (2024-08-29)
+
+#### :bug: Bug Fix
+
+* Fixed the RegExp for determining cookie in the `withIdempotent` decorator
+
+## v4.0.0-beta.126 (2024-08-23)
+
+#### :rocket: New Feature
+
+* The `eventConverter` function can now return a tuple consisting of the page component name and page component key, instead of just a string representing the page component name `bDynamicPage`
+
+#### :bug: Bug Fix
+
+* Fixed an issue where a new page component instance was not created when switching between routes that use the same page component `bDynamicPage`
+
 ## v4.0.0-beta.125 (2024-08-12)
 
 #### :bug: Bug Fix

@@ -18,6 +18,7 @@ import {
 
 } from 'core/component/render';
 
+import { isPropGetter } from 'core/component/reflect';
 import { modRgxp, styleAttrs, classAttrs } from 'core/component/directives/attrs/const';
 
 /**
@@ -54,6 +55,10 @@ export function normalizePropertyAttribute(name: string): string {
 		}
 	}
 
+	if (isPropGetter.test(attrName)) {
+		attrName = `on:${isPropGetter.replace(attrName)}`;
+	}
+
 	return attrName;
 }
 
@@ -64,13 +69,13 @@ export function normalizePropertyAttribute(name: string): string {
 export function normalizeDirectiveModifiers(rawModifiers: string): Record<string, boolean> {
 	const modifiers = {};
 
-	rawModifiers.split('.').forEach((modifier) => {
-		modifier = modifier.trim();
+	for (const rawModifier of rawModifiers.split('.')) {
+		const modifier = rawModifier.trim();
 
 		if (modifier !== '') {
 			modifiers[modifier] = true;
 		}
-	});
+	}
 
 	return modifiers;
 }
@@ -118,7 +123,7 @@ export function patchProps(props: Dictionary, attrName: string, attrVal: unknown
 		}
 	}
 
-	if (props[attrName] != null) {
+	if (props[attrName] != null && !isPropGetter.test(attrName)) {
 		Object.assign(props, mergeProps({[attrName]: props[attrName]}, {[attrName]: attrVal}));
 
 	} else {

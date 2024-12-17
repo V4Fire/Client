@@ -332,12 +332,11 @@ export function iterate(
 		return lastTask();
 
 		function task() {
-			const
-				renderedVNodes: Node[] = [];
+			const renderedVNodes: Node[] = [];
 
 			ctx.vdom.withRenderContext(() => {
 				const vnodes = valuesToRender.flatMap((el) => {
-					const rawVNodes = Array.concat([], toVNode(el, iterI));
+					const rawVNodes = Array.toArray(toVNode(el, iterI));
 
 					return rawVNodes.flatMap((vnode) => {
 						if (Object.isSymbol(vnode.type) && Object.isArray(vnode.children)) {
