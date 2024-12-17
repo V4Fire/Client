@@ -169,7 +169,7 @@
     "@types/semver": "7.3.10",
     "@types/webpack": "5.28.0",
     "@v4fire/cli": "1.6.0",
-    "@v4fire/core": "4.0.0-alpha.50",
+    "@v4fire/core": "4.0.0-alpha.53",
     "@v4fire/linters": "git+https://github.com/v4fire/linters#rework_rules",
     "@v4fire/storybook": "0.8.0",
     "@v4fire/storybook-framework-webpack5": "0.8.0",
