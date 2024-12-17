@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.169 (2024-12-17)
+
+#### :house: Internal
+
+* Updated dependencies: `@v4fire/core@4.0.0-alpha.53`
+
 ## v4.0.0-beta.168 (2024-12-13)
 
 #### :bug: Bug Fix
