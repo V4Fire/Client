@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.168 (2024-12-13)
+
+#### :bug: Bug Fix
+
+* Call component's `reload` just once on reactivation `components/super/i-block/modules/activation`
+
+## v4.0.0-beta.167 (2024-12-12)
+
+#### :bug: Bug Fix
+
+* Call `beforeUnmount` hook of directive before `unmounted` hook `core/component/engines/directive`
+
 ## v4.0.0-beta.166 (2024-12-09)
 
 #### :house: Internal

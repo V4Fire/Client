@@ -180,7 +180,8 @@ export function onActivated(component: iBlock, force: boolean = false): void {
 
 	if (needInitLoadOrReload) {
 		const group = {group: 'requestSync:get'};
-		async.forEach(($a) => $a.clearAll(group).setImmediate(load, group));
+		async.forEach(($a) => $a.clearAll(group));
+		unsafe.async.setImmediate(load, group);
 	}
 
 	if (unsafe.isReadyOnce) {
