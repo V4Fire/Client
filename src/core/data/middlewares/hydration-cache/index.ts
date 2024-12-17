@@ -46,6 +46,14 @@ export function attachHydrationCache(opts: HydrationCacheOptions = defaultParams
 				method: params.method
 			});
 
+			// eslint-disable-next-line no-console
+			console.log('cache params', {
+				id: cacheId(this),
+				query: params.querySerializer(ctx.query),
+				api: Object.isFunction(url) ? url(middlewareParams) : url,
+				method: params.method
+			});
+
 			const withHydrationCache = addHydrationCache(
 				cache,
 				this.params.remoteState.hydrationStore,
