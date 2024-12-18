@@ -11,10 +11,8 @@
  * @param args
  */
 export function measure(...args: Parameters<Performance['measure']>): CanUndef<ReturnType<Performance['measure']>> {
-	if (
-		'performance' in globalThis &&
-		Object.isFunction(Object.get(globalThis, 'performance.measure'))
-	) {
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+	if (typeof globalThis.performance?.measure !== 'undefined') {
 		return performance.measure(...args);
 	}
 }
