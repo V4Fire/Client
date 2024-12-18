@@ -24,7 +24,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'yarn'
+          cache: "yarn"
 
       - name: Install dependencies
         run: yarn
@@ -37,11 +37,10 @@ jobs:
 
       - name: Save build in cache
         id: cache-build
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: dist
           key: cache-${{ github.sha }}
-
 
   # Run linters
   linters:
@@ -57,7 +56,7 @@ jobs:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          cache: 'yarn'
+          cache: "yarn"
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
@@ -68,7 +67,6 @@ jobs:
 
       - name: Run tests
         run: yarn test:linters
-
 
   # Run playwright tests
   components:
@@ -89,11 +87,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'yarn'
+          cache: "yarn"
 
       - name: Restore build from cache
         id: cache-build
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: dist
           key: cache-${{ github.sha }}
@@ -101,12 +99,14 @@ jobs:
       - name: Install dependencies
         run: yarn
 
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
       - name: Build tsconfig
         run: yarn build:tsconfig
 
       - name: Run components' unit tests
         run: yarn test:unit --shard=${{ matrix.shard-index }}/${{ matrix.shard-total }}
-
 
   # Run module tests
   modules:
@@ -125,14 +125,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'yarn'
+          cache: "yarn"
 
       - name: Restore build from cache
         id: cache-build
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
-           path: dist
-           key: cache-${{ github.sha }}
+          path: dist
+          key: cache-${{ github.sha }}
 
       - name: Install dependencies
         run: yarn
