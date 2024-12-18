@@ -18,6 +18,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * [The `performance` option in the Vue engine config is set to true by default for the dev build `core/component/engines/vue3/config.ts`](https://github.com/V4Fire/Client/issues/1389)
 * [Now key functions such as `createBlock` and `renderList` are being measured using the Performance API and will be available on the timeline `core/component/render/wrappers`](https://github.com/V4Fire/Client/issues/1389)
 
+## v4.0.0-beta.169 (2024-12-17)
+
+#### :house: Internal
+
+* Updated dependencies: `@v4fire/core@4.0.0-alpha.53`
+
 ## v4.0.0-beta.168 (2024-12-13)
 
 #### :bug: Bug Fix
