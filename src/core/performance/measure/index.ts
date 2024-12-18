@@ -39,18 +39,17 @@ export function wrapWithMeasurement<TThis = unknown, TArgs extends unknown[] = u
 	}
 
 	return function wrapper(this: TThis, ...args: TArgs): TResult {
-		if (typeof measurement === 'function') {
-			measurement = <string>measurement.apply(this, args);
-		}
-
 		const start = performance.now();
 
 		const result = original.apply(this, args);
 
-		measure(measurement, {
-			start,
-			end: performance.now()
-		});
+		const end = performance.now();
+
+		if (typeof measurement === 'function') {
+			measurement = <string>measurement.apply(this, args);
+		}
+
+		measure(measurement, {start, end});
 
 		return result;
 	};

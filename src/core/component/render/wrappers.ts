@@ -10,7 +10,7 @@
 
 import { wrapWithMeasurement } from 'core/performance';
 
-import { app, isComponent, componentRenderFactories, ASYNC_RENDER_ID } from 'core/component/const';
+import { app, isComponent, componentRenderFactories, ASYNC_RENDER_ID, components } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 
 import { isSmartComponent } from 'core/component/reflect';
@@ -45,7 +45,7 @@ import type {
 
 import type { ssrRenderSlot as ISSRRenderSlot } from '@vue/server-renderer';
 
-import { registerComponent } from 'core/component/init';
+import { getComponentMeta, registerComponent } from 'core/component/init';
 
 import {
 
@@ -88,13 +88,22 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
  */
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	function getMeasurementName(this: ComponentInterface, ...args: Parameters<T>): string {
-		let [name] = args;
+		let 
+			[name] = args,
+			component: CanNull<ComponentMeta> = null;
 
-		if (!Object.isString(name) && !Object.isPrimitive(name) && 'name' in name) {
-			name = name.name ?? '';
+		if (Object.isString(name)) {
+			component = getComponentMeta(name);
+
+		} else if (!Object.isPrimitive(name) && 'name' in name && name.name != null) {
+			component = getComponentMeta(name.name);
 		}
 
-		return `<${String(name).camelize(true)}> create block`;
+		if (component == null) {
+			return '<UNKNOWN COMPONENT> create block';
+		}
+
+		return `<${component.componentName}> create block`;
 	}
 
 	function innerCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
