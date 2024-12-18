@@ -10,7 +10,7 @@
 
 import { wrapWithMeasurement } from 'core/performance';
 
-import { app, isComponent, componentRenderFactories, ASYNC_RENDER_ID, components } from 'core/component/const';
+import { app, isComponent, componentRenderFactories, ASYNC_RENDER_ID } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 
 import { isSmartComponent } from 'core/component/reflect';
@@ -45,7 +45,7 @@ import type {
 
 import type { ssrRenderSlot as ISSRRenderSlot } from '@vue/server-renderer';
 
-import { getComponentMeta, registerComponent } from 'core/component/init';
+import { registerComponent } from 'core/component/init';
 
 import {
 
@@ -93,10 +93,10 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			component: CanNull<ComponentMeta> = null;
 
 		if (Object.isString(name)) {
-			component = getComponentMeta(name);
+			component = registerComponent(name);
 
 		} else if (!Object.isPrimitive(name) && 'name' in name && name.name != null) {
-			component = getComponentMeta(name.name);
+			component = registerComponent(name.name);
 		}
 
 		if (component == null) {

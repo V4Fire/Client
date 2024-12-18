@@ -85,15 +85,3 @@ export function registerComponent(name: CanUndef<string>): CanNull<ComponentMeta
 
 	return components.get(name) ?? null;
 }
-
-/**
- * Returns component metaobject by its name.
- * @param name
- */
-export function getComponentMeta(name: CanUndef<string>): CanNull<ComponentMeta> {
-	if (name == null) {
-		return null;
-	}
-
-	return components.get(name) ?? null;
-}
