@@ -30,7 +30,7 @@ export function measure(...args: Parameters<Performance['measure']>): CanUndef<R
  * @param [enableMeasurement]
  */
 export function wrapWithMeasurement<TThis = unknown, TArgs extends unknown[] = unknown[], TResult = void>(
-	measurement: string | ((this: TThis, ...args: TArgs) => string),
+	measurement: string | ((this: TThis, ...args: TArgs) => CanNull<string>),
 	original: (this: TThis, ...args: TArgs) => TResult,
 	enableMeasurement: boolean = !IS_PROD
 ) {
@@ -45,11 +45,18 @@ export function wrapWithMeasurement<TThis = unknown, TArgs extends unknown[] = u
 
 		const end = performance.now();
 
-		if (typeof measurement === 'function') {
-			measurement = <string>measurement.apply(this, args);
+		let computedMeasurement: CanNull<string> = null;
+
+		if (Object.isFunction(measurement)) {
+			computedMeasurement = measurement.apply(this, args);
+
+		} else {
+			computedMeasurement = measurement;
 		}
 
-		measure(measurement, {start, end});
+		if (computedMeasurement != null) {
+			measure(computedMeasurement, {start, end});
+		}
 
 		return result;
 	};

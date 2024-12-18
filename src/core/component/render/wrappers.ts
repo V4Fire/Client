@@ -87,7 +87,7 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
  * @param original
  */
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
-	function getMeasurementName(this: ComponentInterface, ...args: Parameters<T>): string {
+	function getMeasurementName(this: ComponentInterface, ...args: Parameters<T>): CanNull<string> {
 		let 
 			[name] = args,
 			component: CanNull<ComponentMeta> = null;
@@ -100,10 +100,10 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		}
 
 		if (component == null) {
-			return '<UNKNOWN COMPONENT> create block';
+			return null;
 		}
 
-		return `<${component.componentName}> create block`;
+		return `<${component.componentName.camelize(true)}> create block`;
 	}
 
 	function innerCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
