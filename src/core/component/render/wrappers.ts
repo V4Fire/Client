@@ -271,16 +271,10 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
  */
 export function wrapCreateElementBlock<T extends typeof createElementBlock>(original: T): T {
 	return Object.cast(
-		wrapWithMeasurement(
-			function getMeasurementName(this: ComponentInterface) {
-				return `<${this.componentName.camelize(true)}> create element block`;
-			},
-
-			function createElementBlock(this: ComponentInterface, ...args: Parameters<T>) {
-				args[3] = normalizePatchFlagUsingProps.call(this, args[3], args[1]);
-				return resolveAttrs.call(this, original.apply(null, args));
-			}
-		)
+		function createElementBlock(this: ComponentInterface, ...args: Parameters<T>) {
+			args[3] = normalizePatchFlagUsingProps.call(this, args[3], args[1]);
+			return resolveAttrs.call(this, original.apply(null, args));
+		}
 	);
 }
 
