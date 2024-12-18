@@ -88,9 +88,9 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
  */
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	function getMeasurementName(this: ComponentInterface, ...args: Parameters<T>): CanNull<string> {
-		let 
-			[name] = args,
-			component: CanNull<ComponentMeta> = null;
+		const [name] = args;
+
+		let component: CanNull<ComponentMeta> = null;
 
 		if (Object.isString(name)) {
 			component = registerComponent(name);
@@ -262,7 +262,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			getMeasurementName,
 			innerCreateBlock
 		)
-	)
+	);
 }
 
 /**
@@ -352,7 +352,7 @@ export function wrapRenderList<T extends typeof renderList>(original: T): T {
 				src: Nullable<Iterable<unknown> | Dictionary | number>,
 				cb: AnyFunction
 			) {
-				const 
+				const
 					wrappedCb: AnyFunction = Object.cast(cb),
 					vnodes = original(src, wrappedCb),
 					asyncRenderId = src?.[ASYNC_RENDER_ID];

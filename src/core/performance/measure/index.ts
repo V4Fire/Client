@@ -30,7 +30,7 @@ export function measure(...args: Parameters<Performance['measure']>): CanUndef<R
 export function wrapWithMeasurement<TThis = unknown, TArgs extends unknown[] = unknown[], TResult = void>(
 	measurement: string | ((this: TThis, ...args: TArgs) => CanNull<string>),
 	original: (this: TThis, ...args: TArgs) => TResult
-) {
+): (this: TThis, ...args: TArgs) => TResult {
 	if (!IS_PROD) {
 		return original;
 	}
