@@ -87,7 +87,7 @@ export function registerComponent(name: CanUndef<string>): CanNull<ComponentMeta
 }
 
 /**
- * Returns component metaobject by its name.
+ * Returns component metaobject by its name
  * @param name
  */
 export function getComponentMeta(name: CanUndef<string>): CanNull<ComponentMeta> {
