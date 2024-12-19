@@ -31,7 +31,7 @@ export function wrapWithMeasurement<TThis = unknown, TArgs extends unknown[] = u
 	measurement: string | ((this: TThis, ...args: TArgs) => CanNull<string>),
 	original: (this: TThis, ...args: TArgs) => TResult
 ): (this: TThis, ...args: TArgs) => TResult {
-	if (!IS_PROD) {
+	if (IS_PROD) {
 		return original;
 	}
 
