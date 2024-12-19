@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { isWebComponent } from 'core/component/const/wc-validators';
+
 const componentPrefixes = new Set([
 	'b-',
 	'g-',
@@ -28,6 +30,6 @@ export const isComponent = {
 			return false;
 		}
 
-		return componentPrefixes.has(name.slice(0, 2)) && !name.includes(' ', 2);
+		return componentPrefixes.has(name.slice(0, 2)) && !name.includes(' ', 2) && !isWebComponent.test(name);
 	}
 };
