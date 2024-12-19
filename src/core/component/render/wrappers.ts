@@ -8,6 +8,8 @@
 
 /* eslint-disable prefer-spread */
 
+import { wrapWithMeasurement } from 'core/performance';
+
 import { app, isComponent, componentRenderFactories, ASYNC_RENDER_ID } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 
@@ -43,7 +45,7 @@ import type {
 
 import type { ssrRenderSlot as ISSRRenderSlot } from '@vue/server-renderer';
 
-import { registerComponent } from 'core/component/init';
+import { getComponentMeta, registerComponent } from 'core/component/init';
 
 import {
 
@@ -85,7 +87,26 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
  * @param original
  */
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
-	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
+	function getMeasurementName(this: ComponentInterface, ...args: Parameters<T>): CanNull<string> {
+		const [name] = args;
+
+		let component: CanNull<ComponentMeta> = null;
+
+		if (Object.isString(name)) {
+			component = getComponentMeta(name);
+
+		} else if (!Object.isPrimitive(name) && 'name' in name && name.name != null) {
+			component = getComponentMeta(name.name);
+		}
+
+		if (component == null) {
+			return null;
+		}
+
+		return `<${component.componentName.camelize(true)}> create block`;
+	}
+
+	function innerCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
 		let [name, attrs, slots, patchFlag, dynamicProps] = args;
 
 		let component: CanNull<ComponentMeta> = null;
@@ -234,7 +255,14 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		functionalVNode.dynamicChildren = [];
 
 		return vnode;
-	});
+	}
+
+	return Object.cast(
+		wrapWithMeasurement(
+			getMeasurementName,
+			innerCreateBlock
+		)
+	);
 }
 
 /**
@@ -242,10 +270,12 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
  * @param original
  */
 export function wrapCreateElementBlock<T extends typeof createElementBlock>(original: T): T {
-	return Object.cast(function createElementBlock(this: ComponentInterface, ...args: Parameters<T>) {
-		args[3] = normalizePatchFlagUsingProps.call(this, args[3], args[1]);
-		return resolveAttrs.call(this, original.apply(null, args));
-	});
+	return Object.cast(
+		function createElementBlock(this: ComponentInterface, ...args: Parameters<T>) {
+			args[3] = normalizePatchFlagUsingProps.call(this, args[3], args[1]);
+			return resolveAttrs.call(this, original.apply(null, args));
+		}
+	);
 }
 
 /**
@@ -309,33 +339,39 @@ export function wrapMergeProps<T extends typeof mergeProps>(original: T): T {
  * A wrapper for the component library `renderList` function
  *
  * @param original
- * @param withCtx
  */
 export function wrapRenderList<T extends typeof renderList>(original: T): T {
-	return Object.cast(function renderList(
-		this: ComponentInterface,
-		src: Nullable<Iterable<unknown> | Dictionary | number>,
-		cb: AnyFunction
-	) {
-		const wrappedCb: AnyFunction = Object.cast(cb);
+	return Object.cast(
+		wrapWithMeasurement(
+			function getMeasurementName(this: ComponentInterface, ..._args: unknown[]) {
+				return `<${this.componentName.camelize(true)}> render list`;
+			},
 
-		const
-			vnodes = original(src, wrappedCb),
-			asyncRenderId = src?.[ASYNC_RENDER_ID];
+			function renderList(
+				this: ComponentInterface,
+				src: Nullable<Iterable<unknown> | Dictionary | number>,
+				cb: AnyFunction
+			) {
+				const
+					wrappedCb: AnyFunction = Object.cast(cb),
+					vnodes = original(src, wrappedCb),
+					asyncRenderId = src?.[ASYNC_RENDER_ID];
 
-		if (asyncRenderId != null) {
-			this.$emit('[[V_FOR_CB]]', {wrappedCb});
+				if (asyncRenderId != null) {
+					this.$emit('[[V_FOR_CB]]', {wrappedCb});
 
-			Object.defineProperty(vnodes, ASYNC_RENDER_ID, {
-				writable: false,
-				enumerable: false,
-				configurable: false,
-				value: asyncRenderId
-			});
-		}
+					Object.defineProperty(vnodes, ASYNC_RENDER_ID, {
+						writable: false,
+						enumerable: false,
+						configurable: false,
+						value: asyncRenderId
+					});
+				}
 
-		return vnodes;
-	});
+				return vnodes;
+			}
+		)
+	);
 }
 
 /**

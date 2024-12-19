@@ -29,6 +29,8 @@ if (!IS_PROD) {
 	};
 }
 
+Vue.config.performance = !IS_PROD;
+
 const
 	UNRECOGNIZED_COMPONENT_NAME = 'unrecognized-component',
 	ROOT_COMPONENT_NAME = 'root-component';

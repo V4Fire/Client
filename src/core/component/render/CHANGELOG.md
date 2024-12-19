@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.170 (2024-12-19)
+
+#### :house: Internal
+
+* [Now key functions such as `createBlock` and `renderList` are being measured using the Performance API and will be available on the timeline](https://github.com/V4Fire/Client/issues/1389)
+
 ## v4.0.0-beta.153 (2024-11-15)
 
 #### :house: Internal
