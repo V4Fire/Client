@@ -14,6 +14,15 @@ const componentPrefixes = new Set([
 ]);
 
 /**
+ * A RegExp to check if the given string is the name of a web-component
+ */
+export const isV4WebComponent = {
+	test(_name: Nullable<string>): boolean {
+		return false;
+	}
+};
+
+/**
  * A RegExp to check if the given string is the name of a component
  *
  * @example
@@ -28,6 +37,6 @@ export const isComponent = {
 			return false;
 		}
 
-		return componentPrefixes.has(name.slice(0, 2)) && !name.includes(' ', 2);
+		return !isV4WebComponent.test(name) && componentPrefixes.has(name.slice(0, 2)) && !name.includes(' ', 2);
 	}
 };
