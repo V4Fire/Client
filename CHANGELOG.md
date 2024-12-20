@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.171 (2024-12-23)
+
+#### :rocket: New Feature
+
+* Added a new validator for web-components `isWebComponent` `src/core/component/const/wc-validators`
+
 ## v4.0.0-beta.170 (2024-12-19)
 
 #### :house: Internal
