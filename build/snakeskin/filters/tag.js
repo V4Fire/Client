@@ -42,6 +42,7 @@ module.exports = [
 	 * @param {string} params.isSimpleTag
 	 * @param {string} params.isFunctional
 	 * @param {string} params.vFuncDir
+	 * @param {boolean} params.isWebComponent
 	 * @throws {Error} if the attributes contain invalid values
 	 */
 	function normalizeV4Attrs({
@@ -50,7 +51,8 @@ module.exports = [
 		attrs,
 		isSimpleTag,
 		isFunctional,
-		vFuncDir
+		vFuncDir,
+		isWebComponent
 	}) {
 		// Remove empty class attributes
 		if (attrs['class'] && !attrs['class'].join().trim()) {
@@ -58,10 +60,17 @@ module.exports = [
 		}
 
 		// To ensure correct functioning on the client side with functional components,
-		// we normalize all calls to the v-attrs directive as props
-		if (attrs['v-attrs']) {
-			attrs[':v-attrs'] = attrs['v-attrs'].slice();
-			delete attrs['v-attrs'];
+		// we normalize all calls to the v-attrs directive as props, except for web components
+		if (!isWebComponent) {
+			if (attrs['v-attrs']) {
+				attrs[':v-attrs'] = attrs['v-attrs'].slice();
+				delete attrs['v-attrs'];
+			}
+
+		// For the web components v-attrs must be normalized to the directive
+		} else if (attrs[':v-attrs']) {
+			attrs['v-attrs'] = attrs[':v-attrs'].slice();
+			delete attrs[':v-attrs'];
 		}
 
 		if (webpack.ssr) {
