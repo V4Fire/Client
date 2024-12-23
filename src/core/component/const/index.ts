@@ -15,3 +15,4 @@ export * from 'core/component/const/cache';
 export * from 'core/component/const/symbols';
 export * from 'core/component/const/enums';
 export * from 'core/component/const/validators';
+export * from 'core/component/const/wc-validators';

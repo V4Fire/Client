@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Forced v-attrs to be converted into directive for tags that are web components `build/snakeskin`
+* Added a new validator for web-components `isWebComponent` `src/core/component/const/wc-validators`
 
 ## v4.0.0-beta.170 (2024-12-19)
 
