@@ -9,9 +9,9 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.171 (2024-12-23)
+## v4.0.0-beta.?? (2024-12-23)
 
-#### :rocket: New Feature
+#### :house: Internal
 
 * Added a new validator for web-components `isWebComponent`
 
