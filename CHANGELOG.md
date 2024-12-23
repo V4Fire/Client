@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-12-23)
+
+#### :house: Internal
+
+* Forced v-attrs to be converted into directive for tags that are web components `build/snakeskin`
+
 ## v4.0.0-beta.170 (2024-12-19)
 
 #### :house: Internal
