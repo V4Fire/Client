@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.136-ssr5 (2024-12-24)
+
+#### :bug: Bug Fix
+
+* Fixed the bug with previous active element not loosing its focus state
+
 ## v4.0.0-beta.26 (2023-09-20)
 
 #### :bug: Bug Fix
