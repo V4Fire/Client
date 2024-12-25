@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.172 (2024-12-25)
+
+#### :boom: Breaking Change
+
+* Updated `@v4fire/core` to version `4.0.0-alpha.54` with renaming `Function.prototype.once` to `memoize`
+
 ## v4.0.0-beta.171 (2024-12-23)
 
 #### :house: Internal

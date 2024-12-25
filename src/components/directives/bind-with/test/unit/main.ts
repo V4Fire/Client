@@ -47,6 +47,7 @@ test.describe('components/directives/bind-with', () => {
 			const el = await renderDirective(page, {
 				emitter: (event: string, listener: AnyFunction) => {
 					document.body.addEventListener(event, listener);
+					return undefined;
 				},
 
 				on: 'testEvent'

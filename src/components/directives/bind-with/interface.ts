@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { EventEmitterLike, PromiseLikeP } from 'core/async';
+import type { EventEmitterLikeP, PromiseLikeP } from 'core/async';
 
 import type { DirectiveBinding } from 'core/component/engines';
 import type { WatchOptions } from 'core/component/interface';
@@ -62,7 +62,7 @@ export interface EventListener<A extends any[]> extends Handle<A> {
 	/**
 	 * An event emitter to listen
 	 */
-	emitter?: EventEmitterLike | EventEmitterLike['on'];
+	emitter?: EventEmitterLikeP;
 
 	/**
 	 * The event name to listen for, or a list of such events
