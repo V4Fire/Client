@@ -137,7 +137,7 @@ export function* createDependencyIterator(
 			wait: expandedWait
 		};
 
-		expandedDependency.fn = expandedDependency.fn.once();
+		expandedDependency.fn = expandedDependency.fn.memoize();
 		expandedDependencies.set(dependency, expandedDependency);
 
 		return expandedDependency;

@@ -121,7 +121,7 @@ export function beforeCreateState(
 
 			let fn = () => ('getRoot' in ctx ? ctx.getRoot?.() : null) ?? ctx.$root;
 
-			fn = fn.once();
+			fn = fn.memoize();
 
 			Object.defineProperty(ctx, $getRoot, {
 				configurable: true,
@@ -163,7 +163,7 @@ export function beforeCreateState(
 				return targetCtx[$getParent];
 			}
 
-			let fn: CanUndef<Function>;
+			let fn: CanUndef<AnyFunction>;
 
 			if (restArgs != null) {
 				// VNODE
@@ -179,7 +179,7 @@ export function beforeCreateState(
 				fn = () => ctx;
 			}
 
-			fn = fn.once();
+			fn = fn.memoize();
 
 			Object.defineProperty(targetCtx, $getParent, {
 				configurable: true,

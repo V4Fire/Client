@@ -67,7 +67,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			unsafe.$vueWatch = this.$watch.bind(this);
 			init.beforeDataCreateState(ctx);
 
-			const emitter: Function = (_: unknown, handler: WatchHandler) => {
+			const emitter = (_: unknown, handler: WatchHandler) => {
 				// eslint-disable-next-line @v4fire/unbound-method
 				const {unwatch} = watch(unsafe.$fields, {deep: true, immediate: true}, handler);
 				return unwatch;
