@@ -519,7 +519,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 				// eslint-disable-next-line prefer-const
 				unwatch: Nullable<Function>;
 
-			const emitter: Function = (_: any, wrappedHandler: RawWatchHandler<typeof that, T>) => {
+			const emitter = (_: any, wrappedHandler: RawWatchHandler<typeof that, T>) => {
 				wrappedHandler['originalLength'] = handler['originalLength'] ?? handler.length;
 				handler = wrappedHandler;
 

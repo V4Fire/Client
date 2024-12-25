@@ -5740,7 +5740,7 @@ __metadata:
     "@types/webpack-env": "npm:1.18.1"
     "@v4fire/cli": "npm:1.6.0"
     "@v4fire/config": "npm:1.0.0"
-    "@v4fire/core": "npm:4.0.0-alpha.53"
+    "@v4fire/core": "npm:4.0.0-alpha.54"
     "@v4fire/design-system": "npm:1.23.0"
     "@v4fire/linters": "git+https://github.com/v4fire/linters#rework_rules"
     "@v4fire/storybook": "npm:0.8.0"
@@ -6022,9 +6022,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@v4fire/core@npm:4.0.0-alpha.53":
-  version: 4.0.0-alpha.53
-  resolution: "@v4fire/core@npm:4.0.0-alpha.53"
+"@v4fire/core@npm:4.0.0-alpha.54":
+  version: 4.0.0-alpha.54
+  resolution: "@v4fire/core@npm:4.0.0-alpha.54"
   dependencies:
     "@babel/core": "npm:7.17.5"
     "@babel/helper-module-transforms": "npm:7.16.7"
@@ -6167,7 +6167,7 @@ __metadata:
       optional: true
     xhr2:
       optional: true
-  checksum: e8d94bbb1c671f8b3b69b1671cd5cd9b5f4e42443ec0f68563cb387ef5b30a9b977696c2260ced8ccbb753f220e16b1f28a6462926b1b9a1129fd642122e753d
+  checksum: 9de3c4e4c9a65de159b44dd1055dcfca9f587ba7e6b134ae5957dde528388d1e5be5f904db9140861635d0b48cc15529ce26061e13ba275a148bdbf1c7bf8b45
   languageName: node
   linkType: hard
 
