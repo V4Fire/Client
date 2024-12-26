@@ -111,6 +111,20 @@ export default class Transition {
 	}
 
 	/**
+	 * Returns `true` if the transition has a provided scroll
+	 */
+	get isTransitionWithProvidedScroll(): boolean {
+		return this.opts.meta?.scroll != null;
+	}
+
+	/**
+	 * Returns `true` if the transition is a soft transition within the same route
+	 */
+	get isSoftTransitionInSameRoute(): boolean {
+		return this.originRef == null && this.method === 'replace';
+	}
+
+	/**
 	 * Returns the transition ref
 	 */
 	getRef(): TransitionContext['ref'] {

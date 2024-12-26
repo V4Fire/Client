@@ -79,6 +79,7 @@ function getScriptDecl(lib, body = '') {
 	}
 
 	lib.defer = lib.defer !== false;
+	lib.iife = Boolean(lib.iife);
 
 	const
 		isInline = Boolean(needInline(lib.inline) || body),
@@ -124,11 +125,10 @@ function getScriptDecl(lib, body = '') {
 				throw new Error(`The asset ${lib.src} cannot be found`);
 			}
 
-			const
-				body = `include('${lib.src}');`;
+			const body = `include('${lib.src}');`;
 
 			if (lib.js) {
-				return `${body}\n`;
+				return lib.iife ? `(() => { ${body} })();\n` : `${body}\n`;
 			}
 
 			return `<script ${attrs}>${body}</script>`;

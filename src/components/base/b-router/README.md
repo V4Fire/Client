@@ -524,6 +524,33 @@ this.router.push('user', {
 The router saves the scroll coordinates every time it switches to another route in order to restore its position
 when using the "back/forward" navigation.
 
+When you navigate to the same route using the `replace` method,
+the router will not apply the scroll restoration logic by default.
+To enable this feature, you need to pass the `meta.scroll` option to the `replace` method.
+
+```js
+// Will not scroll
+this.router.replace(null, {
+  query: {
+    foo: 1
+  }
+});
+
+// Will scroll
+this.router.replace(null, {
+  query: {
+    foo: 1
+  },
+
+  meta: {
+    scroll: {
+      x: 0,
+      y: 100
+    }
+  }
+});
+```
+
 #### Redirecting to another route
 
 You can define behavior where one route automatically redirects to another.

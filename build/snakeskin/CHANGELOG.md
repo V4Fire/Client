@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.171 (2024-12-23)
+
+#### :house: Internal
+
+* Forced v-attrs to be converted into directive for tags that are web components
+
 ## v4.0.0-beta.155 (2024-11-20)
 
 #### :house: Internal

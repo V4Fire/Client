@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.168 (2024-12-13)
+
+#### :bug: Bug Fix
+
+* Call component's `reload` just once on reactivation
+
 ## v4.0.0-beta.153 (2024-11-15)
 
 #### :house: Internal

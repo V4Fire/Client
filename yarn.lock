@@ -5244,6 +5244,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^18.11.9":
+  version: 18.19.64
+  resolution: "@types/node@npm:18.19.64"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: c6383d4f6f3b3f1d48234b2e71e20d1ead4ac4ee31bbca7ef8719eedd1e79a425b35952d4b1ba3eff0a4e3eebd37b8a6e85e9af3bb88aa7b3fdae9cb66630820
+  languageName: node
+  linkType: hard
+
 "@types/normalize-package-data@npm:^2.4.0":
   version: 2.4.1
   resolution: "@types/normalize-package-data@npm:2.4.1"
@@ -5726,7 +5735,7 @@ __metadata:
     "@types/webpack-env": "npm:1.18.1"
     "@v4fire/cli": "npm:1.6.0"
     "@v4fire/config": "npm:1.0.0"
-    "@v4fire/core": "npm:4.0.0-alpha.50"
+    "@v4fire/core": "npm:4.0.0-alpha.54"
     "@v4fire/design-system": "npm:1.23.0"
     "@v4fire/linters": "git+https://github.com/v4fire/linters#rework_rules"
     "@v4fire/storybook": "npm:0.8.0"
@@ -5781,6 +5790,7 @@ __metadata:
     jest: "npm:29.7.0"
     jest-runner-eslint: "npm:2.1.2"
     jsdom: "npm:16.7.0"
+    json5: "npm:2.2.3"
     merge2: "npm:1.4.1"
     mini-css-extract-plugin: "npm:2.5.3"
     monic: "npm:2.6.1"
@@ -5801,6 +5811,7 @@ __metadata:
     react-dom: "npm:18.2.0"
     requestidlecallback: "npm:0.3.0"
     resize-observer-polyfill: "npm:1.5.1"
+    responsive-loader: "npm:3.1.2"
     sharp: "npm:0.30.6"
     simple-git: "npm:3.25.0"
     snakeskin: "github:SnakeskinTpl/Snakeskin#new-var"
@@ -5918,6 +5929,8 @@ __metadata:
       optional: true
     is-path-inside:
       optional: true
+    json5:
+      optional: true
     merge2:
       optional: true
     mini-css-extract-plugin:
@@ -5943,6 +5956,8 @@ __metadata:
     postcss-loader:
       optional: true
     raw-loader:
+      optional: true
+    responsive-loader:
       optional: true
     snakeskin-loader:
       optional: true
@@ -6002,9 +6017,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@v4fire/core@npm:4.0.0-alpha.50":
-  version: 4.0.0-alpha.50
-  resolution: "@v4fire/core@npm:4.0.0-alpha.50"
+"@v4fire/core@npm:4.0.0-alpha.54":
+  version: 4.0.0-alpha.54
+  resolution: "@v4fire/core@npm:4.0.0-alpha.54"
   dependencies:
     "@babel/core": "npm:7.17.5"
     "@babel/helper-module-transforms": "npm:7.16.7"
@@ -6147,7 +6162,7 @@ __metadata:
       optional: true
     xhr2:
       optional: true
-  checksum: 3da2b90ace3368c74447723d506f6be412d1a82e51e34aa260aba4e575902b6dbedaf0706d0c6031393f65edd5361596664741dee71553a40ca914bc458ba56d
+  checksum: 9de3c4e4c9a65de159b44dd1055dcfca9f587ba7e6b134ae5957dde528388d1e5be5f904db9140861635d0b48cc15529ce26061e13ba275a148bdbf1c7bf8b45
   languageName: node
   linkType: hard
 
@@ -12811,7 +12826,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"find-cache-dir@npm:^3.0.0, find-cache-dir@npm:^3.2.0":
+"find-cache-dir@npm:^3.0.0, find-cache-dir@npm:^3.2.0, find-cache-dir@npm:^3.3.2":
   version: 3.3.2
   resolution: "find-cache-dir@npm:3.3.2"
   dependencies:
@@ -16981,6 +16996,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"json5@npm:2.2.3, json5@npm:^2.1.2, json5@npm:^2.2.1, json5@npm:^2.2.2, json5@npm:^2.2.3":
+  version: 2.2.3
+  resolution: "json5@npm:2.2.3"
+  bin:
+    json5: lib/cli.js
+  checksum: 1db67b853ff0de3534085d630691d3247de53a2ed1390ba0ddff681ea43e9b3e30ecbdb65c5e9aab49435e44059c23dbd6fee8ee619419ba37465bb0dd7135da
+  languageName: node
+  linkType: hard
+
 "json5@npm:^0.5.1":
   version: 0.5.1
   resolution: "json5@npm:0.5.1"
@@ -16998,15 +17022,6 @@ __metadata:
   bin:
     json5: lib/cli.js
   checksum: a78d812dbbd5642c4f637dd130954acfd231b074965871c3e28a5bbd571f099d623ecf9161f1960c4ddf68e0cc98dee8bebfdb94a71ad4551f85a1afc94b63f6
-  languageName: node
-  linkType: hard
-
-"json5@npm:^2.1.2, json5@npm:^2.2.2, json5@npm:^2.2.3":
-  version: 2.2.3
-  resolution: "json5@npm:2.2.3"
-  bin:
-    json5: lib/cli.js
-  checksum: 1db67b853ff0de3534085d630691d3247de53a2ed1390ba0ddff681ea43e9b3e30ecbdb65c5e9aab49435e44059c23dbd6fee8ee619419ba37465bb0dd7135da
   languageName: node
   linkType: hard
 
@@ -17268,6 +17283,13 @@ __metadata:
     emojis-list: "npm:^3.0.0"
     json5: "npm:^2.1.2"
   checksum: 28bd9af2025b0cb2fc6c9c2d8140a75a3ab61016e5a86edf18f63732216e985a50bf2479a662555beb472a54d12292e380423705741bfd2b54cab883aa067f18
+  languageName: node
+  linkType: hard
+
+"loader-utils@npm:^3.2.1":
+  version: 3.3.1
+  resolution: "loader-utils@npm:3.3.1"
+  checksum: 3f994a948ded4248569773f065b1f6d7c95da059888c8429153e203f9bdadfb1691ca517f9eac6548a8af2fe5c724a8e09cbb79f665db4209426606a57ec7650
   languageName: node
   linkType: hard
 
@@ -17722,7 +17744,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"make-dir@npm:^3.0.0, make-dir@npm:^3.0.2":
+"make-dir@npm:^3.0.0, make-dir@npm:^3.0.2, make-dir@npm:^3.1.0":
   version: 3.1.0
   resolution: "make-dir@npm:3.1.0"
   dependencies:
@@ -21998,6 +22020,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"responsive-loader@npm:3.1.2":
+  version: 3.1.2
+  resolution: "responsive-loader@npm:3.1.2"
+  dependencies:
+    "@types/node": "npm:^18.11.9"
+    find-cache-dir: "npm:^3.3.2"
+    json5: "npm:^2.2.1"
+    loader-utils: "npm:^3.2.1"
+    make-dir: "npm:^3.1.0"
+    schema-utils: "npm:^4.0.0"
+  peerDependencies:
+    webpack: ^5.73.0
+  peerDependenciesMeta:
+    jimp:
+      optional: true
+    sharp:
+      optional: true
+  checksum: c30015700b2849f0c515e90b1a9cd3618fc767a920815da948ff233c9c93884911ca2242d9fc15a3bf311bfdb600476fb03a2bf7a88fd430b7d5203dd364480a
+  languageName: node
+  linkType: hard
+
 "restore-cursor@npm:^3.1.0":
   version: 3.1.0
   resolution: "restore-cursor@npm:3.1.0"
@@ -24709,6 +24752,13 @@ __metadata:
     object.reduce: "npm:^1.0.0"
     undertaker-registry: "npm:^1.0.0"
   checksum: 6cb5898b0b8fd4b094fbd6ed9c2e155f436d698fdc13f45444d5083825cc29bca7a364c5e27922366f0ce3fff7bb5b834f6ff3583f77cb655bbc3a60fee632ed
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~5.26.4":
+  version: 5.26.5
+  resolution: "undici-types@npm:5.26.5"
+  checksum: 0097779d94bc0fd26f0418b3a05472410408877279141ded2bd449167be1aed7ea5b76f756562cb3586a07f251b90799bab22d9019ceba49c037c76445f7cddd
   languageName: node
   linkType: hard
 
