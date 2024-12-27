@@ -15,6 +15,8 @@
 
 : canInlineSourceCode = !config.webpack.externalizeInline()
 : inlineDepsDeclarations = Boolean(config.webpack.dynamicPublicPath())
+: isFatHtml = config.webpack.fatHTML() === 1
+: wrapScripts = inlineDepsDeclarations || isFatHtml
 
 : themeAttribute = config.theme.attribute
 : theme = config.theme.postProcessor ? config.theme.postProcessorTemplate : config.theme.default()
@@ -140,14 +142,20 @@
 					<! :: STYLES
 
 					- block headScripts
-						+= await h.loadLibs(deps.headScripts, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
-						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
-						+= await h.loadLibs(deps.scripts, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
+						+= await h.loadLibs(deps.headScripts, {assets, wrap: wrapScripts, js: inlineDepsDeclarations})
+						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: wrapScripts, js: inlineDepsDeclarations})
+						+= await h.loadLibs(deps.scripts, {assets, wrap: wrapScripts, js: inlineDepsDeclarations})
 
-						+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
-						+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
+						- if wrapScripts
+							< script
+								+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: false, js: true})
+								+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: false, js: true})
+								+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: false, js: true})
 
-						+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
+						- else
+							+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: true, js: true})
+							+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: true, js: true})
+							+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: true, js: true})
 
 			< body ${rootAttrs|!html}
 				<! :: SSR
