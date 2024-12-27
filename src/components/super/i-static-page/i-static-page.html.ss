@@ -146,10 +146,16 @@
 						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: wrapScripts, js: inlineDepsDeclarations})
 						+= await h.loadLibs(deps.scripts, {assets, wrap: wrapScripts, js: inlineDepsDeclarations})
 
-						+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: wrapScripts, js: inlineDepsDeclarations})
-						+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: wrapScripts, js: inlineDepsDeclarations})
+						- if wrapScripts
+							< script
+								+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: false, js: true})
+								+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: false, js: true})
+								+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: false, js: true})
 
-						+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: wrapScripts, js: inlineDepsDeclarations})
+						- else
+							+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: true, js: true})
+							+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: true, js: true})
+							+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: true, js: true})
 
 			< body ${rootAttrs|!html}
 				<! :: SSR
