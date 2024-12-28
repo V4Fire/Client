@@ -435,7 +435,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * Returns
 		 *   1. `1` if all resources from the build should be embedded in HTML files;
 		 *   2. `2` if all scripts and links from the build should be embedded in HTML files;
-		 *   3. `0` if resources from the build should not be embedded in HTML files.
+		 *   3. `3` if some scripts and components should be embedded in shadow HTML [TBD];
+		 *   4. `0` if resources from the build should not be embedded in HTML files.
 		 *
 		 * @cli fat-html
 		 * @env FAT_HTML
@@ -822,6 +823,23 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		assetsJS() {
 			return path.changeExt(this.assetsJSON(), '.js');
+		},
+
+		/**
+		 * Returns the path to the generated async assets chunks list within the output directory.
+		 * It contains an array of async chunks and their file names to inline them into fat-html.
+		 * ...
+		 * [
+		 *  {
+		 *   id: 'chunk_id',
+		 *   files: ['filename.ext']
+		 *  }
+		 * ]
+		 *
+		 * @returns {string}
+		 */
+		asyncAssetsJSON() {
+			return 'async-chunks-to-inline.json';
 		},
 
 		/**

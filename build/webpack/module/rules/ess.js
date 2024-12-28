@@ -25,7 +25,9 @@ const
  * @returns {Promise<import('webpack').RuleSetRule>}
  */
 module.exports = async function essRules() {
-	const g = await projectGraph;
+	const
+		g = await projectGraph,
+		isThirdFatHTMLMode = config.webpack.fatHTML() == 3;
 
 	return {
 		test: /\.ess$/,
@@ -37,12 +39,17 @@ module.exports = async function essRules() {
 				}
 			},
 
-			'extract-loader',
+			...(!isThirdFatHTMLMode ?
+				[
+					'extract-loader',
 
-			{
-				loader: 'html-loader',
-				options: config.html()
-			},
+					{
+						loader: 'html-loader',
+						options: config.html()
+					}
+				] :
+				[]
+			),
 
 			{
 				loader: 'monic-loader',
