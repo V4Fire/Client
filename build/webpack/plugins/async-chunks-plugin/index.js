@@ -104,7 +104,10 @@ class Index {
 
 				asyncChunks.forEach((chunk) => {
 					chunk.files.forEach((file) => {
-						fs.rmSync(path.join(compiler.options.output.path, file));
+						const pathToFile = path.join(compiler.options.output.path, file);
+						if (fs.existsSync(pathToFile)) {
+							fs.rmSync(path.join(compiler.options.output.path, file));
+						}
 					});
 				});
 			}
