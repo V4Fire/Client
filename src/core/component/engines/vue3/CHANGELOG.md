@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.170 (2024-12-19)
+
+#### :house: Internal
+
+* [The `performance` option in the Vue engine config is set to true by default for the dev build](https://github.com/V4Fire/Client/issues/1389)
+
 ## v4.0.0-beta.150 (2024-11-05)
 
 #### :bug: Bug Fix

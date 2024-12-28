@@ -11,6 +11,94 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.172 (2024-12-25)
+
+#### :boom: Breaking Change
+
+* Updated `@v4fire/core` to version `4.0.0-alpha.54` with renaming `Function.prototype.once` to `memoize`
+
+## v4.0.0-beta.171 (2024-12-23)
+
+#### :house: Internal
+
+* Forced v-attrs to be converted into directive for tags that are web components `build/snakeskin`
+* Added a new validator for web-components `isWebComponent` `src/core/component/const/wc-validators`
+
+## v4.0.0-beta.170 (2024-12-19)
+
+#### :house: Internal
+
+* [The `performance` option in the Vue engine config is set to true by default for the dev build `core/component/engines/vue3/config.ts`](https://github.com/V4Fire/Client/issues/1389)
+* [Now key functions such as `createBlock` and `renderList` are being measured using the Performance API and will be available on the timeline `core/component/render/wrappers`](https://github.com/V4Fire/Client/issues/1389)
+
+## v4.0.0-beta.169 (2024-12-17)
+
+#### :house: Internal
+
+* Updated dependencies: `@v4fire/core@4.0.0-alpha.53`
+
+## v4.0.0-beta.168 (2024-12-13)
+
+#### :bug: Bug Fix
+
+* Call component's `reload` just once on reactivation `components/super/i-block/modules/activation`
+
+## v4.0.0-beta.167 (2024-12-12)
+
+#### :bug: Bug Fix
+
+* Call `beforeUnmount` hook of directive before `unmounted` hook `core/component/engines/directive`
+
+## v4.0.0-beta.166 (2024-12-09)
+
+#### :house: Internal
+
+* Hint classes are now optional to set on link elements `components/base/b-list`
+
+## v4.0.0-beta.165 (2024-12-09)
+
+#### :bug: Bug Fix
+
+* Fix binding a non-promise handler for the custom watcher.
+After rewriting the loop from `.forEach` to native `for`, `return` statement was not changed to `continue`.
+`core/component/watch`
+* Add "flush: 'sync'" to the page watcher. This restores the original semantics of the "immediate: true" option `bDynamicPage`
+
+## v4.0.0-beta.164 (2024-12-06)
+
+#### :bug: Bug Fix
+
+* Add `appendChild` to DOM class prototype `bVirtualScrollNew`
+
+### :rocket: New Feature
+
+* Add `iife` parameter for `Lib`, which wraps script output into IIFE `iStaticPage`
+
+## v4.0.0-beta.163 (2024-12-05)
+
+#### :boom: Breaking Change
+
+* The `soft` transition using the `replace` method for the same route no longer restores the scroll position by default.
+To restore the scroll position during a `soft` transition, explicitly pass the `scroll` option. `bRouter`
+
+## v4.0.0-beta.162 (2024-12-04)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `changedTouches` was not provided in gestures test module `core/prelude/test-env/gestures.ts`
+
+## v4.0.0-beta.161 (2024-12-03)
+
+#### :bug: Bug Fix
+
+* Fix watching for nested fields inside `$attrs` `core/component/watch`
+
+## v4.0.0-beta.160 (2024-03-12)
+
+#### :rocket: New Feature
+
+* Added a new webpack loader for responsive images `build/webpack/loaders/responsive-images-loader`
+
 ## v4.0.0-beta.159 (2024-11-27)
 
 #### :bug: Bug Fix

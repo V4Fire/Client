@@ -324,7 +324,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							}
 						}
 
-						return;
+						continue;
 					}
 
 					/* eslint-disable prefer-const */

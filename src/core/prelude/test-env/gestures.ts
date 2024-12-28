@@ -62,16 +62,19 @@ export default class Gestures {
 			dispatchEl = document.elementFromPoint(x, y);
 		}
 
+		const touches = touchPoints.map<Touch>(({x: clientX, y: clientY}, identifier) => new Touch({
+			identifier,
+			clientX,
+			clientY,
+			target: targetEl!
+		}));
+
 		const event = new TouchEvent(eventType, {
 			bubbles: true,
 			cancelable: true,
 			composed: true,
-			touches: touchPoints.map<Touch>(({x: clientX, y: clientY}, identifier) => new Touch({
-				identifier,
-				clientX,
-				clientY,
-				target: targetEl!
-			}))
+			touches,
+			changedTouches: touches
 		});
 
 		dispatchEl!.dispatchEvent(event);

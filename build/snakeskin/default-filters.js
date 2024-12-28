@@ -82,12 +82,14 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 		componentName = tag.camelize(false);
 	}
 
-	const component = componentParams[componentName];
+	const
+		component = componentParams[componentName],
+		isWebComponent = isV4WebComponent.test(tag);
 
 	Object.entries(attrs).forEach(([key, attr]) => {
 		if (isStaticV4Prop.test(key)) {
 			// Do not change any attrs name for web components
-			if (isV4WebComponent.test(tag)) {
+			if (isWebComponent) {
 				return;
 			}
 
@@ -183,6 +185,7 @@ function tagFilter({name: tag, attrs = {}}, _, rootTag, forceRenderAsVNode, tplN
 		rootTag,
 		attrs,
 		component,
+		isWebComponent,
 
 		isSimpleTag,
 		isFunctional,

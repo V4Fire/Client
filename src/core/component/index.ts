@@ -30,6 +30,7 @@ export {
 	app,
 
 	isComponent,
+	isWebComponent,
 	rootComponents,
 
 	beforeHooks,

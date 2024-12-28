@@ -9,6 +9,19 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.165 (2024-12-09)
+
+#### :bug: Bug Fix
+
+* Fix binding a non-promise handler for the custom watcher.
+After rewriting the loop from `.forEach` to native `for`, `return` statement was not changed to `continue`.
+
+## v4.0.0-beta.161 (2024-12-03)
+
+#### :bug: Bug Fix
+
+* Fix watching for nested fields inside `$attrs`
+
 ## v4.0.0-beta.153 (2024-11-15)
 
 #### :bug: Bug Fix
