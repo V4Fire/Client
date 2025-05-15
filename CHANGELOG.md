@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.75.2 (2025-05-15)
+
+#### :bug: Bug Fix
+
+* Fixed an error when GET params where included into the route params `core/router`
+
 ## v3.75.1 (2024-11-26)
 
 #### :bug: Bug Fix
