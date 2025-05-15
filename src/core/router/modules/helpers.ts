@@ -265,7 +265,8 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 		}
 
 		const
-			params = route.rgxp?.exec(initialRef);
+			queryIndex = initialRef.indexOf('?'),
+			params = route.rgxp?.exec(queryIndex >= 0 ? initialRef.slice(0, queryIndex) : initialRef);
 
 		if (params == null) {
 			return;
