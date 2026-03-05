@@ -126,7 +126,7 @@
     "stylus-loader": "6.2.0",
     "svg-sprite-loader": "6.0.11",
     "svg-url-loader": "7.1.1",
-    "svgo": "2.8.0",
+    "svgo": "2.8.2",
     "svgo-loader": "3.0.0",
     "svgo-sync": "0.5.1",
     "terser": "5.31.0",
